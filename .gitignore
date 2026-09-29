@@ -1,0 +1,14 @@
+.DS_Store
+*.pdf
+*_files/
+.Rproj.user
+.Rhistory
+/.quarto/
+_site/
+docs/
+.vscode/
+.Renviron
+*.png
+*.html
+*.docx
+output/
