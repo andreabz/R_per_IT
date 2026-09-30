@@ -188,3 +188,222 @@ IT dovrebbe quindi chiedere:
 non:
 
 > "Possiamo procurare 16 core?"
+
+
+# Memoria di processo e picco di RAM
+
+Un processo R utilizza memoria per gli oggetti R, le strutture interne del runtime, le librerie caricate, i buffer e altre risorse.
+
+La dimensione dei dati su disco non coincide quindi necessariamente con la memoria richiesta dal processo.
+
+Un'operazione può richiedere memoria temporanea aggiuntiva:
+
+~~~text
+oggetto originale:  4 GB
+copia temporanea:  +4 GB
+risultato:          +4 GB
+overhead/runtime:   +...
+-----------------------------
+picco > 12 GB
+~~~
+
+Non tutte le operazioni producono necessariamente una copia completa: R può condividere oggetti e creare copie quando necessario. Per IT è però importante ragionare sul **picco di memoria**, non soltanto sulla dimensione finale del dataset.
+
+> «Il dataset è di 10 GB» non implica che servano esattamente 10 GB di RAM.
+
+# RAM e memoria virtuale
+
+La **RAM** è la memoria fisica disponibile al sistema.
+
+La **memoria virtuale** è il meccanismo con cui il sistema operativo presenta ai processi uno spazio di memoria e gestisce le pagine, eventualmente utilizzando anche storage.
+
+~~~text
+Processo R
+   ↓
+memoria virtuale
+   ↓
+RAM + eventuale paging
+~~~
+
+La memoria virtuale non equivale a RAM aggiuntiva gratuita. Se il sistema ricorre intensamente a paging/swap, le prestazioni possono degradare perché lo storage è molto più lento della RAM.
+
+Per IT:
+
+> molto swap disponibile non significa che il server abbia RAM sufficiente per il carico.
+
+# Garbage collection
+
+R utilizza un **garbage collector (GC)** per recuperare memoria associata a oggetti che non sono più necessari.
+
+In termini semplificati:
+
+~~~text
+creazione oggetti
+      ↓
+memoria occupata
+      ↓
+oggetti non più necessari
+      ↓
+garbage collection
+      ↓
+memoria recuperabile
+~~~
+
+Il garbage collector non può liberare memoria ancora necessaria all'elaborazione.
+
+Inoltre una fase di garbage collection può avere un costo temporale. Per questo, per diagnosticare un problema di memoria, è utile osservare sia l'andamento della RAM sia il tempo di esecuzione.
+
+# Thread nativi e oversubscription
+
+Il codice R può chiamare librerie native che utilizzano thread propri. Questo introduce una distinzione importante tra:
+
+- worker R;
+- thread del processo;
+- thread utilizzati da librerie numeriche o di I/O.
+
+Un esempio concettuale:
+
+~~~text
+8 worker R
+×
+4 thread nativi per worker
+=
+fino a 32 unità di esecuzione concorrenti
+~~~
+
+Se il server dispone di meno risorse effettivamente utilizzabili, può verificarsi **oversubscription**: troppi thread competono per i core.
+
+Il risultato può essere:
+
+- più context switching;
+- maggiore contesa CPU;
+- maggiore consumo di risorse;
+- peggioramento delle prestazioni.
+
+Per IT la domanda non è quindi soltanto:
+
+> «Quanti worker?»
+
+ma anche:
+
+> «Quanti thread utilizza ciascun worker?»
+
+# Processo R, core e parallelismo
+
+Il modello semplificato:
+
+~~~{mermaid}
+flowchart LR
+    R["Processo R"] --> CPU["CPU"]
+    CPU --> C["Core"]
+~~~
+
+Se il lavoro è prevalentemente seriale, aggiungere core al server può cambiare poco il tempo di esecuzione.
+
+Se il lavoro è parallelizzabile o utilizza librerie multithread, più core possono essere utilizzati. Il beneficio deve però essere misurato.
+
+Non esiste una regola universale secondo cui il numero ottimale di worker sia «numero di core meno uno o due». Dipende da:
+
+- CPU disponibile;
+- RAM;
+- I/O;
+- database;
+- rete;
+- thread per worker;
+- natura del carico;
+- concorrenza con altri servizi.
+
+# Parallelismo e memoria
+
+Quando i worker sono processi separati, ciascun processo può avere una propria copia degli oggetti necessari.
+
+Schema concettuale:
+
+~~~text
+Processo principale
+   │
+   ├── dati
+   ├── Worker 1 → dati necessari
+   ├── Worker 2 → dati necessari
+   ├── Worker 3 → dati necessari
+   └── Worker 4 → dati necessari
+~~~
+
+Perciò, in molti backend basati su processi separati:
+
+~~~text
+RAM richiesta
+≈
+memoria base
++
+memoria per worker
++
+overhead
+~~~
+
+Non è una formula di dimensionamento esatta, ma è un modello utile per capire perché aumentare i worker può far crescere rapidamente la RAM richiesta.
+
+# Scaling non lineare
+
+Supponiamo di misurare:
+
+| Worker | Tempo | RAM |
+|:---:|---:|---:|
+| 1 | 40 min | 4 GB |
+| 2 | 23 min | 8 GB |
+| 4 | 14 min | 16 GB |
+| 8 | 12 min | 32 GB |
+
+Il passaggio da 1 a 4 worker è significativo. Quello da 4 a 8 molto meno.
+
+La scalabilità reale può essere limitata da:
+
+- parti seriali;
+- sincronizzazione;
+- trasferimento dati;
+- I/O;
+- database;
+- overhead dei worker;
+- contention sulle risorse.
+
+Un benchmark reale è quindi più informativo di una stima basata soltanto sul numero di core.
+
+# Diagnostica del runtime
+
+Quando una soluzione R è lenta, IT può chiedere almeno:
+
+| Domanda | Evidenza |
+|---|---|
+| CPU alta? | utilizzo CPU nel tempo |
+| RAM alta? | memoria del processo e picco |
+| Paging? | metriche del sistema operativo |
+| Un solo core saturo? | utilizzo per core |
+| Più thread? | metriche del processo/libreria |
+| Più worker? | numero di processi/worker |
+| DB lento? | tempi e metriche lato database |
+| I/O lento? | metriche storage |
+| Rete lenta? | throughput e latenza |
+| Quale funzione è lenta? | profiling |
+
+Il profilo della risorsa deve essere osservato **durante** l'elaborazione, non soltanto a fine job.
+
+# Domande runtime per IT
+
+Prima di assegnare risorse aggiuntive chiedere:
+
+- quanti processi R vengono creati?
+- quanti worker?
+- quanti thread per worker?
+- qual è il picco di RAM?
+- qual è l'utilizzo CPU per core?
+- esiste paging?
+- quali operazioni dominano il tempo?
+- il database è coinvolto?
+- il carico è CPU-bound, RAM-bound, I/O-bound o database-bound?
+- la parallelizzazione è già stata testata?
+- come cambia il consumo di RAM aumentando i worker?
+- qual è il tempo obiettivo?
+
+La domanda finale è:
+
+> **qual è il collo di bottiglia misurato e quale intervento lo rimuove?**
