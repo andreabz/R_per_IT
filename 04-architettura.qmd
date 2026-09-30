@@ -6,6 +6,132 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Prima di scegliere l'architettura
+
+La domanda non è «possiamo farlo in R?». Molte cose sono tecnicamente possibili.
+
+La domanda utile è:
+
+> **Quale componente dovrebbe essere responsabile di ciascuna parte del lavoro?**
+
+Un'architettura può distribuire le responsabilità, per esempio:
+
+```text
+Oracle       → persistenza, query, integrità
+R            → analisi, modello, algoritmo scientifico
+Quarto       → report
+Scheduler    → esecuzione
+APEX         → interfaccia gestionale
+API gateway  → esposizione del servizio
+Monitoring   → controllo operativo
+```
+
+Questo evita di costruire in R componenti che l'organizzazione possiede già.
+
+# R e database
+
+R può essere il motore analitico mentre Oracle rimane il sistema di gestione dei dati.
+
+Una buona regola pratica è:
+
+> **portare in R solo i dati che R deve realmente elaborare.**
+
+Se Oracle può filtrare, aggregare o unire dati in modo efficiente, può essere preferibile eseguire quella parte nel database e trasferire a R un dataset più piccolo.
+
+Questo riduce:
+
+- traffico di rete;
+- memoria R;
+- tempo di trasferimento;
+- copie locali;
+- carico sul client.
+
+Non significa spostare sempre tutto nel database: algoritmi statistici, modelli o trasformazioni specialistiche possono essere più naturali in R.
+
+# R e APEX
+
+Oracle APEX è naturalmente adatto a molte applicazioni gestionali basate su Oracle:
+
+- maschere;
+- CRUD;
+- workflow;
+- ruoli e autorizzazioni;
+- interfacce web;
+- operazioni transazionali.
+
+R è invece particolarmente naturale per:
+
+- statistica;
+- modellistica;
+- simulazione;
+- algoritmi scientifici;
+- analisi dati;
+- report analitici.
+
+Una soluzione può quindi usare APEX come interfaccia e R come componente analitico.
+
+# R come componente
+
+In un'architettura aziendale R non deve necessariamente essere il «prodotto».
+
+Può essere un componente specializzato:
+
+```{mermaid}
+flowchart LR
+    USER["Utente"] --> APP["Applicazione"]
+    APP --> API["API"]
+    API --> R["Servizio R"]
+    R --> DB["Oracle"]
+    R --> MODEL["Modello / algoritmo"]
+    R --> API
+```
+
+IT deve allora gestire R come un qualsiasi componente applicativo: identità, rete, logging, monitoraggio, aggiornamenti e gestione degli errori.
+
+# Script, job e servizio
+
+È utile distinguere:
+
+| Forma | Attivazione | Tipico uso |
+|---|---|---|
+| script | manuale | analisi individuale |
+| job | schedulata | elaborazioni batch |
+| servizio | richiesta esterna | API o applicazione web |
+
+Il passaggio da script a servizio cambia radicalmente i requisiti operativi: entrano in gioco concorrenza, autenticazione, disponibilità, logging e monitoring.
+
+# Dal PC al server
+
+Un server non è semplicemente «un PC più potente».
+
+Passando a un server entrano in gioco:
+
+- account tecnici;
+- permessi;
+- rete;
+- scheduling;
+- logging;
+- monitoraggio;
+- aggiornamenti;
+- backup;
+- gestione delle credenziali;
+- responsabilità operative.
+
+La migrazione dovrebbe quindi essere considerata un cambiamento architetturale, non solo hardware.
+
+# Quando serve davvero un server dedicato?
+
+Un server dedicato può essere motivato quando:
+
+- il workload è continuativo o frequente;
+- il tempo di esecuzione è incompatibile con il PC;
+- sono necessarie risorse non disponibili localmente;
+- più utenti devono condividere l'elaborazione;
+- serve esecuzione schedulata centralmente;
+- servono requisiti operativi specifici.
+
+Prima di creare un server dedicato bisogna però verificare se il carico può essere gestito da VM, piattaforme esistenti o servizi condivisi.
+
 # Richiesta di hardware: informazioni minime
 
 | Informazione | Esempio |
