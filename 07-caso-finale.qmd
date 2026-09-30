@@ -6,6 +6,178 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Come leggere il caso
+
+Il caso dell'ecologo riassume il metodo dell'intero corso.
+
+La richiesta iniziale è:
+
+> «R è troppo lento. Servono 16 core e 64 GB di RAM.»
+
+La richiesta contiene una soluzione proposta, ma non ancora una diagnosi.
+
+# Primo passaggio: definire il requisito
+
+Supponiamo che il job debba essere completato entro 30 minuti.
+
+Questo cambia la domanda:
+
+> Non «quale server serve?», ma «quale configurazione consente di completare il workload entro 30 minuti con margine operativo adeguato?»
+
+# Secondo passaggio: raccogliere la baseline
+
+Supponiamo di osservare:
+
+- durata: 3 h 12 min;
+- CPU: 98%;
+- RAM: 11 GB su 32 GB;
+- worker: 1;
+- database: trascurabile;
+- I/O: normale.
+
+La prima ipotesi è un workload CPU-bound.
+
+Ma manca ancora una risposta fondamentale:
+
+> **perché viene utilizzato un solo worker?**
+
+# Terzo passaggio: capire l'algoritmo
+
+Prima dell'hardware bisogna sapere se il lavoro è:
+
+- seriale per natura;
+- seriale per implementazione;
+- parallelizzabile;
+- dominato da un algoritmo inefficiente.
+
+Un profiling può indicare dove viene speso il tempo.
+
+Un'analisi della complessità può indicare se il problema cresce troppo rapidamente al crescere dei dati.
+
+# Quarto passaggio: testare il parallelismo
+
+Supponiamo di ottenere:
+
+| Worker | Tempo | RAM |
+|---:|---:|---:|
+| 1 | 192 min | 11 GB |
+| 2 | 104 min | 20 GB |
+| 4 | 59 min | 38 GB |
+| 8 | 51 min | 70 GB |
+
+Il parallelismo funziona, ma non scala linearmente.
+
+Il passaggio da 4 a 8 worker riduce il tempo di soli 8 minuti e aumenta fortemente la memoria.
+
+Questo introduce un trade-off:
+
+```text
+tempo ↓
+RAM ↑
+```
+
+# Quinto passaggio: valutare il server
+
+A questo punto è possibile discutere l'infrastruttura con dati concreti.
+
+Non sappiamo ancora se servano 16 core.
+
+Sappiamo invece che:
+
+- il carico è CPU-heavy;
+- il parallelismo porta beneficio;
+- 8 worker richiedono molta più RAM;
+- lo scaling presenta rendimenti decrescenti.
+
+Il dimensionamento deve quindi considerare anche il requisito temporale e la concorrenza.
+
+# La domanda che rimane
+
+Anche se un server potente risolve il problema, bisogna chiedersi:
+
+> **perché il workload richiede così tanto calcolo?**
+
+Potrebbero esserci:
+
+- algoritmo inefficiente;
+- dati non filtrati;
+- elaborazioni ripetute;
+- copie inutili;
+- lavoro che potrebbe essere eseguito in Oracle;
+- assenza di caching;
+- operazioni seriali non necessarie.
+
+Un hardware adeguato non elimina necessariamente un problema applicativo.
+
+# Cosa deve consegnare lo sviluppatore
+
+Per rendere valutabile una richiesta di infrastruttura, è utile chiedere una scheda con:
+
+| Informazione | Esempio |
+|---|---|
+| scopo | analisi ecologica |
+| input | dataset monitoraggio |
+| dimensione | 20 GB |
+| durata attuale | 192 min |
+| obiettivo | < 30 min |
+| CPU | 98% |
+| RAM | 11 GB |
+| worker | 1 |
+| scaling test | 1/2/4/8 |
+| profiling | disponibile |
+| DB | marginale |
+| frequenza | 1–2/giorno |
+| concorrenza | 1–2 job |
+
+Una scheda di questo tipo permette a IT di discutere il dimensionamento senza dover diventare sviluppatore R.
+
+# Checklist operativa finale
+
+## Applicazione
+
+- [ ] Che cosa deve fare?
+- [ ] È script, job, report, app o API?
+- [ ] Chi la usa?
+- [ ] Qual è il requisito temporale?
+
+## Performance
+
+- [ ] Durata misurata?
+- [ ] CPU misurata?
+- [ ] RAM di picco?
+- [ ] I/O?
+- [ ] Database?
+- [ ] Profiling?
+- [ ] Scaling test?
+
+## Architettura
+
+- [ ] Dove deve essere eseguita?
+- [ ] Esiste già una piattaforma?
+- [ ] Quale componente gestisce i dati?
+- [ ] Quale componente gestisce l'interfaccia?
+- [ ] Quale componente gestisce l'orchestrazione?
+
+## Produzione
+
+- [ ] Dipendenze riproducibili?
+- [ ] Credenziali gestite?
+- [ ] Logging?
+- [ ] Monitoring?
+- [ ] Gestione degli errori?
+- [ ] Ownership?
+- [ ] Aggiornamenti?
+- [ ] Continuità operativa?
+
+# Le quattro domande
+
+1. **Che cosa deve fare?**
+2. **Quale evidenza dimostra che serve ciò che viene richiesto?**
+3. **Dove deve essere eseguito il lavoro?**
+4. **Esiste già un componente aziendale adatto?**
+
+Queste quattro domande permettono di trasformare una richiesta tecnica in un problema valutabile.
+
 # Una buona architettura è anche una questione organizzativa
 
 Non basta che il codice funzioni.
