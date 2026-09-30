@@ -6,6 +6,10 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Introduzione
+
+Questo capitolo definisce il punto di partenza: per IT, una soluzione R non è semplicemente un programma da installare, ma un insieme di runtime, pacchetti, dipendenze e risorse collocato in un contesto operativo. Prima di parlare di CPU, RAM o server è quindi necessario capire che ruolo svolge R e quali componenti richiede.
+
 # Obiettivi della giornata
 
 L'obiettivo non è imparare a programmare in R.
@@ -219,5 +223,3 @@ Questo facilita:
 - diagnosi;
 - reinstallazione;
 - trasferimento tra ambienti.
-
-
