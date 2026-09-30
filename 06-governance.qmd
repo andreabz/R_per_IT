@@ -1,0 +1,199 @@
+---
+title: "Governance e valutazione delle richieste"
+subtitle: "Come valutare installazioni, risorse, server e alternative"
+toc: true
+toc-depth: 2
+number-sections: false
+---
+
+# Ownership
+
+Una domanda spesso trascurata:
+
+> **Chi è responsabile della soluzione tra un anno?**
+
+Bisogna sapere:
+
+- chi mantiene il codice;
+- chi conosce la logica;
+- chi aggiorna i pacchetti;
+- chi gestisce gli incidenti;
+- chi verifica l'output;
+- chi autorizza modifiche;
+- chi decide quando dismettere il sistema.
+
+Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativo.
+
+---
+
+
+# Come valutare una richiesta di installazione
+
+### Richiesta
+
+> "Installare R e questi 20 pacchetti."
+
+### Domande
+
+1. Quale applicazione?
+2. Quale versione di R?
+3. Quali versioni dei pacchetti?
+4. Sono tutte dipendenze necessarie?
+5. Esiste un ambiente riproducibile?
+6. Ci sono dipendenze OS?
+7. Serve accesso Internet?
+8. Come verranno gestiti gli aggiornamenti?
+9. È un ambiente di sviluppo o produzione?
+10. Chi è responsabile dell'applicazione?
+
+---
+
+
+# Come valutare una richiesta di RAM
+
+### Richiesta
+
+> "Servono 64 GB."
+
+### Domande
+
+- Quanta RAM viene utilizzata oggi?
+- Qual è il picco?
+- Viene utilizzato swap?
+- Qual è la dimensione dei dati?
+- Quanti worker?
+- Quanta RAM usa ogni worker?
+- Ci sono copie degli oggetti?
+- La memoria cresce durante il job?
+- È possibile ridurre i dati caricati?
+
+---
+
+
+# Come valutare una richiesta di CPU
+
+### Richiesta
+
+> "Servono 16 core."
+
+### Domande
+
+- CPU attuale?
+- Percentuale di utilizzo?
+- Uno o più core?
+- Quanti worker?
+- Il carico è parallelizzabile?
+- Quanto scala da 1 a 2, 4, 8 worker?
+- Qual è il limite?
+- La RAM cresce con i worker?
+- Il database regge il parallelismo?
+
+---
+
+
+# Come valutare una richiesta di server
+
+### Richiesta
+
+> "Serve un server dedicato."
+
+### Domande
+
+- Per quale workload?
+- Frequenza?
+- Durata?
+- Utenti?
+- Concorrenza?
+- CPU?
+- RAM?
+- I/O?
+- rete?
+- database?
+- disponibilità richiesta?
+- sicurezza?
+- monitoring?
+- esiste già una piattaforma adatta?
+
+---
+
+
+# La matrice decisionale
+
+```{mermaid}
+flowchart TD
+    R["Richiesta R"]
+    R --> F["Che cosa deve fare?"]
+    F --> D["Quali dati?"]
+    D --> P["Qual è il problema?"]
+    P --> M["Quale evidenza?"]
+    M --> A["Quale architettura?"]
+    A --> E["Esiste già un componente aziendale?"]
+    E --> C["Quale componente è più appropriato?"]
+```
+
+Il percorso è:
+
+> **requisito → evidenza → architettura → componente**
+
+Non:
+
+> **richiesta → hardware**
+
+---
+
+
+# Dove R aggiunge valore
+
+R è particolarmente naturale quando servono:
+
+- analisi statistica;
+- modellistica;
+- simulazioni;
+- algoritmi scientifici;
+- analisi esplorativa;
+- elaborazioni specialistiche;
+- produzione parametrica di report;
+- riproducibilità analitica.
+
+---
+
+
+# Dove può essere sostituito o affiancato
+
+R può non essere il componente più naturale quando il problema è prevalentemente:
+
+- gestione dati relazionali;
+- CRUD;
+- workflow gestionale;
+- autenticazione;
+- reporting standard;
+- ETL;
+- orchestrazione;
+- gestione applicativa già coperta da piattaforme aziendali.
+
+La valutazione deve considerare l'ecosistema già disponibile.
+
+---
+
+
+# R non deve fare tutto
+
+Un'architettura può essere:
+
+```{mermaid}
+flowchart LR
+    ORA["Oracle<br/>Dati"]
+    APEX["APEX<br/>Applicazione"]
+    R["R<br/>Analisi"]
+    Q["Quarto<br/>Report"]
+    SCH["Scheduler<br/>Esecuzione"]
+
+    ORA <--> APEX
+    ORA <--> R
+    SCH --> R
+    R --> Q
+```
+
+Ogni componente svolge la funzione per cui è più adatto.
+
+---
