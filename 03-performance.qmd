@@ -1,0 +1,454 @@
+---
+title: "Performance e diagnostica"
+subtitle: "Identificare il collo di bottiglia prima di cambiare hardware"
+toc: true
+toc-depth: 2
+number-sections: false
+---
+
+# Esempio di scaling
+
+Supponiamo di misurare:
+
+| Worker | Tempo | RAM |
+|---:|---:|---:|
+| 1 | 40 min | 4 GB |
+| 2 | 23 min | 8 GB |
+| 4 | 14 min | 16 GB |
+| 8 | 12 min | 32 GB |
+
+Il passaggio da 1 a 4 worker è significativo.
+
+Il passaggio da 4 a 8 molto meno.
+
+IT dovrebbe quindi chiedere:
+
+> "Perché servono 16 core?"
+
+non:
+
+> "Possiamo procurare 16 core?"
+
+---
+
+
+# CPU, RAM, I/O, rete
+
+Una elaborazione può essere limitata da risorse diverse.
+
+```{mermaid}
+flowchart TD
+    JOB["Job R"]
+    JOB --> CPU["CPU"]
+    JOB --> RAM["RAM"]
+    JOB --> DISK["Storage / I/O"]
+    JOB --> NET["Rete"]
+    NET --> DB["Database"]
+    NET --> API["API"]
+```
+
+Prima di cambiare hardware bisogna identificare il collo di bottiglia.
+
+---
+
+
+# CPU-bound
+
+Indicazioni tipiche:
+
+- CPU molto utilizzata;
+- RAM disponibile;
+- poco I/O;
+- operazioni computazionalmente costose;
+- tempo dominato dal calcolo.
+
+Possibili interventi:
+
+- migliorare algoritmo;
+- migliorare implementazione;
+- parallelizzare;
+- utilizzare librerie native;
+- aumentare CPU se il carico lo giustifica.
+
+---
+
+
+# Memory-bound
+
+Indicazioni tipiche:
+
+- RAM vicina alla saturazione;
+- uso elevato di memoria durante il job;
+- swap;
+- rallentamenti durante la gestione di grandi oggetti;
+- più worker fanno crescere rapidamente la memoria.
+
+Possibili interventi:
+
+- ridurre i dati caricati;
+- evitare copie inutili;
+- modificare algoritmo;
+- elaborare a blocchi;
+- utilizzare formati più efficienti;
+- aumentare RAM se necessario.
+
+---
+
+
+# I/O-bound
+
+Indicazioni tipiche:
+
+- CPU relativamente bassa;
+- molto tempo speso in letture/scritture;
+- molti file;
+- grandi quantità di dati;
+- storage lento.
+
+Possibili interventi:
+
+- ridurre I/O;
+- modificare formato;
+- usare Parquet/Arrow;
+- migliorare storage;
+- cambiare strategia di elaborazione.
+
+---
+
+
+# Database-bound
+
+Un caso frequente:
+
+```{mermaid}
+flowchart LR
+    R["R"] --> Q["Query"]
+    Q --> DB["Oracle"]
+    DB --> Q
+    Q --> R
+```
+
+Il programma può sembrare "lento in R".
+
+Ma il tempo può essere quasi tutto:
+
+> **tempo di esecuzione della query sul database.**
+
+Aggiungere CPU al server R non risolve il problema.
+
+---
+
+
+# Network-bound
+
+Altro caso:
+
+```{mermaid}
+flowchart LR
+    R["R"] --> API["API"]
+    API --> EXT["Sistema remoto"]
+    EXT --> API
+    API --> R
+```
+
+Se R attende una risposta remota:
+
+- aumentare la CPU di R potrebbe non servire;
+- aumentare la RAM potrebbe non servire;
+- bisogna valutare rete, latenza, API e quantità di dati trasferiti.
+
+---
+
+
+# Regola diagnostica
+
+> **Non chiedersi quale hardware manca.**
+
+Chiedersi:
+
+> **Quale risorsa sta limitando l'elaborazione?**
+
+E soprattutto:
+
+> **Quale evidenza lo dimostra?**
+
+---
+
+
+# La diagnostica minima
+
+Prima di valutare una richiesta di potenziamento:
+
+- durata totale;
+- CPU durante il job;
+- RAM utilizzata e picco;
+- numero di processi;
+- numero di worker;
+- dimensione dei dati;
+- quantità di dati trasferiti;
+- tempi delle query;
+- eventuale profiling.
+
+---
+
+
+# Misurare il tempo in R
+
+Un primo test molto semplice:
+
+```{r}
+#| label: misura-tempo-elaborazione
+
+system.time({
+  # elaborazione da misurare
+})
+```
+
+Non è una profilazione completa.
+
+Ma permette già di distinguere:
+
+- tempo di elaborazione;
+- tempo di sistema;
+- tempo trascorso.
+
+---
+
+
+# Profilazione
+
+Quando il tempo è elevato, può essere necessario capire:
+
+> **dove viene speso il tempo?**
+
+Uno strumento disponibile nell'ecosistema R è `profvis`.
+
+```{mermaid}
+flowchart TD
+    JOB["Esecuzione"]
+    JOB --> PROF["Profilazione"]
+    PROF --> F1["Funzione A"]
+    PROF --> F2["Funzione B"]
+    PROF --> F3["Funzione C"]
+```
+
+L'obiettivo non è ottimizzare ogni funzione.
+
+È identificare le parti che contribuiscono realmente al tempo totale.
+
+---
+
+
+# Quattro livelli di ottimizzazione
+
+Quando un'elaborazione è lenta:
+
+```{mermaid}
+flowchart TD
+    P["Problema di performance"]
+    P --> A["Algoritmo"]
+    P --> C["Implementazione"]
+    P --> PA["Parallelizzazione"]
+    P --> H["Hardware"]
+```
+
+L'ordine non è necessariamente questo.
+
+Ma **l'hardware non dovrebbe essere la prima ipotesi**.
+
+---
+
+
+# Livello 1 — Algoritmo
+
+Esempio concettuale:
+
+```text
+100.000 elementi
+
+algoritmo A
+100.000 × 100.000 confronti
+
+algoritmo B
+ordinamento + ricerca
+```
+
+Una modifica algoritmica può produrre un miglioramento enorme.
+
+Nessun aumento di CPU sostituisce sempre un algoritmo inefficiente.
+
+---
+
+
+# Livello 2 — Implementazione
+
+Anche lo stesso algoritmo può essere implementato in modi molto diversi.
+
+Esempi:
+
+- loop inefficienti;
+- copie di oggetti;
+- conversioni ripetute;
+- letture ripetute da disco;
+- query ripetute al database;
+- trasferimento inutile di dati.
+
+IT non deve correggere il codice.
+
+Deve però poter chiedere:
+
+> "È già stata verificata la possibilità di ottimizzare il codice?"
+
+---
+
+
+# Livello 3 — Parallelizzazione
+
+Domande:
+
+- Il problema è parallelizzabile?
+- Le parti sono indipendenti?
+- Quanto costa creare i worker?
+- Quanta memoria usa ogni worker?
+- Il database supporta il carico?
+- Lo speed-up è misurato?
+
+La richiesta:
+
+> "Servono 16 core"
+
+non è una dimostrazione.
+
+---
+
+
+# Livello 4 — Hardware
+
+Solo dopo aver compreso il carico:
+
+- CPU;
+- RAM;
+- storage;
+- rete;
+- server dedicato.
+
+L'hardware può essere assolutamente la soluzione corretta.
+
+Ma deve essere una conseguenza della diagnosi.
+
+---
+
+
+# Il caso dell'ecologo
+
+Supponiamo che la diagnostica mostri:
+
+```text
+CPU: 25%
+RAM: 12 GB / 32 GB
+Disk: normale
+Network: normale
+Database: query lente
+```
+
+La richiesta:
+
+> "Server con 16 core"
+
+non affronta necessariamente il problema.
+
+Il primo candidato da analizzare è il database.
+
+---
+
+
+# Altro scenario
+
+```text
+CPU: 95-100%
+RAM: 10 GB / 64 GB
+Disk: normale
+Database: trascurabile
+```
+
+Qui la situazione è diversa.
+
+Possibili domande:
+
+- il codice è ottimizzato?
+- il problema è parallelizzabile?
+- quanti core usa?
+- quanto scala?
+- quanto dura con 1, 2, 4, 8 worker?
+
+Solo dopo si valuta l'hardware.
+
+---
+
+
+# Altro scenario ancora
+
+```text
+CPU: 30%
+RAM: 60 GB / 64 GB
+Swap: attivo
+Worker: 8
+```
+
+Qui aumentare i core potrebbe essere irrilevante.
+
+Il problema potrebbe essere la memoria.
+
+Ma anche qui bisogna capire:
+
+> perché ogni worker richiede così tanta RAM?
+
+---
+
+
+# Un criterio semplice
+
+| Osservazione | Domanda successiva |
+|---|---|
+| CPU alta | Il lavoro è parallelizzabile? |
+| CPU bassa | Cosa sta aspettando? |
+| RAM alta | Quali oggetti occupano memoria? |
+| Swap | Perché la RAM non basta? |
+| I/O alto | Cosa viene letto/scritto? |
+| DB lento | Quanto tempo passa in Oracle? |
+| R inattivo | Dove viene speso il tempo? |
+
+---
+
+
+# Che cosa chiedere allo sviluppatore
+
+Quando arriva una richiesta tecnica, chiedere almeno:
+
+### Applicazione
+
+- Che cosa fa?
+- È interattiva o batch?
+- Quanti utenti?
+- Quante esecuzioni?
+
+### Dati
+
+- Da dove arrivano?
+- Quanti dati?
+- Quanto crescono?
+
+### Performance
+
+- Quanto dura?
+- Qual è il tempo atteso?
+- Quale risorsa è satura?
+- Come è stata misurata?
+
+### Parallelismo
+
+- Quanti worker?
+- Quanto scala?
+- Quanta RAM per worker?
+
+---
