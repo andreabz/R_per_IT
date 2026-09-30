@@ -6,6 +6,179 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Dal codice alla produzione
+
+Un programma che funziona sul PC dello sviluppatore non è automaticamente pronto per essere eseguito in produzione.
+
+Il deployment introduce almeno cinque domande:
+
+1. **dove** viene eseguito;
+2. **con quale identità**;
+3. **a quali dati e sistemi** accede;
+4. **come viene controllato**;
+5. **chi interviene quando qualcosa non funziona**.
+
+# Ambienti: sviluppo, test, produzione
+
+È utile distinguere almeno:
+
+```text
+sviluppo → test → produzione
+```
+
+In sviluppo possono essere accettabili modifiche manuali e accesso Internet. In produzione servono invece versioni controllate, configurazione esplicita e procedure ripetibili.
+
+La stessa applicazione può quindi richiedere configurazioni diverse senza cambiare il codice.
+
+# Configurazione e codice
+
+Un principio importante è separare:
+
+- **codice**;
+- **configurazione**;
+- **segreti**.
+
+Per esempio, l'indirizzo del database o il percorso di output non dovrebbero essere necessariamente hard-coded nel programma.
+
+Questo facilita il passaggio tra ambienti.
+
+# Sicurezza
+
+Una soluzione R può avere accesso a:
+
+- database;
+- filesystem;
+- API;
+- dati personali;
+- dati ambientali o scientifici;
+- sistemi interni.
+
+Il principio del **least privilege** implica che l'applicazione riceva soltanto i permessi necessari.
+
+La richiesta «R deve poter accedere a Oracle» non è quindi sufficiente: bisogna sapere con quale account, verso quali oggetti e per quali operazioni.
+
+# Credenziali
+
+Da evitare:
+
+```{r}
+#| label: esempio-credenziali-da-evitare
+
+username <- "utente"
+password <- "password"
+```
+
+Il problema non è specifico di R: credenziali nel codice possono finire nei repository, nei backup, nei log o nei pacchetti distribuiti.
+
+In produzione le credenziali dovrebbero essere gestite tramite i meccanismi previsti dall'infrastruttura aziendale.
+
+# Logging
+
+Un job batch dovrebbe almeno permettere di sapere:
+
+- quando è partito;
+- quando è terminato;
+- quale versione/configurazione ha utilizzato;
+- quanto è durato;
+- se è terminato correttamente;
+- dove si trova l'output;
+- quale errore si è verificato in caso di fallimento.
+
+Un log utile non è necessariamente enorme: deve permettere di ricostruire l'esecuzione.
+
+# Error handling
+
+Un errore applicativo non dovrebbe trasformarsi in un fallimento silenzioso.
+
+Un modello semplice:
+
+```{mermaid}
+flowchart TD
+    A["Avvio"] --> B["Controlli"]
+    B --> C["Elaborazione"]
+    C --> D["Successo"]
+    C --> E["Errore"]
+    E --> F["Log"]
+    F --> G["Alert / presa in carico"]
+```
+
+Per un job notturno, «il processo si è fermato» non è una strategia di gestione dell'errore: bisogna sapere che è fallito e perché.
+
+# Monitoring
+
+Il monitoraggio deve essere coerente con il tipo di applicazione.
+
+### Job batch
+
+Controllare:
+
+- esecuzione;
+- durata;
+- successo/fallimento;
+- output;
+- CPU/RAM quando rilevanti.
+
+### Servizio/API
+
+Controllare:
+
+- disponibilità;
+- tempi di risposta;
+- errori;
+- numero di richieste;
+- risorse;
+- eventuali saturazioni.
+
+### Applicazione Shiny
+
+Aggiungere anche:
+
+- numero di sessioni;
+- durata delle sessioni;
+- utilizzo di RAM/CPU;
+- errori lato server;
+- comportamento sotto concorrenza.
+
+# Responsabilità
+
+Una soluzione in produzione deve avere responsabilità esplicite.
+
+| Area | Sviluppatore | IT |
+|---|---|---|
+| logica scientifica | principale | supporto |
+| codice R | principale | supporto |
+| dipendenze | condivisione | gestione runtime |
+| OS/server | requisiti | principale |
+| database | requisiti applicativi | gestione secondo organizzazione |
+| sicurezza | requisiti | applicazione policy |
+| performance | diagnosi applicativa | infrastruttura |
+| monitoring | requisiti | implementazione operativa |
+| incidenti | analisi codice | gestione infrastruttura |
+
+La divisione concreta dipende dall'organizzazione, ma il principio è che **ogni componente deve avere un proprietario**.
+
+# Production readiness
+
+Prima della messa in produzione verificare:
+
+- codice versionato;
+- versioni R e pacchetti note;
+- dipendenze riproducibili;
+- configurazione separata dal codice;
+- credenziali gestite correttamente;
+- logging;
+- error handling;
+- monitoring;
+- backup degli output quando necessario;
+- procedura di aggiornamento;
+- rollback o ripristino;
+- proprietario applicativo;
+- proprietario infrastrutturale.
+
+La domanda finale non è «funziona?», ma:
+
+> **possiamo eseguirlo e mantenerlo in modo prevedibile?**
+
 # Quando un server dedicato può essere inutile?
 
 Possibili situazioni:
