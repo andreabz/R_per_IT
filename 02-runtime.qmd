@@ -1,0 +1,189 @@
+---
+title: "Runtime, processi e parallelismo"
+subtitle: "Processi, core, thread, worker e scaling"
+toc: true
+toc-depth: 2
+number-sections: false
+---
+
+# `renv`: perché interessa a IT
+
+`renv` permette di associare a un progetto R un ambiente di pacchetti riproducibile.
+
+Il concetto importante per IT è:
+
+> **L'applicazione deve dichiarare da quali dipendenze dipende.**
+
+Non dovrebbe dipendere casualmente da:
+
+> "quello che è installato oggi sul server".
+
+Questo facilita:
+
+- riproducibilità;
+- aggiornamenti;
+- manutenzione;
+- diagnosi;
+- reinstallazione;
+- trasferimento tra ambienti.
+
+---
+
+
+# Processo, CPU, core, thread, worker
+
+Questi termini vengono spesso utilizzati come sinonimi.
+
+Non lo sono.
+
+```{mermaid}
+flowchart TD
+    S["Server"]
+    S --> CPU["CPU"]
+    CPU --> C1["Core 1"]
+    CPU --> C2["Core 2"]
+    CPU --> C3["Core 3"]
+    CPU --> CN["Core N"]
+
+    S --> RAM["RAM"]
+    S --> IO["Storage / rete"]
+```
+
+---
+
+
+# Processo
+
+Un **processo** è un'istanza in esecuzione di un programma.
+
+Un processo possiede:
+
+- memoria;
+- stato;
+- risorse;
+- identificativo;
+- file e connessioni eventualmente aperti.
+
+Un'esecuzione R normalmente corrisponde almeno a un processo R.
+
+---
+
+
+# Core
+
+Un **core** è una risorsa hardware capace di eseguire istruzioni.
+
+Avere:
+
+> 16 core
+
+non significa automaticamente:
+
+> R esegue 16 volte più velocemente.
+
+Serve un carico che possa utilizzare effettivamente quei core.
+
+---
+
+
+# Thread
+
+Un processo può utilizzare uno o più thread.
+
+I thread condividono parte delle risorse del processo.
+
+Alcune operazioni R o librerie native possono utilizzare più thread.
+
+Ma:
+
+> **thread ≠ automaticamente parallelismo efficace.**
+
+Il comportamento dipende dal codice, dalle librerie e dal tipo di operazione.
+
+---
+
+
+# Worker
+
+"Worker" è soprattutto un termine architetturale.
+
+Un worker è un'unità di lavoro incaricata di eseguire una parte dell'elaborazione.
+
+Può essere realizzato, a seconda della tecnologia, tramite:
+
+- processo;
+- thread;
+- altro meccanismo di esecuzione.
+
+Per IT la domanda importante è:
+
+> **Quanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?**
+
+---
+
+
+# Processo R e core
+
+Un modello semplificato:
+
+```{mermaid}
+flowchart LR
+    R["Processo R"] --> CPU["CPU"]
+    CPU --> C["Core"]
+```
+
+Se il lavoro è prevalentemente seriale:
+
+```text
+1 processo
+    ↓
+1 unità di esecuzione
+    ↓
+1 core prevalentemente utilizzato
+```
+
+Aggiungere core al server potrebbe non cambiare significativamente il tempo.
+
+---
+
+
+# Parallelismo
+
+Quando il lavoro può essere suddiviso:
+
+```{mermaid}
+flowchart TD
+    JOB["Elaborazione"]
+    JOB --> W1["Worker 1"]
+    JOB --> W2["Worker 2"]
+    JOB --> W3["Worker 3"]
+    JOB --> W4["Worker 4"]
+
+    W1 --> C1["CPU"]
+    W2 --> C2["CPU"]
+    W3 --> C3["CPU"]
+    W4 --> C4["CPU"]
+```
+
+Il vantaggio dipende dalla possibilità di dividere realmente il lavoro.
+
+---
+
+
+# Il parallelismo ha un costo
+
+Aumentare i worker può significare:
+
+- più CPU utilizzata;
+- più RAM;
+- più dati copiati;
+- più accessi al database;
+- più I/O;
+- più traffico di rete;
+- maggiore complessità.
+
+Quindi:
+
+> **più worker non significa necessariamente meglio.**
+
+---
