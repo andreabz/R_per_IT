@@ -6,6 +6,129 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Una procedura per valutare le richieste
+
+Le richieste più difficili sono quelle che arrivano già accompagnate dalla soluzione:
+
+> «Servono 64 GB di RAM.»
+
+> «Servono 16 core.»
+
+> «Serve un server dedicato.»
+
+> «Bisogna installare questo pacchetto.»
+
+La procedura IT dovrebbe riportare la richiesta al problema originale.
+
+## 1. Identificare il requisito
+
+Chiedere:
+
+- che cosa deve fare l'applicazione?
+- chi la usa?
+- con quale frequenza?
+- entro quale tempo deve completare il lavoro?
+- quali dati utilizza?
+- quale output produce?
+
+## 2. Identificare il carico
+
+Misurare:
+
+- CPU;
+- RAM;
+- I/O;
+- rete;
+- database;
+- numero di processi/worker;
+- durata.
+
+## 3. Identificare il collo di bottiglia
+
+Una richiesta hardware ha senso solo se esiste un rapporto documentato tra risorsa e problema.
+
+## 4. Verificare alternative
+
+Prima dell'hardware considerare:
+
+- ottimizzazione dell'algoritmo;
+- ottimizzazione dell'implementazione;
+- riduzione dei dati;
+- spostamento di elaborazioni nel database;
+- parallelizzazione;
+- infrastruttura esistente;
+- cambio di architettura.
+
+## 5. Testare
+
+Quando possibile, modificare una variabile e misurare il risultato.
+
+## 6. Documentare
+
+La decisione finale dovrebbe poter essere ricostruita mesi dopo.
+
+# La matrice decisionale
+
+Una scheda semplice può essere:
+
+| Campo | Domanda |
+|---|---|
+| Funzione | Che cosa deve fare? |
+| Dati | Da dove arrivano e quanto sono grandi? |
+| Carico | Quanto spesso viene eseguito? |
+| Tempo | Qual è il requisito? |
+| Risorsa | CPU, RAM, I/O, rete o DB? |
+| Evidenza | Quale misura lo dimostra? |
+| Architettura | Dove deve essere eseguito? |
+| Alternative | Esiste già un componente aziendale? |
+| Operatività | Chi lo mantiene e monitora? |
+
+Questa struttura è utile perché rende confrontabili richieste molto diverse.
+
+# Valutare il rischio di una soluzione
+
+Oltre alle performance, IT dovrebbe considerare il rischio operativo.
+
+| Aspetto | Domanda |
+|---|---|
+| Dipendenze | Possiamo ricostruire l'ambiente? |
+| Sicurezza | Quali dati e credenziali utilizza? |
+| Disponibilità | Cosa succede se il servizio non è disponibile? |
+| Manutenzione | Chi aggiorna codice e pacchetti? |
+| Monitoring | Come sappiamo che funziona? |
+| Continuità | Cosa succede se il server viene perso? |
+| Ownership | Chi decide modifiche e aggiornamenti? |
+
+Una soluzione può essere performante ma difficile da mantenere. Le due valutazioni sono distinte.
+
+# Dove R aggiunge valore
+
+R è particolarmente adatto quando il problema contiene:
+
+- statistica;
+- modellistica;
+- analisi scientifica;
+- simulazione;
+- algoritmi specialistici;
+- elaborazione dati scientifici;
+- report analitici riproducibili.
+
+# Dove R può essere affiancato o sostituito
+
+Non è necessariamente il componente migliore per:
+
+- gestione transazionale;
+- CRUD;
+- workflow gestionali;
+- autenticazione centralizzata;
+- persistenza relazionale;
+- orchestrazione generale;
+- funzioni già offerte da piattaforme aziendali.
+
+Il criterio non è «R contro Oracle» o «R contro APEX». È:
+
+> **quale componente svolge meglio quella responsabilità nel contesto dell'organizzazione?**
+
 # Ownership
 
 Una domanda spesso trascurata:
