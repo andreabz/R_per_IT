@@ -6,6 +6,9 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Introduzione
+
+Una volta compreso il runtime, il passo successivo è diagnosticare la performance. La lente corretta non è «R è lento», ma «quale parte del lavoro e quale risorsa determinano il tempo di esecuzione?». Il capitolo parte dalla classificazione del carico, passa dagli strumenti di misura all'algoritmo e all'implementazione, e arriva alla valutazione dell'hardware.
 
 # CPU, RAM, I/O, rete
 
@@ -434,9 +437,6 @@ Ma anche qui bisogna capire:
 
 > perché ogni worker richiede così tanta RAM?
 
-
-
-
 # Un criterio semplice
 
 | Osservazione | Domanda successiva |
@@ -479,5 +479,3 @@ Quando arriva una richiesta tecnica, chiedere almeno:
 - Quanti worker?
 - Quanto scala?
 - Quanta RAM per worker?
-
-
