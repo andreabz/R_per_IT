@@ -6,30 +6,6 @@ toc-depth: 2
 number-sections: false
 ---
 
----
-title: "R per l'IT: dall'esecuzione al deployment"
-subtitle: "Capire, valutare e governare soluzioni sviluppate in R"
-author: ""
-format:
-  revealjs:
-    theme: simple
-    slide-number: true
-    transition: none
-    controls: true
-    progress: true
-    center: false
-    width: 1280
-    height: 720
-    margin: 0.08
-    code-fold: false
-    highlight-style: github
-execute:
-  echo: false
-  warning: false
-  message: false
----
-
-
 # Obiettivi della giornata
 
 L'obiettivo non è imparare a programmare in R.
@@ -243,5 +219,29 @@ Può essere:
 > R → X → Y → libreria OS.
 
 Per questo la gestione dell'ambiente è parte del deployment.
+
+---
+
+
+# `renv`: perché interessa a IT
+
+`renv` permette di associare a un progetto R un ambiente di pacchetti riproducibile.
+
+Il concetto importante per IT è:
+
+> **L'applicazione deve dichiarare da quali dipendenze dipende.**
+
+Non dovrebbe dipendere casualmente da:
+
+> "quello che è installato oggi sul server".
+
+Questo facilita:
+
+- riproducibilità;
+- aggiornamenti;
+- manutenzione;
+- diagnosi;
+- reinstallazione;
+- trasferimento tra ambienti.
 
 ---
