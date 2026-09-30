@@ -95,8 +95,6 @@ Non tutto deve essere testato allo stesso modo.
 
 Verificano che l'elaborazione produca il risultato atteso.
 
-Esempio:
-
 ```text
 input noto → elaborazione → output atteso
 ```
@@ -413,7 +411,7 @@ Una checklist minima:
 
 ## Smoke test
 
-Dopo il deployment è utile eseguire un controllo minimo che verifichi che il sistema sia effettivamente operativo.
+Dopo il deployment è utile eseguire un controllo minimo che verifichi che il sistema sia effettivamente operativo nell'ambiente target.
 
 Esempi:
 
