@@ -217,27 +217,60 @@ Ma permette già di distinguere:
 
 # Profilazione
 
-Quando il tempo è elevato, può essere necessario capire:
+La profilazione risponde a una domanda diversa dal monitoraggio di CPU e RAM: **quali parti del codice contribuiscono maggiormente al tempo?**
 
-> **dove viene speso il tempo?**
+Uno strumento noto nell'ecosistema R è `profvis`.
 
-Uno strumento disponibile nell'ecosistema R è `profvis`.
+```{r}
+#| label: esempio-profilazione-profvis
 
-```{mermaid}
-flowchart TD
-    JOB["Esecuzione"]
-    JOB --> PROF["Profilazione"]
-    PROF --> F1["Funzione A"]
-    PROF --> F2["Funzione B"]
-    PROF --> F3["Funzione C"]
+library(profvis)
+
+profvis({
+  x <- rnorm(5e6)
+  y <- sort(x)
+  z <- y[y > 0]
+  mean(z)
+})
 ```
 
-L'obiettivo non è ottimizzare ogni funzione.
+Il risultato consente di esplorare le chiamate e la loro durata. In un'applicazione reale si profila una porzione rappresentativa del lavoro, possibilmente con dati realistici.
 
-È identificare le parti che contribuiscono realmente al tempo totale.
+## Profilare una funzione applicativa
 
----
+```{r}
+#| label: esempio-profilazione-funzione
 
+library(profvis)
+
+elabora_dati <- function(n = 5e6) {
+  x <- rnorm(n)
+  y <- sort(x)
+  mean(y[y > 0])
+}
+
+profvis({
+  risultato <- elabora_dati()
+})
+```
+
+Un risultato ipotetico potrebbe indicare che il 75% del tempo è concentrato nell'algoritmo principale, il 10% nella preparazione, il 5% nella lettura e il 10% nell'output. In quel caso ottimizzare la lettura difficilmente cambia in modo sostanziale il tempo totale.
+
+La profilazione temporale non sostituisce il monitoraggio infrastrutturale: va correlata con CPU, RAM, I/O e database.
+
+## Profilare la memoria
+
+```{r}
+#| label: esempio-diagnostica-memoria
+
+x <- matrix(runif(5e6), nrow = 5000)
+object.size(x)
+gc()
+```
+
+`object.size()` aiuta a stimare la dimensione di un oggetto R; `gc()` fornisce informazioni sulla gestione della memoria. Per una decisione infrastrutturale questi dati vanno correlati con il **picco di RAM del processo e del server**.
+
+`profvis` e gli strumenti di profiling rispondono quindi alla domanda «dove spendo tempo?», mentre il monitoraggio OS risponde a «quali risorse consumo?».
 
 # Quattro livelli di ottimizzazione
 
