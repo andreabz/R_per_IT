@@ -1,0 +1,247 @@
+---
+title: "Contesto e ambiente R"
+subtitle: "Che cosa deve sapere IT prima di valutare una soluzione R"
+toc: true
+toc-depth: 2
+number-sections: false
+---
+
+---
+title: "R per l'IT: dall'esecuzione al deployment"
+subtitle: "Capire, valutare e governare soluzioni sviluppate in R"
+author: ""
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    transition: none
+    controls: true
+    progress: true
+    center: false
+    width: 1280
+    height: 720
+    margin: 0.08
+    code-fold: false
+    highlight-style: github
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+
+# Obiettivi della giornata
+
+L'obiettivo non è imparare a programmare in R.
+
+L'obiettivo è mettere IT nelle condizioni di:
+
+- capire che cosa sta chiedendo uno sviluppatore R;
+- valutare se una richiesta è tecnicamente motivata;
+- chiedere la diagnostica necessaria;
+- distinguere problemi applicativi da problemi infrastrutturali;
+- valutare richieste di CPU, RAM, storage e server;
+- capire come R si integra con i sistemi esistenti;
+- riconoscere quando R è adatto e quando esistono alternative più naturali.
+
+---
+
+
+# Il problema dal punto di vista IT
+
+Una richiesta può arrivare così:
+
+> "L'elaborazione R è troppo lenta.  
+> Servono 16 core, 64 GB di RAM e l'installazione di alcuni pacchetti."
+
+La domanda di IT non dovrebbe essere:
+
+> "Possiamo comprare il server?"
+
+Ma:
+
+> **"Quali evidenze giustificano questa richiesta?"**
+
+---
+
+
+# Il caso guida: l'ecologo
+
+Un ricercatore utilizza R per una elaborazione sui dati ambientali.
+
+Attualmente:
+
+- l'elaborazione viene eseguita su un PC;
+- dura diverse ore;
+- il PC diventa poco utilizzabile durante l'elaborazione;
+- viene richiesto un server dedicato;
+- la richiesta iniziale è: 16 CPU e 64 GB RAM.
+
+IT deve capire:
+
+1. qual è il problema;
+2. quale risorsa viene realmente saturata;
+3. se il codice può essere migliorato;
+4. se il parallelismo è possibile;
+5. se il database è coinvolto;
+6. quale infrastruttura è realmente necessaria.
+
+---
+
+
+# R dal punto di vista di IT
+
+Per IT, R può comparire in molti modi diversi:
+
+```{mermaid}
+flowchart TD
+    R["R"]
+
+    R --> SCRIPT["Script"]
+    R --> BATCH["Job batch"]
+    R --> REPORT["Report Quarto"]
+    R --> SHINY["Web app Shiny"]
+    R --> API["API HTTP"]
+    R --> DB["Client database"]
+    R --> MODEL["Modello / analisi"]
+```
+
+Non tutte queste situazioni hanno gli stessi requisiti infrastrutturali.
+
+---
+
+
+# La domanda fondamentale
+
+> **Che ruolo ha R nel sistema?**
+
+Può essere:
+
+- uno strumento personale;
+- un motore di calcolo;
+- un job batch;
+- un generatore di report;
+- un componente di un'applicazione;
+- un servizio API;
+- un client verso Oracle;
+- un componente di una pipeline.
+
+La risposta cambia completamente la valutazione IT.
+
+---
+
+
+# R non è RStudio
+
+```{mermaid}
+flowchart LR
+    U["Utente"] --> RS["RStudio"]
+    RS --> R["R runtime"]
+    R --> P["Pacchetti"]
+    R --> OS["Sistema operativo"]
+    R --> CPU["CPU"]
+    R --> RAM["RAM"]
+    R --> IO["Storage / rete"]
+```
+
+**RStudio** è un ambiente di sviluppo.
+
+**R** è il runtime che esegue il codice.
+
+Un server può eseguire R senza RStudio.
+
+---
+
+
+# Che cosa contiene un ambiente R?
+
+Un ambiente R reale comprende più livelli:
+
+```{mermaid}
+flowchart TD
+    APP["Codice applicativo"]
+    APP --> R["R"]
+    R --> PKG["Pacchetti R"]
+    PKG --> DEP["Dipendenze"]
+    DEP --> SYS["Librerie di sistema"]
+    SYS --> OS["Sistema operativo"]
+    OS --> HW["Hardware"]
+```
+
+Una richiesta di "installare un pacchetto" può quindi avere conseguenze anche sul sistema operativo.
+
+---
+
+
+# Principali pacchetti da conoscere
+
+| Pacchetto | Utilizzo principale |
+|---|---|
+| `data.table` | Manipolazione efficiente dei dati |
+| `ggplot2` | Visualizzazione |
+| `DBI` | Interfaccia standard verso database |
+| `odbc` | Connessioni ODBC |
+| `httr2` | Accesso a API HTTP |
+| `jsonlite` | JSON |
+| `readr` | Import/export dati testuali |
+| `arrow` | Parquet e formato Arrow |
+| `shiny` | Applicazioni web |
+| `quarto` | Report e pubblicazione |
+| `plumber2` | API HTTP |
+| `future` | Parallelizzazione |
+| `parallel` | Parallelizzazione |
+| `profvis` | Profilazione |
+| `renv` | Gestione dell'ambiente e delle dipendenze |
+
+IT non deve conoscere l'API di questi pacchetti.
+
+Deve riconoscerne il **ruolo**.
+
+---
+
+
+# Una richiesta di pacchetto non è una semplice installazione
+
+Uno sviluppatore può chiedere:
+
+> "Mi serve il pacchetto X."
+
+IT deve poter chiedere:
+
+- Per quale funzionalità?
+- È indispensabile?
+- Quali dipendenze introduce?
+- Richiede librerie di sistema?
+- Quale versione di R richiede?
+- Quale versione del pacchetto?
+- Da quale repository proviene?
+- Ha bisogno di accesso Internet?
+- È compatibile con l'ambiente aziendale?
+- Come verrà aggiornato?
+
+---
+
+
+# Dipendenze
+
+```{mermaid}
+flowchart TD
+    APP["Applicazione R"]
+    APP --> X["Pacchetto X"]
+    X --> Y["Pacchetto Y"]
+    X --> Z["Pacchetto Z"]
+    Y --> SYS["Libreria di sistema"]
+    Z --> SYS2["Altra libreria di sistema"]
+```
+
+La dipendenza non è solo:
+
+> "R richiede X."
+
+Può essere:
+
+> R → X → Y → libreria OS.
+
+Per questo la gestione dell'ambiente è parte del deployment.
+
+---
