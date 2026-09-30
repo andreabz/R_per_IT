@@ -6,6 +6,10 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Introduzione
+
+Questo capitolo raccoglie il metodo decisionale che collega i capitoli precedenti. L'obiettivo non è stabilire a priori quale tecnologia utilizzare, ma rendere le richieste confrontabili: partire dal requisito, raccogliere evidenze, identificare il collo di bottiglia, verificare le alternative e documentare la decisione. La stessa logica vale per pacchetti, RAM, CPU, server e scelta architetturale.
+
 # Una procedura per valutare le richieste
 
 Le richieste più difficili sono quelle che arrivano già accompagnate dalla soluzione:
@@ -67,24 +71,6 @@ Quando possibile, modificare una variabile e misurare il risultato.
 
 La decisione finale dovrebbe poter essere ricostruita mesi dopo.
 
-# La matrice decisionale
-
-Una scheda semplice può essere:
-
-| Campo | Domanda |
-|||
-| Funzione | Che cosa deve fare? |
-| Dati | Da dove arrivano e quanto sono grandi? |
-| Carico | Quanto spesso viene eseguito? |
-| Tempo | Qual è il requisito? |
-| Risorsa | CPU, RAM, I/O, rete o DB? |
-| Evidenza | Quale misura lo dimostra? |
-| Architettura | Dove deve essere eseguito? |
-| Alternative | Esiste già un componente aziendale? |
-| Operatività | Chi lo mantiene e monitora? |
-
-Questa struttura è utile perché rende confrontabili richieste molto diverse.
-
 # Valutare il rischio di una soluzione
 
 Oltre alle performance, IT dovrebbe considerare il rischio operativo.
@@ -100,34 +86,6 @@ Oltre alle performance, IT dovrebbe considerare il rischio operativo.
 | Ownership | Chi decide modifiche e aggiornamenti? |
 
 Una soluzione può essere performante ma difficile da mantenere. Le due valutazioni sono distinte.
-
-# Dove R aggiunge valore
-
-R è particolarmente adatto quando il problema contiene:
-
-- statistica;
-- modellistica;
-- analisi scientifica;
-- simulazione;
-- algoritmi specialistici;
-- elaborazione dati scientifici;
-- report analitici riproducibili.
-
-# Dove R può essere affiancato o sostituito
-
-Non è necessariamente il componente migliore per:
-
-- gestione transazionale;
-- CRUD;
-- workflow gestionali;
-- autenticazione centralizzata;
-- persistenza relazionale;
-- orchestrazione generale;
-- funzioni già offerte da piattaforme aziendali.
-
-Il criterio non è «R contro Oracle» o «R contro APEX». È:
-
-> **quale componente svolge meglio quella responsabilità nel contesto dell'organizzazione?**
 
 # Ownership
 
@@ -146,7 +104,6 @@ Bisogna sapere:
 - chi decide quando dismettere il sistema.
 
 Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativo.
-
 
 # Come valutare una richiesta di installazione
 
@@ -167,7 +124,6 @@ Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativ
 9. È un ambiente di sviluppo o produzione?
 10. Chi è responsabile dell'applicazione?
 
-
 # Come valutare una richiesta di RAM
 
 ### Richiesta
@@ -186,7 +142,6 @@ Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativ
 - La memoria cresce durante il job?
 - È possibile ridurre i dati caricati?
 
-
 # Come valutare una richiesta di CPU
 
 ### Richiesta
@@ -204,7 +159,6 @@ Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativ
 - Qual è il limite?
 - La RAM cresce con i worker?
 - Il database regge il parallelismo?
-
 
 # Come valutare una richiesta di server
 
@@ -229,60 +183,6 @@ Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativ
 - monitoring?
 - esiste già una piattaforma adatta?
 
-
-# La matrice decisionale
-
-```{mermaid}
-flowchart TD
-    R["Richiesta R"]
-    R --> F["Che cosa deve fare?"]
-    F --> D["Quali dati?"]
-    D --> P["Qual è il problema?"]
-    P --> M["Quale evidenza?"]
-    M --> A["Quale architettura?"]
-    A --> E["Esiste già un componente aziendale?"]
-    E --> C["Quale componente è più appropriato?"]
-```
-
-Il percorso è:
-
-> **requisito → evidenza → architettura → componente**
-
-Non:
-
-> **richiesta → hardware**
-
-
-# Dove R aggiunge valore
-
-R è particolarmente naturale quando servono:
-
-- analisi statistica;
-- modellistica;
-- simulazioni;
-- algoritmi scientifici;
-- analisi esplorativa;
-- elaborazioni specialistiche;
-- produzione parametrica di report;
-- riproducibilità analitica.
-
-
-# Dove può essere sostituito o affiancato
-
-R può non essere il componente più naturale quando il problema è prevalentemente:
-
-- gestione dati relazionali;
-- CRUD;
-- workflow gestionale;
-- autenticazione;
-- reporting standard;
-- ETL;
-- orchestrazione;
-- gestione applicativa già coperta da piattaforme aziendali.
-
-La valutazione deve considerare l'ecosistema già disponibile.
-
-
 # R non deve fare tutto
 
 Un'architettura può essere:
@@ -302,5 +202,3 @@ flowchart LR
 ```
 
 Ogni componente svolge la funzione per cui è più adatto.
-
-
