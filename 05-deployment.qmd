@@ -6,6 +6,10 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Introduzione
+
+L'architettura descrive dove e come collocare R; il deployment definisce come portare quella soluzione in esercizio e mantenerla nel tempo. Il capitolo segue il percorso dalla versione del codice alla produzione, mettendo in evidenza riproducibilità, test, sicurezza, logging, monitoring, rollback, continuità operativa e responsabilità.
+
 # Dal codice alla produzione
 
 Un programma che funziona sul PC dello sviluppatore non è automaticamente pronto per essere eseguito in produzione.
