@@ -1,0 +1,67 @@
+---
+title: "R per l'IT"
+subtitle: "Capire, valutare e governare soluzioni sviluppate in R"
+---
+
+## A chi è rivolto
+
+Questo materiale è pensato per un dipartimento IT che deve **valutare e governare soluzioni sviluppate in R**, non per chi deve imparare a programmare in R.
+
+L'obiettivo è fornire un linguaggio comune per affrontare richieste come:
+
+- installazione di R e pacchetti;
+- aumento di CPU o RAM;
+- richiesta di un server dedicato;
+- introduzione di una Shiny o di un'API;
+- integrazione con Oracle;
+- produzione automatica di report;
+- passaggio da PC a server;
+- messa in produzione e gestione operativa.
+
+## Il principio guida
+
+> **Prima di aumentare le risorse, capire perché servono.**
+
+Una richiesta tecnica dovrebbe seguire questo percorso:
+
+```text
+Richiesta
+   ↓
+Requisiti
+   ↓
+Diagnostica
+   ↓
+Architettura
+   ↓
+Infrastruttura
+   ↓
+Deployment
+   ↓
+Gestione
+```
+
+## Come usare il sito
+
+Il materiale è organizzato come un piccolo manuale:
+
+1. **Contesto e ambiente R** — che cosa vede IT quando arriva una richiesta R.
+2. **Runtime, processi e parallelismo** — processi, core, thread, worker e risorse.
+3. **Performance e diagnostica** — come distinguere CPU, RAM, I/O, rete e database.
+4. **Architettura e integrazione** — R, Oracle, APEX, Quarto, Shiny e API.
+5. **Deployment e gestione operativa** — sicurezza, logging, monitoring e ownership.
+6. **Governance e valutazione delle richieste** — come valutare pacchetti, RAM, CPU e server.
+7. **Caso finale e checklist** — applicazione del metodo al caso dell'ecologo.
+
+## Quattro domande da ricordare
+
+> **1. Che cosa deve fare?**
+
+> **2. Quale evidenza dimostra che serve ciò che viene richiesto?**
+
+> **3. Dove deve essere eseguito il lavoro?**
+
+> **4. Esiste già un componente aziendale adatto?**
+
+## Nota
+
+Il file `materiale.qmd` originale viene mantenuto nel repository come sorgente della versione a slide. Il sito costituisce la versione estesa e consultabile del corso.
