@@ -6,6 +6,9 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Introduzione
+
+Per valutare una richiesta infrastrutturale bisogna capire come il lavoro R viene effettivamente eseguito. Il capitolo costruisce il vocabolario minimo — processo, core, thread, worker e memoria — e lo collega al problema più importante per IT: individuare il consumo reale di risorse e capire che cosa cambia quando si introduce il parallelismo.
 
 # Processo, CPU, core, thread, worker
 
@@ -95,10 +98,6 @@ Può essere realizzato, a seconda della tecnologia, tramite:
 Per IT la domanda importante è:
 
 > **Quanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?**
-
-Come regola pratica, il numero ottimale di worker è tipicamente pari 
-al numero di core fisici meno 1 o 2 
-(per lasciare respiro al Sistema Operativo e al processo R principale).
 
 
 # Processo R e core
