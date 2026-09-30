@@ -1,0 +1,7 @@
+:root { --bs-body-font-size: 1.02rem; }
+body { line-height: 1.6; }
+h1 { margin-bottom: 1.2rem; }
+h2 { margin-top: 2.2rem; }
+blockquote { margin: 1.5rem 0; padding: 0.75rem 1rem; }
+table { font-size: 0.95rem; }
+pre { border-radius: 0.25rem; }
