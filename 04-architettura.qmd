@@ -1,0 +1,335 @@
+---
+title: "Architettura e integrazione"
+subtitle: "R, database, APEX, Quarto, Shiny, API e server"
+toc: true
+toc-depth: 2
+number-sections: false
+---
+
+# Richiesta di hardware: informazioni minime
+
+| Informazione | Esempio |
+|---|---|
+| Durata attuale | 3 ore |
+| Durata obiettivo | < 30 min |
+| CPU | 95% |
+| RAM | 18 GB |
+| Worker | 4 |
+| Dataset | 20 GB |
+| Frequenza | 2 volte/giorno |
+| Utenti | 1 |
+| Database | Oracle |
+| I/O | basso |
+
+Questi dati sono molto più utili di:
+
+> "Servono 16 core."
+
+---
+
+
+# R e database
+
+Uno degli scenari più importanti:
+
+```{mermaid}
+flowchart LR
+    U["Utente / Job"] --> R["R"]
+    R --> DBI["DBI / driver"]
+    DBI --> O["Oracle"]
+    O --> DBI
+    DBI --> R
+```
+
+R può essere il motore analitico.
+
+Oracle può rimanere il sistema di gestione dei dati.
+
+---
+
+
+# Dove dovrebbe avvenire il calcolo?
+
+Esempio:
+
+```text
+100 milioni di righe in Oracle
+          ↓
+filtro
+          ↓
+aggregazione
+          ↓
+dataset ridotto
+          ↓
+R
+          ↓
+analisi statistica
+```
+
+Non sempre conviene:
+
+```text
+Oracle
+   ↓
+100 milioni di righe
+   ↓
+R
+   ↓
+filtro e aggregazione
+```
+
+Il principio:
+
+> **spostare il lavoro nel componente più adatto.**
+
+---
+
+
+# Oracle e R non sono necessariamente concorrenti
+
+Possono avere responsabilità diverse.
+
+| Responsabilità | Componente possibile |
+|---|---|
+| Persistenza dati | Oracle |
+| Integrità relazionale | Oracle |
+| Query e aggregazioni | Oracle |
+| Analisi statistica | R |
+| Modellistica scientifica | R |
+| Report parametrico | R + Quarto |
+| Applicazione gestionale | APEX / altri sistemi |
+| Visualizzazione | BI / APEX / Shiny / altri |
+| Batch scientifico | R + scheduler |
+
+La domanda non è:
+
+> "Oracle o R?"
+
+Ma:
+
+> **"Quale componente è più adatto a questa responsabilità?"**
+
+---
+
+
+# R e APEX
+
+Oracle APEX può essere molto adatto a scenari in cui prevalgono:
+
+- maschere;
+- gestione dati;
+- CRUD;
+- workflow applicativi;
+- autenticazione e ruoli;
+- interfacce web;
+- integrazione con Oracle.
+
+R può essere più naturale quando prevalgono:
+
+- analisi statistica;
+- modellistica;
+- algoritmi scientifici;
+- elaborazioni sui dati;
+- simulazioni;
+- report analitici.
+
+Spesso possono anche convivere.
+
+---
+
+
+# Non reinventare ciò che esiste già
+
+Una domanda utile per IT:
+
+> **Esiste già un componente aziendale che svolge questa funzione?**
+
+Prima di introdurre una nuova soluzione R, verificare:
+
+- database;
+- APEX;
+- strumenti BI;
+- ETL;
+- scheduler;
+- sistemi di autenticazione;
+- API gateway;
+- sistemi di monitoring;
+- storage;
+- strumenti di reporting.
+
+R può aggiungere valore senza dover sostituire tutto il resto.
+
+---
+
+
+# R come componente
+
+Una possibile architettura:
+
+```{mermaid}
+flowchart TD
+    USER["Utente"]
+    APP["Applicazione aziendale"]
+    API["API"]
+    R["R - analisi / modello"]
+    DB["Oracle"]
+    OUT["Output"]
+
+    USER --> APP
+    APP --> API
+    API --> R
+    R --> DB
+    DB --> R
+    R --> OUT
+```
+
+In questo modello R non è l'intero sistema.
+
+È un componente specializzato.
+
+---
+
+
+# R + Quarto
+
+Scenario tipico:
+
+```{mermaid}
+flowchart LR
+    S["Scheduler"] --> R["R"]
+    R --> DB["Oracle"]
+    R --> Q["Quarto"]
+    Q --> PDF["PDF / HTML"]
+    Q --> OUT["Output"]
+```
+
+Domande IT:
+
+- chi avvia il job?
+- con quale account?
+- dove sono i file?
+- dove sono le credenziali?
+- dove vengono scritti i log?
+- cosa succede se il job fallisce?
+- chi riceve l'output?
+
+---
+
+
+# R + Shiny
+
+Shiny trasforma R in una applicazione web interattiva.
+
+```{mermaid}
+flowchart LR
+    USER["Browser"] --> WEB["Server web / Shiny"]
+    WEB --> R["Processo R"]
+    R --> DB["Oracle / dati"]
+```
+
+IT deve quindi occuparsi di questioni ulteriori:
+
+- utenti;
+- autenticazione;
+- concorrenza;
+- risorse;
+- disponibilità;
+- logging;
+- aggiornamenti;
+- sicurezza.
+
+Una Shiny per tre utenti interni non ha necessariamente gli stessi requisiti di una applicazione usata da centinaia di utenti.
+
+---
+
+
+# R + API
+
+Con un framework API:
+
+```{mermaid}
+flowchart LR
+    CLIENT["Client"] --> API["API"]
+    API --> R["R"]
+    R --> DB["Oracle"]
+    R --> MODEL["Modello"]
+    MODEL --> R
+    R --> API
+    API --> CLIENT
+```
+
+La domanda diventa:
+
+> **R è il posto giusto per eseguire questo servizio?**
+
+E se sì:
+
+- come viene eseguito?
+- come viene autenticato?
+- come viene monitorato?
+- quali tempi di risposta sono richiesti?
+- quanti utenti contemporanei?
+- cosa succede in caso di errore?
+
+---
+
+
+# Script, job, servizio: non sono la stessa cosa
+
+```{mermaid}
+flowchart TD
+    SCRIPT["Script locale"]
+    JOB["Job schedulato"]
+    SERVICE["Servizio"]
+    SCRIPT --> JOB
+    JOB --> SERVICE
+```
+
+La complessità operativa aumenta passando da:
+
+> script personale
+
+a:
+
+> componente di produzione.
+
+---
+
+
+# Dal PC al server
+
+Un server non è semplicemente:
+
+> "un PC più potente."
+
+Cambiano:
+
+- gestione degli utenti;
+- sicurezza;
+- scheduling;
+- monitoraggio;
+- backup;
+- aggiornamenti;
+- logging;
+- disponibilità;
+- responsabilità operative.
+
+---
+
+
+# Quando serve davvero un server dedicato?
+
+Possibili motivazioni:
+
+- carico elevato;
+- durata incompatibile con il PC;
+- esecuzione frequente;
+- necessità di scheduling;
+- necessità di disponibilità;
+- risorse superiori a quelle del PC;
+- separazione del carico dal lavoro dell'utente;
+- necessità di esecuzione centralizzata.
+
+Ma la richiesta deve essere motivata dal **workload**.
+
+---
