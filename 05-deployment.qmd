@@ -1,0 +1,211 @@
+---
+title: "Deployment e gestione operativa"
+subtitle: "Sicurezza, logging, monitoring, responsabilità e ownership"
+toc: true
+toc-depth: 2
+number-sections: false
+---
+
+# Quando un server dedicato può essere inutile?
+
+Possibili situazioni:
+
+- il problema è una query Oracle;
+- il codice è fortemente inefficiente;
+- il carico è occasionale;
+- l'elaborazione usa un solo core;
+- il dataset può essere ridotto;
+- il problema è la rete;
+- esiste già un'infrastruttura adeguata;
+- l'applicazione non richiede disponibilità continua.
+
+---
+
+
+# Deployment: le domande fondamentali
+
+Quando un prodotto R passa in produzione:
+
+### Dove gira?
+
+PC, VM, container, server?
+
+### Come parte?
+
+Manuale, scheduler, servizio?
+
+### Con quale identità?
+
+Utente personale o account tecnico?
+
+### Dove accede?
+
+Database, API, filesystem?
+
+### Dove scrive?
+
+Log, file temporanei, output?
+
+### Come viene monitorato?
+
+Come si rileva un errore?
+
+### Come viene aggiornato?
+
+R, pacchetti, codice?
+
+---
+
+
+# Sicurezza
+
+Una soluzione R può accedere a:
+
+- database;
+- API;
+- filesystem;
+- dati ambientali;
+- dati personali;
+- servizi esterni.
+
+IT deve verificare:
+
+- credenziali;
+- permessi;
+- account tecnici;
+- segreti;
+- accesso alla rete;
+- HTTPS;
+- logging;
+- principio del minimo privilegio.
+
+---
+
+
+# Credenziali
+
+Da evitare:
+
+```{r}
+#| label: esempio-credenziali-da-evitare
+
+username <- "utente"
+password <- "password"
+```
+
+Il principio è:
+
+> **Le credenziali non devono essere parte del codice applicativo.**
+
+Devono essere gestite secondo i meccanismi previsti dall'infrastruttura aziendale.
+
+---
+
+
+# Logging
+
+Un job di produzione dovrebbe permettere di capire:
+
+- quando è partito;
+- cosa ha fatto;
+- quanto è durato;
+- quali dati ha elaborato;
+- se ha avuto errori;
+- quando è terminato;
+- dove ha prodotto l'output.
+
+Un errore senza log diventa un problema operativo.
+
+---
+
+
+# Error handling
+
+Un'applicazione deve prevedere:
+
+```{mermaid}
+flowchart TD
+    START["Avvio"]
+    CHECK["Controlli"]
+    RUN["Elaborazione"]
+    OK["Successo"]
+    ERR["Errore"]
+    LOG["Log"]
+    ALERT["Segnalazione"]
+
+    START --> CHECK
+    CHECK --> RUN
+    RUN --> OK
+    RUN --> ERR
+    ERR --> LOG
+    LOG --> ALERT
+```
+
+IT deve sapere:
+
+> cosa succede quando qualcosa va storto?
+
+---
+
+
+# Monitoring
+
+Per un job:
+
+- è partito?
+- è terminato?
+- quanto ha impiegato?
+- ha prodotto l'output?
+- ha fallito?
+
+Per un servizio:
+
+- è raggiungibile?
+- risponde?
+- con quali tempi?
+- quanti errori produce?
+- quante risorse consuma?
+
+---
+
+
+# Responsabilità: sviluppatore e IT
+
+| Aspetto | Sviluppatore | IT |
+|---|:---:|:---:|
+| Codice R | ✓ | |
+| Logica scientifica | ✓ | |
+| Requisiti funzionali | ✓ | |
+| Dipendenze applicative | ✓ | supporto |
+| Ambiente runtime | | ✓ |
+| Sistema operativo | | ✓ |
+| Server / VM | | ✓ |
+| Database | collaborativo | ✓ |
+| Sicurezza infrastrutturale | | ✓ |
+| Performance applicativa | ✓ | supporto |
+| Performance infrastrutturale | supporto | ✓ |
+| Deployment | collaborativo | ✓ |
+| Monitoring | supporto | ✓ |
+
+La responsabilità deve essere esplicita.
+
+---
+
+
+# Production readiness
+
+Una soluzione R destinata alla produzione dovrebbe essere valutata almeno su:
+
+- funzionalità;
+- riproducibilità;
+- dipendenze;
+- configurazione;
+- sicurezza;
+- logging;
+- gestione degli errori;
+- monitoring;
+- backup;
+- aggiornamento;
+- ownership.
+
+---
