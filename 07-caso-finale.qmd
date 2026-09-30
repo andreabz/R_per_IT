@@ -6,6 +6,10 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Introduzione
+
+Il caso finale applica il metodo dell'intero corso a una richiesta concreta: un'elaborazione R è troppo lenta e viene richiesto un server più potente. Il valore del caso non sta nella macchina da scegliere, ma nel percorso che permette di trasformare una richiesta hardware in una decisione tecnica verificabile.
+
 # Come leggere il caso
 
 Il caso dell'ecologo riassume il metodo dell'intero corso.
