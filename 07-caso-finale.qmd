@@ -59,7 +59,7 @@ Un'analisi della complessità può indicare se il problema cresce troppo rapidam
 Supponiamo di ottenere:
 
 | Worker | Tempo | RAM |
-|---:|---:|---:|
+|:|:|:|
 | 1 | 192 min | 11 GB |
 | 2 | 104 min | 20 GB |
 | 4 | 59 min | 38 GB |
@@ -114,7 +114,7 @@ Un hardware adeguato non elimina necessariamente un problema applicativo.
 Per rendere valutabile una richiesta di infrastruttura, è utile chiedere una scheda con:
 
 | Informazione | Esempio |
-|---|---|
+|||
 | scopo | analisi ecologica |
 | input | dataset monitoraggio |
 | dimensione | 20 GB |
@@ -196,8 +196,6 @@ Occorre considerare:
 
 Una soluzione tecnicamente possibile può essere operativamente inadatta.
 
----
-
 
 # Caso finale: l'ecologo
 
@@ -220,8 +218,6 @@ Chiede:
 8. dimensione dati;
 9. profiling;
 10. test di scaling.
-
----
 
 
 # Caso finale: diagnostica
@@ -247,15 +243,13 @@ Ma rimangono domande:
 - quanto scala?
 - qual è il beneficio atteso da più CPU?
 
----
-
 
 # Caso finale: test di scaling
 
 Viene eseguito un test:
 
 | Worker | Tempo | RAM |
-|---:|---:|---:|
+|:|:|:|
 | 1 | 192 min | 11 GB |
 | 2 | 104 min | 20 GB |
 | 4 | 59 min | 38 GB |
@@ -269,8 +263,6 @@ Ora emerge qualcosa di importante:
 - 8 worker richiedono molta memoria.
 
 La richiesta hardware può ora essere valutata su dati reali.
-
----
 
 
 # Ma c'è ancora una domanda
@@ -290,8 +282,6 @@ Potrebbero esserci:
 
 La diagnostica infrastrutturale non sostituisce quella applicativa.
 
----
-
 
 # Il ruolo di IT
 
@@ -308,8 +298,6 @@ e:
 > "Quale misura dimostra che questa risorsa è il problema?"
 
 Questa distinzione è fondamentale.
-
----
 
 
 # Il ciclo corretto
@@ -329,8 +317,6 @@ Non:
 ```text
 Richiesta → acquisto
 ```
-
----
 
 
 # Una checklist per IT
@@ -368,8 +354,6 @@ Prima di approvare una richiesta R:
 - rete;
 - database.
 
----
-
 
 # Checklist: architettura
 
@@ -399,8 +383,6 @@ Prima di approvare una richiesta R:
 - autenticazione;
 - monitoring.
 
----
-
 
 # Checklist: gestione
 
@@ -427,8 +409,6 @@ Prima di approvare una richiesta R:
 - infrastruttura;
 - incidenti.
 
----
-
 
 # Le quattro domande da ricordare
 
@@ -441,8 +421,6 @@ Quando arriva una richiesta R, chiedersi:
 > **3. Dove deve essere eseguito il lavoro?**
 
 > **4. Esiste già un componente aziendale adatto?**
-
----
 
 
 # Dal punto di vista IT
@@ -463,8 +441,6 @@ Una buona soluzione R non è semplicemente:
 - ha un responsabile;
 - può essere mantenuta.
 
----
-
 
 # Messaggio finale
 
@@ -479,8 +455,6 @@ IT non deve necessariamente diventare esperto di R.
 Deve diventare capace di:
 
 > **capire la richiesta, chiedere evidenze, valutare l'architettura e governare il componente.**
-
----
 
 
 # Discussione
@@ -497,4 +471,4 @@ Deve diventare capace di:
 - Chi ne è responsabile?
 - Quali dati diagnostici vengono normalmente raccolti?
 
----
+

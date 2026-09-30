@@ -20,8 +20,6 @@ L'obiettivo è mettere IT nelle condizioni di:
 - capire come R si integra con i sistemi esistenti;
 - riconoscere quando R è adatto e quando esistono alternative più naturali.
 
----
-
 
 # Il problema dal punto di vista IT
 
@@ -30,15 +28,9 @@ Una richiesta può arrivare così:
 > "L'elaborazione R è troppo lenta.  
 > Servono 16 core, 64 GB di RAM e l'installazione di alcuni pacchetti."
 
-La domanda di IT non dovrebbe essere:
-
-> "Possiamo comprare il server?"
-
-Ma:
+La domanda che dovrebbe sorgere è:
 
 > **"Quali evidenze giustificano questa richiesta?"**
-
----
 
 
 # Il caso guida: l'ecologo
@@ -62,8 +54,6 @@ IT deve capire:
 5. se il database è coinvolto;
 6. quale infrastruttura è realmente necessaria.
 
----
-
 
 # R dal punto di vista di IT
 
@@ -84,8 +74,6 @@ flowchart TD
 
 Non tutte queste situazioni hanno gli stessi requisiti infrastrutturali.
 
----
-
 
 # La domanda fondamentale
 
@@ -103,8 +91,6 @@ Può essere:
 - un componente di una pipeline.
 
 La risposta cambia completamente la valutazione IT.
-
----
 
 
 # R non è RStudio
@@ -126,8 +112,6 @@ flowchart LR
 
 Un server può eseguire R senza RStudio.
 
----
-
 
 # Che cosa contiene un ambiente R?
 
@@ -146,13 +130,11 @@ flowchart TD
 
 Una richiesta di "installare un pacchetto" può quindi avere conseguenze anche sul sistema operativo.
 
----
-
 
 # Principali pacchetti da conoscere
 
 | Pacchetto | Utilizzo principale |
-|---|---|
+|||
 | `data.table` | Manipolazione efficiente dei dati |
 | `ggplot2` | Visualizzazione |
 | `DBI` | Interfaccia standard verso database |
@@ -173,8 +155,6 @@ IT non deve conoscere l'API di questi pacchetti.
 
 Deve riconoscerne il **ruolo**.
 
----
-
 
 # Una richiesta di pacchetto non è una semplice installazione
 
@@ -194,8 +174,6 @@ IT deve poter chiedere:
 - Ha bisogno di accesso Internet?
 - È compatibile con l'ambiente aziendale?
 - Come verrà aggiornato?
-
----
 
 
 # Dipendenze
@@ -220,8 +198,6 @@ Può essere:
 
 Per questo la gestione dell'ambiente è parte del deployment.
 
----
-
 
 # `renv`: perché interessa a IT
 
@@ -244,4 +220,4 @@ Questo facilita:
 - reinstallazione;
 - trasferimento tra ambienti.
 
----
+

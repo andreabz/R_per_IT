@@ -72,7 +72,7 @@ La decisione finale dovrebbe poter essere ricostruita mesi dopo.
 Una scheda semplice può essere:
 
 | Campo | Domanda |
-|---|---|
+|||
 | Funzione | Che cosa deve fare? |
 | Dati | Da dove arrivano e quanto sono grandi? |
 | Carico | Quanto spesso viene eseguito? |
@@ -90,7 +90,7 @@ Questa struttura è utile perché rende confrontabili richieste molto diverse.
 Oltre alle performance, IT dovrebbe considerare il rischio operativo.
 
 | Aspetto | Domanda |
-|---|---|
+|||
 | Dipendenze | Possiamo ricostruire l'ambiente? |
 | Sicurezza | Quali dati e credenziali utilizza? |
 | Disponibilità | Cosa succede se il servizio non è disponibile? |
@@ -147,8 +147,6 @@ Bisogna sapere:
 
 Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativo.
 
----
-
 
 # Come valutare una richiesta di installazione
 
@@ -169,8 +167,6 @@ Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativ
 9. È un ambiente di sviluppo o produzione?
 10. Chi è responsabile dell'applicazione?
 
----
-
 
 # Come valutare una richiesta di RAM
 
@@ -190,8 +186,6 @@ Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativ
 - La memoria cresce durante il job?
 - È possibile ridurre i dati caricati?
 
----
-
 
 # Come valutare una richiesta di CPU
 
@@ -210,8 +204,6 @@ Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativ
 - Qual è il limite?
 - La RAM cresce con i worker?
 - Il database regge il parallelismo?
-
----
 
 
 # Come valutare una richiesta di server
@@ -237,8 +229,6 @@ Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativ
 - monitoring?
 - esiste già una piattaforma adatta?
 
----
-
 
 # La matrice decisionale
 
@@ -262,8 +252,6 @@ Non:
 
 > **richiesta → hardware**
 
----
-
 
 # Dove R aggiunge valore
 
@@ -277,8 +265,6 @@ R è particolarmente naturale quando servono:
 - elaborazioni specialistiche;
 - produzione parametrica di report;
 - riproducibilità analitica.
-
----
 
 
 # Dove può essere sostituito o affiancato
@@ -295,8 +281,6 @@ R può non essere il componente più naturale quando il problema è prevalenteme
 - gestione applicativa già coperta da piattaforme aziendali.
 
 La valutazione deve considerare l'ecosistema già disponibile.
-
----
 
 
 # R non deve fare tutto
@@ -319,4 +303,4 @@ flowchart LR
 
 Ogni componente svolge la funzione per cui è più adatto.
 
----
+

@@ -6,6 +6,20 @@ toc-depth: 2
 number-sections: false
 ---
 
+# Introduzione
+
+Questo capitolo affronta una delle domande più difficili quando si porta R in produzione:
+
+> Come integrare R con l'infrastruttura esistente?
+
+R non deve (e spesso non dovrebbe) essere l'intero sistema. 
+È un componente specializzato che deve collaborare con database, 
+scheduler, applicazioni web, sistemi di monitoring e altro.
+
+Il principio guida è semplice:
+> **Distribuisci le responsabilità tra i componenti più adatti.**
+
+
 # Prima di scegliere l'architettura
 
 La domanda non è «possiamo farlo in R?». Molte cose sono tecnicamente possibili.
@@ -48,8 +62,6 @@ Questi dati sono molto più utili di:
 
 > "Servono 16 core."
 
----
-
 
 # R e database
 
@@ -67,8 +79,6 @@ flowchart LR
 R può essere il motore analitico.
 
 Oracle può rimanere il sistema di gestione dei dati.
-
----
 
 
 # Dove dovrebbe avvenire il calcolo?
@@ -105,8 +115,6 @@ Il principio:
 
 > **spostare il lavoro nel componente più adatto.**
 
----
-
 
 # Oracle e R non sono necessariamente concorrenti
 
@@ -132,8 +140,6 @@ Ma:
 
 > **"Quale componente è più adatto a questa responsabilità?"**
 
----
-
 
 # R e APEX
 
@@ -158,8 +164,6 @@ R può essere più naturale quando prevalgono:
 
 Spesso possono anche convivere.
 
----
-
 
 # Non reinventare ciò che esiste già
 
@@ -181,8 +185,6 @@ Prima di introdurre una nuova soluzione R, verificare:
 - strumenti di reporting.
 
 R può aggiungere valore senza dover sostituire tutto il resto.
-
----
 
 
 # R come componente
@@ -210,8 +212,6 @@ In questo modello R non è l'intero sistema.
 
 È un componente specializzato.
 
----
-
 
 # R + Quarto
 
@@ -236,8 +236,6 @@ Domande IT:
 - cosa succede se il job fallisce?
 - chi riceve l'output?
 
----
-
 
 # R + Shiny
 
@@ -261,9 +259,8 @@ IT deve quindi occuparsi di questioni ulteriori:
 - aggiornamenti;
 - sicurezza.
 
-Una Shiny per tre utenti interni non ha necessariamente gli stessi requisiti di una applicazione usata da centinaia di utenti.
-
----
+Una Shiny per tre utenti interni non ha necessariamente gli stessi requisiti 
+di una applicazione usata da centinaia di utenti.
 
 
 # R + API
@@ -294,8 +291,6 @@ E se sì:
 - quanti utenti contemporanei?
 - cosa succede in caso di errore?
 
----
-
 
 # Script, job, servizio: non sono la stessa cosa
 
@@ -316,8 +311,6 @@ a:
 
 > componente di produzione.
 
----
-
 
 # Dal PC al server
 
@@ -337,8 +330,6 @@ Cambiano:
 - disponibilità;
 - responsabilità operative.
 
----
-
 
 # Quando serve davvero un server dedicato?
 
@@ -354,8 +345,6 @@ Possibili motivazioni:
 - necessità di esecuzione centralizzata.
 
 Ma la richiesta deve essere motivata dal **workload**.
-
----
 
 
 # Ambienti di esecuzione
@@ -405,7 +394,9 @@ host / piattaforma
 
 Il vantaggio principale per IT è la **riproducibilità dell'ambiente**.
 
-Il container non significa però «nessuna gestione»: restano da gestire immagini, vulnerabilità, aggiornamenti, registry, rete, storage, segreti e risorse.
+Il container non significa però «nessuna gestione»:
+restano da gestire immagini, vulnerabilità, aggiornamenti, 
+registry, rete, storage, segreti e risorse.
 
 ## Server condiviso o dedicato?
 

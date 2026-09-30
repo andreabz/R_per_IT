@@ -144,7 +144,7 @@ Aggiungere anche:
 Una soluzione in produzione deve avere responsabilità esplicite.
 
 | Area | Sviluppatore | IT |
-|---|---|---|
+||||
 | logica scientifica | principale | supporto |
 | codice R | principale | supporto |
 | dipendenze | condivisione | gestione runtime |
@@ -192,8 +192,6 @@ Possibili situazioni:
 - esiste già un'infrastruttura adeguata;
 - l'applicazione non richiede disponibilità continua.
 
----
-
 
 # Deployment: le domande fondamentali
 
@@ -227,8 +225,6 @@ Come si rileva un errore?
 
 R, pacchetti, codice?
 
----
-
 
 # Sicurezza
 
@@ -252,15 +248,13 @@ IT deve verificare:
 - logging;
 - principio del minimo privilegio.
 
----
-
 
 # Credenziali
 
 Da evitare:
 
 ```{r}
-#| label: esempio-credenziali-da-evitare
+#| label: esempio-credenziali-in-chiaro
 
 username <- "utente"
 password <- "password"
@@ -271,8 +265,6 @@ Il principio è:
 > **Le credenziali non devono essere parte del codice applicativo.**
 
 Devono essere gestite secondo i meccanismi previsti dall'infrastruttura aziendale.
-
----
 
 
 # Logging
@@ -288,8 +280,6 @@ Un job di produzione dovrebbe permettere di capire:
 - dove ha prodotto l'output.
 
 Un errore senza log diventa un problema operativo.
-
----
 
 
 # Error handling
@@ -318,8 +308,6 @@ IT deve sapere:
 
 > cosa succede quando qualcosa va storto?
 
----
-
 
 # Monitoring
 
@@ -339,13 +327,11 @@ Per un servizio:
 - quanti errori produce?
 - quante risorse consuma?
 
----
-
 
 # Responsabilità: sviluppatore e IT
 
 | Aspetto | Sviluppatore | IT |
-|---|:---:|:---:|
+||::|::|
 | Codice R | ✓ | |
 | Logica scientifica | ✓ | |
 | Requisiti funzionali | ✓ | |
@@ -361,8 +347,6 @@ Per un servizio:
 | Monitoring | supporto | ✓ |
 
 La responsabilità deve essere esplicita.
-
----
 
 
 # Production readiness
@@ -381,4 +365,4 @@ Una soluzione R destinata alla produzione dovrebbe essere valutata almeno su:
 - aggiornamento;
 - ownership.
 
----
+

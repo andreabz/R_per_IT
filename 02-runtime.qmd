@@ -6,33 +6,10 @@ toc-depth: 2
 number-sections: false
 ---
 
-# `renv`: perché interessa a IT
-
-`renv` permette di associare a un progetto R un ambiente di pacchetti riproducibile.
-
-Il concetto importante per IT è:
-
-> **L'applicazione deve dichiarare da quali dipendenze dipende.**
-
-Non dovrebbe dipendere casualmente da:
-
-> "quello che è installato oggi sul server".
-
-Questo facilita:
-
-- riproducibilità;
-- aggiornamenti;
-- manutenzione;
-- diagnosi;
-- reinstallazione;
-- trasferimento tra ambienti.
-
----
-
 
 # Processo, CPU, core, thread, worker
 
-Questi termini vengono spesso utilizzati come sinonimi.
+Questi termini sono spesso utilizzati come sinonimi.
 
 Non lo sono.
 
@@ -49,7 +26,14 @@ flowchart TD
     S --> IO["Storage / rete"]
 ```
 
----
+# Runtime
+
+Il runtime, o tempo di esecuzione, è l'insieme dell'ambiente software e 
+del tempo in cui il codice viene effettivamente eseguito dalla CPU, 
+in contrapposizione al *compile time* (quando il codice viene solo tradotto o controllato).
+
+Quando parliamo di performance in R, stiamo quasi sempre parlando di ottimizzare il runtime.
+Ma per farlo, dobbiamo capire come il runtime interagisce con l'hardware.
 
 
 # Processo
@@ -66,8 +50,6 @@ Un processo possiede:
 
 Un'esecuzione R normalmente corrisponde almeno a un processo R.
 
----
-
 
 # Core
 
@@ -83,25 +65,20 @@ non significa automaticamente:
 
 Serve un carico che possa utilizzare effettivamente quei core.
 
----
-
 
 # Thread
 
 Un processo può utilizzare uno o più thread.
+I thread condividono la stessa memoria del processo.
 
-I thread condividono parte delle risorse del processo.
-
-Alcune operazioni R o librerie native possono utilizzare più thread.
-
-Ma:
+Il motore base di R è prevalentemente *single-thread*. 
+Tuttavia, molte operazioni pesanti (es. moltiplicazioni di matrici, 
+o funzioni di pacchetti come `data.table`, `arrow`, `torch`)
+delegano il lavoro a librerie native in C/C++ che usano i thread.
 
 > **thread ≠ automaticamente parallelismo efficace.**
 
 Il comportamento dipende dal codice, dalle librerie e dal tipo di operazione.
-
----
-
 
 # Worker
 
@@ -119,7 +96,9 @@ Per IT la domanda importante è:
 
 > **Quanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?**
 
----
+Come regola pratica, il numero ottimale di worker è tipicamente pari 
+al numero di core fisici meno 1 o 2 
+(per lasciare respiro al Sistema Operativo e al processo R principale).
 
 
 # Processo R e core
@@ -144,8 +123,6 @@ Se il lavoro è prevalentemente seriale:
 
 Aggiungere core al server potrebbe non cambiare significativamente il tempo.
 
----
-
 
 # Parallelismo
 
@@ -167,8 +144,6 @@ flowchart TD
 
 Il vantaggio dipende dalla possibilità di dividere realmente il lavoro.
 
----
-
 
 # Il parallelismo ha un costo
 
@@ -186,4 +161,30 @@ Quindi:
 
 > **più worker non significa necessariamente meglio.**
 
----
+Nella maggior parte dei backend paralleli in R (come `PSOCK` o `multisession`), 
+ogni worker è un processo R completamente separato.
+Questo significa che se lo script principale carica 2 GB di dati in memoria,
+ogni singolo worker caricherà 2 GB.
+
+# Esempio di scaling
+
+Supponiamo di misurare:
+
+| Worker | Tempo | RAM |
+|:|:|:|
+| 1 | 40 min | 4 GB |
+| 2 | 23 min | 8 GB |
+| 4 | 14 min | 16 GB |
+| 8 | 12 min | 32 GB |
+
+Il passaggio da 1 a 4 worker è significativo.
+
+Il passaggio da 4 a 8 molto meno.
+
+IT dovrebbe quindi chiedere:
+
+> "Perché servono 16 core?"
+
+non:
+
+> "Possiamo procurare 16 core?"

@@ -6,31 +6,6 @@ toc-depth: 2
 number-sections: false
 ---
 
-# Esempio di scaling
-
-Supponiamo di misurare:
-
-| Worker | Tempo | RAM |
-|---:|---:|---:|
-| 1 | 40 min | 4 GB |
-| 2 | 23 min | 8 GB |
-| 4 | 14 min | 16 GB |
-| 8 | 12 min | 32 GB |
-
-Il passaggio da 1 a 4 worker è significativo.
-
-Il passaggio da 4 a 8 molto meno.
-
-IT dovrebbe quindi chiedere:
-
-> "Perché servono 16 core?"
-
-non:
-
-> "Possiamo procurare 16 core?"
-
----
-
 
 # CPU, RAM, I/O, rete
 
@@ -48,8 +23,6 @@ flowchart TD
 ```
 
 Prima di cambiare hardware bisogna identificare il collo di bottiglia.
-
----
 
 
 # CPU-bound
@@ -69,8 +42,6 @@ Possibili interventi:
 - parallelizzare;
 - utilizzare librerie native;
 - aumentare CPU se il carico lo giustifica.
-
----
 
 
 # Memory-bound
@@ -92,8 +63,6 @@ Possibili interventi:
 - utilizzare formati più efficienti;
 - aumentare RAM se necessario.
 
----
-
 
 # I/O-bound
 
@@ -112,8 +81,6 @@ Possibili interventi:
 - usare Parquet/Arrow;
 - migliorare storage;
 - cambiare strategia di elaborazione.
-
----
 
 
 # Database-bound
@@ -136,8 +103,6 @@ Ma il tempo può essere quasi tutto:
 
 Aggiungere CPU al server R non risolve il problema.
 
----
-
 
 # Network-bound
 
@@ -157,12 +122,8 @@ Se R attende una risposta remota:
 - aumentare la RAM potrebbe non servire;
 - bisogna valutare rete, latenza, API e quantità di dati trasferiti.
 
----
-
 
 # Regola diagnostica
-
-> **Non chiedersi quale hardware manca.**
 
 Chiedersi:
 
@@ -171,8 +132,6 @@ Chiedersi:
 E soprattutto:
 
 > **Quale evidenza lo dimostra?**
-
----
 
 
 # La diagnostica minima
@@ -188,8 +147,6 @@ Prima di valutare una richiesta di potenziamento:
 - quantità di dati trasferiti;
 - tempi delle query;
 - eventuale profiling.
-
----
 
 
 # Misurare il tempo in R
@@ -208,11 +165,9 @@ Non è una profilazione completa.
 
 Ma permette già di distinguere:
 
-- tempo di elaborazione;
-- tempo di sistema;
+- tempo di elaborazione da parte della CPU;
+- tempo di sistema per l'allocazione della memoria;
 - tempo trascorso.
-
----
 
 
 # Profilazione
@@ -289,8 +244,6 @@ L'ordine non è necessariamente questo.
 
 Ma **l'hardware non dovrebbe essere la prima ipotesi**.
 
----
-
 
 # Livello 1 — Algoritmo
 
@@ -299,7 +252,7 @@ Prima di chiedere più hardware bisogna considerare la complessità dell'algorit
 La notazione **O()** descrive come cresce il costo al crescere della dimensione dell'input. Non predice direttamente i secondi su una macchina specifica.
 
 | Complessità | Crescita indicativa quando i dati diventano 10 volte maggiori |
-|---|---:|
+|:|:|
 | O(1) | circa 1× |
 | O(log n) | poco più di 1× |
 | O(n) | circa 10× |
@@ -307,29 +260,27 @@ La notazione **O()** descrive come cresce il costo al crescere della dimensione 
 | O(n²) | circa 100× |
 | O(2ⁿ) | crescita estremamente rapida |
 
-Sono ordini di crescita ideali: costanti, allocazioni, memoria e implementazione reale possono cambiare molto il risultato.
+Sono ordini di crescita ideali: costanti, allocazioni, memoria e 
+implementazione reale possono cambiare molto il risultato.
 
-## O(n) contro O(n²)
+## Perché importa in pratica
 
-Se un algoritmo confronta ogni elemento con tutti gli altri, il numero di operazioni cresce approssimativamente come n². Con 100.000 elementi, si entra nell'ordine di 10 miliardi di confronti.
+Un algoritmo O(n²) che confronta ogni elemento con tutti gli altri, su 100.000 elementi, 
+richiede nell'ordine di 10 miliardi di confronti. 
+Un algoritmo lineare O(n) ne richiederebbe 100.000.
 
-Un algoritmo lineare cresce invece nell'ordine di n. La differenza di complessità può quindi essere molto più importante di un aumento della frequenza della CPU.
-
-## Ricerca O(n) contro O(log n)
-
-Una scansione lineare di un vettore non ordinato può richiedere O(n). Se i dati sono ordinati, una ricerca binaria può richiedere O(log n).
-
-Con un milione di elementi, il numero di confronti passa concettualmente da centinaia di migliaia nel caso medio a circa 20 livelli di ricerca binaria.
-
-Questo non significa che la ricerca binaria sia sempre migliore: mantenere l'ordinamento ha un costo e bisogna scegliere una struttura dati coerente con il problema.
-
-## Ordinamento
-
-Molti algoritmi di ordinamento efficienti hanno complessità O(n log n), mentre algoritmi ingenui possono arrivare a O(n²). In pratica è spesso preferibile utilizzare implementazioni consolidate delle operazioni fondamentali invece di reinventarle.
+La differenza di complessità può essere molto più importante di un aumento della frequenza della CPU: 
+raddoppiare la CPU non salva un algoritmo quadratico quando i dati crescono.
+Allo stesso modo, una ricerca O(log n) su dati ordinati (ricerca binaria) richiede 
+circa 20 confronti su un milione di elementi, contro centinaia di migliaia di una scansione lineare O(n). 
+Mantenere l'ordinamento ha un costo, ma scegliere la struttura dati coerente 
+con il problema è spesso la vera ottimizzazione.
 
 Per IT, la domanda utile è:
 
 > «La richiesta di hardware deriva dal volume dei dati oppure dalla complessità dell'algoritmo?»
+
+Se la risposta è "dalla complessità", aggiungere CPU sposterà solo il problema in avanti.
 
 # Livello 2 — Implementazione
 
@@ -346,7 +297,9 @@ Esempi frequenti:
 
 ## Copie e memoria
 
-Un oggetto da 8 GB non implica automaticamente che servano solo 8 GB di RAM. Durante una trasformazione possono coesistere temporaneamente l'oggetto originale, risultati intermedi e nuovi oggetti.
+Un oggetto da 8 GB non implica automaticamente che servano solo 8 GB di RAM. 
+Durante una trasformazione possono coesistere temporaneamente l'oggetto originale, 
+risultati intermedi e nuovi oggetti.
 
 Esempio concettuale:
 
@@ -355,23 +308,40 @@ originale             8 GB
 copia                  8 GB
 intermedio             8 GB
 risultato              8 GB
----------------------------
+
 picco teorico          32 GB
 ```
 
-Questo **non significa** che ogni operazione R faccia una copia completa. R utilizza meccanismi che possono evitare copie non necessarie, e il consumo dipende dall'operazione e dalla struttura degli oggetti.
+Questo **non significa** che ogni operazione R faccia una copia completa.
+
+R utilizza una strategia chiamata **copy-on-modify**: 
+se assegni un oggetto a una nuova variabile (`b <- a`), 
+R non copia subito i dati in memoria, ma punta allo stesso indirizzo. 
+La copia avviene solo se modifichi `b`.
+
+Tuttavia, in pipeline di trasformazioni complesse o passando oggetti a certe funzioni, 
+le copie temporanee possono moltiplicarsi rapidamente.
 
 Il principio IT è:
 
 > **dimensione dei dati ≠ automaticamente RAM necessaria.**
 
-Con worker separati il costo può crescere ulteriormente se ciascun worker mantiene una propria rappresentazione dei dati.
+Con worker separati il costo può crescere ulteriormente se 
+ciascun worker mantiene una propria rappresentazione dei dati.
 
-Se un job usa 8 GB per worker, quattro worker potrebbero portare il consumo applicativo nell'ordine di 32 GB, prima di considerare sistema operativo, overhead e altre strutture.
+Se un job usa 8 GB per worker, quattro worker potrebbero portare 
+il consumo applicativo nell'ordine di 32 GB, prima di considerare sistema operativo, 
+overhead e altre strutture.
 
-Per questo una richiesta di RAM deve riportare almeno il picco osservato e il numero di worker, non soltanto la dimensione del dataset.
+Per questo una richiesta di RAM deve riportare almeno il picco osservato e 
+il numero di worker, non soltanto la dimensione del dataset.
 
 # Livello 3 — Parallelizzazione
+
+Il parallelismo non è gratis:
+creare i worker, copiare i dati nella loro memoria e raccogliere i risultati 
+(serializzazione/deserializzazione) ha un costo. 
+Se il task è troppo piccolo, il costo del parallelismo supera il vantaggio.
 
 Domande:
 
@@ -388,8 +358,6 @@ La richiesta:
 
 non è una dimostrazione.
 
----
-
 
 # Livello 4 — Hardware
 
@@ -404,8 +372,6 @@ Solo dopo aver compreso il carico:
 L'hardware può essere assolutamente la soluzione corretta.
 
 Ma deve essere una conseguenza della diagnosi.
-
----
 
 
 # Il caso dell'ecologo
@@ -427,8 +393,6 @@ La richiesta:
 non affronta necessariamente il problema.
 
 Il primo candidato da analizzare è il database.
-
----
 
 
 # Altro scenario
@@ -452,8 +416,6 @@ Possibili domande:
 
 Solo dopo si valuta l'hardware.
 
----
-
 
 # Altro scenario ancora
 
@@ -472,13 +434,13 @@ Ma anche qui bisogna capire:
 
 > perché ogni worker richiede così tanta RAM?
 
----
+
 
 
 # Un criterio semplice
 
 | Osservazione | Domanda successiva |
-|---|---|
+|||
 | CPU alta | Il lavoro è parallelizzabile? |
 | CPU bassa | Cosa sta aspettando? |
 | RAM alta | Quali oggetti occupano memoria? |
@@ -486,8 +448,6 @@ Ma anche qui bisogna capire:
 | I/O alto | Cosa viene letto/scritto? |
 | DB lento | Quanto tempo passa in Oracle? |
 | R inattivo | Dove viene speso il tempo? |
-
----
 
 
 # Che cosa chiedere allo sviluppatore
@@ -520,4 +480,4 @@ Quando arriva una richiesta tecnica, chiedere almeno:
 - Quanto scala?
 - Quanta RAM per worker?
 
----
+
