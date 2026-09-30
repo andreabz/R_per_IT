@@ -294,46 +294,82 @@ Ma **l'hardware non dovrebbe essere la prima ipotesi**.
 
 # Livello 1 — Algoritmo
 
-Esempio concettuale:
+Prima di chiedere più hardware bisogna considerare la complessità dell'algoritmo.
 
-```text
-100.000 elementi
+La notazione **O()** descrive come cresce il costo al crescere della dimensione dell'input. Non predice direttamente i secondi su una macchina specifica.
 
-algoritmo A
-100.000 × 100.000 confronti
+| Complessità | Crescita indicativa quando i dati diventano 10 volte maggiori |
+|---|---:|
+| O(1) | circa 1× |
+| O(log n) | poco più di 1× |
+| O(n) | circa 10× |
+| O(n log n) | circa 10–12× |
+| O(n²) | circa 100× |
+| O(2ⁿ) | crescita estremamente rapida |
 
-algoritmo B
-ordinamento + ricerca
-```
+Sono ordini di crescita ideali: costanti, allocazioni, memoria e implementazione reale possono cambiare molto il risultato.
 
-Una modifica algoritmica può produrre un miglioramento enorme.
+## O(n) contro O(n²)
 
-Nessun aumento di CPU sostituisce sempre un algoritmo inefficiente.
+Se un algoritmo confronta ogni elemento con tutti gli altri, il numero di operazioni cresce approssimativamente come n². Con 100.000 elementi, si entra nell'ordine di 10 miliardi di confronti.
 
----
+Un algoritmo lineare cresce invece nell'ordine di n. La differenza di complessità può quindi essere molto più importante di un aumento della frequenza della CPU.
 
+## Ricerca O(n) contro O(log n)
+
+Una scansione lineare di un vettore non ordinato può richiedere O(n). Se i dati sono ordinati, una ricerca binaria può richiedere O(log n).
+
+Con un milione di elementi, il numero di confronti passa concettualmente da centinaia di migliaia nel caso medio a circa 20 livelli di ricerca binaria.
+
+Questo non significa che la ricerca binaria sia sempre migliore: mantenere l'ordinamento ha un costo e bisogna scegliere una struttura dati coerente con il problema.
+
+## Ordinamento
+
+Molti algoritmi di ordinamento efficienti hanno complessità O(n log n), mentre algoritmi ingenui possono arrivare a O(n²). In pratica è spesso preferibile utilizzare implementazioni consolidate delle operazioni fondamentali invece di reinventarle.
+
+Per IT, la domanda utile è:
+
+> «La richiesta di hardware deriva dal volume dei dati oppure dalla complessità dell'algoritmo?»
 
 # Livello 2 — Implementazione
 
 Anche lo stesso algoritmo può essere implementato in modi molto diversi.
 
-Esempi:
+Esempi frequenti:
 
-- loop inefficienti;
 - copie di oggetti;
 - conversioni ripetute;
-- letture ripetute da disco;
+- letture ripetute;
 - query ripetute al database;
-- trasferimento inutile di dati.
+- trasferimento inutile di dati;
+- ricomputazione di risultati già disponibili.
 
-IT non deve correggere il codice.
+## Copie e memoria
 
-Deve però poter chiedere:
+Un oggetto da 8 GB non implica automaticamente che servano solo 8 GB di RAM. Durante una trasformazione possono coesistere temporaneamente l'oggetto originale, risultati intermedi e nuovi oggetti.
 
-> "È già stata verificata la possibilità di ottimizzare il codice?"
+Esempio concettuale:
 
----
+```text
+originale             8 GB
+copia                  8 GB
+intermedio             8 GB
+risultato              8 GB
+---------------------------
+picco teorico          32 GB
+```
 
+Questo **non significa** che ogni operazione R faccia una copia completa. R utilizza meccanismi che possono evitare copie non necessarie, e il consumo dipende dall'operazione e dalla struttura degli oggetti.
+
+Il principio IT è:
+
+> **dimensione dei dati ≠ automaticamente RAM necessaria.**
+
+Con worker separati il costo può crescere ulteriormente se ciascun worker mantiene una propria rappresentazione dei dati.
+
+Se un job usa 8 GB per worker, quattro worker potrebbero portare il consumo applicativo nell'ordine di 32 GB, prima di considerare sistema operativo, overhead e altre strutture.
+
+Per questo una richiesta di RAM deve riportare almeno il picco osservato e il numero di worker, non soltanto la dimensione del dataset.
 
 # Livello 3 — Parallelizzazione
 
