@@ -459,3 +459,349 @@ Possibili motivazioni:
 Ma la richiesta deve essere motivata dal **workload**.
 
 ---
+
+
+# Ambienti di esecuzione
+
+Un'applicazione R può essere eseguita in ambienti molto diversi. La scelta non dipende dal linguaggio, ma dai requisiti operativi.
+
+| Ambiente | Quando può essere adatto | Aspetti IT |
+|---|---|---|
+| PC dello sviluppatore | analisi individuale | gestione locale |
+| VM | job o servizio con isolamento | risorse assegnate, OS, patching |
+| server condiviso | più workload compatibili | contesa delle risorse |
+| server dedicato | workload persistente o particolare | costo e gestione dedicata |
+| container | deployment riproducibile | immagini, registry, runtime |
+| piattaforma applicativa | servizio gestito | vincoli e standard aziendali |
+
+## VM
+
+Una VM fornisce un ambiente isolato con un proprio sistema operativo, pur utilizzando hardware condiviso.
+
+Per IT può essere una soluzione utile quando servono:
+
+- un ambiente R separato;
+- una versione specifica del sistema operativo;
+- risorse definite;
+- accesso controllato alla rete;
+- gestione centralizzata.
+
+La VM non elimina il problema del dimensionamento: CPU e RAM assegnate devono comunque essere coerenti con il workload.
+
+## Container
+
+Un container permette di distribuire insieme applicazione e dipendenze in un ambiente standardizzato.
+
+Il modello concettuale è:
+
+```text
+immagine
+  ├── runtime R
+  ├── pacchetti
+  ├── librerie di sistema
+  └── applicazione
+       ↓
+container
+       ↓
+host / piattaforma
+```
+
+Il vantaggio principale per IT è la **riproducibilità dell'ambiente**.
+
+Il container non significa però «nessuna gestione»: restano da gestire immagini, vulnerabilità, aggiornamenti, registry, rete, storage, segreti e risorse.
+
+## Server condiviso o dedicato?
+
+La scelta dovrebbe dipendere dal workload.
+
+Un server condiviso può essere sufficiente quando i job sono sporadici e i carichi sono compatibili.
+
+Un server dedicato può essere motivato quando:
+
+- il carico è elevato o persistente;
+- i workload sono incompatibili tra loro;
+- sono necessari requisiti specifici;
+- l'isolamento è importante;
+- esiste un requisito di disponibilità.
+
+Prima di introdurre un server fisico è opportuno verificare se una VM o una piattaforma esistente soddisfi gli stessi requisiti.
+
+# Scheduler e job batch
+
+Molte applicazioni R non devono essere servizi permanenti. Devono semplicemente essere eseguite a intervalli prestabiliti.
+
+Un'architettura tipica è:
+
+```{mermaid}
+flowchart LR
+    S["Scheduler"] --> J["Job R"]
+    J --> DB["Oracle"]
+    J --> Q["Quarto"]
+    Q --> O["PDF / HTML"]
+    J --> L["Log"]
+```
+
+In questo scenario R è il motore di elaborazione, mentre lo scheduler è responsabile dell'avvio.
+
+## Cosa deve sapere IT
+
+Per un job batch bisogna conoscere:
+
+- frequenza;
+- durata attesa;
+- account di esecuzione;
+- sorgenti dati;
+- destinazione degli output;
+- timeout;
+- comportamento in caso di errore;
+- possibilità di riesecuzione;
+- logging;
+- notifiche.
+
+È importante non confondere il job con lo scheduler: R può sapere **come elaborare**, mentre lo scheduler decide **quando eseguire**.
+
+# R + Oracle
+
+Oracle e R possono avere responsabilità diverse.
+
+```{mermaid}
+flowchart LR
+    R["R"] -->|query| O["Oracle"]
+    O -->|dati necessari| R
+    R --> M["Analisi / modello"]
+    M --> Q["Output"]
+```
+
+Una buona architettura evita di trasferire a R dati che Oracle può filtrare o aggregare efficacemente.
+
+## Esempio
+
+Invece di:
+
+```text
+Oracle
+  ↓
+100 GB
+  ↓
+R
+  ↓
+filtra
+  ↓
+aggregazione
+```
+
+può essere preferibile:
+
+```text
+Oracle
+  ↓
+filtro + aggregazione
+  ↓
+500 MB
+  ↓
+R
+  ↓
+analisi specialistica
+```
+
+La scelta va verificata con misure: non tutte le operazioni devono essere spostate nel database.
+
+# R + APEX
+
+Quando Oracle APEX è già presente nell'organizzazione, può essere naturale usarlo per la parte gestionale e R per la parte analitica.
+
+```{mermaid}
+flowchart LR
+    U["Utente"] --> A["APEX"]
+    A --> O["Oracle"]
+    A --> R["R"]
+    R --> M["Analisi / modello"]
+    M --> A
+```
+
+APEX può gestire:
+
+- interfaccia;
+- autenticazione e autorizzazioni secondo l'architettura aziendale;
+- CRUD;
+- workflow;
+- transazioni.
+
+R può gestire:
+
+- modelli statistici;
+- simulazioni;
+- algoritmi scientifici;
+- elaborazioni specialistiche.
+
+Questo evita di ricostruire in R funzionalità che l'organizzazione possiede già.
+
+# R + Quarto
+
+Quarto è particolarmente adatto quando il risultato dell'elaborazione è un documento riproducibile.
+
+```{mermaid}
+flowchart LR
+    S["Scheduler"] --> R["R"]
+    R --> Q["Quarto"]
+    Q --> PDF["PDF"]
+    Q --> HTML["HTML"]
+    R --> DB["Oracle"]
+```
+
+IT deve distinguere:
+
+- codice di analisi;
+- dati;
+- configurazione;
+- rendering;
+- output;
+- scheduling.
+
+La domanda operativa diventa quindi: **se il rendering fallisce alle 03:00, come lo sappiamo e come interveniamo?**
+
+# R + Shiny
+
+Shiny trasforma R in un'applicazione web interattiva.
+
+```{mermaid}
+flowchart LR
+    B["Browser"] --> W["Web server / proxy"]
+    W --> S["Shiny"]
+    S --> R["R"]
+    R --> O["Oracle"]
+```
+
+Qui il modello operativo è diverso dal batch.
+
+Un servizio deve gestire:
+
+- utenti contemporanei;
+- sessioni;
+- autenticazione;
+- timeout;
+- consumo di RAM;
+- CPU;
+- errori;
+- aggiornamenti;
+- disponibilità.
+
+La domanda «quanto RAM serve?» non può essere risposta guardando soltanto un'esecuzione singola: bisogna considerare la concorrenza.
+
+# R come API
+
+Un'applicazione R può essere esposta tramite API HTTP.
+
+```{mermaid}
+flowchart LR
+    C["Client"] --> G["Gateway / reverse proxy"]
+    G --> A["API R"]
+    A --> R["Logica R"]
+    R --> O["Oracle"]
+    R --> C
+```
+
+In questo caso R diventa un componente di servizio.
+
+IT deve valutare:
+
+- autenticazione e autorizzazione;
+- HTTPS;
+- timeout;
+- limiti di richiesta;
+- concorrenza;
+- logging;
+- monitoring;
+- gestione degli errori;
+- disponibilità;
+- versioning dell'API.
+
+Il fatto che un codice R possa essere trasformato in API non significa automaticamente che questa sia l'architettura più appropriata.
+
+# Confini tra componenti
+
+Una buona architettura assegna responsabilità chiare.
+
+| Responsabilità | Componente possibile |
+|---|---|
+| persistenza | Oracle |
+| query e aggregazioni relazionali | Oracle |
+| interfaccia gestionale | APEX / piattaforma aziendale |
+| analisi scientifica | R |
+| report riproducibile | Quarto |
+| scheduling | scheduler aziendale |
+| esposizione HTTP | API gateway / reverse proxy |
+| autenticazione | infrastruttura aziendale |
+| monitoring | piattaforma IT |
+| storage | infrastruttura aziendale |
+
+Non è una tabella normativa: la soluzione concreta dipende dalle piattaforme disponibili e dai requisiti.
+
+Il principio è evitare che un singolo componente assuma responsabilità che appartengono più naturalmente a un altro.
+
+# Un esempio completo
+
+Consideriamo un processo che ogni notte:
+
+1. legge dati da Oracle;
+2. esegue un modello statistico in R;
+3. produce un report Quarto;
+4. salva il PDF;
+5. notifica l'esito.
+
+Un'architettura possibile è:
+
+```{mermaid}
+flowchart TD
+    S["Scheduler"] --> J["Job R"]
+    J --> O["Oracle"]
+    J --> M["Modello R"]
+    M --> Q["Quarto"]
+    Q --> P["PDF"]
+    J --> L["Log / monitoring"]
+    L --> N["Notifica"]
+```
+
+Qui non serve trasformare R in un sistema di scheduling, database, autenticazione o monitoring. R svolge il lavoro specialistico per cui è stato scelto.
+
+# Come scegliere tra le architetture
+
+Una scheda utile per IT:
+
+| Domanda | Risposta da ottenere |
+|---|---|
+| È interattivo? | batch / web / API |
+| Quanti utenti? | uno / pochi / molti |
+| È schedulato? | frequenza e finestra temporale |
+| Deve essere sempre disponibile? | requisito di disponibilità |
+| Quanto dura? | durata baseline |
+| Quanta RAM usa? | picco |
+| Da dove arrivano i dati? | DB / file / API |
+| Dove devono restare i dati? | requisiti di sicurezza |
+| Chi autentica l'utente? | componente aziendale |
+| Chi esegue lo scheduling? | scheduler |
+| Chi monitora? | piattaforma / team |
+| Chi mantiene il codice? | owner applicativo |
+
+La risposta a queste domande permette di scegliere l'architettura prima di discutere la macchina.
+
+# Una regola pratica
+
+Quando una proposta architetturale contiene la frase:
+
+> «Facciamo tutto in R»
+
+è utile scomporla.
+
+Chiedere:
+
+- R deve elaborare?
+- R deve conservare dati?
+- R deve autenticare?
+- R deve fare scheduling?
+- R deve esporre il servizio?
+- R deve produrre il documento?
+- R deve monitorare se stesso?
+
+Spesso la risposta corretta è che R deve fare **una parte** del lavoro.
+
