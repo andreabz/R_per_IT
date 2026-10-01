@@ -17,8 +17,8 @@ Questi termini sono spesso utilizzati come sinonimi.
 Non lo sono.
 
 ```{mermaid}
-#| label: mermaid-02-runtime-01
-#| echo: false
+%%| label: mermaid-02-runtime-01
+%%| echo: false
 flowchart TD
     S["Server"]
     S --> CPU["CPU"]
@@ -107,8 +107,8 @@ Per IT la domanda importante è:
 Quando il lavoro può essere suddiviso:
 
 ```{mermaid}
-#| label: mermaid-02-runtime-02
-#| echo: false
+%%| label: mermaid-02-runtime-02
+%%| echo: false
 flowchart TD
     JOB["Elaborazione"]
     JOB --> W1["Worker 1"]
