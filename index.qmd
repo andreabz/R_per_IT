@@ -42,9 +42,9 @@ Gestione
 
 ## Come usare questo materiale
 
-Il sito non vuole essere un manuale di programmazione R. È una guida per **leggere richieste tecniche e porre le domande corrette**.
+Questo materiale non vuole essere un manuale di programmazione R. È una guida per **leggere richieste tecniche e porre le domande corrette**.
 
-Il materiale è organizzato come un piccolo manuale, con una progressione dal runtime alla gestione operativa:
+Il materiale è organizzato come un manuale tecnico, con una progressione dal runtime alla gestione operativa:
 
 1. **Contesto e ambiente R** — che cosa vede IT quando arriva una richiesta R.
 2. **Runtime, processi e parallelismo** — processi, core, thread, worker e risorse.
@@ -66,7 +66,7 @@ Il materiale è organizzato come un piccolo manuale, con una progressione dal ru
 
 ## Nota
 
-Il file `materiale.qmd` originale viene mantenuto nel repository come sorgente della versione a slide. Il sito costituisce la versione estesa e consultabile del corso.
+Il materiale nasce come corso per l'IT e viene qui sviluppato in forma estesa. La versione a slide può essere mantenuta separatamente come supporto alla formazione.
 
 
 ## Modello operativo del corso
