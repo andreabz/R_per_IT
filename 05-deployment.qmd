@@ -180,7 +180,7 @@ Non è necessario automatizzare tutto dal primo giorno. Anche una pipeline che i
 
 # Il ruolo del workflow GitHub Actions
 
-Per questo progetto il workflow di GitHub Actions può essere usato come esempio di CI/CD.
+Per questo progetto il workflow di GitHub Actions è un esempio concreto di CI/CD. In un'organizzazione il medesimo processo può essere implementato con GitHub Actions o con un'altra piattaforma aziendale: il principio da governare è la pipeline, non lo specifico prodotto.
 
 Il principio è:
 
@@ -660,7 +660,7 @@ Possibili situazioni:
 
 L'infrastruttura va dimensionata dopo aver compreso il carico e il requisito operativo.
 
-# Deployment: le domande fondamentali
+## Le domande fondamentali
 
 Quando un prodotto R passa in produzione:
 
