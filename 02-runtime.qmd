@@ -31,12 +31,12 @@ flowchart TD
 
 # Runtime
 
-Il runtime, o tempo di esecuzione, è l'insieme dell'ambiente software e 
-del tempo in cui il codice viene effettivamente eseguito dalla CPU, 
-in contrapposizione al *compile time* (quando il codice viene solo tradotto o controllato).
+Il termine **runtime** può indicare due concetti distinti:
 
-Quando parliamo di performance in R, stiamo quasi sempre parlando di ottimizzare il runtime.
-Ma per farlo, dobbiamo capire come il runtime interagisce con l'hardware.
+- **runtime environment**: l'ambiente software necessario all'esecuzione, come R, pacchetti, librerie di sistema, driver e sistema operativo;
+- **execution time**: il tempo necessario per completare un'elaborazione.
+
+Nel contesto del corso, quando parliamo di performance ci riferiamo soprattutto al secondo concetto. Per analizzarlo dobbiamo capire come il codice utilizza processi, thread, worker e risorse hardware.
 
 
 # Processo
@@ -100,29 +100,6 @@ Per IT la domanda importante è:
 > **Quanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?**
 
 
-# Processo R e core
-
-Un modello semplificato:
-
-```{mermaid}
-flowchart LR
-    R["Processo R"] --> CPU["CPU"]
-    CPU --> C["Core"]
-```
-
-Se il lavoro è prevalentemente seriale:
-
-```text
-1 processo
-    ↓
-1 unità di esecuzione
-    ↓
-1 core prevalentemente utilizzato
-```
-
-Aggiungere core al server potrebbe non cambiare significativamente il tempo.
-
-
 # Parallelismo
 
 Quando il lavoro può essere suddiviso:
@@ -170,24 +147,29 @@ ogni singolo worker caricherà 2 GB.
 Supponiamo di misurare:
 
 | Worker | Tempo | RAM |
-|:|:|:|
+|:---:|---:|---:|
 | 1 | 40 min | 4 GB |
 | 2 | 23 min | 8 GB |
 | 4 | 14 min | 16 GB |
 | 8 | 12 min | 32 GB |
 
-Il passaggio da 1 a 4 worker è significativo.
+Il passaggio da 1 a 4 worker è significativo; quello da 4 a 8 molto meno.
 
-Il passaggio da 4 a 8 molto meno.
+La scalabilità reale può essere limitata da:
 
-IT dovrebbe quindi chiedere:
+- parti seriali;
+- sincronizzazione;
+- trasferimento dati;
+- I/O;
+- database;
+- overhead dei worker;
+- contesa sulle risorse.
 
-> "Perché servono 16 core?"
+Un benchmark reale è quindi più informativo di una stima basata soltanto sul numero di core.
 
-non:
+IT dovrebbe chiedere:
 
-> "Possiamo procurare 16 core?"
-
+> **Quale beneficio misurato otteniamo aumentando i worker e quale costo aggiuntivo introduciamo in RAM, I/O e database?**
 
 # Memoria di processo e picco di RAM
 
@@ -286,31 +268,6 @@ Per IT la domanda non è quindi soltanto:
 ma anche:
 
 > «Quanti thread utilizza ciascun worker?»
-
-# Processo R, core e parallelismo
-
-Il modello semplificato:
-
-~~~{mermaid}
-flowchart LR
-    R["Processo R"] --> CPU["CPU"]
-    CPU --> C["Core"]
-~~~
-
-Se il lavoro è prevalentemente seriale, aggiungere core al server può cambiare poco il tempo di esecuzione.
-
-Se il lavoro è parallelizzabile o utilizza librerie multithread, più core possono essere utilizzati. Il beneficio deve però essere misurato.
-
-Non esiste una regola universale secondo cui il numero ottimale di worker sia «numero di core meno uno o due». Dipende da:
-
-- CPU disponibile;
-- RAM;
-- I/O;
-- database;
-- rete;
-- thread per worker;
-- natura del carico;
-- concorrenza con altri servizi.
 
 # Parallelismo e memoria
 
