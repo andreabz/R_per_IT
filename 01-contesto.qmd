@@ -39,7 +39,7 @@ La domanda che dovrebbe sorgere è:
 
 # Il caso guida: l'ecologo
 
-Un ricercatore utilizza R per una elaborazione sui dati ambientali.
+Un ricercatore utilizza R per un'elaborazione sui dati ambientali.
 
 Attualmente:
 
@@ -144,7 +144,7 @@ Una richiesta di "installare un pacchetto" può quindi avere conseguenze anche s
 # Principali pacchetti da conoscere
 
 | Pacchetto | Utilizzo principale |
-|||
+|---|---|---|
 | `data.table` | Manipolazione efficiente dei dati |
 | `ggplot2` | Visualizzazione |
 | `DBI` | Interfaccia standard verso database |
