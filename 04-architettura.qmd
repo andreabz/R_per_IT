@@ -1,16 +1,13 @@
 ---
 title: "Architettura e integrazione"
 subtitle: "R, database, APEX, Quarto, Shiny, API e server"
-toc: true
-toc-depth: 2
-number-sections: false
 ---
 
-# Introduzione
+## Perché questo capitolo
 
 Questo capitolo affronta il passaggio dalla singola elaborazione all'architettura di sistema. La domanda non è soltanto dove eseguire R, ma quali responsabilità assegnare a R e quali lasciare ai componenti aziendali già disponibili. La sequenza va quindi dal requisito al contesto di esecuzione, poi alle integrazioni e infine alla scelta architetturale.
 
-# Prima di scegliere l'architettura
+## Prima di scegliere l'architettura
 
 La domanda non è «possiamo farlo in R?». Molte cose sono tecnicamente possibili.
 
@@ -32,7 +29,7 @@ Monitoring   → controllo operativo
 
 Questo evita di costruire in R componenti che l'organizzazione possiede già.
 
-# Richiesta di hardware: informazioni minime
+## Richiesta di hardware: informazioni minime
 
 | Informazione | Esempio |
 |---|---|
@@ -51,11 +48,11 @@ Questi dati sono molto più utili di:
 
 > "Servono 16 core."
 
-# Errori comuni
+## Errori comuni
 
 Gli errori architetturali non consistono necessariamente nell'usare una tecnologia «sbagliata». Più spesso consistono nell'assegnare a un componente una responsabilità che un altro componente aziendale gestisce meglio.
 
-## Usare R come database
+### Usare R come database
 
 R può leggere e scrivere CSV, RDS, Parquet e altri formati. Questi formati possono essere appropriati per scambio dati, snapshot, risultati intermedi o archivi.
 
@@ -67,7 +64,7 @@ La domanda per IT è:
 
 Se Oracle svolge già questo ruolo, in genere è preferibile che R lo utilizzi invece di creare una copia persistente parallela.
 
-## Usare R come scheduler
+### Usare R come scheduler
 
 Uno script R può avviare altri script per semplici orchestrazioni locali. In produzione, quando esiste uno scheduler aziendale, è normalmente più chiaro affidargli calendario, dipendenze, retry, timeout, logging e notifiche.
 
@@ -75,7 +72,7 @@ Il principio è:
 
 > **R decide come elaborare; lo scheduler decide quando e in quali condizioni eseguire il lavoro.**
 
-## Usare Shiny come intera architettura web
+### Usare Shiny come intera architettura web
 
 Shiny può costituire il livello applicativo, ma non deve necessariamente essere anche il livello di esposizione e sicurezza.
 
@@ -83,7 +80,7 @@ In funzione dell'architettura aziendale, un reverse proxy o un gateway può gest
 
 Non è quindi corretto considerare «Shiny senza reverse proxy» un errore universale: la questione è capire quali responsabilità sono già coperte dalla piattaforma e quali devono essere gestite dall'applicazione.
 
-## Duplicare dati tra R e database
+### Duplicare dati tra R e database
 
 Copiare dati dal database a R può essere necessario, ma una copia persistente non dovrebbe essere creata senza una motivazione.
 
@@ -105,7 +102,7 @@ Quando possibile, conviene trasferire a R solo i dati necessari e spostare nel d
 | Shiny come intero web stack | sicurezza, traffico, esposizione | Chi gestisce TLS e autenticazione? |
 | Copie R + database | consistenza e lineage | Perché questa copia deve esistere? |
 
-# Ambienti di esecuzione
+## Ambienti di esecuzione
 
 Un'applicazione R può essere eseguita in ambienti molto diversi. La scelta non dipende dal linguaggio, ma dai requisiti operativi.
 
@@ -118,7 +115,7 @@ Un'applicazione R può essere eseguita in ambienti molto diversi. La scelta non 
 | container | deployment riproducibile | immagini, registry, runtime |
 | piattaforma applicativa | servizio gestito | vincoli e standard aziendali |
 
-## VM
+### VM
 
 Una VM fornisce un ambiente isolato con un proprio sistema operativo, pur utilizzando hardware condiviso.
 
@@ -132,7 +129,7 @@ Per IT può essere una soluzione utile quando servono:
 
 La VM non elimina il problema del dimensionamento: CPU e RAM assegnate devono comunque essere coerenti con il workload.
 
-## Container
+### Container
 
 In questo capitolo il container va considerato come **scelta architetturale di esecuzione**: stabilisce come isolare e distribuire il runtime dell'applicazione rispetto all'host e alla piattaforma.
 
@@ -162,7 +159,7 @@ Il container non significa però «nessuna gestione»:
 restano da gestire immagini, vulnerabilità, aggiornamenti, 
 registry, rete, storage, segreti e risorse.
 
-## Server condiviso o dedicato?
+### Server condiviso o dedicato?
 
 La scelta dovrebbe dipendere dal workload.
 
@@ -178,7 +175,7 @@ Un server dedicato può essere motivato quando:
 
 Prima di introdurre un server fisico è opportuno verificare se una VM o una piattaforma esistente soddisfi gli stessi requisiti.
 
-# Scheduler e job batch
+## Scheduler e job batch
 
 Molte applicazioni R non devono essere servizi permanenti. Devono semplicemente essere eseguite a intervalli prestabiliti.
 
@@ -197,7 +194,7 @@ flowchart LR
 
 In questo scenario R è il motore di elaborazione, mentre lo scheduler è responsabile dell'avvio.
 
-## Cosa deve sapere IT
+### Cosa deve sapere IT
 
 Per un job batch bisogna conoscere:
 
@@ -214,7 +211,7 @@ Per un job batch bisogna conoscere:
 
 È importante non confondere il job con lo scheduler: R può sapere **come elaborare**, mentre lo scheduler decide **quando eseguire**.
 
-# R + Oracle
+## R + Oracle
 
 Oracle e R possono avere responsabilità diverse.
 
@@ -230,7 +227,7 @@ flowchart LR
 
 Una buona architettura evita di trasferire a R dati che Oracle può filtrare o aggregare efficacemente.
 
-## Esempio
+### Esempio
 
 Invece di:
 
@@ -262,7 +259,7 @@ analisi specialistica
 
 La scelta va verificata con misure: non tutte le operazioni devono essere spostate nel database.
 
-# R + APEX
+## R + APEX
 
 Quando Oracle APEX è già presente nell'organizzazione, può essere naturale usarlo per la parte gestionale e R per la parte analitica.
 
@@ -294,7 +291,7 @@ R può gestire:
 
 Questo evita di ricostruire in R funzionalità che l'organizzazione possiede già.
 
-# R + Quarto
+## R + Quarto
 
 Scenario tipico:
 
@@ -319,7 +316,7 @@ Domande IT:
 - cosa succede se il job fallisce?
 - chi riceve l'output?
 
-# R + Shiny
+## R + Shiny
 
 Shiny trasforma R in una applicazione web interattiva.
 
@@ -346,7 +343,7 @@ IT deve quindi occuparsi di questioni ulteriori:
 Una Shiny per tre utenti interni non ha necessariamente gli stessi requisiti 
 di una applicazione usata da centinaia di utenti.
 
-# R come API
+## R come API
 
 Un'applicazione R può essere esposta tramite API HTTP.
 
@@ -378,7 +375,7 @@ IT deve valutare:
 
 Il fatto che un codice R possa essere trasformato in API non significa automaticamente che questa sia l'architettura più appropriata.
 
-# Confini tra componenti
+## Confini tra componenti
 
 Una buona architettura assegna responsabilità chiare.
 
@@ -399,7 +396,7 @@ Non è una tabella normativa: la soluzione concreta dipende dalle piattaforme di
 
 Il principio è evitare che un singolo componente assuma responsabilità che appartengono più naturalmente a un altro.
 
-# Costi e trade-off
+## Costi e trade-off
 
 Un'architettura va valutata sul **costo complessivo di esercizio**, non soltanto sul tempo necessario per svilupparla.
 
@@ -424,7 +421,7 @@ ma anche:
 
 > **«Quanto costa mantenerla, operarla, proteggerla e sostituirla se necessario?»**
 
-# Un esempio completo
+## Un esempio completo
 
 Consideriamo un processo che ogni notte:
 
@@ -451,7 +448,7 @@ flowchart TD
 
 Qui non serve trasformare R in un sistema di scheduling, database, autenticazione o monitoring. R svolge il lavoro specialistico per cui è stato scelto.
 
-# Come scegliere tra le architetture
+## Come scegliere tra le architetture
 
 Una scheda utile per IT:
 
@@ -472,7 +469,7 @@ Una scheda utile per IT:
 
 La risposta a queste domande permette di scegliere l'architettura prima di discutere la macchina.
 
-# Una regola pratica
+## Una regola pratica
 
 Quando una proposta architetturale contiene la frase:
 
