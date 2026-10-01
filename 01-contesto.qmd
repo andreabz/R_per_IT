@@ -56,7 +56,8 @@ IT deve capire:
 6. quale infrastruttura è realmente necessaria.
 
 
-## R dal punto di vista di IT
+## Che cosa vede IT quando arriva una richiesta R
+
 
 Per IT, R può comparire in molti modi diversi:
 
@@ -78,7 +79,7 @@ flowchart TD
 Non tutte queste situazioni hanno gli stessi requisiti infrastrutturali.
 
 
-## La domanda fondamentale
+### La domanda fondamentale
 
 > **Che ruolo ha R nel sistema?**
 
@@ -96,7 +97,8 @@ Può essere:
 La risposta cambia completamente la valutazione IT.
 
 
-## R non è RStudio
+## Separare ambiente di sviluppo e runtime
+
 
 ```{mermaid}
 %%| label: mermaid-01-contesto-02
@@ -118,7 +120,8 @@ flowchart LR
 Un server può eseguire R senza RStudio.
 
 
-## Che cosa contiene un ambiente R?
+## Capire l'ambiente software
+
 
 Un ambiente R reale comprende più livelli:
 
@@ -138,7 +141,8 @@ flowchart TD
 Una richiesta di "installare un pacchetto" può quindi avere conseguenze anche sul sistema operativo.
 
 
-## Principali pacchetti da conoscere
+## Riconoscere le dipendenze
+
 
 | Pacchetto | Utilizzo principale |
 |---|---|---|
@@ -163,7 +167,7 @@ IT non deve conoscere l'API di questi pacchetti.
 Deve riconoscerne il **ruolo**.
 
 
-## Una richiesta di pacchetto non è una semplice installazione
+### Una richiesta di pacchetto non è una semplice installazione
 
 Uno sviluppatore può chiedere:
 
@@ -183,7 +187,7 @@ IT deve poter chiedere:
 - Come verrà aggiornato?
 
 
-## Dipendenze
+### Dipendenze
 
 ```{mermaid}
 %%| label: mermaid-01-contesto-04
@@ -208,7 +212,7 @@ Può essere:
 Per questo la gestione dell'ambiente è parte del deployment.
 
 
-## `renv`: perché interessa a IT
+### `renv`: perché interessa a IT
 
 `renv` permette di associare a un progetto R un ambiente di pacchetti riproducibile.
 
@@ -229,7 +233,8 @@ Questo facilita:
 - reinstallazione;
 - trasferimento tra ambienti.
 
-## Library, repository, ambiente e lockfile
+## Gestire l'ambiente e la riproducibilità
+
 
 Per evitare ambiguità, IT dovrebbe distinguere quattro concetti:
 
@@ -256,7 +261,7 @@ applicazione
 
 La baseline deve identificare anche i componenti che il lockfile non copre, come sistema operativo, librerie native, driver, client database e configurazione.
 
-## Gestione delle librerie e riproducibilità
+### Gestione delle librerie e riproducibilità
 
 Per IT, una libreria R non è semplicemente una cartella che contiene file.
 
@@ -288,7 +293,7 @@ progetto
 
 Le modalità concrete dipendono dal sistema operativo e dalla configurazione di R. Il punto IT è stabilire **chi può modificare una library, quali versioni contiene e quale ambiente deve essere utilizzato dall'applicazione**.
 
-### Librerie condivise e multiutente
+#### Librerie condivise e multiutente
 
 Su un computer utilizzato da più persone, installare o aggiornare un pacchetto in una library condivisa può modificare il comportamento di applicazioni diverse.
 
@@ -345,7 +350,7 @@ ma:
 
 > **«Quale versione viene caricata da questa applicazione, da quale library, chi può modificarla e quale processo autorizza la modifica?»**
 
-### Ambiente controllato del progetto
+#### Ambiente controllato del progetto
 
 Per un progetto R è preferibile poter dichiarare in modo esplicito:
 
@@ -371,7 +376,7 @@ Il lockfile non congela però automaticamente tutto l'ambiente di esecuzione: si
 
 Questa distinzione diventa importante quando il risultato prodotto dal software deve essere **ricostruibile e verificabile nel tempo**.
 
-### Dal computer dello sviluppatore alla baseline software
+#### Dal computer dello sviluppatore alla baseline software
 
 Una richiesta di installazione può essere trasformata in una descrizione controllata dell'ambiente:
 
