@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Contesto e ambiente R – R per l’IT</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-29e2c20b02301cfff04dc8050bf30c7e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-346f7653faf71f503ba44a80ac96ac51.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">R per l’IT</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Corso</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/andreabz/R_per_IT"> 
+<span class="menu-text">Repository</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-contesto.html">1. Contesto e ambiente R</a></li><li class="breadcrumb-item"><a href="./01-contesto.html">Contesto e ambiente R</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">1. Contesto e ambiente R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-contesto.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Contesto e ambiente R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">2. Runtime, processi e parallelismo</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-runtime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Runtime, processi e parallelismo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">3. Performance e diagnostica</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-performance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Performance e diagnostica</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">4. Architettura e integrazione</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architettura.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Architettura e integrazione</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">5. Deployment e gestione operativa</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-deployment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Deployment e gestione operativa</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">6. Governance e valutazione delle richieste</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-governance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Governance e valutazione delle richieste</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">7. Caso finale e checklist</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-caso-finale.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Caso finale e checklist</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introduzione" id="toc-introduzione" class="nav-link active" data-scroll-target="#introduzione">Introduzione</a></li>
+  <li><a href="#obiettivi-della-giornata" id="toc-obiettivi-della-giornata" class="nav-link" data-scroll-target="#obiettivi-della-giornata">Obiettivi della giornata</a></li>
+  <li><a href="#il-problema-dal-punto-di-vista-it" id="toc-il-problema-dal-punto-di-vista-it" class="nav-link" data-scroll-target="#il-problema-dal-punto-di-vista-it">Il problema dal punto di vista IT</a></li>
+  <li><a href="#il-caso-guida-lecologo" id="toc-il-caso-guida-lecologo" class="nav-link" data-scroll-target="#il-caso-guida-lecologo">Il caso guida: l’ecologo</a></li>
+  <li><a href="#r-dal-punto-di-vista-di-it" id="toc-r-dal-punto-di-vista-di-it" class="nav-link" data-scroll-target="#r-dal-punto-di-vista-di-it">R dal punto di vista di IT</a></li>
+  <li><a href="#la-domanda-fondamentale" id="toc-la-domanda-fondamentale" class="nav-link" data-scroll-target="#la-domanda-fondamentale">La domanda fondamentale</a></li>
+  <li><a href="#r-non-è-rstudio" id="toc-r-non-è-rstudio" class="nav-link" data-scroll-target="#r-non-è-rstudio">R non è RStudio</a></li>
+  <li><a href="#che-cosa-contiene-un-ambiente-r" id="toc-che-cosa-contiene-un-ambiente-r" class="nav-link" data-scroll-target="#che-cosa-contiene-un-ambiente-r">Che cosa contiene un ambiente R?</a></li>
+  <li><a href="#principali-pacchetti-da-conoscere" id="toc-principali-pacchetti-da-conoscere" class="nav-link" data-scroll-target="#principali-pacchetti-da-conoscere">Principali pacchetti da conoscere</a></li>
+  <li><a href="#una-richiesta-di-pacchetto-non-è-una-semplice-installazione" id="toc-una-richiesta-di-pacchetto-non-è-una-semplice-installazione" class="nav-link" data-scroll-target="#una-richiesta-di-pacchetto-non-è-una-semplice-installazione">Una richiesta di pacchetto non è una semplice installazione</a></li>
+  <li><a href="#dipendenze" id="toc-dipendenze" class="nav-link" data-scroll-target="#dipendenze">Dipendenze</a></li>
+  <li><a href="#renv-perché-interessa-a-it" id="toc-renv-perché-interessa-a-it" class="nav-link" data-scroll-target="#renv-perché-interessa-a-it"><code>renv</code>: perché interessa a IT</a></li>
+  <li><a href="#library-repository-ambiente-e-lockfile" id="toc-library-repository-ambiente-e-lockfile" class="nav-link" data-scroll-target="#library-repository-ambiente-e-lockfile">Library, repository, ambiente e lockfile</a></li>
+  <li><a href="#gestione-delle-librerie-e-riproducibilità" id="toc-gestione-delle-librerie-e-riproducibilità" class="nav-link" data-scroll-target="#gestione-delle-librerie-e-riproducibilità">Gestione delle librerie e riproducibilità</a>
+  <ul class="collapse">
+  <li><a href="#librerie-condivise-e-multiutente" id="toc-librerie-condivise-e-multiutente" class="nav-link" data-scroll-target="#librerie-condivise-e-multiutente">Librerie condivise e multiutente</a></li>
+  <li><a href="#ambiente-controllato-del-progetto" id="toc-ambiente-controllato-del-progetto" class="nav-link" data-scroll-target="#ambiente-controllato-del-progetto">Ambiente controllato del progetto</a></li>
+  <li><a href="#dal-computer-dello-sviluppatore-alla-baseline-software" id="toc-dal-computer-dello-sviluppatore-alla-baseline-software" class="nav-link" data-scroll-target="#dal-computer-dello-sviluppatore-alla-baseline-software">Dal computer dello sviluppatore alla baseline software</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-contesto.html">1. Contesto e ambiente R</a></li><li class="breadcrumb-item"><a href="./01-contesto.html">Contesto e ambiente R</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Contesto e ambiente R</h1>
+<p class="subtitle lead">Che cosa deve sapere IT prima di valutare una soluzione R</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduzione" class="level1">
+<h1>Introduzione</h1>
+<p>Questo capitolo definisce il punto di partenza: per IT, una soluzione R non è semplicemente un programma da installare, ma un insieme di runtime, pacchetti, dipendenze e risorse collocato in un contesto operativo. Prima di parlare di CPU, RAM o server è quindi necessario capire che ruolo svolge R e quali componenti richiede.</p>
+</section>
+<section id="obiettivi-della-giornata" class="level1">
+<h1>Obiettivi della giornata</h1>
+<p>L’obiettivo non è imparare a programmare in R.</p>
+<p>L’obiettivo è mettere IT nelle condizioni di:</p>
+<ul>
+<li>capire che cosa sta chiedendo uno sviluppatore R;</li>
+<li>valutare se una richiesta è tecnicamente motivata;</li>
+<li>chiedere la diagnostica necessaria;</li>
+<li>distinguere problemi applicativi da problemi infrastrutturali;</li>
+<li>valutare richieste di CPU, RAM, storage e server;</li>
+<li>capire come R si integra con i sistemi esistenti;</li>
+<li>riconoscere quando R è adatto e quando esistono alternative più naturali.</li>
+</ul>
+</section>
+<section id="il-problema-dal-punto-di-vista-it" class="level1">
+<h1>Il problema dal punto di vista IT</h1>
+<p>Una richiesta può arrivare così:</p>
+<blockquote class="blockquote">
+<p>“L’elaborazione R è troppo lenta.<br>
+Servono 16 core, 64 GB di RAM e l’installazione di alcuni pacchetti.”</p>
+</blockquote>
+<p>La domanda che dovrebbe sorgere è:</p>
+<blockquote class="blockquote">
+<p><strong>“Quali evidenze giustificano questa richiesta?”</strong></p>
+</blockquote>
+</section>
+<section id="il-caso-guida-lecologo" class="level1">
+<h1>Il caso guida: l’ecologo</h1>
+<p>Un ricercatore utilizza R per un’elaborazione sui dati ambientali.</p>
+<p>Attualmente:</p>
+<ul>
+<li>l’elaborazione viene eseguita su un PC;</li>
+<li>dura diverse ore;</li>
+<li>il PC diventa poco utilizzabile durante l’elaborazione;</li>
+<li>viene richiesto un server dedicato;</li>
+<li>la richiesta iniziale è: 16 CPU e 64 GB RAM.</li>
+</ul>
+<p>IT deve capire:</p>
+<ol type="1">
+<li>qual è il problema;</li>
+<li>quale risorsa viene realmente saturata;</li>
+<li>se il codice può essere migliorato;</li>
+<li>se il parallelismo è possibile;</li>
+<li>se il database è coinvolto;</li>
+<li>quale infrastruttura è realmente necessaria.</li>
+</ol>
+</section>
+<section id="r-dal-punto-di-vista-di-it" class="level1">
+<h1>R dal punto di vista di IT</h1>
+<p>Per IT, R può comparire in molti modi diversi:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="mermaid-01-contesto-01">
+<div>
+<pre class="mermaid mermaid-js" data-label="mermaid-01-contesto-01">flowchart TD
+    R["R"]
+
+    R --&gt; SCRIPT["Script"]
+    R --&gt; BATCH["Job batch"]
+    R --&gt; REPORT["Report Quarto"]
+    R --&gt; SHINY["Web app Shiny"]
+    R --&gt; API["API HTTP"]
+    R --&gt; DB["Client database"]
+    R --&gt; MODEL["Modello / analisi"]
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p>Non tutte queste situazioni hanno gli stessi requisiti infrastrutturali.</p>
+</section>
+<section id="la-domanda-fondamentale" class="level1">
+<h1>La domanda fondamentale</h1>
+<blockquote class="blockquote">
+<p><strong>Che ruolo ha R nel sistema?</strong></p>
+</blockquote>
+<p>Può essere:</p>
+<ul>
+<li>uno strumento personale;</li>
+<li>un motore di calcolo;</li>
+<li>un job batch;</li>
+<li>un generatore di report;</li>
+<li>un componente di un’applicazione;</li>
+<li>un servizio API;</li>
+<li>un client verso Oracle;</li>
+<li>un componente di una pipeline.</li>
+</ul>
+<p>La risposta cambia completamente la valutazione IT.</p>
+</section>
+<section id="r-non-è-rstudio" class="level1">
+<h1>R non è RStudio</h1>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="mermaid-01-contesto-02">
+<div>
+<pre class="mermaid mermaid-js" data-label="mermaid-01-contesto-02">flowchart LR
+    U["Utente"] --&gt; RS["RStudio"]
+    RS --&gt; R["R runtime"]
+    R --&gt; P["Pacchetti"]
+    R --&gt; OS["Sistema operativo"]
+    R --&gt; CPU["CPU"]
+    R --&gt; RAM["RAM"]
+    R --&gt; IO["Storage / rete"]
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p><strong>RStudio</strong> è un ambiente di sviluppo.</p>
+<p><strong>R</strong> è il runtime che esegue il codice.</p>
+<p>Un server può eseguire R senza RStudio.</p>
+</section>
+<section id="che-cosa-contiene-un-ambiente-r" class="level1">
+<h1>Che cosa contiene un ambiente R?</h1>
+<p>Un ambiente R reale comprende più livelli:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="mermaid-01-contesto-03">
+<div>
+<pre class="mermaid mermaid-js" data-label="mermaid-01-contesto-03">flowchart TD
+    APP["Codice applicativo"]
+    APP --&gt; R["R"]
+    R --&gt; PKG["Pacchetti R"]
+    PKG --&gt; DEP["Dipendenze"]
+    DEP --&gt; SYS["Librerie di sistema"]
+    SYS --&gt; OS["Sistema operativo"]
+    OS --&gt; HW["Hardware"]
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p>Una richiesta di “installare un pacchetto” può quindi avere conseguenze anche sul sistema operativo.</p>
+</section>
+<section id="principali-pacchetti-da-conoscere" class="level1">
+<h1>Principali pacchetti da conoscere</h1>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Pacchetto</th>
+<th>Utilizzo principale</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>data.table</code></td>
+<td>Manipolazione efficiente dei dati</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>ggplot2</code></td>
+<td>Visualizzazione</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>DBI</code></td>
+<td>Interfaccia standard verso database</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>odbc</code></td>
+<td>Connessioni ODBC</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>httr2</code></td>
+<td>Accesso a API HTTP</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>jsonlite</code></td>
+<td>JSON</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>readr</code></td>
+<td>Import/export dati testuali</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>arrow</code></td>
+<td>Parquet e formato Arrow</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>shiny</code></td>
+<td>Applicazioni web</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>quarto</code></td>
+<td>Report e pubblicazione</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>plumber2</code></td>
+<td>API HTTP</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>future</code></td>
+<td>Parallelizzazione</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>parallel</code></td>
+<td>Parallelizzazione</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>profvis</code></td>
+<td>Profilazione</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>renv</code></td>
+<td>Gestione dell’ambiente e delle dipendenze</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>IT non deve conoscere l’API di questi pacchetti.</p>
+<p>Deve riconoscerne il <strong>ruolo</strong>.</p>
+</section>
+<section id="una-richiesta-di-pacchetto-non-è-una-semplice-installazione" class="level1">
+<h1>Una richiesta di pacchetto non è una semplice installazione</h1>
+<p>Uno sviluppatore può chiedere:</p>
+<blockquote class="blockquote">
+<p>“Mi serve il pacchetto X.”</p>
+</blockquote>
+<p>IT deve poter chiedere:</p>
+<ul>
+<li>Per quale funzionalità?</li>
+<li>È indispensabile?</li>
+<li>Quali dipendenze introduce?</li>
+<li>Richiede librerie di sistema?</li>
+<li>Quale versione di R richiede?</li>
+<li>Quale versione del pacchetto?</li>
+<li>Da quale repository proviene?</li>
+<li>Ha bisogno di accesso Internet?</li>
+<li>È compatibile con l’ambiente aziendale?</li>
+<li>Come verrà aggiornato?</li>
+</ul>
+</section>
+<section id="dipendenze" class="level1">
+<h1>Dipendenze</h1>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="mermaid-01-contesto-04">
+<div>
+<pre class="mermaid mermaid-js" data-label="mermaid-01-contesto-04">flowchart TD
+    APP["Applicazione R"]
+    APP --&gt; X["Pacchetto X"]
+    X --&gt; Y["Pacchetto Y"]
+    X --&gt; Z["Pacchetto Z"]
+    Y --&gt; SYS["Libreria di sistema"]
+    Z --&gt; SYS2["Altra libreria di sistema"]
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p>La dipendenza non è solo:</p>
+<blockquote class="blockquote">
+<p>“R richiede X.”</p>
+</blockquote>
+<p>Può essere:</p>
+<blockquote class="blockquote">
+<p>R → X → Y → libreria OS.</p>
+</blockquote>
+<p>Per questo la gestione dell’ambiente è parte del deployment.</p>
+</section>
+<section id="renv-perché-interessa-a-it" class="level1">
+<h1><code>renv</code>: perché interessa a IT</h1>
+<p><code>renv</code> permette di associare a un progetto R un ambiente di pacchetti riproducibile.</p>
+<p>Il concetto importante per IT è:</p>
+<blockquote class="blockquote">
+<p><strong>L’applicazione deve dichiarare da quali dipendenze dipende.</strong></p>
+</blockquote>
+<p>Non dovrebbe dipendere casualmente da:</p>
+<blockquote class="blockquote">
+<p>“quello che è installato oggi sul server”.</p>
+</blockquote>
+<p>Questo facilita:</p>
+<ul>
+<li>riproducibilità;</li>
+<li>aggiornamenti;</li>
+<li>manutenzione;</li>
+<li>diagnosi;</li>
+<li>reinstallazione;</li>
+<li>trasferimento tra ambienti.</li>
+</ul>
+</section>
+<section id="library-repository-ambiente-e-lockfile" class="level1">
+<h1>Library, repository, ambiente e lockfile</h1>
+<p>Per evitare ambiguità, IT dovrebbe distinguere quattro concetti:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concetto</th>
+<th>Che cosa rappresenta</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Library</strong></td>
+<td>dove i pacchetti sono fisicamente installati e caricabili da R</td>
+</tr>
+<tr class="even">
+<td><strong>Repository</strong></td>
+<td>da dove vengono recuperati i pacchetti e le loro versioni</td>
+</tr>
+<tr class="odd">
+<td><strong>Ambiente</strong></td>
+<td>insieme effettivo di R, pacchetti e componenti necessari a un progetto</td>
+</tr>
+<tr class="even">
+<td><strong>Lockfile</strong></td>
+<td>descrizione versionata delle dipendenze che il progetto intende ricostruire</td>
+</tr>
+</tbody>
+</table>
+<p>Un repository non è una library e un lockfile non è l’ambiente completo. Il percorso operativo è:</p>
+<pre class="text"><code>repository
+    ↓
+installazione
+    ↓
+library
+    ↓
+ambiente R
+    ↓
+applicazione</code></pre>
+<p>La baseline deve identificare anche i componenti che il lockfile non copre, come sistema operativo, librerie native, driver, client database e configurazione.</p>
+</section>
+<section id="gestione-delle-librerie-e-riproducibilità" class="level1">
+<h1>Gestione delle librerie e riproducibilità</h1>
+<p>Per IT, una libreria R non è semplicemente una cartella che contiene file.</p>
+<p>Quando R viene eseguito, cerca i pacchetti nelle <strong>library</strong> disponibili per quel processo. Il percorso effettivo può dipendere dalla configurazione del sistema e dell’utente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Il comando permette di vedere le library utilizzate dalla sessione R.</p>
+<p>In un ambiente multiutente è utile distinguere concettualmente:</p>
+<pre class="text"><code>sistema / sito
+      │
+      ├── pacchetti condivisi
+      │
+utente
+      │
+      └── pacchetti personali
+      │
+progetto
+      │
+      └── ambiente controllato dal progetto</code></pre>
+<p>Le modalità concrete dipendono dal sistema operativo e dalla configurazione di R. Il punto IT è stabilire <strong>chi può modificare una library, quali versioni contiene e quale ambiente deve essere utilizzato dall’applicazione</strong>.</p>
+<section id="librerie-condivise-e-multiutente" class="level2">
+<h2 class="anchored" data-anchor-id="librerie-condivise-e-multiutente">Librerie condivise e multiutente</h2>
+<p>Su un computer utilizzato da più persone, installare o aggiornare un pacchetto in una library condivisa può modificare il comportamento di applicazioni diverse.</p>
+<p>Per questo è utile distinguere:</p>
+<ul>
+<li>ambiente di sviluppo personale;</li>
+<li>library condivisa;</li>
+<li>ambiente del progetto;</li>
+<li>ambiente di test;</li>
+<li>ambiente di produzione.</li>
+</ul>
+<p>La domanda non è soltanto:</p>
+<blockquote class="blockquote">
+<p>«Il pacchetto è installato?»</p>
+</blockquote>
+<p>ma:</p>
+<blockquote class="blockquote">
+<p><strong>«Quale versione del pacchetto viene caricata da questa applicazione e chi può modificarla?»</strong></p>
+</blockquote>
+<section id="gestione-operativa-su-computer-multiutente" class="level3">
+<h3 class="anchored" data-anchor-id="gestione-operativa-su-computer-multiutente">Gestione operativa su computer multiutente</h3>
+<p>Su un computer utilizzato da più persone, una library condivisa deve essere trattata come un componente amministrato, non come una cartella nella quale ogni utente può installare liberamente pacchetti.</p>
+<p>Per IT, il modello operativo dovrebbe distinguere:</p>
+<ul>
+<li><strong>library condivisa</strong>: gestita centralmente e utilizzata in lettura dalle applicazioni;</li>
+<li><strong>library personale</strong>: spazio nel quale un utente può sperimentare senza modificare l’ambiente condiviso;</li>
+<li><strong>library del progetto</strong>: ambiente associato a una specifica applicazione, per esempio tramite <code>renv</code>;</li>
+<li><strong>ambiente di test</strong>;</li>
+<li><strong>ambiente di produzione</strong>.</li>
+</ul>
+<p>In produzione, l’account tecnico che esegue l’applicazione dovrebbe normalmente poter leggere le library approvate ma non modificarle. L’installazione o l’aggiornamento dei pacchetti dovrebbe avvenire tramite un processo autorizzato, con test e aggiornamento della baseline.</p>
+</section>
+<section id="checklist-it-per-le-library" class="level3">
+<h3 class="anchored" data-anchor-id="checklist-it-per-le-library">Checklist IT per le library</h3>
+<p>Per ogni computer o server multiutente, verificare:</p>
+<ol type="1">
+<li>quali library sono effettivamente utilizzate da ciascun runtime;</li>
+<li>chi può scrivere nelle library condivise;</li>
+<li>quale procedura autorizza installazione e aggiornamento dei pacchetti;</li>
+<li>come vengono impedite modifiche casuali all’ambiente di produzione;</li>
+<li>come si identifica la versione realmente caricata da un’applicazione;</li>
+<li>come sono separati sviluppo, test e produzione;</li>
+<li>come vengono gestite eventuali versioni diverse di R;</li>
+<li>come vengono registrati richiesta, installazione, verifica e autorizzazione della modifica.</li>
+</ol>
+<p>Per diagnosticare il percorso effettivo si possono usare <code>.libPaths()</code> e, quando necessario, le variabili <code>R_LIBS_USER</code> e <code>R_LIBS_SITE</code>. Per un pacchetto critico si può verificare anche il percorso effettivo con <code>find.package()</code>.</p>
+<p>La domanda operativa non è quindi soltanto:</p>
+<blockquote class="blockquote">
+<p>«Il pacchetto è installato?»</p>
+</blockquote>
+<p>ma:</p>
+<blockquote class="blockquote">
+<p><strong>«Quale versione viene caricata da questa applicazione, da quale library, chi può modificarla e quale processo autorizza la modifica?»</strong></p>
+</blockquote>
+</section>
+</section>
+<section id="ambiente-controllato-del-progetto" class="level2">
+<h2 class="anchored" data-anchor-id="ambiente-controllato-del-progetto">Ambiente controllato del progetto</h2>
+<p>Per un progetto R è preferibile poter dichiarare in modo esplicito:</p>
+<ul>
+<li>versione di R;</li>
+<li>pacchetti utilizzati;</li>
+<li>versioni dei pacchetti;</li>
+<li>repository di provenienza;</li>
+<li>eventuali dipendenze di sistema;</li>
+<li>eventuali driver o software esterni.</li>
+</ul>
+<p><code>renv</code> consente di registrare le dipendenze R del progetto in un lockfile e di ricostruire l’ambiente a partire da quella descrizione.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In un progetto gestito con renv, il lockfile</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># descrive le dipendenze R da ricostruire.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Il comando seguente è mostrato come concetto:</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># renv::restore()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Il lockfile non congela però automaticamente tutto l’ambiente di esecuzione: sistema operativo, librerie native, driver, client Oracle, configurazioni e altri componenti esterni devono essere gestiti separatamente.</p>
+<p>Questa distinzione diventa importante quando il risultato prodotto dal software deve essere <strong>ricostruibile e verificabile nel tempo</strong>.</p>
+</section>
+<section id="dal-computer-dello-sviluppatore-alla-baseline-software" class="level2">
+<h2 class="anchored" data-anchor-id="dal-computer-dello-sviluppatore-alla-baseline-software">Dal computer dello sviluppatore alla baseline software</h2>
+<p>Una richiesta di installazione può essere trasformata in una descrizione controllata dell’ambiente:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Componente</th>
+<th>Informazione da identificare</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Codice</td>
+<td>repository, commit o tag</td>
+</tr>
+<tr class="even">
+<td>R</td>
+<td>versione</td>
+</tr>
+<tr class="odd">
+<td>Pacchetti</td>
+<td>versioni e repository</td>
+</tr>
+<tr class="even">
+<td>Dipendenze R</td>
+<td>lockfile, per esempio <code>renv.lock</code></td>
+</tr>
+<tr class="odd">
+<td>Sistema operativo</td>
+<td>distribuzione e versione</td>
+</tr>
+<tr class="even">
+<td>Librerie native</td>
+<td>versioni rilevanti</td>
+</tr>
+<tr class="odd">
+<td>Driver/client</td>
+<td>ODBC, Oracle o altri</td>
+</tr>
+<tr class="even">
+<td>Configurazione</td>
+<td>parametri necessari</td>
+</tr>
+<tr class="odd">
+<td>Dati di test</td>
+<td>identificativo/versione</td>
+</tr>
+<tr class="even">
+<td>Test software</td>
+<td>versione della suite ed esito</td>
+</tr>
+</tbody>
+</table>
+<p>Questa <strong>baseline software</strong> non è ancora la validazione del metodo. È la descrizione controllata dell’ambiente nel quale il software viene eseguito.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

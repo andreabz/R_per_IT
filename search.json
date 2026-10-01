@@ -1,0 +1,677 @@
+[
+  {
+    "objectID": "07-caso-finale.html",
+    "href": "07-caso-finale.html",
+    "title": "Caso finale e checklist",
+    "section": "",
+    "text": "Il caso finale applica il metodo dell’intero corso a una richiesta concreta: un’elaborazione R è troppo lenta e viene richiesto un server più potente. Il valore del caso non sta nella macchina da scegliere, ma nel percorso che permette di trasformare una richiesta hardware in una decisione tecnica verificabile.",
+    "crumbs": [
+      "Corso",
+      "7. Caso finale e checklist",
+      "Caso finale e checklist"
+    ]
+  },
+  {
+    "objectID": "07-caso-finale.html#dal-software-installato-alla-configurazione-riproducibile",
+    "href": "07-caso-finale.html#dal-software-installato-alla-configurazione-riproducibile",
+    "title": "Caso finale e checklist",
+    "section": "Dal software installato alla configurazione riproducibile",
+    "text": "Dal software installato alla configurazione riproducibile\nSe l’applicazione viene distribuita come container, il percorso può diventare:\ncodice versionato\n      ↓\ndipendenze dichiarate\n      ↓\nbuild container\n      ↓\ntest\n      ↓\nimmagine identificata\n      ↓\ndeployment\n      ↓\nrisultato\nIl container rende più controllabile la distribuzione dell’ambiente, ma non elimina la necessità di identificare i dati, le configurazioni e i servizi esterni.",
+    "crumbs": [
+      "Corso",
+      "7. Caso finale e checklist",
+      "Caso finale e checklist"
+    ]
+  },
+  {
+    "objectID": "07-caso-finale.html#applicazione",
+    "href": "07-caso-finale.html#applicazione",
+    "title": "Caso finale e checklist",
+    "section": "Applicazione",
+    "text": "Applicazione\n\nChe cosa deve fare?\nÈ script, job, report, app o API?\nChi la usa?\nQual è il requisito temporale?",
+    "crumbs": [
+      "Corso",
+      "7. Caso finale e checklist",
+      "Caso finale e checklist"
+    ]
+  },
+  {
+    "objectID": "07-caso-finale.html#performance",
+    "href": "07-caso-finale.html#performance",
+    "title": "Caso finale e checklist",
+    "section": "Performance",
+    "text": "Performance\n\nDurata misurata?\nCPU misurata?\nRAM di picco?\nI/O?\nDatabase?\nProfiling?\nScaling test?",
+    "crumbs": [
+      "Corso",
+      "7. Caso finale e checklist",
+      "Caso finale e checklist"
+    ]
+  },
+  {
+    "objectID": "07-caso-finale.html#architettura",
+    "href": "07-caso-finale.html#architettura",
+    "title": "Caso finale e checklist",
+    "section": "Architettura",
+    "text": "Architettura\n\nDove deve essere eseguita?\nEsiste già una piattaforma?\nQuale componente gestisce i dati?\nQuale componente gestisce l’interfaccia?\nQuale componente gestisce l’orchestrazione?",
+    "crumbs": [
+      "Corso",
+      "7. Caso finale e checklist",
+      "Caso finale e checklist"
+    ]
+  },
+  {
+    "objectID": "07-caso-finale.html#produzione",
+    "href": "07-caso-finale.html#produzione",
+    "title": "Caso finale e checklist",
+    "section": "Produzione",
+    "text": "Produzione\n\nDipendenze riproducibili?\nCredenziali gestite?\nLogging?\nMonitoring?\nGestione degli errori?\nOwnership?\nAggiornamenti?\nContinuità operativa?",
+    "crumbs": [
+      "Corso",
+      "7. Caso finale e checklist",
+      "Caso finale e checklist"
+    ]
+  },
+  {
+    "objectID": "07-caso-finale.html#domande-da-portare-nel-proprio-contesto",
+    "href": "07-caso-finale.html#domande-da-portare-nel-proprio-contesto",
+    "title": "Caso finale e checklist",
+    "section": "Domande da portare nel proprio contesto",
+    "text": "Domande da portare nel proprio contesto\n\nQuali richieste R arrivano oggi a IT?\nQuali sono difficili da valutare?\nQuali componenti R sono già presenti?\nQuali integrazioni con Oracle esistono?\nDove viene usato APEX?\nQuali job R sono già schedulati?\nQuali applicazioni R sono già in produzione?\nChi ne è responsabile?\nQuali dati diagnostici vengono normalmente raccolti?",
+    "crumbs": [
+      "Corso",
+      "7. Caso finale e checklist",
+      "Caso finale e checklist"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html",
+    "href": "05-deployment.html",
+    "title": "Deployment e gestione operativa",
+    "section": "",
+    "text": "L’architettura descrive dove e come collocare R; il deployment definisce come portare quella soluzione in esercizio e mantenerla nel tempo. Il capitolo segue il percorso dalla versione del codice alla produzione, mettendo in evidenza riproducibilità, test, sicurezza, logging, monitoring, rollback, continuità operativa e responsabilità.",
+    "crumbs": [
+      "Corso",
+      "5. Deployment e gestione operativa",
+      "Deployment e gestione operativa"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#commit-tag-e-release",
+    "href": "05-deployment.html#commit-tag-e-release",
+    "title": "Deployment e gestione operativa",
+    "section": "Commit, tag e release",
+    "text": "Commit, tag e release\nUn commit identifica uno stato del repository.\nUn tag può identificare una versione rilasciabile, per esempio:\nv1.4.0\nUna release dovrebbe essere associata almeno a:\n\nversione del codice;\nconfigurazione prevista;\ndipendenze;\nistruzioni di deployment;\neventuali migrazioni database;\nnote sulle modifiche;\nprocedura di rollback.\n\n\nSe non è possibile identificare con precisione ciò che è stato messo in produzione, il rilascio non è realmente tracciato.",
+    "crumbs": [
+      "Corso",
+      "5. Deployment e gestione operativa",
+      "Deployment e gestione operativa"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#containerizzazione",
+    "href": "05-deployment.html#containerizzazione",
+    "title": "Deployment e gestione operativa",
+    "section": "Containerizzazione",
+    "text": "Containerizzazione\nUn container permette di distribuire insieme una parte molto più ampia dell’ambiente software.\nConcettualmente:\nImmagine container\n├── sistema operativo / userland\n├── R\n├── pacchetti R\n├── librerie native\n├── applicazione\n└── strumenti necessari\nQuesto può ridurre le differenze tra sviluppo, test e produzione e rendere più prevedibile il deployment.\nIl container non rende automaticamente valido il software e non sostituisce i test. Fornisce un artefatto distribuibile che può essere identificato, testato e promosso tra ambienti.",
+    "crumbs": [
+      "Corso",
+      "5. Deployment e gestione operativa",
+      "Deployment e gestione operativa"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#build-test-e-release-dellimmagine",
+    "href": "05-deployment.html#build-test-e-release-dellimmagine",
+    "title": "Deployment e gestione operativa",
+    "section": "Build, test e release dell’immagine",
+    "text": "Build, test e release dell’immagine\nUn flusso controllato può essere:\n\n\n\n\nflowchart LR\n    GIT[\"Codice versionato\"] --&gt; BUILD[\"Build immagine\"]\n    BUILD --&gt; TEST[\"Test automatici\"]\n    TEST --&gt;|FAIL| DISCARD[\"Scarto\"]\n    TEST --&gt;|PASS| IMAGE[\"Immagine versionata\"]\n    IMAGE --&gt; REG[\"Registry\"]\n    REG --&gt; DEPLOY[\"Deployment\"]\n    DEPLOY --&gt; SMOKE[\"Smoke test\"]\n\n\n\n\n\nL’immagine dovrebbe essere identificabile in modo univoco. Un tag leggibile può essere utile per gli operatori, mentre il digest dell’immagine permette di identificare esattamente l’artefatto distribuito.\nL’obiettivo non è dichiarare che il container sia “immutabile” in senso assoluto. L’obiettivo operativo è non modificare manualmente un artefatto già testato: se cambia il contenuto, si costruisce e si testa una nuova versione.",
+    "crumbs": [
+      "Corso",
+      "5. Deployment e gestione operativa",
+      "Deployment e gestione operativa"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#cosa-non-risolve-docker",
+    "href": "05-deployment.html#cosa-non-risolve-docker",
+    "title": "Deployment e gestione operativa",
+    "section": "Cosa non risolve Docker",
+    "text": "Cosa non risolve Docker\nLa containerizzazione non risolve automaticamente:\n\nla correttezza dell’algoritmo;\nl’idoneità del metodo scientifico;\nla qualità dei dati;\nla gestione dei segreti;\nla sicurezza dell’immagine;\nla compatibilità con sistemi esterni;\nla configurazione dell’ambiente target;\nil controllo delle modifiche.\n\nInoltre, un container può dipendere da servizi esterni: database, API, filesystem, autenticazione, certificati o scheduler. La baseline deve quindi identificare anche le dipendenze che rimangono fuori dal container.",
+    "crumbs": [
+      "Corso",
+      "5. Deployment e gestione operativa",
+      "Deployment e gestione operativa"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#checklist-it-per-la-gestione-sicura-delle-credenziali",
+    "href": "05-deployment.html#checklist-it-per-la-gestione-sicura-delle-credenziali",
+    "title": "Deployment e gestione operativa",
+    "section": "Checklist IT per la gestione sicura delle credenziali",
+    "text": "Checklist IT per la gestione sicura delle credenziali\nPer una soluzione R in produzione, IT dovrebbe poter verificare almeno:\n\n\n\n\n\n\n\nControllo\nEvidenza da verificare\n\n\n\n\nSegreti fuori dal codice\nricerca nel repository e nella configurazione versionata; nessuna password, token o chiave hard-coded\n\n\nSegreti fuori dai log\nlog applicativi e diagnostici non contengono password, token, connection string complete o altri segreti\n\n\nIdentità dedicata\nl’applicazione usa un account tecnico o un’identità di servizio, non l’account personale dello sviluppatore\n\n\nLeast privilege\nl’identità dispone solo dei permessi necessari su database, filesystem, API e rete\n\n\nRecupero a runtime\nil segreto viene fornito dall’infrastruttura o dal sistema di secret management al momento dell’esecuzione, senza inserirlo nel codice\n\n\nPermessi sul segreto\nsolo i processi e gli amministratori autorizzati possono leggere o modificare il segreto\n\n\nRotazione\nesiste una procedura per sostituire periodicamente o in caso di compromissione password, token e chiavi\n\n\nRevoca\nè possibile disabilitare rapidamente un’identità senza modificare il codice applicativo\n\n\nAudit\naccessi e modifiche ai segreti sono registrati secondo le policy aziendali\n\n\nSeparazione ambienti\nsviluppo, test e produzione non condividono inutilmente le stesse credenziali\n\n\nGestione errori\nun errore di autenticazione non stampa il segreto né una connection string completa\n\n\nDipendenze esterne\neventuali wallet, certificati, file di configurazione o client database sono inclusi nella baseline e hanno permessi appropriati\n\n\n\nPer R, il punto importante è che R non deve diventare il sistema di gestione dei segreti. Il codice dovrebbe ricevere un riferimento o un valore già reso disponibile dall’infrastruttura secondo le modalità approvate dall’organizzazione. La soluzione concreta può usare, per esempio, un secret manager, un credential store del sistema operativo o un’identità gestita; la scelta dipende dall’architettura aziendale.\n\nDomande operative per IT\nPrima del rilascio:\n\nDove viene conservato il segreto?\nChi o quale processo può leggerlo?\nL’applicazione usa un’identità dedicata?\nQuali permessi ha quell’identità?\nCome arriva il segreto al processo R?\nÈ presente in codice, repository, immagine container, file di configurazione o log?\nCome viene ruotato?\nCome viene revocato?\nCome viene registrato l’accesso?\nCosa succede se il segreto scade o viene revocato?\nSviluppo, test e produzione usano identità separate?\nLa gestione delle credenziali è documentata nella baseline e nella procedura operativa?\n\nUn controllo utile consiste nel verificare non solo il repository, ma l’intera catena:\nsecret manager / credential store\n          ↓\nruntime / account di servizio\n          ↓\nprocesso R\n          ↓\nOracle / API / filesystem\nIl principio è minimizzare il numero di componenti che conoscono il segreto e il tempo per cui il segreto rimane disponibile.",
+    "crumbs": [
+      "Corso",
+      "5. Deployment e gestione operativa",
+      "Deployment e gestione operativa"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#smoke-test",
+    "href": "05-deployment.html#smoke-test",
+    "title": "Deployment e gestione operativa",
+    "section": "Smoke test",
+    "text": "Smoke test\nDopo il deployment è utile eseguire un controllo minimo che verifichi che il sistema sia effettivamente operativo nell’ambiente target.\nEsempi:\n\nun endpoint risponde;\nun job può partire;\nuna connessione al database funziona;\nun report viene prodotto;\nuna pagina Quarto è raggiungibile.\n\nLo smoke test non sostituisce i test automatici: verifica che il componente distribuito sia effettivamente utilizzabile nell’ambiente target.",
+    "crumbs": [
+      "Corso",
+      "5. Deployment e gestione operativa",
+      "Deployment e gestione operativa"
+    ]
+  },
+  {
+    "objectID": "05-deployment.html#le-domande-fondamentali",
+    "href": "05-deployment.html#le-domande-fondamentali",
+    "title": "Deployment e gestione operativa",
+    "section": "Le domande fondamentali",
+    "text": "Le domande fondamentali\nQuando un prodotto R passa in produzione:\n\nDove gira?\nPC, VM, container, server?\n\n\nCome parte?\nManuale, scheduler, servizio?\n\n\nCon quale versione?\nQuale commit, tag o artefatto?\n\n\nCon quali dipendenze?\nQuale R, quali pacchetti, quali driver?\n\n\nCon quale identità?\nUtente personale o account tecnico?\n\n\nDove accede?\nDatabase, API, filesystem?\n\n\nDove scrive?\nLog, file temporanei, output?\n\n\nCome viene testato?\nQuali controlli vengono eseguiti prima e dopo il rilascio?\n\n\nCome viene monitorato?\nCome si rileva un errore?\n\n\nCome viene aggiornato?\nQual è la procedura di release?\n\n\nCome si torna indietro?\nQual è la procedura di rollback?\n\n\nCome si ripristina?\nQuali sono RTO/RPO e chi esegue il recovery?",
+    "crumbs": [
+      "Corso",
+      "5. Deployment e gestione operativa",
+      "Deployment e gestione operativa"
+    ]
+  },
+  {
+    "objectID": "03-performance.html",
+    "href": "03-performance.html",
+    "title": "Performance e diagnostica",
+    "section": "",
+    "text": "Una volta compreso il runtime, il passo successivo è diagnosticare la performance. La lente corretta non è «R è lento», ma «quale parte del lavoro e quale risorsa determinano il tempo di esecuzione?». Il capitolo parte dalla classificazione del carico, passa dagli strumenti di misura all’algoritmo e all’implementazione, e arriva alla valutazione dell’hardware.",
+    "crumbs": [
+      "Corso",
+      "3. Performance e diagnostica",
+      "Performance e diagnostica"
+    ]
+  },
+  {
+    "objectID": "03-performance.html#profilare-una-funzione-applicativa",
+    "href": "03-performance.html#profilare-una-funzione-applicativa",
+    "title": "Performance e diagnostica",
+    "section": "Profilare una funzione applicativa",
+    "text": "Profilare una funzione applicativa\n\nlibrary(profvis)\n\nelabora_dati &lt;- function(n = 5e6) {\n  x &lt;- rnorm(n)\n  y &lt;- sort(x)\n  mean(y[y &gt; 0])\n}\n\nprofvis({\n  risultato &lt;- elabora_dati()\n})\n\nUn risultato ipotetico potrebbe indicare che il 75% del tempo è concentrato nell’algoritmo principale, il 10% nella preparazione, il 5% nella lettura e il 10% nell’output. In quel caso ottimizzare la lettura difficilmente cambia in modo sostanziale il tempo totale.\nLa profilazione temporale non sostituisce il monitoraggio infrastrutturale: va correlata con CPU, RAM, I/O e database.",
+    "crumbs": [
+      "Corso",
+      "3. Performance e diagnostica",
+      "Performance e diagnostica"
+    ]
+  },
+  {
+    "objectID": "03-performance.html#profilare-la-memoria",
+    "href": "03-performance.html#profilare-la-memoria",
+    "title": "Performance e diagnostica",
+    "section": "Profilare la memoria",
+    "text": "Profilare la memoria\n\nx &lt;- matrix(runif(5e6), nrow = 5000)\nobject.size(x)\ngc()\n\nobject.size() aiuta a stimare la dimensione di un oggetto R; gc() fornisce informazioni sulla gestione della memoria. Per una decisione infrastrutturale questi dati vanno correlati con il picco di RAM del processo e del server.\nprofvis e gli strumenti di profiling rispondono quindi alla domanda «dove spendo tempo?», mentre il monitoraggio OS risponde a «quali risorse consumo?».",
+    "crumbs": [
+      "Corso",
+      "3. Performance e diagnostica",
+      "Performance e diagnostica"
+    ]
+  },
+  {
+    "objectID": "03-performance.html#perché-importa-in-pratica",
+    "href": "03-performance.html#perché-importa-in-pratica",
+    "title": "Performance e diagnostica",
+    "section": "Perché importa in pratica",
+    "text": "Perché importa in pratica\nUn algoritmo O(n²) che confronta ogni elemento con tutti gli altri, su 100.000 elementi, richiede nell’ordine di 10 miliardi di confronti. Un algoritmo lineare O(n) ne richiederebbe 100.000.\nLa differenza di complessità può essere molto più importante di un aumento della frequenza della CPU: raddoppiare la CPU non salva un algoritmo quadratico quando i dati crescono. Allo stesso modo, una ricerca O(log n) su dati ordinati (ricerca binaria) richiede circa 20 confronti su un milione di elementi, contro centinaia di migliaia di una scansione lineare O(n). Mantenere l’ordinamento ha un costo, ma scegliere la struttura dati coerente con il problema è spesso la vera ottimizzazione.\nPer IT, la domanda utile è:\n\n«La richiesta di hardware deriva dal volume dei dati oppure dalla complessità dell’algoritmo?»\n\nSe la risposta è “dalla complessità”, aggiungere CPU sposterà solo il problema in avanti.",
+    "crumbs": [
+      "Corso",
+      "3. Performance e diagnostica",
+      "Performance e diagnostica"
+    ]
+  },
+  {
+    "objectID": "03-performance.html#copie-e-memoria",
+    "href": "03-performance.html#copie-e-memoria",
+    "title": "Performance e diagnostica",
+    "section": "Copie e memoria",
+    "text": "Copie e memoria\nUn oggetto da 8 GB non implica automaticamente che servano solo 8 GB di RAM. Durante una trasformazione possono coesistere temporaneamente l’oggetto originale, risultati intermedi e nuovi oggetti.\nEsempio concettuale:\noriginale             8 GB\ncopia                  8 GB\nintermedio             8 GB\nrisultato              8 GB\n\npicco teorico          32 GB\nQuesto non significa che ogni operazione R faccia una copia completa.\nR utilizza una strategia chiamata copy-on-modify: se assegni un oggetto a una nuova variabile (b &lt;- a), R non copia subito i dati in memoria, ma punta allo stesso indirizzo. La copia avviene solo se modifichi b.\nTuttavia, in pipeline di trasformazioni complesse o passando oggetti a certe funzioni, le copie temporanee possono moltiplicarsi rapidamente.\nIl principio IT è:\n\ndimensione dei dati ≠ automaticamente RAM necessaria.\n\nCon worker separati il costo può crescere ulteriormente se ciascun worker mantiene una propria rappresentazione dei dati.\nSe un job usa 8 GB per worker, quattro worker potrebbero portare il consumo applicativo nell’ordine di 32 GB, prima di considerare sistema operativo, overhead e altre strutture.\nPer questo una richiesta di RAM deve riportare almeno il picco osservato e il numero di worker, non soltanto la dimensione del dataset.",
+    "crumbs": [
+      "Corso",
+      "3. Performance e diagnostica",
+      "Performance e diagnostica"
+    ]
+  },
+  {
+    "objectID": "03-performance.html#scenario-database-bound",
+    "href": "03-performance.html#scenario-database-bound",
+    "title": "Performance e diagnostica",
+    "section": "Scenario database-bound",
+    "text": "Scenario database-bound\nCPU: 25%\nRAM: 12 GB / 32 GB\nDisk: normale\nNetwork: normale\nDatabase: query lente\nL’elaborazione sembra lenta, ma il tempo può essere dominato da Oracle. Aggiungere CPU al server R non affronta il collo di bottiglia misurato.\nEvidenza da raccogliere: tempi delle query e metriche lato database.",
+    "crumbs": [
+      "Corso",
+      "3. Performance e diagnostica",
+      "Performance e diagnostica"
+    ]
+  },
+  {
+    "objectID": "03-performance.html#scenario-cpu-bound",
+    "href": "03-performance.html#scenario-cpu-bound",
+    "title": "Performance e diagnostica",
+    "section": "Scenario CPU-bound",
+    "text": "Scenario CPU-bound\nCPU: 95-100%\nRAM: 10 GB / 64 GB\nDisk: normale\nDatabase: trascurabile\nQui ha senso verificare algoritmo, implementazione e parallelizzazione:\n\nil codice è ottimizzato?\nil lavoro è parallelizzabile?\nquanti core vengono utilizzati?\nquanto scala da 1 a 2, 4, 8 worker?\n\nSolo dopo si valuta se l’hardware aggiuntivo è giustificato.",
+    "crumbs": [
+      "Corso",
+      "3. Performance e diagnostica",
+      "Performance e diagnostica"
+    ]
+  },
+  {
+    "objectID": "03-performance.html#scenario-memory-bound",
+    "href": "03-performance.html#scenario-memory-bound",
+    "title": "Performance e diagnostica",
+    "section": "Scenario memory-bound",
+    "text": "Scenario memory-bound\nCPU: 30%\nRAM: 60 GB / 64 GB\nSwap: attivo\nWorker: 8\nIl problema potrebbe essere la memoria, ma la diagnosi non termina con «serve più RAM».\nBisogna capire:\n\nquali oggetti occupano memoria;\nse esistono copie temporanee;\nquanta memoria utilizza ciascun worker;\nse il numero di worker può essere ridotto;\nse i dati possono essere filtrati o elaborati a blocchi.",
+    "crumbs": [
+      "Corso",
+      "3. Performance e diagnostica",
+      "Performance e diagnostica"
+    ]
+  },
+  {
+    "objectID": "01-contesto.html",
+    "href": "01-contesto.html",
+    "title": "Contesto e ambiente R",
+    "section": "",
+    "text": "Questo capitolo definisce il punto di partenza: per IT, una soluzione R non è semplicemente un programma da installare, ma un insieme di runtime, pacchetti, dipendenze e risorse collocato in un contesto operativo. Prima di parlare di CPU, RAM o server è quindi necessario capire che ruolo svolge R e quali componenti richiede.",
+    "crumbs": [
+      "Corso",
+      "1. Contesto e ambiente R",
+      "Contesto e ambiente R"
+    ]
+  },
+  {
+    "objectID": "01-contesto.html#librerie-condivise-e-multiutente",
+    "href": "01-contesto.html#librerie-condivise-e-multiutente",
+    "title": "Contesto e ambiente R",
+    "section": "Librerie condivise e multiutente",
+    "text": "Librerie condivise e multiutente\nSu un computer utilizzato da più persone, installare o aggiornare un pacchetto in una library condivisa può modificare il comportamento di applicazioni diverse.\nPer questo è utile distinguere:\n\nambiente di sviluppo personale;\nlibrary condivisa;\nambiente del progetto;\nambiente di test;\nambiente di produzione.\n\nLa domanda non è soltanto:\n\n«Il pacchetto è installato?»\n\nma:\n\n«Quale versione del pacchetto viene caricata da questa applicazione e chi può modificarla?»\n\n\nGestione operativa su computer multiutente\nSu un computer utilizzato da più persone, una library condivisa deve essere trattata come un componente amministrato, non come una cartella nella quale ogni utente può installare liberamente pacchetti.\nPer IT, il modello operativo dovrebbe distinguere:\n\nlibrary condivisa: gestita centralmente e utilizzata in lettura dalle applicazioni;\nlibrary personale: spazio nel quale un utente può sperimentare senza modificare l’ambiente condiviso;\nlibrary del progetto: ambiente associato a una specifica applicazione, per esempio tramite renv;\nambiente di test;\nambiente di produzione.\n\nIn produzione, l’account tecnico che esegue l’applicazione dovrebbe normalmente poter leggere le library approvate ma non modificarle. L’installazione o l’aggiornamento dei pacchetti dovrebbe avvenire tramite un processo autorizzato, con test e aggiornamento della baseline.\n\n\nChecklist IT per le library\nPer ogni computer o server multiutente, verificare:\n\nquali library sono effettivamente utilizzate da ciascun runtime;\nchi può scrivere nelle library condivise;\nquale procedura autorizza installazione e aggiornamento dei pacchetti;\ncome vengono impedite modifiche casuali all’ambiente di produzione;\ncome si identifica la versione realmente caricata da un’applicazione;\ncome sono separati sviluppo, test e produzione;\ncome vengono gestite eventuali versioni diverse di R;\ncome vengono registrati richiesta, installazione, verifica e autorizzazione della modifica.\n\nPer diagnosticare il percorso effettivo si possono usare .libPaths() e, quando necessario, le variabili R_LIBS_USER e R_LIBS_SITE. Per un pacchetto critico si può verificare anche il percorso effettivo con find.package().\nLa domanda operativa non è quindi soltanto:\n\n«Il pacchetto è installato?»\n\nma:\n\n«Quale versione viene caricata da questa applicazione, da quale library, chi può modificarla e quale processo autorizza la modifica?»",
+    "crumbs": [
+      "Corso",
+      "1. Contesto e ambiente R",
+      "Contesto e ambiente R"
+    ]
+  },
+  {
+    "objectID": "01-contesto.html#ambiente-controllato-del-progetto",
+    "href": "01-contesto.html#ambiente-controllato-del-progetto",
+    "title": "Contesto e ambiente R",
+    "section": "Ambiente controllato del progetto",
+    "text": "Ambiente controllato del progetto\nPer un progetto R è preferibile poter dichiarare in modo esplicito:\n\nversione di R;\npacchetti utilizzati;\nversioni dei pacchetti;\nrepository di provenienza;\neventuali dipendenze di sistema;\neventuali driver o software esterni.\n\nrenv consente di registrare le dipendenze R del progetto in un lockfile e di ricostruire l’ambiente a partire da quella descrizione.\n\n# In un progetto gestito con renv, il lockfile\n# descrive le dipendenze R da ricostruire.\n# Il comando seguente è mostrato come concetto:\n# renv::restore()\n\nIl lockfile non congela però automaticamente tutto l’ambiente di esecuzione: sistema operativo, librerie native, driver, client Oracle, configurazioni e altri componenti esterni devono essere gestiti separatamente.\nQuesta distinzione diventa importante quando il risultato prodotto dal software deve essere ricostruibile e verificabile nel tempo.",
+    "crumbs": [
+      "Corso",
+      "1. Contesto e ambiente R",
+      "Contesto e ambiente R"
+    ]
+  },
+  {
+    "objectID": "01-contesto.html#dal-computer-dello-sviluppatore-alla-baseline-software",
+    "href": "01-contesto.html#dal-computer-dello-sviluppatore-alla-baseline-software",
+    "title": "Contesto e ambiente R",
+    "section": "Dal computer dello sviluppatore alla baseline software",
+    "text": "Dal computer dello sviluppatore alla baseline software\nUna richiesta di installazione può essere trasformata in una descrizione controllata dell’ambiente:\n\n\n\nComponente\nInformazione da identificare\n\n\n\n\nCodice\nrepository, commit o tag\n\n\nR\nversione\n\n\nPacchetti\nversioni e repository\n\n\nDipendenze R\nlockfile, per esempio renv.lock\n\n\nSistema operativo\ndistribuzione e versione\n\n\nLibrerie native\nversioni rilevanti\n\n\nDriver/client\nODBC, Oracle o altri\n\n\nConfigurazione\nparametri necessari\n\n\nDati di test\nidentificativo/versione\n\n\nTest software\nversione della suite ed esito\n\n\n\nQuesta baseline software non è ancora la validazione del metodo. È la descrizione controllata dell’ambiente nel quale il software viene eseguito.",
+    "crumbs": [
+      "Corso",
+      "1. Contesto e ambiente R",
+      "Contesto e ambiente R"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "R per l’IT",
+    "section": "",
+    "text": "Questo materiale è pensato per un dipartimento IT che deve valutare e governare soluzioni sviluppate in R, non per chi deve imparare a programmare in R.\nL’obiettivo è fornire un linguaggio comune per affrontare richieste come:\n\ninstallazione di R e pacchetti;\naumento di CPU o RAM;\nrichiesta di un server dedicato;\nintroduzione di una Shiny o di un’API;\nintegrazione con Oracle;\nproduzione automatica di report;\npassaggio da PC a server;\nmessa in produzione e gestione operativa.",
+    "crumbs": [
+      "Corso",
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#a-chi-è-rivolto",
+    "href": "index.html#a-chi-è-rivolto",
+    "title": "R per l’IT",
+    "section": "",
+    "text": "Questo materiale è pensato per un dipartimento IT che deve valutare e governare soluzioni sviluppate in R, non per chi deve imparare a programmare in R.\nL’obiettivo è fornire un linguaggio comune per affrontare richieste come:\n\ninstallazione di R e pacchetti;\naumento di CPU o RAM;\nrichiesta di un server dedicato;\nintroduzione di una Shiny o di un’API;\nintegrazione con Oracle;\nproduzione automatica di report;\npassaggio da PC a server;\nmessa in produzione e gestione operativa.",
+    "crumbs": [
+      "Corso",
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#il-principio-guida",
+    "href": "index.html#il-principio-guida",
+    "title": "R per l’IT",
+    "section": "Il principio guida",
+    "text": "Il principio guida\n\nPrima di aumentare le risorse, capire perché servono.\n\nUna richiesta tecnica dovrebbe seguire questo percorso:\nRichiesta\n   ↓\nRequisiti\n   ↓\nDiagnostica\n   ↓\nArchitettura\n   ↓\nInfrastruttura\n   ↓\nDeployment\n   ↓\nGestione",
+    "crumbs": [
+      "Corso",
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#come-usare-questo-materiale",
+    "href": "index.html#come-usare-questo-materiale",
+    "title": "R per l’IT",
+    "section": "Come usare questo materiale",
+    "text": "Come usare questo materiale\nIl sito non vuole essere un manuale di programmazione R. È una guida per leggere richieste tecniche e porre le domande corrette.\nIl materiale è organizzato come un piccolo manuale, con una progressione dal runtime alla gestione operativa:\n\nContesto e ambiente R — che cosa vede IT quando arriva una richiesta R.\nRuntime, processi e parallelismo — processi, core, thread, worker e risorse.\nPerformance e diagnostica — come distinguere CPU, RAM, I/O, rete e database.\nArchitettura e integrazione — R, Oracle, APEX, Quarto, Shiny e API.\nDeployment e gestione operativa — sicurezza, logging, monitoring e ownership.\nGovernance e valutazione delle richieste — come valutare pacchetti, RAM, CPU e server.\nCaso finale e checklist — applicazione del metodo al caso dell’ecologo.",
+    "crumbs": [
+      "Corso",
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#quattro-domande-da-ricordare",
+    "href": "index.html#quattro-domande-da-ricordare",
+    "title": "R per l’IT",
+    "section": "Quattro domande da ricordare",
+    "text": "Quattro domande da ricordare\n\n1. Che cosa deve fare?\n\n\n2. Quale evidenza dimostra che serve ciò che viene richiesto?\n\n\n3. Dove deve essere eseguito il lavoro?\n\n\n4. Esiste già un componente aziendale adatto?",
+    "crumbs": [
+      "Corso",
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#nota",
+    "href": "index.html#nota",
+    "title": "R per l’IT",
+    "section": "Nota",
+    "text": "Nota\nIl file materiale.qmd originale viene mantenuto nel repository come sorgente della versione a slide. Il sito costituisce la versione estesa e consultabile del corso.",
+    "crumbs": [
+      "Corso",
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#modello-operativo-del-corso",
+    "href": "index.html#modello-operativo-del-corso",
+    "title": "R per l’IT",
+    "section": "Modello operativo del corso",
+    "text": "Modello operativo del corso\nIl corso può essere letto come una catena unica:\nrequisito\n  ↓\nworkload\n  ↓\ndiagnostica\n  ↓\narchitettura\n  ↓\nbaseline software\n  ↓\nverifica del software\n  ↓\ndeployment\n  ↓\noperatività\n  ↓\nmodifica\n  ↓\nnuova baseline\nLa baseline software è il riferimento dello stato approvato. Non è un documento statico: cambia quando una modifica autorizzata produce un nuovo stato che viene nuovamente verificato.\nTre domande restano distinte:\n\n\n\n\n\n\n\nDomanda\nOggetto\n\n\n\n\nQuanto costa eseguire il lavoro?\nperformance e dimensionamento\n\n\nChe cosa stiamo eseguendo?\nsoftware, ambiente e configurazione\n\n\nIl metodo è adeguato allo scopo?\nmetodo analitico e criteri applicabili",
+    "crumbs": [
+      "Corso",
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#il-percorso-mentale",
+    "href": "index.html#il-percorso-mentale",
+    "title": "R per l’IT",
+    "section": "Il percorso mentale",
+    "text": "Il percorso mentale\nUna richiesta infrastrutturale non dovrebbe partire da una specifica hardware.\nDovrebbe partire dal workload:\nChe cosa deve fare?\n       ↓\nQuanto spesso?\n       ↓\nCon quali dati?\n       ↓\nQuanto deve essere veloce?\n       ↓\nQuale risorsa limita?\n       ↓\nQuali alternative esistono?\n       ↓\nQuale infrastruttura serve?",
+    "crumbs": [
+      "Corso",
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#un-criterio-di-lettura",
+    "href": "index.html#un-criterio-di-lettura",
+    "title": "R per l’IT",
+    "section": "Un criterio di lettura",
+    "text": "Un criterio di lettura\nIl materiale distingue, quando possibile, tra:\n\nfatto misurato — per esempio «CPU 98%»;\ninterpretazione — per esempio «il workload sembra CPU-bound»;\nipotesi — per esempio «potrebbe essere parallelizzabile»;\ndecisione infrastrutturale — per esempio «valutiamo più core».\n\nQuesta distinzione evita di trasformare un’ipotesi in una specifica hardware.",
+    "crumbs": [
+      "Corso",
+      "Home"
+    ]
+  },
+  {
+    "objectID": "02-runtime.html",
+    "href": "02-runtime.html",
+    "title": "Runtime, processi e parallelismo",
+    "section": "",
+    "text": "Introduzione\nPer valutare una richiesta infrastrutturale bisogna capire come il lavoro R viene effettivamente eseguito. Il capitolo costruisce il vocabolario minimo — processo, core, thread, worker e memoria — e lo collega al problema più importante per IT: individuare il consumo reale di risorse e capire che cosa cambia quando si introduce il parallelismo.\n\n\nProcesso, CPU, core, thread, worker\nQuesti termini sono spesso utilizzati come sinonimi.\nNon lo sono.\n\n\n\n\nflowchart TD\n    S[\"Server\"]\n    S --&gt; CPU[\"CPU\"]\n    CPU --&gt; C1[\"Core 1\"]\n    CPU --&gt; C2[\"Core 2\"]\n    CPU --&gt; C3[\"Core 3\"]\n    CPU --&gt; CN[\"Core N\"]\n\n    S --&gt; RAM[\"RAM\"]\n    S --&gt; IO[\"Storage / rete\"]\n\n\n\n\n\n\n\nRuntime\nIl termine runtime può indicare due concetti distinti:\n\nruntime environment: l’ambiente software necessario all’esecuzione, come R, pacchetti, librerie di sistema, driver e sistema operativo;\nexecution time: il tempo necessario per completare un’elaborazione.\n\nNel contesto del corso, quando parliamo di performance ci riferiamo soprattutto al secondo concetto. Per analizzarlo dobbiamo capire come il codice utilizza processi, thread, worker e risorse hardware.\n\n\nProcesso\nUn processo è un’istanza in esecuzione di un programma.\nUn processo possiede:\n\nmemoria;\nstato;\nrisorse;\nidentificativo;\nfile e connessioni eventualmente aperti.\n\nUn’esecuzione R normalmente corrisponde almeno a un processo R.\n\n\nCore\nUn core è una risorsa hardware capace di eseguire istruzioni.\nAvere:\n\n16 core\n\nnon significa automaticamente:\n\nR esegue 16 volte più velocemente.\n\nServe un carico che possa utilizzare effettivamente quei core.\n\n\nThread\nUn processo può utilizzare uno o più thread. I thread condividono la stessa memoria del processo.\nIl motore base di R è prevalentemente single-thread. Tuttavia, molte operazioni pesanti (es. moltiplicazioni di matrici, o funzioni di pacchetti come data.table, arrow, torch) delegano il lavoro a librerie native in C/C++ che usano i thread.\n\nthread ≠ automaticamente parallelismo efficace.\n\nIl comportamento dipende dal codice, dalle librerie e dal tipo di operazione.\n\n\nWorker\n“Worker” è soprattutto un termine architetturale.\nUn worker è un’unità di lavoro incaricata di eseguire una parte dell’elaborazione.\nPuò essere realizzato, a seconda della tecnologia, tramite:\n\nprocesso;\nthread;\naltro meccanismo di esecuzione.\n\nPer IT la domanda importante è:\n\nQuanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?\n\n\n\nParallelismo\nQuando il lavoro può essere suddiviso:\n\n\n\n\nflowchart TD\n    JOB[\"Elaborazione\"]\n    JOB --&gt; W1[\"Worker 1\"]\n    JOB --&gt; W2[\"Worker 2\"]\n    JOB --&gt; W3[\"Worker 3\"]\n    JOB --&gt; W4[\"Worker 4\"]\n\n    W1 --&gt; C1[\"CPU\"]\n    W2 --&gt; C2[\"CPU\"]\n    W3 --&gt; C3[\"CPU\"]\n    W4 --&gt; C4[\"CPU\"]\n\n\n\n\n\nIl vantaggio dipende dalla possibilità di dividere realmente il lavoro.\n\n\nParallelismo e concorrenza\nParallelismo e concorrenza non sono la stessa cosa.\n\nparallelismo: una singola elaborazione utilizza più unità di esecuzione nello stesso intervallo di tempo;\nconcorrenza: più elaborazioni o richieste sono attive contemporaneamente.\n\nEsempio:\nCaso A — un job:\n1 job → 8 worker\n\nCaso B — più utenti:\n8 job → 1 worker ciascuno\nI due casi hanno profili operativi diversi. Nel caso B la contesa può coinvolgere contemporaneamente CPU, RAM, database, rete e scheduler; nel caso A la domanda principale è quanto scala il singolo workload.\nPer IT, prima di dimensionare una piattaforma bisogna quindi chiedere entrambe le cose:\n\n«Quanti worker usa una singola elaborazione?»\n\ne\n\n«Quante elaborazioni possono essere contemporaneamente attive?»\n\nQuesta distinzione è particolarmente importante per Shiny e API, dove più richieste o sessioni possono essere contemporaneamente in esecuzione.\n\n\nIl parallelismo ha un costo\nAumentare i worker può significare:\n\npiù CPU utilizzata;\npiù RAM;\npiù dati copiati;\npiù accessi al database;\npiù I/O;\npiù traffico di rete;\nmaggiore complessità.\n\nQuindi:\n\npiù worker non significa necessariamente meglio.\n\nNella maggior parte dei backend paralleli in R (come PSOCK o multisession), ogni worker è un processo R completamente separato. Questo significa che se lo script principale carica 2 GB di dati in memoria, ogni singolo worker caricherà 2 GB.\n\n\nEsempio di scaling\nSupponiamo di misurare:\n\n\n\nWorker\nTempo\nRAM\n\n\n\n\n1\n40 min\n4 GB\n\n\n2\n23 min\n8 GB\n\n\n4\n14 min\n16 GB\n\n\n8\n12 min\n32 GB\n\n\n\nIl passaggio da 1 a 4 worker è significativo; quello da 4 a 8 molto meno.\nLa scalabilità reale può essere limitata da:\n\nparti seriali;\nsincronizzazione;\ntrasferimento dati;\nI/O;\ndatabase;\noverhead dei worker;\ncontesa sulle risorse.\n\nUn benchmark reale è quindi più informativo di una stima basata soltanto sul numero di core.\nIT dovrebbe chiedere:\n\nQuale beneficio misurato otteniamo aumentando i worker e quale costo aggiuntivo introduciamo in RAM, I/O e database?\n\n\n\nMemoria di processo e picco di RAM\nUn processo R utilizza memoria per gli oggetti R, le strutture interne del runtime, le librerie caricate, i buffer e altre risorse.\nLa dimensione dei dati su disco non coincide quindi necessariamente con la memoria richiesta dal processo.\nUn’operazione può richiedere memoria temporanea aggiuntiva:\noggetto originale:  4 GB\ncopia temporanea:  +4 GB\nrisultato:          +4 GB\noverhead/runtime:   +...\n-----------------------------\npicco &gt; 12 GB\nNon tutte le operazioni producono necessariamente una copia completa: R può condividere oggetti e creare copie quando necessario. Per IT è però importante ragionare sul picco di memoria, non soltanto sulla dimensione finale del dataset.\n\n«Il dataset è di 10 GB» non implica che servano esattamente 10 GB di RAM.\n\n\n\nRAM e memoria virtuale\nLa RAM è la memoria fisica disponibile al sistema.\nLa memoria virtuale è il meccanismo con cui il sistema operativo presenta ai processi uno spazio di memoria e gestisce le pagine, eventualmente utilizzando anche storage.\nProcesso R\n   ↓\nmemoria virtuale\n   ↓\nRAM + eventuale paging\nLa memoria virtuale non equivale a RAM aggiuntiva gratuita. Se il sistema ricorre intensamente a paging/swap, le prestazioni possono degradare perché lo storage è molto più lento della RAM.\nPer IT:\n\nmolto swap disponibile non significa che il server abbia RAM sufficiente per il carico.\n\n\n\nGarbage collection\nR utilizza un garbage collector (GC) per recuperare memoria associata a oggetti che non sono più necessari.\nIn termini semplificati:\ncreazione oggetti\n      ↓\nmemoria occupata\n      ↓\noggetti non più necessari\n      ↓\ngarbage collection\n      ↓\nmemoria recuperabile\nIl garbage collector non può liberare memoria ancora necessaria all’elaborazione.\nInoltre una fase di garbage collection può avere un costo temporale. Per questo, per diagnosticare un problema di memoria, è utile osservare sia l’andamento della RAM sia il tempo di esecuzione.\n\n\nThread nativi e oversubscription\nIl codice R può chiamare librerie native che utilizzano thread propri. Questo introduce una distinzione importante tra:\n\nworker R;\nthread del processo;\nthread utilizzati da librerie numeriche o di I/O.\n\nUn esempio concettuale:\n8 worker R\n×\n4 thread nativi per worker\n=\nfino a 32 unità di esecuzione concorrenti\nSe il server dispone di meno risorse effettivamente utilizzabili, può verificarsi oversubscription: troppi thread competono per i core.\nIl risultato può essere:\n\npiù context switching;\nmaggiore contesa CPU;\nmaggiore consumo di risorse;\npeggioramento delle prestazioni.\n\nPer IT la domanda non è quindi soltanto:\n\n«Quanti worker?»\n\nma anche:\n\n«Quanti thread utilizza ciascun worker?»\n\n\n\nParallelismo e memoria\nQuando i worker sono processi separati, ciascun processo può avere una propria copia degli oggetti necessari.\nSchema concettuale:\nProcesso principale\n   │\n   ├── dati\n   ├── Worker 1 → dati necessari\n   ├── Worker 2 → dati necessari\n   ├── Worker 3 → dati necessari\n   └── Worker 4 → dati necessari\nPerciò, in molti backend basati su processi separati:\nRAM richiesta\n≈\nmemoria base\n+\nmemoria per worker\n+\noverhead\nNon è una formula di dimensionamento esatta, ma è un modello utile per capire perché aumentare i worker può far crescere rapidamente la RAM richiesta.\n\n\nDiagnostica del runtime\nQuando una soluzione R è lenta, IT può chiedere almeno:\n\n\n\nDomanda\nEvidenza\n\n\n\n\nCPU alta?\nutilizzo CPU nel tempo\n\n\nRAM alta?\nmemoria del processo e picco\n\n\nPaging?\nmetriche del sistema operativo\n\n\nUn solo core saturo?\nutilizzo per core\n\n\nPiù thread?\nmetriche del processo/libreria\n\n\nPiù worker?\nnumero di processi/worker\n\n\nDB lento?\ntempi e metriche lato database\n\n\nI/O lento?\nmetriche storage\n\n\nRete lenta?\nthroughput e latenza\n\n\nQuale funzione è lenta?\nprofiling\n\n\n\nIl profilo della risorsa deve essere osservato durante l’elaborazione, non soltanto a fine job.\n\n\nDomande runtime per IT\nPrima di assegnare risorse aggiuntive chiedere:\n\nquanti processi R vengono creati?\nquanti worker?\nquanti thread per worker?\nqual è il picco di RAM?\nqual è l’utilizzo CPU per core?\nesiste paging?\nquali operazioni dominano il tempo?\nil database è coinvolto?\nil carico è CPU-bound, RAM-bound, I/O-bound o database-bound?\nla parallelizzazione è già stata testata?\ncome cambia il consumo di RAM aumentando i worker?\nqual è il tempo obiettivo?\n\nLa domanda finale è:\n\nqual è il collo di bottiglia misurato e quale intervento lo rimuove?",
+    "crumbs": [
+      "Corso",
+      "2. Runtime, processi e parallelismo",
+      "Runtime, processi e parallelismo"
+    ]
+  },
+  {
+    "objectID": "04-architettura.html",
+    "href": "04-architettura.html",
+    "title": "Architettura e integrazione",
+    "section": "",
+    "text": "Questo capitolo affronta il passaggio dalla singola elaborazione all’architettura di sistema. La domanda non è soltanto dove eseguire R, ma quali responsabilità assegnare a R e quali lasciare ai componenti aziendali già disponibili. La sequenza va quindi dal requisito al contesto di esecuzione, poi alle integrazioni e infine alla scelta architetturale.",
+    "crumbs": [
+      "Corso",
+      "4. Architettura e integrazione",
+      "Architettura e integrazione"
+    ]
+  },
+  {
+    "objectID": "04-architettura.html#usare-r-come-database",
+    "href": "04-architettura.html#usare-r-come-database",
+    "title": "Architettura e integrazione",
+    "section": "Usare R come database",
+    "text": "Usare R come database\nR può leggere e scrivere CSV, RDS, Parquet e altri formati. Questi formati possono essere appropriati per scambio dati, snapshot, risultati intermedi o archivi.\nIl problema nasce quando un file gestito da R viene usato come sostituto di un database aziendale per dati che richiedono persistenza, accesso concorrente, integrità, transazioni, controllo degli accessi o governance.\nLa domanda per IT è:\n\nQual è il sistema di riferimento del dato e chi ne garantisce consistenza e disponibilità?\n\nSe Oracle svolge già questo ruolo, in genere è preferibile che R lo utilizzi invece di creare una copia persistente parallela.",
+    "crumbs": [
+      "Corso",
+      "4. Architettura e integrazione",
+      "Architettura e integrazione"
+    ]
+  },
+  {
+    "objectID": "04-architettura.html#usare-r-come-scheduler",
+    "href": "04-architettura.html#usare-r-come-scheduler",
+    "title": "Architettura e integrazione",
+    "section": "Usare R come scheduler",
+    "text": "Usare R come scheduler\nUno script R può avviare altri script per semplici orchestrazioni locali. In produzione, quando esiste uno scheduler aziendale, è normalmente più chiaro affidargli calendario, dipendenze, retry, timeout, logging e notifiche.\nIl principio è:\n\nR decide come elaborare; lo scheduler decide quando e in quali condizioni eseguire il lavoro.",
+    "crumbs": [
+      "Corso",
+      "4. Architettura e integrazione",
+      "Architettura e integrazione"
+    ]
+  },
+  {
+    "objectID": "04-architettura.html#usare-shiny-come-intera-architettura-web",
+    "href": "04-architettura.html#usare-shiny-come-intera-architettura-web",
+    "title": "Architettura e integrazione",
+    "section": "Usare Shiny come intera architettura web",
+    "text": "Usare Shiny come intera architettura web\nShiny può costituire il livello applicativo, ma non deve necessariamente essere anche il livello di esposizione e sicurezza.\nIn funzione dell’architettura aziendale, un reverse proxy o un gateway può gestire TLS, routing, autenticazione, limiti di traffico e altre funzioni perimetrali.\nNon è quindi corretto considerare «Shiny senza reverse proxy» un errore universale: la questione è capire quali responsabilità sono già coperte dalla piattaforma e quali devono essere gestite dall’applicazione.",
+    "crumbs": [
+      "Corso",
+      "4. Architettura e integrazione",
+      "Architettura e integrazione"
+    ]
+  },
+  {
+    "objectID": "04-architettura.html#duplicare-dati-tra-r-e-database",
+    "href": "04-architettura.html#duplicare-dati-tra-r-e-database",
+    "title": "Architettura e integrazione",
+    "section": "Duplicare dati tra R e database",
+    "text": "Duplicare dati tra R e database\nCopiare dati dal database a R può essere necessario, ma una copia persistente non dovrebbe essere creata senza una motivazione.\nDuplicare dati introduce possibili problemi di:\n\nsincronizzazione;\nconsistenza;\nstorage;\nsicurezza;\naggiornamento;\ndata lineage.\n\nQuando possibile, conviene trasferire a R solo i dati necessari e spostare nel database filtri e aggregazioni che il database può eseguire efficacemente.\n\n\n\n\n\n\n\n\nPattern\nRischio principale\nDomanda per IT\n\n\n\n\nR come database\npersistenza, concorrenza, governance\nQual è il sistema di riferimento del dato?\n\n\nR come scheduler\nretry, dipendenze, monitoring\nQuale scheduler aziendale esiste?\n\n\nShiny come intero web stack\nsicurezza, traffico, esposizione\nChi gestisce TLS e autenticazione?\n\n\nCopie R + database\nconsistenza e lineage\nPerché questa copia deve esistere?",
+    "crumbs": [
+      "Corso",
+      "4. Architettura e integrazione",
+      "Architettura e integrazione"
+    ]
+  },
+  {
+    "objectID": "04-architettura.html#vm",
+    "href": "04-architettura.html#vm",
+    "title": "Architettura e integrazione",
+    "section": "VM",
+    "text": "VM\nUna VM fornisce un ambiente isolato con un proprio sistema operativo, pur utilizzando hardware condiviso.\nPer IT può essere una soluzione utile quando servono:\n\nun ambiente R separato;\nuna versione specifica del sistema operativo;\nrisorse definite;\naccesso controllato alla rete;\ngestione centralizzata.\n\nLa VM non elimina il problema del dimensionamento: CPU e RAM assegnate devono comunque essere coerenti con il workload.",
+    "crumbs": [
+      "Corso",
+      "4. Architettura e integrazione",
+      "Architettura e integrazione"
+    ]
+  },
+  {
+    "objectID": "04-architettura.html#container",
+    "href": "04-architettura.html#container",
+    "title": "Architettura e integrazione",
+    "section": "Container",
+    "text": "Container\nIn questo capitolo il container va considerato come scelta architetturale di esecuzione: stabilisce come isolare e distribuire il runtime dell’applicazione rispetto all’host e alla piattaforma.\nIl container non sostituisce VM, piattaforma applicativa, registry o sistemi di gestione: è un componente della soluzione.\nNel capitolo sul deployment il container viene invece considerato come artefatto di rilascio: immagine costruita, testata, identificata e distribuita senza modificarne manualmente il contenuto.\nUn container permette di distribuire insieme applicazione e dipendenze in un ambiente standardizzato.\nIl modello concettuale è:\nimmagine\n  ├── runtime R\n  ├── pacchetti\n  ├── librerie di sistema\n  └── applicazione\n       ↓\ncontainer\n       ↓\nhost / piattaforma\nIl vantaggio principale per IT è la riproducibilità dell’ambiente.\nIl container non significa però «nessuna gestione»: restano da gestire immagini, vulnerabilità, aggiornamenti, registry, rete, storage, segreti e risorse.",
+    "crumbs": [
+      "Corso",
+      "4. Architettura e integrazione",
+      "Architettura e integrazione"
+    ]
+  },
+  {
+    "objectID": "04-architettura.html#server-condiviso-o-dedicato",
+    "href": "04-architettura.html#server-condiviso-o-dedicato",
+    "title": "Architettura e integrazione",
+    "section": "Server condiviso o dedicato?",
+    "text": "Server condiviso o dedicato?\nLa scelta dovrebbe dipendere dal workload.\nUn server condiviso può essere sufficiente quando i job sono sporadici e i carichi sono compatibili.\nUn server dedicato può essere motivato quando:\n\nil carico è elevato o persistente;\ni workload sono incompatibili tra loro;\nsono necessari requisiti specifici;\nl’isolamento è importante;\nesiste un requisito di disponibilità.\n\nPrima di introdurre un server fisico è opportuno verificare se una VM o una piattaforma esistente soddisfi gli stessi requisiti.",
+    "crumbs": [
+      "Corso",
+      "4. Architettura e integrazione",
+      "Architettura e integrazione"
+    ]
+  },
+  {
+    "objectID": "04-architettura.html#cosa-deve-sapere-it",
+    "href": "04-architettura.html#cosa-deve-sapere-it",
+    "title": "Architettura e integrazione",
+    "section": "Cosa deve sapere IT",
+    "text": "Cosa deve sapere IT\nPer un job batch bisogna conoscere:\n\nfrequenza;\ndurata attesa;\naccount di esecuzione;\nsorgenti dati;\ndestinazione degli output;\ntimeout;\ncomportamento in caso di errore;\npossibilità di riesecuzione;\nlogging;\nnotifiche.\n\nÈ importante non confondere il job con lo scheduler: R può sapere come elaborare, mentre lo scheduler decide quando eseguire.",
+    "crumbs": [
+      "Corso",
+      "4. Architettura e integrazione",
+      "Architettura e integrazione"
+    ]
+  },
+  {
+    "objectID": "04-architettura.html#esempio",
+    "href": "04-architettura.html#esempio",
+    "title": "Architettura e integrazione",
+    "section": "Esempio",
+    "text": "Esempio\nInvece di:\nOracle\n  ↓\n100 GB\n  ↓\nR\n  ↓\nfiltra\n  ↓\naggregazione\npuò essere preferibile:\nOracle\n  ↓\nfiltro + aggregazione\n  ↓\n500 MB\n  ↓\nR\n  ↓\nanalisi specialistica\nLa scelta va verificata con misure: non tutte le operazioni devono essere spostate nel database.",
+    "crumbs": [
+      "Corso",
+      "4. Architettura e integrazione",
+      "Architettura e integrazione"
+    ]
+  },
+  {
+    "objectID": "06-governance.html",
+    "href": "06-governance.html",
+    "title": "Governance e valutazione delle richieste",
+    "section": "",
+    "text": "Questo capitolo raccoglie il metodo decisionale che collega i capitoli precedenti. L’obiettivo non è stabilire a priori quale tecnologia utilizzare, ma rendere le richieste confrontabili: partire dal requisito, raccogliere evidenze, identificare il collo di bottiglia, verificare le alternative e documentare la decisione. La stessa logica vale per pacchetti, RAM, CPU, server e scelta architetturale.",
+    "crumbs": [
+      "Corso",
+      "6. Governance e valutazione delle richieste",
+      "Governance e valutazione delle richieste"
+    ]
+  },
+  {
+    "objectID": "06-governance.html#identificare-il-requisito",
+    "href": "06-governance.html#identificare-il-requisito",
+    "title": "Governance e valutazione delle richieste",
+    "section": "1. Identificare il requisito",
+    "text": "1. Identificare il requisito\nChiedere:\n\nche cosa deve fare l’applicazione?\nchi la usa?\ncon quale frequenza?\nentro quale tempo deve completare il lavoro?\nquali dati utilizza?\nquale output produce?",
+    "crumbs": [
+      "Corso",
+      "6. Governance e valutazione delle richieste",
+      "Governance e valutazione delle richieste"
+    ]
+  },
+  {
+    "objectID": "06-governance.html#identificare-il-carico",
+    "href": "06-governance.html#identificare-il-carico",
+    "title": "Governance e valutazione delle richieste",
+    "section": "2. Identificare il carico",
+    "text": "2. Identificare il carico\nMisurare:\n\nCPU;\nRAM;\nI/O;\nrete;\ndatabase;\nnumero di processi/worker;\ndurata.",
+    "crumbs": [
+      "Corso",
+      "6. Governance e valutazione delle richieste",
+      "Governance e valutazione delle richieste"
+    ]
+  },
+  {
+    "objectID": "06-governance.html#identificare-il-collo-di-bottiglia",
+    "href": "06-governance.html#identificare-il-collo-di-bottiglia",
+    "title": "Governance e valutazione delle richieste",
+    "section": "3. Identificare il collo di bottiglia",
+    "text": "3. Identificare il collo di bottiglia\nUna richiesta hardware ha senso solo se esiste un rapporto documentato tra risorsa e problema.",
+    "crumbs": [
+      "Corso",
+      "6. Governance e valutazione delle richieste",
+      "Governance e valutazione delle richieste"
+    ]
+  },
+  {
+    "objectID": "06-governance.html#verificare-alternative",
+    "href": "06-governance.html#verificare-alternative",
+    "title": "Governance e valutazione delle richieste",
+    "section": "4. Verificare alternative",
+    "text": "4. Verificare alternative\nPrima dell’hardware considerare:\n\nottimizzazione dell’algoritmo;\nottimizzazione dell’implementazione;\nriduzione dei dati;\nspostamento di elaborazioni nel database;\nparallelizzazione;\ninfrastruttura esistente;\ncambio di architettura.",
+    "crumbs": [
+      "Corso",
+      "6. Governance e valutazione delle richieste",
+      "Governance e valutazione delle richieste"
+    ]
+  },
+  {
+    "objectID": "06-governance.html#testare",
+    "href": "06-governance.html#testare",
+    "title": "Governance e valutazione delle richieste",
+    "section": "5. Testare",
+    "text": "5. Testare\nQuando possibile, modificare una variabile e misurare il risultato.",
+    "crumbs": [
+      "Corso",
+      "6. Governance e valutazione delle richieste",
+      "Governance e valutazione delle richieste"
+    ]
+  },
+  {
+    "objectID": "06-governance.html#documentare",
+    "href": "06-governance.html#documentare",
+    "title": "Governance e valutazione delle richieste",
+    "section": "6. Documentare",
+    "text": "6. Documentare\nLa decisione finale dovrebbe poter essere ricostruita mesi dopo.",
+    "crumbs": [
+      "Corso",
+      "6. Governance e valutazione delle richieste",
+      "Governance e valutazione delle richieste"
+    ]
+  },
+  {
+    "objectID": "06-governance.html#pacchetti-interni-e-test",
+    "href": "06-governance.html#pacchetti-interni-e-test",
+    "title": "Governance e valutazione delle richieste",
+    "section": "Pacchetti interni e test",
+    "text": "Pacchetti interni e test\nQuando una parte di codice diventa stabile, riutilizzata da più applicazioni o rilevante per risultati analitici, un pacchetto R interno può offrire vantaggi di controllo:\n\nversione esplicita;\ndipendenze dichiarate;\nstruttura standard;\ntest automatici;\nchangelog;\npossibilità di distribuire una release precisa.\n\nI test non dovrebbero limitarsi alla singola funzione quando il rischio è legato alla sequenza di elaborazione. È quindi utile distinguere:\nfunzione → test unitario\n\nfunzione A → funzione B → funzione C\n          → test di integrazione\n\ndataset di riferimento → intera elaborazione\n                       → test di regressione\nPer un test di regressione è importante poter associare il risultato a:\n\nversione del codice;\nambiente software;\ndataset di test;\noutput atteso o criterio di accettazione;\nesito;\neventuale tolleranza.",
+    "crumbs": [
+      "Corso",
+      "6. Governance e valutazione delle richieste",
+      "Governance e valutazione delle richieste"
+    ]
+  },
+  {
+    "objectID": "06-governance.html#baseline-software",
+    "href": "06-governance.html#baseline-software",
+    "title": "Governance e valutazione delle richieste",
+    "section": "Baseline software",
+    "text": "Baseline software\nPer una release significativa può essere utile mantenere una scheda di baseline:\n\n\n\nElemento\nIdentificazione\n\n\n\n\napplicazione\nnome e versione\n\n\ncodice\ncommit/tag\n\n\nR\nversione\n\n\npacchetti\nlockfile/versioni\n\n\nOS\nversione\n\n\ncontainer\ntag e digest, se utilizzato\n\n\ndriver/client\nversione\n\n\ndati di test\nidentificativo\n\n\nsuite di test\nversione\n\n\nrisultato test\nPASS/FAIL\n\n\nmetodo\nidentificativo/versione\n\n\n\nLa baseline permette di rispondere a una domanda operativa importante:\n\nPossiamo ricostruire quale ambiente e quale versione del software hanno prodotto questo risultato?",
+    "crumbs": [
+      "Corso",
+      "6. Governance e valutazione delle richieste",
+      "Governance e valutazione delle richieste"
+    ]
+  },
+  {
+    "objectID": "06-governance.html#ownership-nel-tempo",
+    "href": "06-governance.html#ownership-nel-tempo",
+    "title": "Governance e valutazione delle richieste",
+    "section": "Ownership nel tempo",
+    "text": "Ownership nel tempo\nL’ownership comprende anche il fine vita della soluzione:\n\nchi valuta gli aggiornamenti tecnologici;\nchi decide quando sostituire una dipendenza non più sostenibile;\nchi pianifica la migrazione;\nchi autorizza la dismissione;\nchi conserva la documentazione necessaria.",
+    "crumbs": [
+      "Corso",
+      "6. Governance e valutazione delle richieste",
+      "Governance e valutazione delle richieste"
+    ]
+  }
+]

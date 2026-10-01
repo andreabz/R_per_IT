@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Governance e valutazione delle richieste – R per l’IT</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-29e2c20b02301cfff04dc8050bf30c7e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-346f7653faf71f503ba44a80ac96ac51.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">R per l’IT</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Corso</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/andreabz/R_per_IT"> 
+<span class="menu-text">Repository</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06-governance.html">6. Governance e valutazione delle richieste</a></li><li class="breadcrumb-item"><a href="./06-governance.html">Governance e valutazione delle richieste</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">1. Contesto e ambiente R</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-contesto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Contesto e ambiente R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">2. Runtime, processi e parallelismo</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-runtime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Runtime, processi e parallelismo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">3. Performance e diagnostica</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-performance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Performance e diagnostica</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">4. Architettura e integrazione</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architettura.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Architettura e integrazione</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">5. Deployment e gestione operativa</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-deployment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Deployment e gestione operativa</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">6. Governance e valutazione delle richieste</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-governance.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Governance e valutazione delle richieste</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">7. Caso finale e checklist</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-caso-finale.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Caso finale e checklist</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introduzione" id="toc-introduzione" class="nav-link active" data-scroll-target="#introduzione">Introduzione</a></li>
+  <li><a href="#una-procedura-per-valutare-le-richieste" id="toc-una-procedura-per-valutare-le-richieste" class="nav-link" data-scroll-target="#una-procedura-per-valutare-le-richieste">Una procedura per valutare le richieste</a>
+  <ul class="collapse">
+  <li><a href="#identificare-il-requisito" id="toc-identificare-il-requisito" class="nav-link" data-scroll-target="#identificare-il-requisito">1. Identificare il requisito</a></li>
+  <li><a href="#identificare-il-carico" id="toc-identificare-il-carico" class="nav-link" data-scroll-target="#identificare-il-carico">2. Identificare il carico</a></li>
+  <li><a href="#identificare-il-collo-di-bottiglia" id="toc-identificare-il-collo-di-bottiglia" class="nav-link" data-scroll-target="#identificare-il-collo-di-bottiglia">3. Identificare il collo di bottiglia</a></li>
+  <li><a href="#verificare-alternative" id="toc-verificare-alternative" class="nav-link" data-scroll-target="#verificare-alternative">4. Verificare alternative</a></li>
+  <li><a href="#testare" id="toc-testare" class="nav-link" data-scroll-target="#testare">5. Testare</a></li>
+  <li><a href="#documentare" id="toc-documentare" class="nav-link" data-scroll-target="#documentare">6. Documentare</a></li>
+  </ul></li>
+  <li><a href="#software-controllato-verificato-e-validato" id="toc-software-controllato-verificato-e-validato" class="nav-link" data-scroll-target="#software-controllato-verificato-e-validato">Software controllato, verificato e validato</a>
+  <ul class="collapse">
+  <li><a href="#pacchetti-interni-e-test" id="toc-pacchetti-interni-e-test" class="nav-link" data-scroll-target="#pacchetti-interni-e-test">Pacchetti interni e test</a></li>
+  <li><a href="#baseline-software" id="toc-baseline-software" class="nav-link" data-scroll-target="#baseline-software">Baseline software</a></li>
+  </ul></li>
+  <li><a href="#dallevidenza-alla-decisione" id="toc-dallevidenza-alla-decisione" class="nav-link" data-scroll-target="#dallevidenza-alla-decisione">Dall’evidenza alla decisione</a></li>
+  <li><a href="#pacchetti-interni-quando-trattarli-come-componenti" id="toc-pacchetti-interni-quando-trattarli-come-componenti" class="nav-link" data-scroll-target="#pacchetti-interni-quando-trattarli-come-componenti">Pacchetti interni: quando trattarli come componenti</a></li>
+  <li><a href="#valutare-il-rischio-di-una-soluzione" id="toc-valutare-il-rischio-di-una-soluzione" class="nav-link" data-scroll-target="#valutare-il-rischio-di-una-soluzione">Valutare il rischio di una soluzione</a></li>
+  <li><a href="#ownership" id="toc-ownership" class="nav-link" data-scroll-target="#ownership">Ownership</a>
+  <ul class="collapse">
+  <li><a href="#ownership-nel-tempo" id="toc-ownership-nel-tempo" class="nav-link" data-scroll-target="#ownership-nel-tempo">Ownership nel tempo</a></li>
+  </ul></li>
+  <li><a href="#come-valutare-una-richiesta-di-installazione" id="toc-come-valutare-una-richiesta-di-installazione" class="nav-link" data-scroll-target="#come-valutare-una-richiesta-di-installazione">Come valutare una richiesta di installazione</a></li>
+  <li><a href="#come-valutare-una-richiesta-di-ram" id="toc-come-valutare-una-richiesta-di-ram" class="nav-link" data-scroll-target="#come-valutare-una-richiesta-di-ram">Come valutare una richiesta di RAM</a></li>
+  <li><a href="#come-valutare-una-richiesta-di-cpu" id="toc-come-valutare-una-richiesta-di-cpu" class="nav-link" data-scroll-target="#come-valutare-una-richiesta-di-cpu">Come valutare una richiesta di CPU</a></li>
+  <li><a href="#come-valutare-una-richiesta-di-server" id="toc-come-valutare-una-richiesta-di-server" class="nav-link" data-scroll-target="#come-valutare-una-richiesta-di-server">Come valutare una richiesta di server</a></li>
+  <li><a href="#matrice-decisionale" id="toc-matrice-decisionale" class="nav-link" data-scroll-target="#matrice-decisionale">Matrice decisionale</a></li>
+  <li><a href="#tracciabilità-del-dato-e-del-risultato" id="toc-tracciabilità-del-dato-e-del-risultato" class="nav-link" data-scroll-target="#tracciabilità-del-dato-e-del-risultato">Tracciabilità del dato e del risultato</a></li>
+  <li><a href="#r-non-deve-fare-tutto" id="toc-r-non-deve-fare-tutto" class="nav-link" data-scroll-target="#r-non-deve-fare-tutto">R non deve fare tutto</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06-governance.html">6. Governance e valutazione delle richieste</a></li><li class="breadcrumb-item"><a href="./06-governance.html">Governance e valutazione delle richieste</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Governance e valutazione delle richieste</h1>
+<p class="subtitle lead">Come valutare installazioni, risorse, server e alternative</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduzione" class="level1">
+<h1>Introduzione</h1>
+<p>Questo capitolo raccoglie il metodo decisionale che collega i capitoli precedenti. L’obiettivo non è stabilire a priori quale tecnologia utilizzare, ma rendere le richieste confrontabili: partire dal requisito, raccogliere evidenze, identificare il collo di bottiglia, verificare le alternative e documentare la decisione. La stessa logica vale per pacchetti, RAM, CPU, server e scelta architetturale.</p>
+</section>
+<section id="una-procedura-per-valutare-le-richieste" class="level1">
+<h1>Una procedura per valutare le richieste</h1>
+<p>Le richieste più difficili sono quelle che arrivano già accompagnate dalla soluzione:</p>
+<blockquote class="blockquote">
+<p>«Servono 64 GB di RAM.»</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>«Servono 16 core.»</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>«Serve un server dedicato.»</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>«Bisogna installare questo pacchetto.»</p>
+</blockquote>
+<p>La procedura IT dovrebbe riportare la richiesta al problema originale.</p>
+<section id="identificare-il-requisito" class="level2">
+<h2 class="anchored" data-anchor-id="identificare-il-requisito">1. Identificare il requisito</h2>
+<p>Chiedere:</p>
+<ul>
+<li>che cosa deve fare l’applicazione?</li>
+<li>chi la usa?</li>
+<li>con quale frequenza?</li>
+<li>entro quale tempo deve completare il lavoro?</li>
+<li>quali dati utilizza?</li>
+<li>quale output produce?</li>
+</ul>
+</section>
+<section id="identificare-il-carico" class="level2">
+<h2 class="anchored" data-anchor-id="identificare-il-carico">2. Identificare il carico</h2>
+<p>Misurare:</p>
+<ul>
+<li>CPU;</li>
+<li>RAM;</li>
+<li>I/O;</li>
+<li>rete;</li>
+<li>database;</li>
+<li>numero di processi/worker;</li>
+<li>durata.</li>
+</ul>
+</section>
+<section id="identificare-il-collo-di-bottiglia" class="level2">
+<h2 class="anchored" data-anchor-id="identificare-il-collo-di-bottiglia">3. Identificare il collo di bottiglia</h2>
+<p>Una richiesta hardware ha senso solo se esiste un rapporto documentato tra risorsa e problema.</p>
+</section>
+<section id="verificare-alternative" class="level2">
+<h2 class="anchored" data-anchor-id="verificare-alternative">4. Verificare alternative</h2>
+<p>Prima dell’hardware considerare:</p>
+<ul>
+<li>ottimizzazione dell’algoritmo;</li>
+<li>ottimizzazione dell’implementazione;</li>
+<li>riduzione dei dati;</li>
+<li>spostamento di elaborazioni nel database;</li>
+<li>parallelizzazione;</li>
+<li>infrastruttura esistente;</li>
+<li>cambio di architettura.</li>
+</ul>
+</section>
+<section id="testare" class="level2">
+<h2 class="anchored" data-anchor-id="testare">5. Testare</h2>
+<p>Quando possibile, modificare una variabile e misurare il risultato.</p>
+</section>
+<section id="documentare" class="level2">
+<h2 class="anchored" data-anchor-id="documentare">6. Documentare</h2>
+<p>La decisione finale dovrebbe poter essere ricostruita mesi dopo.</p>
+</section>
+</section>
+<section id="software-controllato-verificato-e-validato" class="level1">
+<h1>Software controllato, verificato e validato</h1>
+<p>In un laboratorio soggetto a requisiti di qualità è importante non confondere tre problemi diversi.</p>
+<section id="controllo-dellambiente-software" class="level3">
+<h3 class="anchored" data-anchor-id="controllo-dellambiente-software">1. Controllo dell’ambiente software</h3>
+<p>Domanda:</p>
+<blockquote class="blockquote">
+<p><strong>Con quale ambiente è stato eseguito il software?</strong></p>
+</blockquote>
+<p>Le evidenze possono comprendere:</p>
+<ul>
+<li>versione di R;</li>
+<li>versioni dei pacchetti;</li>
+<li>lockfile;</li>
+<li>sistema operativo;</li>
+<li>librerie native;</li>
+<li>driver;</li>
+<li>configurazione;</li>
+<li>identificativo dell’immagine container.</li>
+</ul>
+</section>
+<section id="verifica-del-software" class="level3">
+<h3 class="anchored" data-anchor-id="verifica-del-software">2. Verifica del software</h3>
+<p>Domanda:</p>
+<blockquote class="blockquote">
+<p><strong>Abbiamo evidenza che il software si comporti come previsto?</strong></p>
+</blockquote>
+<p>Le evidenze possono comprendere:</p>
+<ul>
+<li>test unitari;</li>
+<li>test di integrazione;</li>
+<li>test di regressione;</li>
+<li>casi limite;</li>
+<li>dataset di riferimento;</li>
+<li>output attesi;</li>
+<li>tolleranze definite;</li>
+<li>esito dei test associato a una specifica versione del codice.</li>
+</ul>
+<p>Per codice riutilizzato in più applicazioni può essere utile organizzare la logica in un <strong>pacchetto interno versionato</strong>, con una propria suite di test. Non è necessario che IT gestisca la programmazione dei test: deve poter riconoscere che esistono una versione, un insieme di verifiche e un esito documentato.</p>
+</section>
+<section id="verifica-o-validazione-del-metodo" class="level3">
+<h3 class="anchored" data-anchor-id="verifica-o-validazione-del-metodo">3. Verifica o validazione del metodo</h3>
+<p>Domanda:</p>
+<blockquote class="blockquote">
+<p><strong>Il metodo analitico è adeguato allo scopo per il quale viene utilizzato?</strong></p>
+</blockquote>
+<p>Questa è una questione diversa dalla riproducibilità dell’ambiente e dalla verifica del codice.</p>
+<p><strong><code>renv</code> + test + container non equivalgono automaticamente alla validazione di un metodo analitico.</strong></p>
+<p>Nel contesto del laboratorio, la modalità con cui software e metodo vengono verificati o validati deve essere ricondotta alle procedure, ai requisiti e ai criteri di accettazione applicabili.</p>
+</section>
+<section id="pacchetti-interni-e-test" class="level2">
+<h2 class="anchored" data-anchor-id="pacchetti-interni-e-test">Pacchetti interni e test</h2>
+<p>Quando una parte di codice diventa stabile, riutilizzata da più applicazioni o rilevante per risultati analitici, un pacchetto R interno può offrire vantaggi di controllo:</p>
+<ul>
+<li>versione esplicita;</li>
+<li>dipendenze dichiarate;</li>
+<li>struttura standard;</li>
+<li>test automatici;</li>
+<li>changelog;</li>
+<li>possibilità di distribuire una release precisa.</li>
+</ul>
+<p>I test non dovrebbero limitarsi alla singola funzione quando il rischio è legato alla sequenza di elaborazione. È quindi utile distinguere:</p>
+<pre class="text"><code>funzione → test unitario
+
+funzione A → funzione B → funzione C
+          → test di integrazione
+
+dataset di riferimento → intera elaborazione
+                       → test di regressione</code></pre>
+<p>Per un test di regressione è importante poter associare il risultato a:</p>
+<ul>
+<li>versione del codice;</li>
+<li>ambiente software;</li>
+<li>dataset di test;</li>
+<li>output atteso o criterio di accettazione;</li>
+<li>esito;</li>
+<li>eventuale tolleranza.</li>
+</ul>
+</section>
+<section id="baseline-software" class="level2">
+<h2 class="anchored" data-anchor-id="baseline-software">Baseline software</h2>
+<p>Per una release significativa può essere utile mantenere una scheda di baseline:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Elemento</th>
+<th>Identificazione</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>applicazione</td>
+<td>nome e versione</td>
+</tr>
+<tr class="even">
+<td>codice</td>
+<td>commit/tag</td>
+</tr>
+<tr class="odd">
+<td>R</td>
+<td>versione</td>
+</tr>
+<tr class="even">
+<td>pacchetti</td>
+<td>lockfile/versioni</td>
+</tr>
+<tr class="odd">
+<td>OS</td>
+<td>versione</td>
+</tr>
+<tr class="even">
+<td>container</td>
+<td>tag e digest, se utilizzato</td>
+</tr>
+<tr class="odd">
+<td>driver/client</td>
+<td>versione</td>
+</tr>
+<tr class="even">
+<td>dati di test</td>
+<td>identificativo</td>
+</tr>
+<tr class="odd">
+<td>suite di test</td>
+<td>versione</td>
+</tr>
+<tr class="even">
+<td>risultato test</td>
+<td>PASS/FAIL</td>
+</tr>
+<tr class="odd">
+<td>metodo</td>
+<td>identificativo/versione</td>
+</tr>
+</tbody>
+</table>
+<p>La baseline permette di rispondere a una domanda operativa importante:</p>
+<blockquote class="blockquote">
+<p><strong>Possiamo ricostruire quale ambiente e quale versione del software hanno prodotto questo risultato?</strong></p>
+</blockquote>
+</section>
+</section>
+<section id="dallevidenza-alla-decisione" class="level1">
+<h1>Dall’evidenza alla decisione</h1>
+<p>Una richiesta IT dovrebbe lasciare una traccia logica semplice:</p>
+<pre class="text"><code>misura
+  ↓
+interpretazione
+  ↓
+ipotesi
+  ↓
+test
+  ↓
+decisione
+  ↓
+evidenza conservata</code></pre>
+<p>Esempio:</p>
+<ul>
+<li><strong>misura</strong>: CPU 98%, un worker;</li>
+<li><strong>interpretazione</strong>: il job è prevalentemente CPU-bound;</li>
+<li><strong>ipotesi</strong>: il workload può beneficiare del parallelismo;</li>
+<li><strong>test</strong>: esecuzioni con 1, 2, 4 e 8 worker;</li>
+<li><strong>decisione</strong>: dimensionare sulla configurazione che soddisfa il requisito senza introdurre un costo di memoria non sostenibile;</li>
+<li><strong>evidenza conservata</strong>: metriche, risultati dello scaling, versione del software e configurazione testata.</li>
+</ul>
+<p>Questa sequenza evita che una decisione infrastrutturale venga registrata soltanto come conclusione («servono 64 GB») senza conservare il percorso che l’ha motivata.</p>
+</section>
+<section id="pacchetti-interni-quando-trattarli-come-componenti" class="level1">
+<h1>Pacchetti interni: quando trattarli come componenti</h1>
+<p>Un pacchetto interno merita un ciclo di vita esplicito quando, per esempio:</p>
+<ul>
+<li>è utilizzato da più applicazioni;</li>
+<li>contiene logica rilevante per risultati analitici;</li>
+<li>viene aggiornato indipendentemente dalle applicazioni che lo usano;</li>
+<li>deve essere distribuito a più ambienti;</li>
+<li>una modifica al suo comportamento può avere impatto su più sistemi.</li>
+</ul>
+<p>In questi casi IT dovrebbe poter identificare:</p>
+<ul>
+<li>repository e owner;</li>
+<li>versione/release;</li>
+<li>dipendenze;</li>
+<li>suite di test;</li>
+<li>changelog;</li>
+<li>repository di distribuzione;</li>
+<li>applicazioni che dipendono dal pacchetto;</li>
+<li>procedura di deprecazione o sostituzione.</li>
+</ul>
+<p>Il pacchetto diventa così un <strong>componente software governato</strong>, non una copia di funzioni condivisa manualmente.</p>
+</section>
+<section id="valutare-il-rischio-di-una-soluzione" class="level1">
+<h1>Valutare il rischio di una soluzione</h1>
+<p>Oltre alle performance, IT dovrebbe considerare il rischio operativo.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Aspetto</th>
+<th>Domanda</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dipendenze</td>
+<td>Possiamo ricostruire l’ambiente?</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Sicurezza</td>
+<td>Quali dati e credenziali utilizza?</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Disponibilità</td>
+<td>Cosa succede se il servizio non è disponibile?</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Manutenzione</td>
+<td>Chi aggiorna codice e pacchetti?</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Monitoring</td>
+<td>Come sappiamo che funziona?</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Continuità</td>
+<td>Cosa succede se il server viene perso?</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Ownership</td>
+<td>Chi decide modifiche e aggiornamenti?</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Una soluzione può essere performante ma difficile da mantenere. Le due valutazioni sono distinte.</p>
+</section>
+<section id="ownership" class="level1">
+<h1>Ownership</h1>
+<p>Una domanda spesso trascurata:</p>
+<blockquote class="blockquote">
+<p><strong>Chi è responsabile della soluzione tra un anno?</strong></p>
+</blockquote>
+<p>Bisogna sapere:</p>
+<ul>
+<li>chi mantiene il codice;</li>
+<li>chi conosce la logica;</li>
+<li>chi aggiorna i pacchetti;</li>
+<li>chi gestisce gli incidenti;</li>
+<li>chi verifica l’output;</li>
+<li>chi autorizza modifiche;</li>
+<li>chi decide quando dismettere il sistema.</li>
+</ul>
+<p>Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativo.</p>
+<section id="ownership-nel-tempo" class="level2">
+<h2 class="anchored" data-anchor-id="ownership-nel-tempo">Ownership nel tempo</h2>
+<p>L’ownership comprende anche il <strong>fine vita</strong> della soluzione:</p>
+<ul>
+<li>chi valuta gli aggiornamenti tecnologici;</li>
+<li>chi decide quando sostituire una dipendenza non più sostenibile;</li>
+<li>chi pianifica la migrazione;</li>
+<li>chi autorizza la dismissione;</li>
+<li>chi conserva la documentazione necessaria.</li>
+</ul>
+</section>
+</section>
+<section id="come-valutare-una-richiesta-di-installazione" class="level1">
+<h1>Come valutare una richiesta di installazione</h1>
+<section id="richiesta" class="level3">
+<h3 class="anchored" data-anchor-id="richiesta">Richiesta</h3>
+<blockquote class="blockquote">
+<p>“Installare R e questi 20 pacchetti.”</p>
+</blockquote>
+</section>
+<section id="domande" class="level3">
+<h3 class="anchored" data-anchor-id="domande">Domande</h3>
+<ol type="1">
+<li>Quale applicazione?</li>
+<li>Quale versione di R?</li>
+<li>Quali versioni dei pacchetti?</li>
+<li>Sono tutte dipendenze necessarie?</li>
+<li>Esiste un ambiente riproducibile?</li>
+<li>Ci sono dipendenze OS?</li>
+<li>Serve accesso Internet?</li>
+<li>Come verranno gestiti gli aggiornamenti?</li>
+<li>È un ambiente di sviluppo o produzione?</li>
+<li>Chi è responsabile dell’applicazione?</li>
+</ol>
+</section>
+</section>
+<section id="come-valutare-una-richiesta-di-ram" class="level1">
+<h1>Come valutare una richiesta di RAM</h1>
+<section id="richiesta-1" class="level3">
+<h3 class="anchored" data-anchor-id="richiesta-1">Richiesta</h3>
+<blockquote class="blockquote">
+<p>“Servono 64 GB.”</p>
+</blockquote>
+</section>
+<section id="domande-1" class="level3">
+<h3 class="anchored" data-anchor-id="domande-1">Domande</h3>
+<ul>
+<li>Quanta RAM viene utilizzata oggi?</li>
+<li>Qual è il picco?</li>
+<li>Viene utilizzato swap?</li>
+<li>Qual è la dimensione dei dati?</li>
+<li>Quanti worker?</li>
+<li>Quanta RAM usa ogni worker?</li>
+<li>Ci sono copie degli oggetti?</li>
+<li>La memoria cresce durante il job?</li>
+<li>È possibile ridurre i dati caricati?</li>
+</ul>
+</section>
+</section>
+<section id="come-valutare-una-richiesta-di-cpu" class="level1">
+<h1>Come valutare una richiesta di CPU</h1>
+<section id="richiesta-2" class="level3">
+<h3 class="anchored" data-anchor-id="richiesta-2">Richiesta</h3>
+<blockquote class="blockquote">
+<p>“Servono 16 core.”</p>
+</blockquote>
+</section>
+<section id="domande-2" class="level3">
+<h3 class="anchored" data-anchor-id="domande-2">Domande</h3>
+<ul>
+<li>CPU attuale?</li>
+<li>Percentuale di utilizzo?</li>
+<li>Uno o più core?</li>
+<li>Quanti worker?</li>
+<li>Il carico è parallelizzabile?</li>
+<li>Quanto scala da 1 a 2, 4, 8 worker?</li>
+<li>Qual è il limite?</li>
+<li>La RAM cresce con i worker?</li>
+<li>Il database regge il parallelismo?</li>
+</ul>
+</section>
+</section>
+<section id="come-valutare-una-richiesta-di-server" class="level1">
+<h1>Come valutare una richiesta di server</h1>
+<section id="richiesta-3" class="level3">
+<h3 class="anchored" data-anchor-id="richiesta-3">Richiesta</h3>
+<blockquote class="blockquote">
+<p>“Serve un server dedicato.”</p>
+</blockquote>
+</section>
+<section id="domande-3" class="level3">
+<h3 class="anchored" data-anchor-id="domande-3">Domande</h3>
+<ul>
+<li>Per quale workload?</li>
+<li>Frequenza?</li>
+<li>Durata?</li>
+<li>Utenti?</li>
+<li>Concorrenza?</li>
+<li>CPU?</li>
+<li>RAM?</li>
+<li>I/O?</li>
+<li>rete?</li>
+<li>database?</li>
+<li>disponibilità richiesta?</li>
+<li>sicurezza?</li>
+<li>monitoring?</li>
+<li>esiste già una piattaforma adatta?</li>
+</ul>
+</section>
+</section>
+<section id="matrice-decisionale" class="level1">
+<h1>Matrice decisionale</h1>
+<p>La stessa logica può essere applicata alle richieste più frequenti.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Richiesta</th>
+<th>Evidenza richiesta</th>
+<th>Alternative da verificare</th>
+<th>Decisione da motivare</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Pacchetto R</td>
+<td>dipendenze, versione, licenza</td>
+<td>pacchetti già disponibili, repository aziendale</td>
+<td>installazione e ciclo di vita</td>
+</tr>
+<tr class="even">
+<td>RAM</td>
+<td>picco, worker, copie, swap</td>
+<td>riduzione dati, algoritmo, numero worker</td>
+<td>dimensionamento</td>
+</tr>
+<tr class="odd">
+<td>CPU</td>
+<td>utilizzo per core, worker, scaling</td>
+<td>algoritmo, parallelizzazione</td>
+<td>dimensionamento</td>
+</tr>
+<tr class="even">
+<td>Server</td>
+<td>workload, frequenza, concorrenza, disponibilità</td>
+<td>VM, piattaforma esistente</td>
+<td>ambiente di esecuzione</td>
+</tr>
+<tr class="odd">
+<td>Shiny/API</td>
+<td>utenti, traffico, autenticazione, disponibilità</td>
+<td>piattaforma web aziendale</td>
+<td>architettura</td>
+</tr>
+</tbody>
+</table>
+<p>La matrice non sostituisce la diagnosi: serve a rendere esplicite le <strong>evidenze</strong> che devono precedere la decisione. # Chi può modificare, verificare, approvare e distribuire?</p>
+<p>Per una soluzione controllata è utile distinguere almeno quattro responsabilità:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Attività</th>
+<th>Domanda</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Modificare</td>
+<td>chi può cambiare codice, configurazione o ambiente?</td>
+</tr>
+<tr class="even">
+<td>Verificare</td>
+<td>chi esegue e documenta i test?</td>
+</tr>
+<tr class="odd">
+<td>Approvare</td>
+<td>chi autorizza il nuovo stato secondo la procedura applicabile?</td>
+</tr>
+<tr class="even">
+<td>Distribuire</td>
+<td>chi porta l’artefatto approvato nell’ambiente target?</td>
+</tr>
+</tbody>
+</table>
+<p>Le responsabilità possono appartenere allo stesso team, ma non devono essere confuse. IT dovrebbe sapere <strong>chi è autorizzato a fare cosa</strong> e quali evidenze rimangono dopo ogni passaggio.</p>
+</section>
+<section id="tracciabilità-del-dato-e-del-risultato" class="level1">
+<h1>Tracciabilità del dato e del risultato</h1>
+<p>La baseline software identifica con quale ambiente è stato eseguito il software, ma da sola non identifica necessariamente il dato elaborato.</p>
+<p>Per risultati che devono essere ricostruibili, è utile poter collegare almeno:</p>
+<pre class="text"><code>input / dataset identificato
+        ↓
+versione software
+        ↓
+configurazione e parametri
+        ↓
+esecuzione
+        ↓
+output identificato</code></pre>
+<p>IT deve verificare dove sono registrati gli identificativi necessari e quali componenti esterni alla baseline software devono essere conservati o riferiti.</p>
+</section>
+<section id="r-non-deve-fare-tutto" class="level1">
+<h1>R non deve fare tutto</h1>
+<p>Un’architettura può essere:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="mermaid-06-governance-01">
+<div>
+<pre class="mermaid mermaid-js" data-label="mermaid-06-governance-01">flowchart LR
+    ORA["Oracle&lt;br/&gt;Dati"]
+    APEX["APEX&lt;br/&gt;Applicazione"]
+    R["R&lt;br/&gt;Analisi"]
+    Q["Quarto&lt;br/&gt;Report"]
+    SCH["Scheduler&lt;br/&gt;Esecuzione"]
+
+    ORA &lt;--&gt; APEX
+    ORA &lt;--&gt; R
+    SCH --&gt; R
+    R --&gt; Q
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p>Ogni componente svolge la funzione per cui è più adatto.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

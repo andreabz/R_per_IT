@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Runtime, processi e parallelismo – R per l’IT</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-29e2c20b02301cfff04dc8050bf30c7e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-346f7653faf71f503ba44a80ac96ac51.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">R per l’IT</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Corso</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/andreabz/R_per_IT"> 
+<span class="menu-text">Repository</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-runtime.html">2. Runtime, processi e parallelismo</a></li><li class="breadcrumb-item"><a href="./02-runtime.html">Runtime, processi e parallelismo</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">1. Contesto e ambiente R</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-contesto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Contesto e ambiente R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">2. Runtime, processi e parallelismo</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-runtime.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Runtime, processi e parallelismo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">3. Performance e diagnostica</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-performance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Performance e diagnostica</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">4. Architettura e integrazione</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architettura.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Architettura e integrazione</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">5. Deployment e gestione operativa</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-deployment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Deployment e gestione operativa</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">6. Governance e valutazione delle richieste</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-governance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Governance e valutazione delle richieste</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">7. Caso finale e checklist</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-caso-finale.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Caso finale e checklist</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introduzione" id="toc-introduzione" class="nav-link active" data-scroll-target="#introduzione">Introduzione</a></li>
+  <li><a href="#processo-cpu-core-thread-worker" id="toc-processo-cpu-core-thread-worker" class="nav-link" data-scroll-target="#processo-cpu-core-thread-worker">Processo, CPU, core, thread, worker</a></li>
+  <li><a href="#runtime" id="toc-runtime" class="nav-link" data-scroll-target="#runtime">Runtime</a></li>
+  <li><a href="#processo" id="toc-processo" class="nav-link" data-scroll-target="#processo">Processo</a></li>
+  <li><a href="#core" id="toc-core" class="nav-link" data-scroll-target="#core">Core</a></li>
+  <li><a href="#thread" id="toc-thread" class="nav-link" data-scroll-target="#thread">Thread</a></li>
+  <li><a href="#worker" id="toc-worker" class="nav-link" data-scroll-target="#worker">Worker</a></li>
+  <li><a href="#parallelismo" id="toc-parallelismo" class="nav-link" data-scroll-target="#parallelismo">Parallelismo</a></li>
+  <li><a href="#parallelismo-e-concorrenza" id="toc-parallelismo-e-concorrenza" class="nav-link" data-scroll-target="#parallelismo-e-concorrenza">Parallelismo e concorrenza</a></li>
+  <li><a href="#il-parallelismo-ha-un-costo" id="toc-il-parallelismo-ha-un-costo" class="nav-link" data-scroll-target="#il-parallelismo-ha-un-costo">Il parallelismo ha un costo</a></li>
+  <li><a href="#esempio-di-scaling" id="toc-esempio-di-scaling" class="nav-link" data-scroll-target="#esempio-di-scaling">Esempio di scaling</a></li>
+  <li><a href="#memoria-di-processo-e-picco-di-ram" id="toc-memoria-di-processo-e-picco-di-ram" class="nav-link" data-scroll-target="#memoria-di-processo-e-picco-di-ram">Memoria di processo e picco di RAM</a></li>
+  <li><a href="#ram-e-memoria-virtuale" id="toc-ram-e-memoria-virtuale" class="nav-link" data-scroll-target="#ram-e-memoria-virtuale">RAM e memoria virtuale</a></li>
+  <li><a href="#garbage-collection" id="toc-garbage-collection" class="nav-link" data-scroll-target="#garbage-collection">Garbage collection</a></li>
+  <li><a href="#thread-nativi-e-oversubscription" id="toc-thread-nativi-e-oversubscription" class="nav-link" data-scroll-target="#thread-nativi-e-oversubscription">Thread nativi e oversubscription</a></li>
+  <li><a href="#parallelismo-e-memoria" id="toc-parallelismo-e-memoria" class="nav-link" data-scroll-target="#parallelismo-e-memoria">Parallelismo e memoria</a></li>
+  <li><a href="#diagnostica-del-runtime" id="toc-diagnostica-del-runtime" class="nav-link" data-scroll-target="#diagnostica-del-runtime">Diagnostica del runtime</a></li>
+  <li><a href="#domande-runtime-per-it" id="toc-domande-runtime-per-it" class="nav-link" data-scroll-target="#domande-runtime-per-it">Domande runtime per IT</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-runtime.html">2. Runtime, processi e parallelismo</a></li><li class="breadcrumb-item"><a href="./02-runtime.html">Runtime, processi e parallelismo</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Runtime, processi e parallelismo</h1>
+<p class="subtitle lead">Processi, core, thread, worker e scaling</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduzione" class="level1">
+<h1>Introduzione</h1>
+<p>Per valutare una richiesta infrastrutturale bisogna capire come il lavoro R viene effettivamente eseguito. Il capitolo costruisce il vocabolario minimo — processo, core, thread, worker e memoria — e lo collega al problema più importante per IT: individuare il consumo reale di risorse e capire che cosa cambia quando si introduce il parallelismo.</p>
+</section>
+<section id="processo-cpu-core-thread-worker" class="level1">
+<h1>Processo, CPU, core, thread, worker</h1>
+<p>Questi termini sono spesso utilizzati come sinonimi.</p>
+<p>Non lo sono.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="mermaid-02-runtime-01">
+<div>
+<pre class="mermaid mermaid-js" data-label="mermaid-02-runtime-01">flowchart TD
+    S["Server"]
+    S --&gt; CPU["CPU"]
+    CPU --&gt; C1["Core 1"]
+    CPU --&gt; C2["Core 2"]
+    CPU --&gt; C3["Core 3"]
+    CPU --&gt; CN["Core N"]
+
+    S --&gt; RAM["RAM"]
+    S --&gt; IO["Storage / rete"]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="runtime" class="level1">
+<h1>Runtime</h1>
+<p>Il termine <strong>runtime</strong> può indicare due concetti distinti:</p>
+<ul>
+<li><strong>runtime environment</strong>: l’ambiente software necessario all’esecuzione, come R, pacchetti, librerie di sistema, driver e sistema operativo;</li>
+<li><strong>execution time</strong>: il tempo necessario per completare un’elaborazione.</li>
+</ul>
+<p>Nel contesto del corso, quando parliamo di performance ci riferiamo soprattutto al secondo concetto. Per analizzarlo dobbiamo capire come il codice utilizza processi, thread, worker e risorse hardware.</p>
+</section>
+<section id="processo" class="level1">
+<h1>Processo</h1>
+<p>Un <strong>processo</strong> è un’istanza in esecuzione di un programma.</p>
+<p>Un processo possiede:</p>
+<ul>
+<li>memoria;</li>
+<li>stato;</li>
+<li>risorse;</li>
+<li>identificativo;</li>
+<li>file e connessioni eventualmente aperti.</li>
+</ul>
+<p>Un’esecuzione R normalmente corrisponde almeno a un processo R.</p>
+</section>
+<section id="core" class="level1">
+<h1>Core</h1>
+<p>Un <strong>core</strong> è una risorsa hardware capace di eseguire istruzioni.</p>
+<p>Avere:</p>
+<blockquote class="blockquote">
+<p>16 core</p>
+</blockquote>
+<p>non significa automaticamente:</p>
+<blockquote class="blockquote">
+<p>R esegue 16 volte più velocemente.</p>
+</blockquote>
+<p>Serve un carico che possa utilizzare effettivamente quei core.</p>
+</section>
+<section id="thread" class="level1">
+<h1>Thread</h1>
+<p>Un processo può utilizzare uno o più thread. I thread condividono la stessa memoria del processo.</p>
+<p>Il motore base di R è prevalentemente <em>single-thread</em>. Tuttavia, molte operazioni pesanti (es. moltiplicazioni di matrici, o funzioni di pacchetti come <code>data.table</code>, <code>arrow</code>, <code>torch</code>) delegano il lavoro a librerie native in C/C++ che usano i thread.</p>
+<blockquote class="blockquote">
+<p><strong>thread ≠ automaticamente parallelismo efficace.</strong></p>
+</blockquote>
+<p>Il comportamento dipende dal codice, dalle librerie e dal tipo di operazione.</p>
+</section>
+<section id="worker" class="level1">
+<h1>Worker</h1>
+<p>“Worker” è soprattutto un termine architetturale.</p>
+<p>Un worker è un’unità di lavoro incaricata di eseguire una parte dell’elaborazione.</p>
+<p>Può essere realizzato, a seconda della tecnologia, tramite:</p>
+<ul>
+<li>processo;</li>
+<li>thread;</li>
+<li>altro meccanismo di esecuzione.</li>
+</ul>
+<p>Per IT la domanda importante è:</p>
+<blockquote class="blockquote">
+<p><strong>Quanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?</strong></p>
+</blockquote>
+</section>
+<section id="parallelismo" class="level1">
+<h1>Parallelismo</h1>
+<p>Quando il lavoro può essere suddiviso:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="mermaid-02-runtime-02">
+<div>
+<pre class="mermaid mermaid-js" data-label="mermaid-02-runtime-02">flowchart TD
+    JOB["Elaborazione"]
+    JOB --&gt; W1["Worker 1"]
+    JOB --&gt; W2["Worker 2"]
+    JOB --&gt; W3["Worker 3"]
+    JOB --&gt; W4["Worker 4"]
+
+    W1 --&gt; C1["CPU"]
+    W2 --&gt; C2["CPU"]
+    W3 --&gt; C3["CPU"]
+    W4 --&gt; C4["CPU"]
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p>Il vantaggio dipende dalla possibilità di dividere realmente il lavoro.</p>
+</section>
+<section id="parallelismo-e-concorrenza" class="level1">
+<h1>Parallelismo e concorrenza</h1>
+<p><strong>Parallelismo</strong> e <strong>concorrenza</strong> non sono la stessa cosa.</p>
+<ul>
+<li><strong>parallelismo</strong>: una singola elaborazione utilizza più unità di esecuzione nello stesso intervallo di tempo;</li>
+<li><strong>concorrenza</strong>: più elaborazioni o richieste sono attive contemporaneamente.</li>
+</ul>
+<p>Esempio:</p>
+<pre class="text"><code>Caso A — un job:
+1 job → 8 worker
+
+Caso B — più utenti:
+8 job → 1 worker ciascuno</code></pre>
+<p>I due casi hanno profili operativi diversi. Nel caso B la contesa può coinvolgere contemporaneamente CPU, RAM, database, rete e scheduler; nel caso A la domanda principale è quanto scala il singolo workload.</p>
+<p>Per IT, prima di dimensionare una piattaforma bisogna quindi chiedere entrambe le cose:</p>
+<blockquote class="blockquote">
+<p><strong>«Quanti worker usa una singola elaborazione?»</strong></p>
+</blockquote>
+<p>e</p>
+<blockquote class="blockquote">
+<p><strong>«Quante elaborazioni possono essere contemporaneamente attive?»</strong></p>
+</blockquote>
+<p>Questa distinzione è particolarmente importante per Shiny e API, dove più richieste o sessioni possono essere contemporaneamente in esecuzione.</p>
+</section>
+<section id="il-parallelismo-ha-un-costo" class="level1">
+<h1>Il parallelismo ha un costo</h1>
+<p>Aumentare i worker può significare:</p>
+<ul>
+<li>più CPU utilizzata;</li>
+<li>più RAM;</li>
+<li>più dati copiati;</li>
+<li>più accessi al database;</li>
+<li>più I/O;</li>
+<li>più traffico di rete;</li>
+<li>maggiore complessità.</li>
+</ul>
+<p>Quindi:</p>
+<blockquote class="blockquote">
+<p><strong>più worker non significa necessariamente meglio.</strong></p>
+</blockquote>
+<p>Nella maggior parte dei backend paralleli in R (come <code>PSOCK</code> o <code>multisession</code>), ogni worker è un processo R completamente separato. Questo significa che se lo script principale carica 2 GB di dati in memoria, ogni singolo worker caricherà 2 GB.</p>
+</section>
+<section id="esempio-di-scaling" class="level1">
+<h1>Esempio di scaling</h1>
+<p>Supponiamo di misurare:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Worker</th>
+<th style="text-align: right;">Tempo</th>
+<th style="text-align: right;">RAM</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: right;">40 min</td>
+<td style="text-align: right;">4 GB</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: right;">23 min</td>
+<td style="text-align: right;">8 GB</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">4</td>
+<td style="text-align: right;">14 min</td>
+<td style="text-align: right;">16 GB</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: right;">12 min</td>
+<td style="text-align: right;">32 GB</td>
+</tr>
+</tbody>
+</table>
+<p>Il passaggio da 1 a 4 worker è significativo; quello da 4 a 8 molto meno.</p>
+<p>La scalabilità reale può essere limitata da:</p>
+<ul>
+<li>parti seriali;</li>
+<li>sincronizzazione;</li>
+<li>trasferimento dati;</li>
+<li>I/O;</li>
+<li>database;</li>
+<li>overhead dei worker;</li>
+<li>contesa sulle risorse.</li>
+</ul>
+<p>Un benchmark reale è quindi più informativo di una stima basata soltanto sul numero di core.</p>
+<p>IT dovrebbe chiedere:</p>
+<blockquote class="blockquote">
+<p><strong>Quale beneficio misurato otteniamo aumentando i worker e quale costo aggiuntivo introduciamo in RAM, I/O e database?</strong></p>
+</blockquote>
+</section>
+<section id="memoria-di-processo-e-picco-di-ram" class="level1">
+<h1>Memoria di processo e picco di RAM</h1>
+<p>Un processo R utilizza memoria per gli oggetti R, le strutture interne del runtime, le librerie caricate, i buffer e altre risorse.</p>
+<p>La dimensione dei dati su disco non coincide quindi necessariamente con la memoria richiesta dal processo.</p>
+<p>Un’operazione può richiedere memoria temporanea aggiuntiva:</p>
+<pre class="text"><code>oggetto originale:  4 GB
+copia temporanea:  +4 GB
+risultato:          +4 GB
+overhead/runtime:   +...
+-----------------------------
+picco &gt; 12 GB</code></pre>
+<p>Non tutte le operazioni producono necessariamente una copia completa: R può condividere oggetti e creare copie quando necessario. Per IT è però importante ragionare sul <strong>picco di memoria</strong>, non soltanto sulla dimensione finale del dataset.</p>
+<blockquote class="blockquote">
+<p>«Il dataset è di 10 GB» non implica che servano esattamente 10 GB di RAM.</p>
+</blockquote>
+</section>
+<section id="ram-e-memoria-virtuale" class="level1">
+<h1>RAM e memoria virtuale</h1>
+<p>La <strong>RAM</strong> è la memoria fisica disponibile al sistema.</p>
+<p>La <strong>memoria virtuale</strong> è il meccanismo con cui il sistema operativo presenta ai processi uno spazio di memoria e gestisce le pagine, eventualmente utilizzando anche storage.</p>
+<pre class="text"><code>Processo R
+   ↓
+memoria virtuale
+   ↓
+RAM + eventuale paging</code></pre>
+<p>La memoria virtuale non equivale a RAM aggiuntiva gratuita. Se il sistema ricorre intensamente a paging/swap, le prestazioni possono degradare perché lo storage è molto più lento della RAM.</p>
+<p>Per IT:</p>
+<blockquote class="blockquote">
+<p>molto swap disponibile non significa che il server abbia RAM sufficiente per il carico.</p>
+</blockquote>
+</section>
+<section id="garbage-collection" class="level1">
+<h1>Garbage collection</h1>
+<p>R utilizza un <strong>garbage collector (GC)</strong> per recuperare memoria associata a oggetti che non sono più necessari.</p>
+<p>In termini semplificati:</p>
+<pre class="text"><code>creazione oggetti
+      ↓
+memoria occupata
+      ↓
+oggetti non più necessari
+      ↓
+garbage collection
+      ↓
+memoria recuperabile</code></pre>
+<p>Il garbage collector non può liberare memoria ancora necessaria all’elaborazione.</p>
+<p>Inoltre una fase di garbage collection può avere un costo temporale. Per questo, per diagnosticare un problema di memoria, è utile osservare sia l’andamento della RAM sia il tempo di esecuzione.</p>
+</section>
+<section id="thread-nativi-e-oversubscription" class="level1">
+<h1>Thread nativi e oversubscription</h1>
+<p>Il codice R può chiamare librerie native che utilizzano thread propri. Questo introduce una distinzione importante tra:</p>
+<ul>
+<li>worker R;</li>
+<li>thread del processo;</li>
+<li>thread utilizzati da librerie numeriche o di I/O.</li>
+</ul>
+<p>Un esempio concettuale:</p>
+<pre class="text"><code>8 worker R
+×
+4 thread nativi per worker
+=
+fino a 32 unità di esecuzione concorrenti</code></pre>
+<p>Se il server dispone di meno risorse effettivamente utilizzabili, può verificarsi <strong>oversubscription</strong>: troppi thread competono per i core.</p>
+<p>Il risultato può essere:</p>
+<ul>
+<li>più context switching;</li>
+<li>maggiore contesa CPU;</li>
+<li>maggiore consumo di risorse;</li>
+<li>peggioramento delle prestazioni.</li>
+</ul>
+<p>Per IT la domanda non è quindi soltanto:</p>
+<blockquote class="blockquote">
+<p>«Quanti worker?»</p>
+</blockquote>
+<p>ma anche:</p>
+<blockquote class="blockquote">
+<p>«Quanti thread utilizza ciascun worker?»</p>
+</blockquote>
+</section>
+<section id="parallelismo-e-memoria" class="level1">
+<h1>Parallelismo e memoria</h1>
+<p>Quando i worker sono processi separati, ciascun processo può avere una propria copia degli oggetti necessari.</p>
+<p>Schema concettuale:</p>
+<pre class="text"><code>Processo principale
+   │
+   ├── dati
+   ├── Worker 1 → dati necessari
+   ├── Worker 2 → dati necessari
+   ├── Worker 3 → dati necessari
+   └── Worker 4 → dati necessari</code></pre>
+<p>Perciò, in molti backend basati su processi separati:</p>
+<pre class="text"><code>RAM richiesta
+≈
+memoria base
++
+memoria per worker
++
+overhead</code></pre>
+<p>Non è una formula di dimensionamento esatta, ma è un modello utile per capire perché aumentare i worker può far crescere rapidamente la RAM richiesta.</p>
+</section>
+<section id="diagnostica-del-runtime" class="level1">
+<h1>Diagnostica del runtime</h1>
+<p>Quando una soluzione R è lenta, IT può chiedere almeno:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Domanda</th>
+<th>Evidenza</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CPU alta?</td>
+<td>utilizzo CPU nel tempo</td>
+</tr>
+<tr class="even">
+<td>RAM alta?</td>
+<td>memoria del processo e picco</td>
+</tr>
+<tr class="odd">
+<td>Paging?</td>
+<td>metriche del sistema operativo</td>
+</tr>
+<tr class="even">
+<td>Un solo core saturo?</td>
+<td>utilizzo per core</td>
+</tr>
+<tr class="odd">
+<td>Più thread?</td>
+<td>metriche del processo/libreria</td>
+</tr>
+<tr class="even">
+<td>Più worker?</td>
+<td>numero di processi/worker</td>
+</tr>
+<tr class="odd">
+<td>DB lento?</td>
+<td>tempi e metriche lato database</td>
+</tr>
+<tr class="even">
+<td>I/O lento?</td>
+<td>metriche storage</td>
+</tr>
+<tr class="odd">
+<td>Rete lenta?</td>
+<td>throughput e latenza</td>
+</tr>
+<tr class="even">
+<td>Quale funzione è lenta?</td>
+<td>profiling</td>
+</tr>
+</tbody>
+</table>
+<p>Il profilo della risorsa deve essere osservato <strong>durante</strong> l’elaborazione, non soltanto a fine job.</p>
+</section>
+<section id="domande-runtime-per-it" class="level1">
+<h1>Domande runtime per IT</h1>
+<p>Prima di assegnare risorse aggiuntive chiedere:</p>
+<ul>
+<li>quanti processi R vengono creati?</li>
+<li>quanti worker?</li>
+<li>quanti thread per worker?</li>
+<li>qual è il picco di RAM?</li>
+<li>qual è l’utilizzo CPU per core?</li>
+<li>esiste paging?</li>
+<li>quali operazioni dominano il tempo?</li>
+<li>il database è coinvolto?</li>
+<li>il carico è CPU-bound, RAM-bound, I/O-bound o database-bound?</li>
+<li>la parallelizzazione è già stata testata?</li>
+<li>come cambia il consumo di RAM aumentando i worker?</li>
+<li>qual è il tempo obiettivo?</li>
+</ul>
+<p>La domanda finale è:</p>
+<blockquote class="blockquote">
+<p><strong>qual è il collo di bottiglia misurato e quale intervento lo rimuove?</strong></p>
+</blockquote>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

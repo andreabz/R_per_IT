@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Deployment e gestione operativa – R per l’IT</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-29e2c20b02301cfff04dc8050bf30c7e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-346f7653faf71f503ba44a80ac96ac51.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">R per l’IT</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Corso</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/andreabz/R_per_IT"> 
+<span class="menu-text">Repository</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deployment.html">5. Deployment e gestione operativa</a></li><li class="breadcrumb-item"><a href="./05-deployment.html">Deployment e gestione operativa</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">1. Contesto e ambiente R</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-contesto.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Contesto e ambiente R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">2. Runtime, processi e parallelismo</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-runtime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Runtime, processi e parallelismo</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">3. Performance e diagnostica</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-performance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Performance e diagnostica</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">4. Architettura e integrazione</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-architettura.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Architettura e integrazione</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">5. Deployment e gestione operativa</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-deployment.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Deployment e gestione operativa</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">6. Governance e valutazione delle richieste</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-governance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Governance e valutazione delle richieste</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">7. Caso finale e checklist</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-caso-finale.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Caso finale e checklist</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introduzione" id="toc-introduzione" class="nav-link active" data-scroll-target="#introduzione">Introduzione</a></li>
+  <li><a href="#dal-codice-alla-produzione" id="toc-dal-codice-alla-produzione" class="nav-link" data-scroll-target="#dal-codice-alla-produzione">Dal codice alla produzione</a></li>
+  <li><a href="#ambienti-sviluppo-test-produzione" id="toc-ambienti-sviluppo-test-produzione" class="nav-link" data-scroll-target="#ambienti-sviluppo-test-produzione">Ambienti: sviluppo, test, produzione</a></li>
+  <li><a href="#git-e-versionamento" id="toc-git-e-versionamento" class="nav-link" data-scroll-target="#git-e-versionamento">Git e versionamento</a>
+  <ul class="collapse">
+  <li><a href="#commit-tag-e-release" id="toc-commit-tag-e-release" class="nav-link" data-scroll-target="#commit-tag-e-release">Commit, tag e release</a></li>
+  </ul></li>
+  <li><a href="#test-che-cosa-deve-essere-verificato" id="toc-test-che-cosa-deve-essere-verificato" class="nav-link" data-scroll-target="#test-che-cosa-deve-essere-verificato">Test: che cosa deve essere verificato?</a></li>
+  <li><a href="#test-e-dati-di-produzione" id="toc-test-e-dati-di-produzione" class="nav-link" data-scroll-target="#test-e-dati-di-produzione">Test e dati di produzione</a></li>
+  <li><a href="#cicd" id="toc-cicd" class="nav-link" data-scroll-target="#cicd">CI/CD</a></li>
+  <li><a href="#il-ruolo-del-workflow-github-actions" id="toc-il-ruolo-del-workflow-github-actions" class="nav-link" data-scroll-target="#il-ruolo-del-workflow-github-actions">Il ruolo del workflow GitHub Actions</a></li>
+  <li><a href="#artefatti" id="toc-artefatti" class="nav-link" data-scroll-target="#artefatti">Artefatti</a></li>
+  <li><a href="#configurazione-e-codice" id="toc-configurazione-e-codice" class="nav-link" data-scroll-target="#configurazione-e-codice">Configurazione e codice</a></li>
+  <li><a href="#dipendenze-r-e-renv" id="toc-dipendenze-r-e-renv" class="nav-link" data-scroll-target="#dipendenze-r-e-renv">Dipendenze R e renv</a></li>
+  <li><a href="#baseline-software-e-containerizzazione" id="toc-baseline-software-e-containerizzazione" class="nav-link" data-scroll-target="#baseline-software-e-containerizzazione">Baseline software e containerizzazione</a>
+  <ul class="collapse">
+  <li><a href="#containerizzazione" id="toc-containerizzazione" class="nav-link" data-scroll-target="#containerizzazione">Containerizzazione</a></li>
+  <li><a href="#build-test-e-release-dellimmagine" id="toc-build-test-e-release-dellimmagine" class="nav-link" data-scroll-target="#build-test-e-release-dellimmagine">Build, test e release dell’immagine</a></li>
+  <li><a href="#cosa-non-risolve-docker" id="toc-cosa-non-risolve-docker" class="nav-link" data-scroll-target="#cosa-non-risolve-docker">Cosa non risolve Docker</a></li>
+  </ul></li>
+  <li><a href="#repository-dei-pacchetti-e-licenze" id="toc-repository-dei-pacchetti-e-licenze" class="nav-link" data-scroll-target="#repository-dei-pacchetti-e-licenze">Repository dei pacchetti e licenze</a></li>
+  <li><a href="#sicurezza" id="toc-sicurezza" class="nav-link" data-scroll-target="#sicurezza">Sicurezza</a></li>
+  <li><a href="#credenziali" id="toc-credenziali" class="nav-link" data-scroll-target="#credenziali">Credenziali</a>
+  <ul class="collapse">
+  <li><a href="#checklist-it-per-la-gestione-sicura-delle-credenziali" id="toc-checklist-it-per-la-gestione-sicura-delle-credenziali" class="nav-link" data-scroll-target="#checklist-it-per-la-gestione-sicura-delle-credenziali">Checklist IT per la gestione sicura delle credenziali</a></li>
+  </ul></li>
+  <li><a href="#logging" id="toc-logging" class="nav-link" data-scroll-target="#logging">Logging</a></li>
+  <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling">Error handling</a></li>
+  <li><a href="#monitoring" id="toc-monitoring" class="nav-link" data-scroll-target="#monitoring">Monitoring</a></li>
+  <li><a href="#rilascio" id="toc-rilascio" class="nav-link" data-scroll-target="#rilascio">Rilascio</a>
+  <ul class="collapse">
+  <li><a href="#smoke-test" id="toc-smoke-test" class="nav-link" data-scroll-target="#smoke-test">Smoke test</a></li>
+  </ul></li>
+  <li><a href="#rollback" id="toc-rollback" class="nav-link" data-scroll-target="#rollback">Rollback</a></li>
+  <li><a href="#backup-rto-e-rpo" id="toc-backup-rto-e-rpo" class="nav-link" data-scroll-target="#backup-rto-e-rpo">Backup, RTO e RPO</a></li>
+  <li><a href="#continuità-operativa" id="toc-continuità-operativa" class="nav-link" data-scroll-target="#continuità-operativa">Continuità operativa</a></li>
+  <li><a href="#modifiche-impatto-e-nuova-baseline" id="toc-modifiche-impatto-e-nuova-baseline" class="nav-link" data-scroll-target="#modifiche-impatto-e-nuova-baseline">Modifiche, impatto e nuova baseline</a></li>
+  <li><a href="#lifecycle" id="toc-lifecycle" class="nav-link" data-scroll-target="#lifecycle">Lifecycle</a></li>
+  <li><a href="#responsabilità" id="toc-responsabilità" class="nav-link" data-scroll-target="#responsabilità">Responsabilità</a></li>
+  <li><a href="#production-readiness" id="toc-production-readiness" class="nav-link" data-scroll-target="#production-readiness">Production readiness</a>
+  <ul class="collapse">
+  <li><a href="#le-domande-fondamentali" id="toc-le-domande-fondamentali" class="nav-link" data-scroll-target="#le-domande-fondamentali">Le domande fondamentali</a></li>
+  </ul></li>
+  <li><a href="#quando-un-server-dedicato-può-essere-inutile" id="toc-quando-un-server-dedicato-può-essere-inutile" class="nav-link" data-scroll-target="#quando-un-server-dedicato-può-essere-inutile">Quando un server dedicato può essere inutile?</a></li>
+  <li><a href="#una-pipeline-completa" id="toc-una-pipeline-completa" class="nav-link" data-scroll-target="#una-pipeline-completa">Una pipeline completa</a></li>
+  <li><a href="#principio-operativo" id="toc-principio-operativo" class="nav-link" data-scroll-target="#principio-operativo">Principio operativo</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deployment.html">5. Deployment e gestione operativa</a></li><li class="breadcrumb-item"><a href="./05-deployment.html">Deployment e gestione operativa</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Deployment e gestione operativa</h1>
+<p class="subtitle lead">Versionamento, test, CI/CD, rilascio, sicurezza, continuità e ownership</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduzione" class="level1">
+<h1>Introduzione</h1>
+<p>L’architettura descrive dove e come collocare R; il deployment definisce come portare quella soluzione in esercizio e mantenerla nel tempo. Il capitolo segue il percorso dalla versione del codice alla produzione, mettendo in evidenza riproducibilità, test, sicurezza, logging, monitoring, rollback, continuità operativa e responsabilità.</p>
+</section>
+<section id="dal-codice-alla-produzione" class="level1">
+<h1>Dal codice alla produzione</h1>
+<p>Un programma che funziona sul PC dello sviluppatore non è automaticamente pronto per essere eseguito in produzione.</p>
+<p>Il deployment introduce almeno queste domande:</p>
+<ol type="1">
+<li><strong>dove</strong> viene eseguito;</li>
+<li><strong>con quale versione</strong> del codice;</li>
+<li><strong>con quali dipendenze</strong>;</li>
+<li><strong>con quale identità</strong>;</li>
+<li><strong>a quali dati e sistemi</strong> accede;</li>
+<li><strong>come viene testato e rilasciato</strong>;</li>
+<li><strong>come viene monitorato</strong>;</li>
+<li><strong>come si torna indietro</strong> se qualcosa non funziona;</li>
+<li><strong>chi interviene</strong> in caso di incidente.</li>
+</ol>
+<p>Il passaggio alla produzione deve quindi essere trattato come un processo controllato, non come la semplice copia di uno script su un server.</p>
+</section>
+<section id="ambienti-sviluppo-test-produzione" class="level1">
+<h1>Ambienti: sviluppo, test, produzione</h1>
+<p>È utile distinguere almeno:</p>
+<pre class="text"><code>sviluppo → test → produzione</code></pre>
+<p>In sviluppo possono essere accettabili modifiche manuali e accesso Internet. In produzione servono invece versioni controllate, configurazione esplicita e procedure ripetibili.</p>
+<p>La stessa applicazione può quindi richiedere configurazioni diverse senza cambiare il codice.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Ambiente</th>
+<th>Obiettivo</th>
+<th>Caratteristiche</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>sviluppo</td>
+<td>costruire e modificare</td>
+<td>flessibile, modificabile</td>
+</tr>
+<tr class="even">
+<td>test</td>
+<td>verificare una versione</td>
+<td>controllato, ripetibile</td>
+</tr>
+<tr class="odd">
+<td>produzione</td>
+<td>erogare il servizio</td>
+<td>stabile, monitorato, tracciato</td>
+</tr>
+</tbody>
+</table>
+<p>Una modifica dovrebbe attraversare gli ambienti secondo una sequenza definita.</p>
+</section>
+<section id="git-e-versionamento" class="level1">
+<h1>Git e versionamento</h1>
+<p>Il codice di produzione deve essere riconducibile a una versione precisa.</p>
+<p>Per IT questo significa poter rispondere a:</p>
+<ul>
+<li>quale commit è in esecuzione?</li>
+<li>quale versione dell’applicazione è stata rilasciata?</li>
+<li>quali file sono cambiati?</li>
+<li>chi ha introdotto la modifica?</li>
+<li>quale versione era precedente?</li>
+<li>possiamo ricostruire esattamente il rilascio?</li>
+</ul>
+<p>Un flusso semplice può essere:</p>
+<pre class="text"><code>modifica → commit → review → test → release → produzione</code></pre>
+<p>Il punto non è imporre un particolare modello di branching. Il requisito importante è la <strong>tracciabilità</strong>.</p>
+<section id="commit-tag-e-release" class="level2">
+<h2 class="anchored" data-anchor-id="commit-tag-e-release">Commit, tag e release</h2>
+<p>Un commit identifica uno stato del repository.</p>
+<p>Un tag può identificare una versione rilasciabile, per esempio:</p>
+<pre class="text"><code>v1.4.0</code></pre>
+<p>Una release dovrebbe essere associata almeno a:</p>
+<ul>
+<li>versione del codice;</li>
+<li>configurazione prevista;</li>
+<li>dipendenze;</li>
+<li>istruzioni di deployment;</li>
+<li>eventuali migrazioni database;</li>
+<li>note sulle modifiche;</li>
+<li>procedura di rollback.</li>
+</ul>
+<blockquote class="blockquote">
+<p>Se non è possibile identificare con precisione ciò che è stato messo in produzione, il rilascio non è realmente tracciato.</p>
+</blockquote>
+</section>
+</section>
+<section id="test-che-cosa-deve-essere-verificato" class="level1">
+<h1>Test: che cosa deve essere verificato?</h1>
+<p>Non tutto deve essere testato allo stesso modo.</p>
+<section id="test-funzionali" class="level3">
+<h3 class="anchored" data-anchor-id="test-funzionali">Test funzionali</h3>
+<p>Verificano che l’elaborazione produca il risultato atteso.</p>
+<pre class="text"><code>input noto → elaborazione → output atteso</code></pre>
+</section>
+<section id="test-di-integrazione" class="level3">
+<h3 class="anchored" data-anchor-id="test-di-integrazione">Test di integrazione</h3>
+<p>Verificano l’interazione con componenti esterni:</p>
+<ul>
+<li>Oracle;</li>
+<li>filesystem;</li>
+<li>API;</li>
+<li>scheduler;</li>
+<li>servizi aziendali.</li>
+</ul>
+</section>
+<section id="test-di-regressione" class="level3">
+<h3 class="anchored" data-anchor-id="test-di-regressione">Test di regressione</h3>
+<p>Verificano che una modifica non rompa funzionalità già esistenti.</p>
+</section>
+<section id="test-di-performance" class="level3">
+<h3 class="anchored" data-anchor-id="test-di-performance">Test di performance</h3>
+<p>Sono necessari quando il requisito riguarda:</p>
+<ul>
+<li>tempo massimo;</li>
+<li>numero di utenti;</li>
+<li>dimensione del dataset;</li>
+<li>consumo di RAM;</li>
+<li>carico CPU;</li>
+<li>concorrenza.</li>
+</ul>
+<p>Un test di performance deve avere un contesto misurabile. «È veloce» non è un criterio operativo.</p>
+</section>
+</section>
+<section id="test-e-dati-di-produzione" class="level1">
+<h1>Test e dati di produzione</h1>
+<p>Quando possibile, i test dovrebbero utilizzare dati:</p>
+<ul>
+<li>sintetici;</li>
+<li>anonimizzati;</li>
+<li>minimizzati;</li>
+<li>rappresentativi del comportamento reale.</li>
+</ul>
+<p>L’accesso ai dati di produzione non dovrebbe essere considerato automaticamente necessario solo perché un’applicazione deve essere testata.</p>
+</section>
+<section id="cicd" class="level1">
+<h1>CI/CD</h1>
+<p>La <strong>Continuous Integration</strong> automatizza almeno una parte dei controlli dopo una modifica al repository.</p>
+<p>Un flusso tipico:</p>
+<pre class="text"><code>push / pull request
+        ↓
+controlli automatici
+        ↓
+test
+        ↓
+build / render
+        ↓
+artefatto
+        ↓
+approvazione
+        ↓
+deploy</code></pre>
+<p>La Continuous Delivery/Deployment aggiunge il passaggio controllato verso gli ambienti successivi.</p>
+<p>Per una soluzione R, una pipeline può verificare:</p>
+<ul>
+<li>sintassi e struttura;</li>
+<li>test automatici;</li>
+<li>dipendenze;</li>
+<li>rendering Quarto;</li>
+<li>costruzione di un’immagine container;</li>
+<li>presenza dei file richiesti;</li>
+<li>eventuali controlli di sicurezza;</li>
+<li>produzione dell’artefatto.</li>
+</ul>
+<p>Non è necessario automatizzare tutto dal primo giorno. Anche una pipeline che impedisce di portare in produzione un progetto che non supera i test di base costituisce un miglioramento significativo.</p>
+</section>
+<section id="il-ruolo-del-workflow-github-actions" class="level1">
+<h1>Il ruolo del workflow GitHub Actions</h1>
+<p>Per questo progetto il workflow di GitHub Actions è un esempio concreto di CI/CD. In un’organizzazione il medesimo processo può essere implementato con GitHub Actions o con un’altra piattaforma aziendale: il principio da governare è la pipeline, non lo specifico prodotto.</p>
+<p>Il principio è:</p>
+<pre class="text"><code>Pull Request → render e controlli
+main         → build + pubblicazione</code></pre>
+<p>La separazione è importante: una Pull Request deve verificare la modifica senza pubblicarla automaticamente in produzione.</p>
+<p>Per un’applicazione R aziendale il medesimo schema può essere adattato:</p>
+<pre class="text"><code>Git
+ ↓
+CI
+ ↓
+test
+ ↓
+artefatto versionato
+ ↓
+approvazione
+ ↓
+deployment</code></pre>
+</section>
+<section id="artefatti" class="level1">
+<h1>Artefatti</h1>
+<p>Il deployment non dovrebbe dipendere da una copia manuale e non tracciata dei file.</p>
+<p>Un <strong>artefatto</strong> è il prodotto del processo di build, per esempio:</p>
+<ul>
+<li>sito HTML;</li>
+<li>pacchetto applicativo;</li>
+<li>immagine container;</li>
+<li>bundle di file;</li>
+<li>report;</li>
+<li>eseguibile o servizio configurato.</li>
+</ul>
+<p>L’artefatto dovrebbe essere associato alla versione del codice che lo ha prodotto.</p>
+<p>Questo rende possibile distinguere:</p>
+<pre class="text"><code>codice sorgente
+     ↓
+build
+     ↓
+artefatto
+     ↓
+produzione</code></pre>
+</section>
+<section id="configurazione-e-codice" class="level1">
+<h1>Configurazione e codice</h1>
+<p>Un principio importante è separare:</p>
+<ul>
+<li><strong>codice</strong>;</li>
+<li><strong>configurazione</strong>;</li>
+<li><strong>segreti</strong>.</li>
+</ul>
+<p>Per esempio, l’indirizzo del database o il percorso di output non dovrebbero essere necessariamente hard-coded nel programma.</p>
+<p>Questo facilita il passaggio tra ambienti.</p>
+<p>La configurazione dovrebbe inoltre essere versionabile quando non contiene segreti.</p>
+</section>
+<section id="dipendenze-r-e-renv" class="level1">
+<h1>Dipendenze R e renv</h1>
+<p>Una soluzione R dipende non solo dal codice sviluppato internamente, ma anche da:</p>
+<ul>
+<li>versione di R;</li>
+<li>pacchetti;</li>
+<li>versioni dei pacchetti;</li>
+<li>librerie di sistema;</li>
+<li>driver;</li>
+<li>eventuali strumenti esterni.</li>
+</ul>
+<p><code>renv</code> permette di descrivere in modo riproducibile l’ambiente R del progetto.</p>
+<p>Il concetto importante per IT è:</p>
+<blockquote class="blockquote">
+<p>il requisito non è soltanto «installare il pacchetto X», ma poter ricostruire l’ambiente necessario per eseguire una specifica versione dell’applicazione.</p>
+</blockquote>
+<p>In produzione bisogna quindi considerare anche:</p>
+<ul>
+<li>repository dei pacchetti;</li>
+<li>disponibilità delle versioni richieste;</li>
+<li>librerie native;</li>
+<li>compatibilità con il sistema operativo;</li>
+<li>aggiornamenti di sicurezza;</li>
+<li>procedura di aggiornamento.</li>
+</ul>
+</section>
+<section id="baseline-software-e-containerizzazione" class="level1">
+<h1>Baseline software e containerizzazione</h1>
+<p>Quando la riproducibilità dell’ambiente diventa un requisito operativo, <code>renv</code> risolve una parte del problema: descrive le dipendenze R del progetto.</p>
+<p>Restano però altri componenti:</p>
+<ul>
+<li>versione di R;</li>
+<li>sistema operativo;</li>
+<li>librerie native;</li>
+<li>driver;</li>
+<li>client database;</li>
+<li>strumenti esterni;</li>
+<li>configurazione.</li>
+</ul>
+<p>Una <strong>baseline software</strong> può quindi identificare l’insieme delle versioni approvate per una specifica release.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Livello</th>
+<th>Esempio di evidenza</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>codice</td>
+<td>commit/tag Git</td>
+</tr>
+<tr class="even">
+<td>R</td>
+<td>versione</td>
+</tr>
+<tr class="odd">
+<td>pacchetti R</td>
+<td>lockfile</td>
+</tr>
+<tr class="even">
+<td>OS</td>
+<td>versione dell’immagine o del sistema</td>
+</tr>
+<tr class="odd">
+<td>librerie native</td>
+<td>versioni</td>
+</tr>
+<tr class="even">
+<td>driver/client</td>
+<td>versione</td>
+</tr>
+<tr class="odd">
+<td>configurazione</td>
+<td>configurazione dell’ambiente</td>
+</tr>
+<tr class="even">
+<td>test</td>
+<td>suite, dataset e risultato</td>
+</tr>
+<tr class="odd">
+<td>artefatto</td>
+<td>identificativo dell’artefatto rilasciato</td>
+</tr>
+</tbody>
+</table>
+<section id="containerizzazione" class="level2">
+<h2 class="anchored" data-anchor-id="containerizzazione">Containerizzazione</h2>
+<p>Un container permette di distribuire insieme una parte molto più ampia dell’ambiente software.</p>
+<p>Concettualmente:</p>
+<pre class="text"><code>Immagine container
+├── sistema operativo / userland
+├── R
+├── pacchetti R
+├── librerie native
+├── applicazione
+└── strumenti necessari</code></pre>
+<p>Questo può ridurre le differenze tra sviluppo, test e produzione e rendere più prevedibile il deployment.</p>
+<p>Il container <strong>non rende automaticamente valido il software</strong> e non sostituisce i test. Fornisce un artefatto distribuibile che può essere identificato, testato e promosso tra ambienti.</p>
+</section>
+<section id="build-test-e-release-dellimmagine" class="level2">
+<h2 class="anchored" data-anchor-id="build-test-e-release-dellimmagine">Build, test e release dell’immagine</h2>
+<p>Un flusso controllato può essere:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="mermaid-05-deployment-01">
+<div>
+<pre class="mermaid mermaid-js" data-label="mermaid-05-deployment-01">flowchart LR
+    GIT["Codice versionato"] --&gt; BUILD["Build immagine"]
+    BUILD --&gt; TEST["Test automatici"]
+    TEST --&gt;|FAIL| DISCARD["Scarto"]
+    TEST --&gt;|PASS| IMAGE["Immagine versionata"]
+    IMAGE --&gt; REG["Registry"]
+    REG --&gt; DEPLOY["Deployment"]
+    DEPLOY --&gt; SMOKE["Smoke test"]
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p>L’immagine dovrebbe essere identificabile in modo univoco. Un tag leggibile può essere utile per gli operatori, mentre il digest dell’immagine permette di identificare esattamente l’artefatto distribuito.</p>
+<p>L’obiettivo non è dichiarare che il container sia “immutabile” in senso assoluto. L’obiettivo operativo è <strong>non modificare manualmente un artefatto già testato</strong>: se cambia il contenuto, si costruisce e si testa una nuova versione.</p>
+</section>
+<section id="cosa-non-risolve-docker" class="level2">
+<h2 class="anchored" data-anchor-id="cosa-non-risolve-docker">Cosa non risolve Docker</h2>
+<p>La containerizzazione non risolve automaticamente:</p>
+<ul>
+<li>la correttezza dell’algoritmo;</li>
+<li>l’idoneità del metodo scientifico;</li>
+<li>la qualità dei dati;</li>
+<li>la gestione dei segreti;</li>
+<li>la sicurezza dell’immagine;</li>
+<li>la compatibilità con sistemi esterni;</li>
+<li>la configurazione dell’ambiente target;</li>
+<li>il controllo delle modifiche.</li>
+</ul>
+<p>Inoltre, un container può dipendere da servizi esterni: database, API, filesystem, autenticazione, certificati o scheduler. La baseline deve quindi identificare anche le dipendenze che rimangono fuori dal container.</p>
+</section>
+</section>
+<section id="repository-dei-pacchetti-e-licenze" class="level1">
+<h1>Repository dei pacchetti e licenze</h1>
+<p>Le dipendenze devono essere governabili anche dal punto di vista organizzativo.</p>
+<p>Per ogni dipendenza rilevante è utile sapere:</p>
+<ul>
+<li>nome;</li>
+<li>versione;</li>
+<li>origine;</li>
+<li>licenza;</li>
+<li>eventuali dipendenze native;</li>
+<li>modalità di aggiornamento.</li>
+</ul>
+<p>Non tutte le dipendenze sono equivalenti dal punto di vista del rischio operativo.</p>
+<p>La domanda IT non è soltanto:</p>
+<blockquote class="blockquote">
+<p>«Il pacchetto funziona?»</p>
+</blockquote>
+<p>ma anche:</p>
+<blockquote class="blockquote">
+<p>«Da dove proviene, quale versione usiamo e come gestiamo il suo ciclo di vita?»</p>
+</blockquote>
+<p>Le verifiche legali sulle licenze devono seguire le policy dell’organizzazione.</p>
+</section>
+<section id="sicurezza" class="level1">
+<h1>Sicurezza</h1>
+<p>Una soluzione R può avere accesso a:</p>
+<ul>
+<li>database;</li>
+<li>filesystem;</li>
+<li>API;</li>
+<li>dati personali;</li>
+<li>dati ambientali o scientifici;</li>
+<li>sistemi interni.</li>
+</ul>
+<p>Il principio del <strong>least privilege</strong> implica che l’applicazione riceva soltanto i permessi necessari.</p>
+<p>La richiesta «R deve poter accedere a Oracle» non è quindi sufficiente: bisogna sapere con quale account, verso quali oggetti e per quali operazioni.</p>
+</section>
+<section id="credenziali" class="level1">
+<h1>Credenziali</h1>
+<p>Da evitare:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>username <span class="ot">&lt;-</span> <span class="st">"utente"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>password <span class="ot">&lt;-</span> <span class="st">"password"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Il problema non è specifico di R: credenziali nel codice possono finire nei repository, nei backup, nei log o nei pacchetti distribuiti.</p>
+<p>In produzione le credenziali dovrebbero essere gestite tramite i meccanismi previsti dall’infrastruttura aziendale.</p>
+<section id="checklist-it-per-la-gestione-sicura-delle-credenziali" class="level2">
+<h2 class="anchored" data-anchor-id="checklist-it-per-la-gestione-sicura-delle-credenziali">Checklist IT per la gestione sicura delle credenziali</h2>
+<p>Per una soluzione R in produzione, IT dovrebbe poter verificare almeno:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Controllo</th>
+<th>Evidenza da verificare</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Segreti fuori dal codice</td>
+<td>ricerca nel repository e nella configurazione versionata; nessuna password, token o chiave hard-coded</td>
+</tr>
+<tr class="even">
+<td>Segreti fuori dai log</td>
+<td>log applicativi e diagnostici non contengono password, token, connection string complete o altri segreti</td>
+</tr>
+<tr class="odd">
+<td>Identità dedicata</td>
+<td>l’applicazione usa un account tecnico o un’identità di servizio, non l’account personale dello sviluppatore</td>
+</tr>
+<tr class="even">
+<td>Least privilege</td>
+<td>l’identità dispone solo dei permessi necessari su database, filesystem, API e rete</td>
+</tr>
+<tr class="odd">
+<td>Recupero a runtime</td>
+<td>il segreto viene fornito dall’infrastruttura o dal sistema di secret management al momento dell’esecuzione, senza inserirlo nel codice</td>
+</tr>
+<tr class="even">
+<td>Permessi sul segreto</td>
+<td>solo i processi e gli amministratori autorizzati possono leggere o modificare il segreto</td>
+</tr>
+<tr class="odd">
+<td>Rotazione</td>
+<td>esiste una procedura per sostituire periodicamente o in caso di compromissione password, token e chiavi</td>
+</tr>
+<tr class="even">
+<td>Revoca</td>
+<td>è possibile disabilitare rapidamente un’identità senza modificare il codice applicativo</td>
+</tr>
+<tr class="odd">
+<td>Audit</td>
+<td>accessi e modifiche ai segreti sono registrati secondo le policy aziendali</td>
+</tr>
+<tr class="even">
+<td>Separazione ambienti</td>
+<td>sviluppo, test e produzione non condividono inutilmente le stesse credenziali</td>
+</tr>
+<tr class="odd">
+<td>Gestione errori</td>
+<td>un errore di autenticazione non stampa il segreto né una connection string completa</td>
+</tr>
+<tr class="even">
+<td>Dipendenze esterne</td>
+<td>eventuali wallet, certificati, file di configurazione o client database sono inclusi nella baseline e hanno permessi appropriati</td>
+</tr>
+</tbody>
+</table>
+<p>Per R, il punto importante è che <strong>R non deve diventare il sistema di gestione dei segreti</strong>. Il codice dovrebbe ricevere un riferimento o un valore già reso disponibile dall’infrastruttura secondo le modalità approvate dall’organizzazione. La soluzione concreta può usare, per esempio, un secret manager, un credential store del sistema operativo o un’identità gestita; la scelta dipende dall’architettura aziendale.</p>
+<section id="domande-operative-per-it" class="level3">
+<h3 class="anchored" data-anchor-id="domande-operative-per-it">Domande operative per IT</h3>
+<p>Prima del rilascio:</p>
+<ol type="1">
+<li><strong>Dove viene conservato il segreto?</strong></li>
+<li><strong>Chi o quale processo può leggerlo?</strong></li>
+<li><strong>L’applicazione usa un’identità dedicata?</strong></li>
+<li><strong>Quali permessi ha quell’identità?</strong></li>
+<li><strong>Come arriva il segreto al processo R?</strong></li>
+<li><strong>È presente in codice, repository, immagine container, file di configurazione o log?</strong></li>
+<li><strong>Come viene ruotato?</strong></li>
+<li><strong>Come viene revocato?</strong></li>
+<li><strong>Come viene registrato l’accesso?</strong></li>
+<li><strong>Cosa succede se il segreto scade o viene revocato?</strong></li>
+<li><strong>Sviluppo, test e produzione usano identità separate?</strong></li>
+<li><strong>La gestione delle credenziali è documentata nella baseline e nella procedura operativa?</strong></li>
+</ol>
+<p>Un controllo utile consiste nel verificare non solo il repository, ma l’intera catena:</p>
+<pre class="text"><code>secret manager / credential store
+          ↓
+runtime / account di servizio
+          ↓
+processo R
+          ↓
+Oracle / API / filesystem</code></pre>
+<p>Il principio è <strong>minimizzare il numero di componenti che conoscono il segreto e il tempo per cui il segreto rimane disponibile</strong>.</p>
+</section>
+</section>
+</section>
+<section id="logging" class="level1">
+<h1>Logging</h1>
+<p>Un job batch dovrebbe almeno permettere di sapere:</p>
+<ul>
+<li>quando è partito;</li>
+<li>quando è terminato;</li>
+<li>quale versione/configurazione ha utilizzato;</li>
+<li>quanto è durato;</li>
+<li>se è terminato correttamente;</li>
+<li>dove si trova l’output;</li>
+<li>quale errore si è verificato in caso di fallimento.</li>
+</ul>
+<p>Un log utile non è necessariamente enorme: deve permettere di ricostruire l’esecuzione.</p>
+</section>
+<section id="error-handling" class="level1">
+<h1>Error handling</h1>
+<p>Un errore applicativo non dovrebbe trasformarsi in un fallimento silenzioso.</p>
+<p>Un modello semplice:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="mermaid-05-deployment-02">
+<div>
+<pre class="mermaid mermaid-js" data-label="mermaid-05-deployment-02">flowchart TD
+    A["Avvio"] --&gt; B["Controlli"]
+    B --&gt; C["Elaborazione"]
+    C --&gt; D["Successo"]
+    C --&gt; E["Errore"]
+    E --&gt; F["Log"]
+    F --&gt; G["Alert / presa in carico"]
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p>Per un job notturno, «il processo si è fermato» non è una strategia di gestione dell’errore: bisogna sapere che è fallito e perché.</p>
+</section>
+<section id="monitoring" class="level1">
+<h1>Monitoring</h1>
+<p>Il monitoraggio deve essere coerente con il tipo di applicazione.</p>
+<section id="job-batch" class="level3">
+<h3 class="anchored" data-anchor-id="job-batch">Job batch</h3>
+<p>Controllare:</p>
+<ul>
+<li>esecuzione;</li>
+<li>durata;</li>
+<li>successo/fallimento;</li>
+<li>output;</li>
+<li>CPU/RAM quando rilevanti.</li>
+</ul>
+</section>
+<section id="servizioapi" class="level3">
+<h3 class="anchored" data-anchor-id="servizioapi">Servizio/API</h3>
+<p>Controllare:</p>
+<ul>
+<li>disponibilità;</li>
+<li>tempi di risposta;</li>
+<li>errori;</li>
+<li>numero di richieste;</li>
+<li>risorse;</li>
+<li>eventuali saturazioni.</li>
+</ul>
+</section>
+<section id="applicazione-shiny" class="level3">
+<h3 class="anchored" data-anchor-id="applicazione-shiny">Applicazione Shiny</h3>
+<p>Aggiungere anche:</p>
+<ul>
+<li>numero di sessioni;</li>
+<li>durata delle sessioni;</li>
+<li>utilizzo di RAM/CPU;</li>
+<li>errori lato server;</li>
+<li>comportamento sotto concorrenza.</li>
+</ul>
+</section>
+</section>
+<section id="rilascio" class="level1">
+<h1>Rilascio</h1>
+<p>Un rilascio dovrebbe essere un’operazione identificabile e ripetibile.</p>
+<p>Una checklist minima:</p>
+<ol type="1">
+<li>codice approvato;</li>
+<li>test superati;</li>
+<li>dipendenze disponibili;</li>
+<li>configurazione verificata;</li>
+<li>backup eseguito quando necessario;</li>
+<li>versione identificata;</li>
+<li>deployment eseguito;</li>
+<li>smoke test;</li>
+<li>monitoring verificato;</li>
+<li>esito registrato.</li>
+</ol>
+<section id="smoke-test" class="level2">
+<h2 class="anchored" data-anchor-id="smoke-test">Smoke test</h2>
+<p>Dopo il deployment è utile eseguire un controllo minimo che verifichi che il sistema sia effettivamente operativo nell’ambiente target.</p>
+<p>Esempi:</p>
+<ul>
+<li>un endpoint risponde;</li>
+<li>un job può partire;</li>
+<li>una connessione al database funziona;</li>
+<li>un report viene prodotto;</li>
+<li>una pagina Quarto è raggiungibile.</li>
+</ul>
+<p>Lo smoke test non sostituisce i test automatici: verifica che il componente distribuito sia effettivamente utilizzabile nell’ambiente target.</p>
+</section>
+</section>
+<section id="rollback" class="level1">
+<h1>Rollback</h1>
+<p>Un deployment controllato deve prevedere anche il caso in cui la nuova versione non sia utilizzabile.</p>
+<p>Schema:</p>
+<pre class="text"><code>versione N
+   ↓
+release N+1
+   ↓
+smoke test
+   ├── OK → mantenere N+1
+   └── KO → rollback a N</code></pre>
+<p>Il rollback può significare:</p>
+<ul>
+<li>ripristinare una precedente versione del codice;</li>
+<li>ridistribuire un precedente artefatto;</li>
+<li>ripristinare una configurazione;</li>
+<li>ripristinare dati, quando previsto dalla procedura.</li>
+</ul>
+<p>Il rollback diventa più complesso quando il rilascio modifica anche il database. In quel caso bisogna considerare esplicitamente la compatibilità tra versione applicativa e schema dati.</p>
+<blockquote class="blockquote">
+<p>Un rollback non documentato è spesso soltanto un’intenzione.</p>
+</blockquote>
+</section>
+<section id="backup-rto-e-rpo" class="level1">
+<h1>Backup, RTO e RPO</h1>
+<p>Per i sistemi che producono o gestiscono dati è utile distinguere:</p>
+<ul>
+<li><strong>RPO — Recovery Point Objective</strong>: quanta perdita di dati è accettabile;</li>
+<li><strong>RTO — Recovery Time Objective</strong>: quanto tempo può trascorrere prima del ripristino.</li>
+</ul>
+<p>Esempio:</p>
+<pre class="text"><code>RPO = 24 h
+RTO = 4 h</code></pre>
+<p>non significa che il sistema debba essere sempre disponibile. Significa che, secondo i requisiti definiti, l’organizzazione deve poter recuperare i dati con una perdita massima prevista di 24 ore e ripristinare il servizio entro 4 ore.</p>
+<p>I valori reali devono essere definiti dal servizio e dalle policy aziendali, non dal linguaggio R.</p>
+</section>
+<section id="continuità-operativa" class="level1">
+<h1>Continuità operativa</h1>
+<p>Per una soluzione R in produzione bisogna sapere:</p>
+<ul>
+<li>dove si trova il codice;</li>
+<li>dove si trovano gli artefatti;</li>
+<li>dove sono le configurazioni;</li>
+<li>dove sono i dati;</li>
+<li>come vengono gestiti i segreti;</li>
+<li>come si ricrea l’ambiente;</li>
+<li>come si ripristina il servizio;</li>
+<li>chi esegue il ripristino;</li>
+<li>come viene verificato il ripristino.</li>
+</ul>
+<p>Questo porta a una distinzione importante:</p>
+<blockquote class="blockquote">
+<p><strong>backup</strong> e <strong>disaster recovery</strong> non sono sinonimi.</p>
+</blockquote>
+<p>Avere una copia dei dati non dimostra automaticamente di essere in grado di ricostruire l’applicazione.</p>
+</section>
+<section id="modifiche-impatto-e-nuova-baseline" class="level1">
+<h1>Modifiche, impatto e nuova baseline</h1>
+<p>Una modifica a una soluzione in produzione non dovrebbe essere trattata come una semplice installazione o sostituzione di file.</p>
+<p>Il percorso minimo è:</p>
+<pre class="text"><code>modifica proposta
+      ↓
+analisi dell'impatto
+      ↓
+test necessari
+      ↓
+esito dei test
+      ↓
+approvazione
+      ↓
+nuova baseline
+      ↓
+deployment
+      ↓
+smoke test e monitoring</code></pre>
+<p>Esempi di modifiche che possono richiedere una valutazione:</p>
+<ul>
+<li>aggiornamento di un pacchetto R;</li>
+<li>nuova versione di R;</li>
+<li>modifica del codice o dell’algoritmo;</li>
+<li>aggiornamento del driver Oracle;</li>
+<li>modifica del sistema operativo;</li>
+<li>nuova versione dell’immagine container;</li>
+<li>modifica della configurazione;</li>
+<li>modifica di un servizio esterno.</li>
+</ul>
+<p>L’analisi dell’impatto deve stabilire quali componenti possono cambiare comportamento e quindi quali verifiche sono necessarie. Non tutte le modifiche richiedono gli stessi test.</p>
+<p>La registrazione minima della modifica dovrebbe permettere di ricostruire:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Elemento</th>
+<th>Evidenza</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>modifica proposta</td>
+<td>descrizione e motivo</td>
+</tr>
+<tr class="even">
+<td>versione precedente</td>
+<td>baseline/artefatto</td>
+</tr>
+<tr class="odd">
+<td>impatto valutato</td>
+<td>componenti interessati</td>
+</tr>
+<tr class="even">
+<td>test richiesti</td>
+<td>elenco</td>
+</tr>
+<tr class="odd">
+<td>esito</td>
+<td>risultati e criteri di accettazione</td>
+</tr>
+<tr class="even">
+<td>approvazione</td>
+<td>soggetto/data secondo procedura</td>
+</tr>
+<tr class="odd">
+<td>nuova baseline</td>
+<td>versione/artefatto</td>
+</tr>
+<tr class="even">
+<td>deployment</td>
+<td>ambiente e data</td>
+</tr>
+<tr class="odd">
+<td>verifica post-rilascio</td>
+<td>smoke test/monitoring</td>
+</tr>
+</tbody>
+</table>
+<p>Questo collega <strong>change management</strong>, <strong>verifica del software</strong> e <strong>baseline</strong>.</p>
+</section>
+<section id="lifecycle" class="level1">
+<h1>Lifecycle</h1>
+<p>Una soluzione può rimanere in produzione per anni.</p>
+<p>Occorre quindi prevedere:</p>
+<pre class="text"><code>sviluppo
+   ↓
+rilascio
+   ↓
+esercizio
+   ↓
+manutenzione
+   ↓
+aggiornamento
+   ↓
+ritiro</code></pre>
+<p>Durante il ciclo di vita possono cambiare:</p>
+<ul>
+<li>versione di R;</li>
+<li>pacchetti;</li>
+<li>sistema operativo;</li>
+<li>driver Oracle;</li>
+<li>certificati;</li>
+<li>API esterne;</li>
+<li>requisiti di sicurezza;</li>
+<li>infrastruttura.</li>
+</ul>
+<p>Una soluzione non mantenuta può diventare progressivamente più difficile da supportare anche se il codice non cambia.</p>
+</section>
+<section id="responsabilità" class="level1">
+<h1>Responsabilità</h1>
+<p>Una soluzione in produzione deve avere responsabilità esplicite.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Area</th>
+<th>Sviluppatore</th>
+<th>IT</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>logica scientifica</td>
+<td>principale</td>
+<td>supporto</td>
+</tr>
+<tr class="even">
+<td>codice R</td>
+<td>principale</td>
+<td>supporto</td>
+</tr>
+<tr class="odd">
+<td>dipendenze applicative</td>
+<td>condivisione</td>
+<td>gestione runtime</td>
+</tr>
+<tr class="even">
+<td>OS/server</td>
+<td>requisiti</td>
+<td>principale</td>
+</tr>
+<tr class="odd">
+<td>database</td>
+<td>requisiti applicativi</td>
+<td>gestione secondo organizzazione</td>
+</tr>
+<tr class="even">
+<td>sicurezza</td>
+<td>requisiti</td>
+<td>applicazione policy</td>
+</tr>
+<tr class="odd">
+<td>performance</td>
+<td>diagnosi applicativa</td>
+<td>infrastruttura</td>
+</tr>
+<tr class="even">
+<td>monitoring</td>
+<td>requisiti</td>
+<td>implementazione operativa</td>
+</tr>
+<tr class="odd">
+<td>incidenti</td>
+<td>analisi codice</td>
+<td>gestione infrastruttura</td>
+</tr>
+<tr class="even">
+<td>continuità operativa</td>
+<td>requisiti applicativi</td>
+<td>implementazione infrastrutturale</td>
+</tr>
+</tbody>
+</table>
+<p>La divisione concreta dipende dall’organizzazione, ma il principio è che <strong>ogni componente deve avere un proprietario</strong>.</p>
+</section>
+<section id="production-readiness" class="level1">
+<h1>Production readiness</h1>
+<p>Prima della messa in produzione, la verifica può essere letta come una serie di domande operative.</p>
+<section id="codice-e-versionamento" class="level3">
+<h3 class="anchored" data-anchor-id="codice-e-versionamento">Codice e versionamento</h3>
+<ul>
+<li>repository versionato;</li>
+<li>commit identificabile;</li>
+<li>release/tag;</li>
+<li>review prevista;</li>
+<li>changelog o note di rilascio.</li>
+</ul>
+</section>
+<section id="test" class="level3">
+<h3 class="anchored" data-anchor-id="test">Test</h3>
+<ul>
+<li>test funzionali;</li>
+<li>test di integrazione quando necessari;</li>
+<li>test di regressione;</li>
+<li>test di performance quando pertinenti;</li>
+<li>smoke test post-deployment.</li>
+</ul>
+</section>
+<section id="runtime" class="level3">
+<h3 class="anchored" data-anchor-id="runtime">Runtime</h3>
+<ul>
+<li>versione R nota;</li>
+<li>dipendenze riproducibili;</li>
+<li>repository dei pacchetti definito;</li>
+<li>librerie di sistema e driver noti.</li>
+</ul>
+</section>
+<section id="sicurezza-1" class="level3">
+<h3 class="anchored" data-anchor-id="sicurezza-1">Sicurezza</h3>
+<ul>
+<li>account tecnico;</li>
+<li>least privilege;</li>
+<li>segreti fuori dal codice;</li>
+<li>accessi di rete definiti;</li>
+<li>gestione dei certificati.</li>
+</ul>
+</section>
+<section id="operatività" class="level3">
+<h3 class="anchored" data-anchor-id="operatività">Operatività</h3>
+<ul>
+<li>logging;</li>
+<li>monitoring;</li>
+<li>alert;</li>
+<li>backup quando necessario;</li>
+<li>procedura di rollback;</li>
+<li>RTO/RPO quando applicabili.</li>
+</ul>
+</section>
+<section id="ownership" class="level3">
+<h3 class="anchored" data-anchor-id="ownership">Ownership</h3>
+<ul>
+<li>proprietario applicativo;</li>
+<li>proprietario infrastrutturale;</li>
+<li>contatti per gli incidenti;</li>
+<li>procedura di manutenzione.</li>
+</ul>
+<p>La domanda finale non è «funziona?», ma:</p>
+<blockquote class="blockquote">
+<p><strong>possiamo rilasciarlo, monitorarlo, aggiornarlo e ripristinarlo in modo prevedibile?</strong></p>
+</blockquote>
+</section>
+<section id="le-domande-fondamentali" class="level2">
+<h2 class="anchored" data-anchor-id="le-domande-fondamentali">Le domande fondamentali</h2>
+<p>Quando un prodotto R passa in produzione:</p>
+<section id="dove-gira" class="level3">
+<h3 class="anchored" data-anchor-id="dove-gira">Dove gira?</h3>
+<p>PC, VM, container, server?</p>
+</section>
+<section id="come-parte" class="level3">
+<h3 class="anchored" data-anchor-id="come-parte">Come parte?</h3>
+<p>Manuale, scheduler, servizio?</p>
+</section>
+<section id="con-quale-versione" class="level3">
+<h3 class="anchored" data-anchor-id="con-quale-versione">Con quale versione?</h3>
+<p>Quale commit, tag o artefatto?</p>
+</section>
+<section id="con-quali-dipendenze" class="level3">
+<h3 class="anchored" data-anchor-id="con-quali-dipendenze">Con quali dipendenze?</h3>
+<p>Quale R, quali pacchetti, quali driver?</p>
+</section>
+<section id="con-quale-identità" class="level3">
+<h3 class="anchored" data-anchor-id="con-quale-identità">Con quale identità?</h3>
+<p>Utente personale o account tecnico?</p>
+</section>
+<section id="dove-accede" class="level3">
+<h3 class="anchored" data-anchor-id="dove-accede">Dove accede?</h3>
+<p>Database, API, filesystem?</p>
+</section>
+<section id="dove-scrive" class="level3">
+<h3 class="anchored" data-anchor-id="dove-scrive">Dove scrive?</h3>
+<p>Log, file temporanei, output?</p>
+</section>
+<section id="come-viene-testato" class="level3">
+<h3 class="anchored" data-anchor-id="come-viene-testato">Come viene testato?</h3>
+<p>Quali controlli vengono eseguiti prima e dopo il rilascio?</p>
+</section>
+<section id="come-viene-monitorato" class="level3">
+<h3 class="anchored" data-anchor-id="come-viene-monitorato">Come viene monitorato?</h3>
+<p>Come si rileva un errore?</p>
+</section>
+<section id="come-viene-aggiornato" class="level3">
+<h3 class="anchored" data-anchor-id="come-viene-aggiornato">Come viene aggiornato?</h3>
+<p>Qual è la procedura di release?</p>
+</section>
+<section id="come-si-torna-indietro" class="level3">
+<h3 class="anchored" data-anchor-id="come-si-torna-indietro">Come si torna indietro?</h3>
+<p>Qual è la procedura di rollback?</p>
+</section>
+<section id="come-si-ripristina" class="level3">
+<h3 class="anchored" data-anchor-id="come-si-ripristina">Come si ripristina?</h3>
+<p>Quali sono RTO/RPO e chi esegue il recovery?</p>
+</section>
+</section>
+</section>
+<section id="quando-un-server-dedicato-può-essere-inutile" class="level1">
+<h1>Quando un server dedicato può essere inutile?</h1>
+<p>Possibili situazioni:</p>
+<ul>
+<li>il problema è una query Oracle;</li>
+<li>il codice è fortemente inefficiente;</li>
+<li>il carico è occasionale;</li>
+<li>l’elaborazione usa un solo core;</li>
+<li>il dataset può essere ridotto;</li>
+<li>il problema è la rete;</li>
+<li>esiste già un’infrastruttura adeguata;</li>
+<li>l’applicazione non richiede disponibilità continua.</li>
+</ul>
+<p>L’infrastruttura va dimensionata dopo aver compreso il carico e il requisito operativo.</p>
+</section>
+<section id="una-pipeline-completa" class="level1">
+<h1>Una pipeline completa</h1>
+<p>Un esempio realistico può essere rappresentato così:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="mermaid-05-deployment-03">
+<div>
+<pre class="mermaid mermaid-js" data-label="mermaid-05-deployment-03">flowchart LR
+    DEV["Sviluppo"] --&gt; GIT["Git"]
+    GIT --&gt; PR["Pull Request"]
+    PR --&gt; CI["CI: test + controlli"]
+    CI --&gt; ART["Artefatto versionato"]
+    ART --&gt; APPROVE["Approvazione"]
+    APPROVE --&gt; TEST["Ambiente di test"]
+    TEST --&gt; SMOKE["Smoke test"]
+    SMOKE --&gt; PROD["Produzione"]
+    PROD --&gt; MON["Monitoring"]
+    MON --&gt;|anomalia| ROLLBACK["Rollback / recovery"]
+    ROLLBACK --&gt; PROD
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p>La pipeline non deve necessariamente essere identica per ogni applicazione. Deve però rendere espliciti i passaggi che oggi sono spesso manuali e non tracciati.</p>
+</section>
+<section id="principio-operativo" class="level1">
+<h1>Principio operativo</h1>
+<p>Per IT, la richiesta:</p>
+<blockquote class="blockquote">
+<p>«Ho uno script R, mettetelo sul server»</p>
+</blockquote>
+<p>dovrebbe essere trasformata in una richiesta più precisa:</p>
+<blockquote class="blockquote">
+<p><strong>Quale versione? Quali dipendenze? Quali dati? Quali permessi? Quale frequenza? Quale requisito di servizio? Quali test? Quale monitoring? Quale rollback? Chi è il proprietario?</strong></p>
+</blockquote>
+<p>Questa trasformazione è uno degli obiettivi principali della governance del deployment.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
