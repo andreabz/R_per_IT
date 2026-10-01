@@ -134,6 +134,12 @@ La VM non elimina il problema del dimensionamento: CPU e RAM assegnate devono co
 
 ## Container
 
+In questo capitolo il container va considerato come **scelta architetturale di esecuzione**: stabilisce come isolare e distribuire il runtime dell'applicazione rispetto all'host e alla piattaforma.
+
+Il container non sostituisce VM, piattaforma applicativa, registry o sistemi di gestione: è un componente della soluzione.
+
+Nel capitolo sul deployment il container viene invece considerato come **artefatto di rilascio**: immagine costruita, testata, identificata e distribuita senza modificarne manualmente il contenuto.
+
 Un container permette di distribuire insieme applicazione e dipendenze in un ambiente standardizzato.
 
 Il modello concettuale è:
