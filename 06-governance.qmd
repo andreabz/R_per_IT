@@ -1,16 +1,13 @@
 ---
 title: "Governance e valutazione delle richieste"
 subtitle: "Come valutare installazioni, risorse, server e alternative"
-toc: true
-toc-depth: 2
-number-sections: false
 ---
 
-# Introduzione
+## Perché questo capitolo
 
 Questo capitolo raccoglie il metodo decisionale che collega i capitoli precedenti. L'obiettivo non è stabilire a priori quale tecnologia utilizzare, ma rendere le richieste confrontabili: partire dal requisito, raccogliere evidenze, identificare il collo di bottiglia, verificare le alternative e documentare la decisione. La stessa logica vale per pacchetti, RAM, CPU, server e scelta architetturale.
 
-# Una procedura per valutare le richieste
+## Una procedura per valutare le richieste
 
 Le richieste più difficili sono quelle che arrivano già accompagnate dalla soluzione:
 
@@ -24,7 +21,7 @@ Le richieste più difficili sono quelle che arrivano già accompagnate dalla sol
 
 La procedura IT dovrebbe riportare la richiesta al problema originale.
 
-## 1. Identificare il requisito
+### 1. Identificare il requisito
 
 Chiedere:
 
@@ -35,7 +32,7 @@ Chiedere:
 - quali dati utilizza?
 - quale output produce?
 
-## 2. Identificare il carico
+### 2. Identificare il carico
 
 Misurare:
 
@@ -47,11 +44,11 @@ Misurare:
 - numero di processi/worker;
 - durata.
 
-## 3. Identificare il collo di bottiglia
+### 3. Identificare il collo di bottiglia
 
 Una richiesta hardware ha senso solo se esiste un rapporto documentato tra risorsa e problema.
 
-## 4. Verificare alternative
+### 4. Verificare alternative
 
 Prima dell'hardware considerare:
 
@@ -63,19 +60,19 @@ Prima dell'hardware considerare:
 - infrastruttura esistente;
 - cambio di architettura.
 
-## 5. Testare
+### 5. Testare
 
 Quando possibile, modificare una variabile e misurare il risultato.
 
-## 6. Documentare
+### 6. Documentare
 
 La decisione finale dovrebbe poter essere ricostruita mesi dopo.
 
-# Software controllato, verificato e validato
+## Software controllato, verificato e validato
 
 In un laboratorio soggetto a requisiti di qualità è importante non confondere tre problemi diversi.
 
-### 1. Controllo dell'ambiente software
+#### 1. Controllo dell'ambiente software
 
 Domanda:
 
@@ -92,7 +89,7 @@ Le evidenze possono comprendere:
 - configurazione;
 - identificativo dell'immagine container.
 
-### 2. Verifica del software
+#### 2. Verifica del software
 
 Domanda:
 
@@ -111,7 +108,7 @@ Le evidenze possono comprendere:
 
 Per codice riutilizzato in più applicazioni può essere utile organizzare la logica in un **pacchetto interno versionato**, con una propria suite di test. Non è necessario che IT gestisca la programmazione dei test: deve poter riconoscere che esistono una versione, un insieme di verifiche e un esito documentato.
 
-### 3. Verifica o validazione del metodo
+#### 3. Verifica o validazione del metodo
 
 Domanda:
 
@@ -123,7 +120,7 @@ Questa è una questione diversa dalla riproducibilità dell'ambiente e dalla ver
 
 Nel contesto del laboratorio, la modalità con cui software e metodo vengono verificati o validati deve essere ricondotta alle procedure, ai requisiti e ai criteri di accettazione applicabili.
 
-## Pacchetti interni e test
+### Pacchetti interni e test
 
 Quando una parte di codice diventa stabile, riutilizzata da più applicazioni o rilevante per risultati analitici, un pacchetto R interno può offrire vantaggi di controllo:
 
@@ -155,7 +152,7 @@ Per un test di regressione è importante poter associare il risultato a:
 - esito;
 - eventuale tolleranza.
 
-## Baseline software
+### Baseline software
 
 Per una release significativa può essere utile mantenere una scheda di baseline:
 
@@ -178,7 +175,7 @@ La baseline permette di rispondere a una domanda operativa importante:
 > **Possiamo ricostruire quale ambiente e quale versione del software hanno prodotto questo risultato?**
 
 
-# Dall'evidenza alla decisione
+## Dall'evidenza alla decisione
 
 Una richiesta IT dovrebbe lasciare una traccia logica semplice:
 
@@ -207,7 +204,7 @@ Esempio:
 
 Questa sequenza evita che una decisione infrastrutturale venga registrata soltanto come conclusione («servono 64 GB») senza conservare il percorso che l'ha motivata.
 
-# Pacchetti interni: quando trattarli come componenti
+## Pacchetti interni: quando trattarli come componenti
 
 Un pacchetto interno merita un ciclo di vita esplicito quando, per esempio:
 
@@ -230,7 +227,7 @@ In questi casi IT dovrebbe poter identificare:
 
 Il pacchetto diventa così un **componente software governato**, non una copia di funzioni condivisa manualmente.
 
-# Valutare il rischio di una soluzione
+## Valutare il rischio di una soluzione
 
 Oltre alle performance, IT dovrebbe considerare il rischio operativo.
 
@@ -246,7 +243,7 @@ Oltre alle performance, IT dovrebbe considerare il rischio operativo.
 
 Una soluzione può essere performante ma difficile da mantenere. Le due valutazioni sono distinte.
 
-# Ownership
+## Ownership
 
 Una domanda spesso trascurata:
 
@@ -264,7 +261,7 @@ Bisogna sapere:
 
 Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativo.
 
-## Ownership nel tempo
+### Ownership nel tempo
 
 L'ownership comprende anche il **fine vita** della soluzione:
 
@@ -274,13 +271,13 @@ L'ownership comprende anche il **fine vita** della soluzione:
 - chi autorizza la dismissione;
 - chi conserva la documentazione necessaria.
 
-# Come valutare una richiesta di installazione
+## Come valutare una richiesta di installazione
 
-### Richiesta
+#### Richiesta
 
 > "Installare R e questi 20 pacchetti."
 
-### Domande
+#### Domande
 
 1. Quale applicazione?
 2. Quale versione di R?
@@ -293,13 +290,13 @@ L'ownership comprende anche il **fine vita** della soluzione:
 9. È un ambiente di sviluppo o produzione?
 10. Chi è responsabile dell'applicazione?
 
-# Come valutare una richiesta di RAM
+## Come valutare una richiesta di RAM
 
-### Richiesta
+#### Richiesta
 
 > "Servono 64 GB."
 
-### Domande
+#### Domande
 
 - Quanta RAM viene utilizzata oggi?
 - Qual è il picco?
@@ -311,13 +308,13 @@ L'ownership comprende anche il **fine vita** della soluzione:
 - La memoria cresce durante il job?
 - È possibile ridurre i dati caricati?
 
-# Come valutare una richiesta di CPU
+## Come valutare una richiesta di CPU
 
-### Richiesta
+#### Richiesta
 
 > "Servono 16 core."
 
-### Domande
+#### Domande
 
 - CPU attuale?
 - Percentuale di utilizzo?
@@ -329,13 +326,13 @@ L'ownership comprende anche il **fine vita** della soluzione:
 - La RAM cresce con i worker?
 - Il database regge il parallelismo?
 
-# Come valutare una richiesta di server
+## Come valutare una richiesta di server
 
-### Richiesta
+#### Richiesta
 
 > "Serve un server dedicato."
 
-### Domande
+#### Domande
 
 - Per quale workload?
 - Frequenza?
@@ -352,7 +349,7 @@ L'ownership comprende anche il **fine vita** della soluzione:
 - monitoring?
 - esiste già una piattaforma adatta?
 
-# Matrice decisionale
+## Matrice decisionale
 
 La stessa logica può essere applicata alle richieste più frequenti.
 
@@ -365,7 +362,7 @@ La stessa logica può essere applicata alle richieste più frequenti.
 | Shiny/API | utenti, traffico, autenticazione, disponibilità | piattaforma web aziendale | architettura |
 
 La matrice non sostituisce la diagnosi: serve a rendere esplicite le **evidenze** che devono precedere la decisione.
-# Chi può modificare, verificare, approvare e distribuire?
+## Chi può modificare, verificare, approvare e distribuire?
 
 Per una soluzione controllata è utile distinguere almeno quattro responsabilità:
 
@@ -378,7 +375,7 @@ Per una soluzione controllata è utile distinguere almeno quattro responsabilit�
 
 Le responsabilità possono appartenere allo stesso team, ma non devono essere confuse. IT dovrebbe sapere **chi è autorizzato a fare cosa** e quali evidenze rimangono dopo ogni passaggio.
 
-# Tracciabilità del dato e del risultato
+## Tracciabilità del dato e del risultato
 
 La baseline software identifica con quale ambiente è stato eseguito il software, ma da sola non identifica necessariamente il dato elaborato.
 
@@ -398,7 +395,7 @@ output identificato
 
 IT deve verificare dove sono registrati gli identificativi necessari e quali componenti esterni alla baseline software devono essere conservati o riferiti.
 
-# R non deve fare tutto
+## R non deve fare tutto
 
 Un'architettura può essere:
 
