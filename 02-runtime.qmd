@@ -299,31 +299,6 @@ overhead
 
 Non è una formula di dimensionamento esatta, ma è un modello utile per capire perché aumentare i worker può far crescere rapidamente la RAM richiesta.
 
-# Scaling non lineare
-
-Supponiamo di misurare:
-
-| Worker | Tempo | RAM |
-|:---:|---:|---:|
-| 1 | 40 min | 4 GB |
-| 2 | 23 min | 8 GB |
-| 4 | 14 min | 16 GB |
-| 8 | 12 min | 32 GB |
-
-Il passaggio da 1 a 4 worker è significativo. Quello da 4 a 8 molto meno.
-
-La scalabilità reale può essere limitata da:
-
-- parti seriali;
-- sincronizzazione;
-- trasferimento dati;
-- I/O;
-- database;
-- overhead dei worker;
-- contention sulle risorse.
-
-Un benchmark reale è quindi più informativo di una stima basata soltanto sul numero di core.
-
 # Diagnostica del runtime
 
 Quando una soluzione R è lenta, IT può chiedere almeno:
