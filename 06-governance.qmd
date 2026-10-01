@@ -178,6 +178,58 @@ La baseline permette di rispondere a una domanda operativa importante:
 > **Possiamo ricostruire quale ambiente e quale versione del software hanno prodotto questo risultato?**
 
 
+# Dall'evidenza alla decisione
+
+Una richiesta IT dovrebbe lasciare una traccia logica semplice:
+
+```text
+misura
+  ↓
+interpretazione
+  ↓
+ipotesi
+  ↓
+test
+  ↓
+decisione
+  ↓
+evidenza conservata
+```
+
+Esempio:
+
+- **misura**: CPU 98%, un worker;
+- **interpretazione**: il job è prevalentemente CPU-bound;
+- **ipotesi**: il workload può beneficiare del parallelismo;
+- **test**: esecuzioni con 1, 2, 4 e 8 worker;
+- **decisione**: dimensionare sulla configurazione che soddisfa il requisito senza introdurre un costo di memoria non sostenibile;
+- **evidenza conservata**: metriche, risultati dello scaling, versione del software e configurazione testata.
+
+Questa sequenza evita che una decisione infrastrutturale venga registrata soltanto come conclusione («servono 64 GB») senza conservare il percorso che l'ha motivata.
+
+# Pacchetti interni: quando trattarli come componenti
+
+Un pacchetto interno merita un ciclo di vita esplicito quando, per esempio:
+
+- è utilizzato da più applicazioni;
+- contiene logica rilevante per risultati analitici;
+- viene aggiornato indipendentemente dalle applicazioni che lo usano;
+- deve essere distribuito a più ambienti;
+- una modifica al suo comportamento può avere impatto su più sistemi.
+
+In questi casi IT dovrebbe poter identificare:
+
+- repository e owner;
+- versione/release;
+- dipendenze;
+- suite di test;
+- changelog;
+- repository di distribuzione;
+- applicazioni che dipendono dal pacchetto;
+- procedura di deprecazione o sostituzione.
+
+Il pacchetto diventa così un **componente software governato**, non una copia di funzioni condivisa manualmente.
+
 # Valutare il rischio di una soluzione
 
 Oltre alle performance, IT dovrebbe considerare il rischio operativo.
