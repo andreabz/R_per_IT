@@ -105,6 +105,16 @@ Bisogna sapere:
 
 Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativo.
 
+## Ownership nel tempo
+
+L'ownership comprende anche il **fine vita** della soluzione:
+
+- chi valuta gli aggiornamenti tecnologici;
+- chi decide quando sostituire una dipendenza non più sostenibile;
+- chi pianifica la migrazione;
+- chi autorizza la dismissione;
+- chi conserva la documentazione necessaria.
+
 # Come valutare una richiesta di installazione
 
 ### Richiesta
