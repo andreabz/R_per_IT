@@ -223,3 +223,100 @@ Questo facilita:
 - diagnosi;
 - reinstallazione;
 - trasferimento tra ambienti.
+
+# Gestione delle librerie e riproducibilità
+
+Per IT, una libreria R non è semplicemente una cartella che contiene file.
+
+Quando R viene eseguito, cerca i pacchetti nelle **library** disponibili per quel processo. Il percorso effettivo può dipendere dalla configurazione del sistema e dell'utente.
+
+```{r}
+#| label: ispezione-librerie-r
+
+.libPaths()
+```
+
+Il comando permette di vedere le library utilizzate dalla sessione R.
+
+In un ambiente multiutente è utile distinguere concettualmente:
+
+```text
+sistema / sito
+      │
+      ├── pacchetti condivisi
+      │
+utente
+      │
+      └── pacchetti personali
+      │
+progetto
+      │
+      └── ambiente controllato dal progetto
+```
+
+Le modalità concrete dipendono dal sistema operativo e dalla configurazione di R. Il punto IT è stabilire **chi può modificare una library, quali versioni contiene e quale ambiente deve essere utilizzato dall'applicazione**.
+
+## Librerie condivise e multiutente
+
+Su un computer utilizzato da più persone, installare o aggiornare un pacchetto in una library condivisa può modificare il comportamento di applicazioni diverse.
+
+Per questo è utile distinguere:
+
+- ambiente di sviluppo personale;
+- library condivisa;
+- ambiente del progetto;
+- ambiente di test;
+- ambiente di produzione.
+
+La domanda non è soltanto:
+
+> «Il pacchetto è installato?»
+
+ma:
+
+> **«Quale versione del pacchetto viene caricata da questa applicazione e chi può modificarla?»**
+
+## Ambiente controllato del progetto
+
+Per un progetto R è preferibile poter dichiarare in modo esplicito:
+
+- versione di R;
+- pacchetti utilizzati;
+- versioni dei pacchetti;
+- repository di provenienza;
+- eventuali dipendenze di sistema;
+- eventuali driver o software esterni.
+
+`renv` consente di registrare le dipendenze R del progetto in un lockfile e di ricostruire l'ambiente a partire da quella descrizione.
+
+```{r}
+#| label: concetto-riproducibilita-renv
+
+# In un progetto gestito con renv, il lockfile
+# descrive le dipendenze R da ricostruire.
+# Il comando seguente è mostrato come concetto:
+# renv::restore()
+```
+
+Il lockfile non congela però automaticamente tutto l'ambiente di esecuzione: sistema operativo, librerie native, driver, client Oracle, configurazioni e altri componenti esterni devono essere gestiti separatamente.
+
+Questa distinzione diventa importante quando il risultato prodotto dal software deve essere **ricostruibile e verificabile nel tempo**.
+
+## Dal computer dello sviluppatore alla baseline software
+
+Una richiesta di installazione può essere trasformata in una descrizione controllata dell'ambiente:
+
+| Componente | Informazione da identificare |
+|---|---|
+| Codice | repository, commit o tag |
+| R | versione |
+| Pacchetti | versioni e repository |
+| Dipendenze R | lockfile, per esempio `renv.lock` |
+| Sistema operativo | distribuzione e versione |
+| Librerie native | versioni rilevanti |
+| Driver/client | ODBC, Oracle o altri |
+| Configurazione | parametri necessari |
+| Dati di test | identificativo/versione |
+| Test software | versione della suite ed esito |
+
+Questa **baseline software** non è ancora la validazione del metodo. È la descrizione controllata dell'ambiente nel quale il software viene eseguito.
