@@ -351,6 +351,8 @@ IT deve verificare dove sono registrati gli identificativi necessari e quali com
 Un'architettura può essere:
 
 ```{mermaid}
+#| label: mermaid-06-governance-01
+#| echo: false
 flowchart LR
     ORA["Oracle<br/>Dati"]
     APEX["APEX<br/>Applicazione"]
