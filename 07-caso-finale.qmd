@@ -1,16 +1,13 @@
 ---
 title: "Caso finale e checklist"
 subtitle: "Dalla richiesta dell'ecologo alla decisione IT"
-toc: true
-toc-depth: 2
-number-sections: false
 ---
 
-# Introduzione
+## Perché questo capitolo
 
 Il caso finale applica il metodo dell'intero corso a una richiesta concreta: un'elaborazione R è troppo lenta e viene richiesto un server più potente. Il valore del caso non sta nella macchina da scegliere, ma nel percorso che permette di trasformare una richiesta hardware in una decisione tecnica verificabile.
 
-# Come leggere il caso
+## Come leggere il caso
 
 Il caso dell'ecologo riassume il metodo dell'intero corso.
 
@@ -20,7 +17,7 @@ La richiesta iniziale è:
 
 La richiesta contiene una soluzione proposta, ma non ancora una diagnosi.
 
-# Primo passaggio: definire il requisito
+## Primo passaggio: definire il requisito
 
 Supponiamo che il job debba essere completato entro 30 minuti.
 
@@ -28,7 +25,7 @@ Questo cambia la domanda:
 
 > Non «quale server serve?», ma «quale configurazione consente di completare il workload entro 30 minuti con margine operativo adeguato?»
 
-# Secondo passaggio: raccogliere la baseline
+## Secondo passaggio: raccogliere la baseline
 
 Supponiamo di osservare:
 
@@ -45,7 +42,7 @@ Ma manca ancora una risposta fondamentale:
 
 > **perché viene utilizzato un solo worker?**
 
-# Terzo passaggio: capire l'algoritmo
+## Terzo passaggio: capire l'algoritmo
 
 Prima dell'hardware bisogna sapere se il lavoro è:
 
@@ -58,7 +55,7 @@ Un profiling può indicare dove viene speso il tempo.
 
 Un'analisi della complessità può indicare se il problema cresce troppo rapidamente al crescere dei dati.
 
-# Quarto passaggio: testare il parallelismo
+## Quarto passaggio: testare il parallelismo
 
 Supponiamo di ottenere:
 
@@ -80,7 +77,7 @@ tempo ↓
 RAM ↑
 ```
 
-# Quinto passaggio: valutare il server
+## Quinto passaggio: valutare il server
 
 A questo punto è possibile discutere l'infrastruttura con dati concreti.
 
@@ -95,7 +92,7 @@ Sappiamo invece che:
 
 Il dimensionamento deve quindi considerare anche il requisito temporale e la concorrenza.
 
-# Sintesi delle evidenze
+## Sintesi delle evidenze
 
 Il caso può essere letto come una catena di evidenze e conseguenze:
 
@@ -109,7 +106,7 @@ Il caso può essere letto come una catena di evidenze e conseguenze:
 | database marginale | DB non è il collo di bottiglia principale | non spostare il problema sul database |
 
 Questa tabella non decide quale server acquistare: rende esplicito il percorso con cui una decisione infrastrutturale può essere motivata.
-# Estensione del caso: la baseline del risultato
+## Estensione del caso: la baseline del risultato
 
 Nel caso dell'ecologo abbiamo verificato il carico computazionale. In un contesto controllato rimane una seconda domanda:
 
@@ -153,7 +150,7 @@ metodo
 
 Le quattro domande non devono essere fuse in una sola.
 
-## Dal software installato alla configurazione riproducibile
+### Dal software installato alla configurazione riproducibile
 
 Se l'applicazione viene distribuita come container, il percorso può diventare:
 
@@ -176,7 +173,7 @@ risultato
 Il container rende più controllabile la distribuzione dell'ambiente, ma non elimina la necessità di identificare i dati, le configurazioni e i servizi esterni.
 
 
-# Dal caso alla produzione
+## Dal caso alla produzione
 
 Il caso può essere esteso fino alla gestione operativa completa:
 
@@ -210,7 +207,7 @@ analisi d'impatto + nuova baseline
 
 Questo completa il collegamento tra performance, architettura, deployment e governance. Una decisione infrastrutturale non chiude il ciclo: il sistema deve poter essere mantenuto, modificato e nuovamente verificato.
 
-# La domanda che rimane
+## La domanda che rimane
 
 Anche se un server potente risolve il problema, bisogna chiedersi:
 
@@ -228,7 +225,7 @@ Potrebbero esserci:
 
 Un hardware adeguato non elimina necessariamente un problema applicativo.
 
-# Cosa deve consegnare lo sviluppatore
+## Cosa deve consegnare lo sviluppatore
 
 Per rendere valutabile una richiesta di infrastruttura, è utile chiedere una scheda con:
 
@@ -250,16 +247,16 @@ Per rendere valutabile una richiesta di infrastruttura, è utile chiedere una sc
 
 Una scheda di questo tipo permette a IT di discutere il dimensionamento senza dover diventare sviluppatore R.
 
-# Checklist operativa finale
+## Checklist operativa finale
 
-## Applicazione
+### Applicazione
 
 - [ ] Che cosa deve fare?
 - [ ] È script, job, report, app o API?
 - [ ] Chi la usa?
 - [ ] Qual è il requisito temporale?
 
-## Performance
+### Performance
 
 - [ ] Durata misurata?
 - [ ] CPU misurata?
@@ -269,7 +266,7 @@ Una scheda di questo tipo permette a IT di discutere il dimensionamento senza do
 - [ ] Profiling?
 - [ ] Scaling test?
 
-## Architettura
+### Architettura
 
 - [ ] Dove deve essere eseguita?
 - [ ] Esiste già una piattaforma?
@@ -277,7 +274,7 @@ Una scheda di questo tipo permette a IT di discutere il dimensionamento senza do
 - [ ] Quale componente gestisce l'interfaccia?
 - [ ] Quale componente gestisce l'orchestrazione?
 
-## Produzione
+### Produzione
 
 - [ ] Dipendenze riproducibili?
 - [ ] Credenziali gestite?
@@ -288,7 +285,7 @@ Una scheda di questo tipo permette a IT di discutere il dimensionamento senza do
 - [ ] Aggiornamenti?
 - [ ] Continuità operativa?
 
-# Le quattro domande
+## Le quattro domande
 
 1. **Che cosa deve fare?**
 2. **Quale evidenza dimostra che serve ciò che viene richiesto?**
@@ -297,7 +294,7 @@ Una scheda di questo tipo permette a IT di discutere il dimensionamento senza do
 
 Queste quattro domande permettono di trasformare una richiesta tecnica in un problema valutabile.
 
-# Una buona architettura è anche una questione organizzativa
+## Una buona architettura è anche una questione organizzativa
 
 Non basta che il codice funzioni.
 
@@ -316,9 +313,9 @@ Occorre considerare:
 Una soluzione tecnicamente possibile può essere operativamente inadatta.
 
 
-# Discussione
+## Discussione
 
-## Domande da portare nel proprio contesto
+### Domande da portare nel proprio contesto
 
 - Quali richieste R arrivano oggi a IT?
 - Quali sono difficili da valutare?
