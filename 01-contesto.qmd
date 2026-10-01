@@ -276,6 +276,43 @@ ma:
 
 > **«Quale versione del pacchetto viene caricata da questa applicazione e chi può modificarla?»**
 
+### Gestione operativa su computer multiutente
+
+Su un computer utilizzato da più persone, una library condivisa deve essere trattata come un componente amministrato, non come una cartella nella quale ogni utente può installare liberamente pacchetti.
+
+Per IT, il modello operativo dovrebbe distinguere:
+
+- **library condivisa**: gestita centralmente e utilizzata in lettura dalle applicazioni;
+- **library personale**: spazio nel quale un utente può sperimentare senza modificare l'ambiente condiviso;
+- **library del progetto**: ambiente associato a una specifica applicazione, per esempio tramite `renv`;
+- **ambiente di test**;
+- **ambiente di produzione**.
+
+In produzione, l'account tecnico che esegue l'applicazione dovrebbe normalmente poter leggere le library approvate ma non modificarle. L'installazione o l'aggiornamento dei pacchetti dovrebbe avvenire tramite un processo autorizzato, con test e aggiornamento della baseline.
+
+### Checklist IT per le library
+
+Per ogni computer o server multiutente, verificare:
+
+1. quali library sono effettivamente utilizzate da ciascun runtime;
+2. chi può scrivere nelle library condivise;
+3. quale procedura autorizza installazione e aggiornamento dei pacchetti;
+4. come vengono impedite modifiche casuali all'ambiente di produzione;
+5. come si identifica la versione realmente caricata da un'applicazione;
+6. come sono separati sviluppo, test e produzione;
+7. come vengono gestite eventuali versioni diverse di R;
+8. come vengono registrati richiesta, installazione, verifica e autorizzazione della modifica.
+
+Per diagnosticare il percorso effettivo si possono usare `.libPaths()` e, quando necessario, le variabili `R_LIBS_USER` e `R_LIBS_SITE`. Per un pacchetto critico si può verificare anche il percorso effettivo con `find.package()`.
+
+La domanda operativa non è quindi soltanto:
+
+> «Il pacchetto è installato?»
+
+ma:
+
+> **«Quale versione viene caricata da questa applicazione, da quale library, chi può modificarla e quale processo autorizza la modifica?»**
+
 ## Ambiente controllato del progetto
 
 Per un progetto R è preferibile poter dichiarare in modo esplicito:
