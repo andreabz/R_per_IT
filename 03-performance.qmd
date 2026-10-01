@@ -15,8 +15,8 @@ Una volta compreso il runtime, il passo successivo è diagnosticare la performan
 Un'elaborazione può essere limitata da risorse diverse.
 
 ```{mermaid}
-#| label: mermaid-03-performance-01
-#| echo: false
+%%| label: mermaid-03-performance-01
+%%| echo: false
 flowchart TD
     JOB["Job R"]
     JOB --> CPU["CPU"]
@@ -93,8 +93,8 @@ Possibili interventi:
 Un caso frequente:
 
 ```{mermaid}
-#| label: mermaid-03-performance-02
-#| echo: false
+%%| label: mermaid-03-performance-02
+%%| echo: false
 flowchart LR
     R["R"] --> Q["Query"]
     Q --> DB["Oracle"]
@@ -116,8 +116,8 @@ Aggiungere CPU al server R non risolve il problema.
 Altro caso:
 
 ```{mermaid}
-#| label: mermaid-03-performance-03
-#| echo: false
+%%| label: mermaid-03-performance-03
+%%| echo: false
 flowchart LR
     R["R"] --> API["API"]
     API --> EXT["Sistema remoto"]
@@ -241,8 +241,8 @@ gc()
 Quando un'elaborazione è lenta:
 
 ```{mermaid}
-#| label: mermaid-03-performance-04
-#| echo: false
+%%| label: mermaid-03-performance-04
+%%| echo: false
 flowchart TD
     P["Problema di performance"]
     P --> A["Algoritmo"]
