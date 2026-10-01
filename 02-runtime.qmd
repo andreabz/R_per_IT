@@ -7,7 +7,8 @@ subtitle: "Processi, core, thread, worker e scaling"
 
 Per valutare una richiesta infrastrutturale bisogna capire come il lavoro R viene effettivamente eseguito. Il capitolo costruisce il vocabolario minimo — processo, core, thread, worker e memoria — e lo collega al problema più importante per IT: individuare il consumo reale di risorse e capire che cosa cambia quando si introduce il parallelismo.
 
-## Processo, CPU, core, thread, worker
+## Il vocabolario del runtime
+
 
 Questi termini sono spesso utilizzati come sinonimi.
 
@@ -28,7 +29,7 @@ flowchart TD
     S --> IO["Storage / rete"]
 ```
 
-## Runtime
+### Runtime
 
 Il termine **runtime** può indicare due concetti distinti:
 
@@ -38,7 +39,7 @@ Il termine **runtime** può indicare due concetti distinti:
 Nel contesto del corso, quando parliamo di performance ci riferiamo soprattutto al secondo concetto. Per analizzarlo dobbiamo capire come il codice utilizza processi, thread, worker e risorse hardware.
 
 
-## Processo
+### Processo
 
 Un **processo** è un'istanza in esecuzione di un programma.
 
@@ -53,7 +54,7 @@ Un processo possiede:
 Un'esecuzione R normalmente corrisponde almeno a un processo R.
 
 
-## Core
+### Core
 
 Un **core** è una risorsa hardware capace di eseguire istruzioni.
 
@@ -68,7 +69,7 @@ non significa automaticamente:
 Serve un carico che possa utilizzare effettivamente quei core.
 
 
-## Thread
+### Thread
 
 Un processo può utilizzare uno o più thread.
 I thread condividono la stessa memoria del processo.
@@ -82,7 +83,7 @@ delegano il lavoro a librerie native in C/C++ che usano i thread.
 
 Il comportamento dipende dal codice, dalle librerie e dal tipo di operazione.
 
-## Worker
+### Worker
 
 "Worker" è soprattutto un termine architetturale.
 
@@ -99,7 +100,8 @@ Per IT la domanda importante è:
 > **Quanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?**
 
 
-## Parallelismo
+## Parallelismo e scaling
+
 
 Quando il lavoro può essere suddiviso:
 
@@ -121,7 +123,7 @@ flowchart TD
 
 Il vantaggio dipende dalla possibilità di dividere realmente il lavoro.
 
-## Parallelismo e concorrenza
+### Parallelismo e concorrenza
 
 **Parallelismo** e **concorrenza** non sono la stessa cosa.
 
@@ -151,7 +153,7 @@ e
 Questa distinzione è particolarmente importante per Shiny e API, dove più richieste o sessioni possono essere contemporaneamente in esecuzione.
 
 
-## Il parallelismo ha un costo
+### Il parallelismo ha un costo
 
 Aumentare i worker può significare:
 
@@ -172,7 +174,7 @@ ogni worker è un processo R completamente separato.
 Questo significa che se lo script principale carica 2 GB di dati in memoria,
 ogni singolo worker caricherà 2 GB.
 
-## Esempio di scaling
+### Esempio di scaling
 
 Supponiamo di misurare:
 
@@ -201,7 +203,8 @@ IT dovrebbe chiedere:
 
 > **Quale beneficio misurato otteniamo aumentando i worker e quale costo aggiuntivo introduciamo in RAM, I/O e database?**
 
-## Memoria di processo e picco di RAM
+## Memoria e consumo di risorse
+
 
 Un processo R utilizza memoria per gli oggetti R, le strutture interne del runtime, le librerie caricate, i buffer e altre risorse.
 
@@ -222,7 +225,7 @@ Non tutte le operazioni producono necessariamente una copia completa: R può con
 
 > «Il dataset è di 10 GB» non implica che servano esattamente 10 GB di RAM.
 
-## RAM e memoria virtuale
+### RAM e memoria virtuale
 
 La **RAM** è la memoria fisica disponibile al sistema.
 
@@ -242,7 +245,7 @@ Per IT:
 
 > molto swap disponibile non significa che il server abbia RAM sufficiente per il carico.
 
-## Garbage collection
+### Garbage collection
 
 R utilizza un **garbage collector (GC)** per recuperare memoria associata a oggetti che non sono più necessari.
 
@@ -264,7 +267,7 @@ Il garbage collector non può liberare memoria ancora necessaria all'elaborazion
 
 Inoltre una fase di garbage collection può avere un costo temporale. Per questo, per diagnosticare un problema di memoria, è utile osservare sia l'andamento della RAM sia il tempo di esecuzione.
 
-## Thread nativi e oversubscription
+### Thread nativi e oversubscription
 
 Il codice R può chiamare librerie native che utilizzano thread propri. Questo introduce una distinzione importante tra:
 
@@ -299,7 +302,7 @@ ma anche:
 
 > «Quanti thread utilizza ciascun worker?»
 
-## Parallelismo e memoria
+### Parallelismo e memoria
 
 Quando i worker sono processi separati, ciascun processo può avere una propria copia degli oggetti necessari.
 
@@ -329,7 +332,8 @@ overhead
 
 Non è una formula di dimensionamento esatta, ma è un modello utile per capire perché aumentare i worker può far crescere rapidamente la RAM richiesta.
 
-## Diagnostica del runtime
+## Diagnosi operativa
+
 
 Quando una soluzione R è lenta, IT può chiedere almeno:
 
@@ -348,7 +352,7 @@ Quando una soluzione R è lenta, IT può chiedere almeno:
 
 Il profilo della risorsa deve essere osservato **durante** l'elaborazione, non soltanto a fine job.
 
-## Domande runtime per IT
+### Domande runtime per IT
 
 Prima di assegnare risorse aggiuntive chiedere:
 
