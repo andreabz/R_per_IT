@@ -274,6 +274,89 @@ In produzione bisogna quindi considerare anche:
 - aggiornamenti di sicurezza;
 - procedura di aggiornamento.
 
+# Baseline software e containerizzazione
+
+Quando la riproducibilità dell'ambiente diventa un requisito operativo, `renv` risolve una parte del problema: descrive le dipendenze R del progetto.
+
+Restano però altri componenti:
+
+- versione di R;
+- sistema operativo;
+- librerie native;
+- driver;
+- client database;
+- strumenti esterni;
+- configurazione.
+
+Una **baseline software** può quindi identificare l'insieme delle versioni approvate per una specifica release.
+
+| Livello | Esempio di evidenza |
+|---|---|
+| codice | commit/tag Git |
+| R | versione |
+| pacchetti R | lockfile |
+| OS | versione dell'immagine o del sistema |
+| librerie native | versioni |
+| driver/client | versione |
+| configurazione | configurazione dell'ambiente |
+| test | suite, dataset e risultato |
+| artefatto | identificativo dell'artefatto rilasciato |
+
+## Containerizzazione
+
+Un container permette di distribuire insieme una parte molto più ampia dell'ambiente software.
+
+Concettualmente:
+
+```text
+Immagine container
+├── sistema operativo / userland
+├── R
+├── pacchetti R
+├── librerie native
+├── applicazione
+└── strumenti necessari
+```
+
+Questo può ridurre le differenze tra sviluppo, test e produzione e rendere più prevedibile il deployment.
+
+Il container **non rende automaticamente valido il software** e non sostituisce i test. Fornisce un artefatto distribuibile che può essere identificato, testato e promosso tra ambienti.
+
+## Build, test e release dell'immagine
+
+Un flusso controllato può essere:
+
+```{mermaid}
+flowchart LR
+    GIT["Codice versionato"] --> BUILD["Build immagine"]
+    BUILD --> TEST["Test automatici"]
+    TEST -->|FAIL| DISCARD["Scarto"]
+    TEST -->|PASS| IMAGE["Immagine versionata"]
+    IMAGE --> REG["Registry"]
+    REG --> DEPLOY["Deployment"]
+    DEPLOY --> SMOKE["Smoke test"]
+```
+
+L'immagine dovrebbe essere identificabile in modo univoco. Un tag leggibile può essere utile per gli operatori, mentre il digest dell'immagine permette di identificare esattamente l'artefatto distribuito.
+
+L'obiettivo non è dichiarare che il container sia "immutabile" in senso assoluto. L'obiettivo operativo è **non modificare manualmente un artefatto già testato**: se cambia il contenuto, si costruisce e si testa una nuova versione.
+
+## Cosa non risolve Docker
+
+La containerizzazione non risolve automaticamente:
+
+- la correttezza dell'algoritmo;
+- l'idoneità del metodo scientifico;
+- la qualità dei dati;
+- la gestione dei segreti;
+- la sicurezza dell'immagine;
+- la compatibilità con sistemi esterni;
+- la configurazione dell'ambiente target;
+- il controllo delle modifiche.
+
+Inoltre, un container può dipendere da servizi esterni: database, API, filesystem, autenticazione, certificati o scheduler. La baseline deve quindi identificare anche le dipendenze che rimangono fuori dal container.
+
+
 # Repository dei pacchetti e licenze
 
 Le dipendenze devono essere governabili anche dal punto di vista organizzativo.
