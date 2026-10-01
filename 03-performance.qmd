@@ -1,16 +1,13 @@
 ---
 title: "Performance e diagnostica"
 subtitle: "Identificare il collo di bottiglia prima di cambiare hardware"
-toc: true
-toc-depth: 2
-number-sections: false
 ---
 
-# Introduzione
+## Perché questo capitolo
 
 Una volta compreso il runtime, il passo successivo è diagnosticare la performance. La lente corretta non è «R è lento», ma «quale parte del lavoro e quale risorsa determinano il tempo di esecuzione?». Il capitolo parte dalla classificazione del carico, passa dagli strumenti di misura all'algoritmo e all'implementazione, e arriva alla valutazione dell'hardware.
 
-# CPU, RAM, I/O, rete
+## CPU, RAM, I/O, rete
 
 Un'elaborazione può essere limitata da risorse diverse.
 
@@ -30,7 +27,7 @@ flowchart TD
 Prima di cambiare hardware bisogna identificare il collo di bottiglia.
 
 
-# CPU-bound
+## CPU-bound
 
 Indicazioni tipiche:
 
@@ -49,7 +46,7 @@ Possibili interventi:
 - aumentare CPU se il carico lo giustifica.
 
 
-# Memory-bound
+## Memory-bound
 
 Indicazioni tipiche:
 
@@ -69,7 +66,7 @@ Possibili interventi:
 - aumentare RAM se necessario.
 
 
-# I/O-bound
+## I/O-bound
 
 Indicazioni tipiche:
 
@@ -88,7 +85,7 @@ Possibili interventi:
 - cambiare strategia di elaborazione.
 
 
-# Database-bound
+## Database-bound
 
 Un caso frequente:
 
@@ -111,7 +108,7 @@ Ma il tempo può essere quasi tutto:
 Aggiungere CPU al server R non risolve il problema.
 
 
-# Network-bound
+## Network-bound
 
 Altro caso:
 
@@ -132,7 +129,7 @@ Se R attende una risposta remota:
 - bisogna valutare rete, latenza, API e quantità di dati trasferiti.
 
 
-# Regola diagnostica
+## Regola diagnostica
 
 Chiedersi:
 
@@ -143,7 +140,7 @@ E soprattutto:
 > **Quale evidenza lo dimostra?**
 
 
-# La diagnostica minima
+## La diagnostica minima
 
 Prima di valutare una richiesta di potenziamento:
 
@@ -158,7 +155,7 @@ Prima di valutare una richiesta di potenziamento:
 - eventuale profiling.
 
 
-# Misurare il tempo in R
+## Misurare il tempo in R
 
 Un primo test molto semplice:
 
@@ -179,7 +176,7 @@ Ma permette già di distinguere:
 - tempo trascorso.
 
 
-# Profilazione
+## Profilazione
 
 La profilazione risponde a una domanda diversa dal monitoraggio di CPU e RAM: **quali parti del codice contribuiscono maggiormente al tempo?**
 
@@ -200,7 +197,7 @@ profvis({
 
 Il risultato consente di esplorare le chiamate e la loro durata. In un'applicazione reale si profila una porzione rappresentativa del lavoro, possibilmente con dati realistici.
 
-## Profilare una funzione applicativa
+### Profilare una funzione applicativa
 
 ```{r}
 #| label: esempio-profilazione-funzione
@@ -222,7 +219,7 @@ Un risultato ipotetico potrebbe indicare che il 75% del tempo è concentrato nel
 
 La profilazione temporale non sostituisce il monitoraggio infrastrutturale: va correlata con CPU, RAM, I/O e database.
 
-## Profilare la memoria
+### Profilare la memoria
 
 ```{r}
 #| label: esempio-diagnostica-memoria
@@ -236,7 +233,7 @@ gc()
 
 `profvis` e gli strumenti di profiling rispondono quindi alla domanda «dove spendo tempo?», mentre il monitoraggio OS risponde a «quali risorse consumo?».
 
-# Diagnosi e benchmark
+## Diagnosi e benchmark
 
 La **diagnosi** cerca di spiegare perché il workload è lento.
 
@@ -267,7 +264,7 @@ decisione → valutare tempo + RAM + concorrenza
 
 La diagnosi individua il problema; il benchmark fornisce evidenza quantitativa sull'effetto di una modifica.
 
-# Quattro livelli di ottimizzazione
+## Quattro livelli di ottimizzazione
 
 Quando un'elaborazione è lenta:
 
@@ -287,7 +284,7 @@ L'ordine non è necessariamente questo.
 Ma **l'hardware non dovrebbe essere la prima ipotesi**.
 
 
-# Livello 1 — Algoritmo
+## Livello 1 — Algoritmo
 
 Prima di chiedere più hardware bisogna considerare la complessità dell'algoritmo.
 
@@ -305,7 +302,7 @@ La notazione **O()** descrive come cresce il costo al crescere della dimensione 
 Sono ordini di crescita ideali: costanti, allocazioni, memoria e 
 implementazione reale possono cambiare molto il risultato.
 
-## Perché importa in pratica
+### Perché importa in pratica
 
 Un algoritmo O(n²) che confronta ogni elemento con tutti gli altri, su 100.000 elementi, 
 richiede nell'ordine di 10 miliardi di confronti. 
@@ -324,7 +321,7 @@ Per IT, la domanda utile è:
 
 Se la risposta è "dalla complessità", aggiungere CPU sposterà solo il problema in avanti.
 
-# Livello 2 — Implementazione
+## Livello 2 — Implementazione
 
 Anche lo stesso algoritmo può essere implementato in modi molto diversi.
 
@@ -337,7 +334,7 @@ Esempi frequenti:
 - trasferimento inutile di dati;
 - ricomputazione di risultati già disponibili.
 
-## Copie e memoria
+### Copie e memoria
 
 Un oggetto da 8 GB non implica automaticamente che servano solo 8 GB di RAM. 
 Durante una trasformazione possono coesistere temporaneamente l'oggetto originale, 
@@ -378,7 +375,7 @@ overhead e altre strutture.
 Per questo una richiesta di RAM deve riportare almeno il picco osservato e 
 il numero di worker, non soltanto la dimensione del dataset.
 
-# Livello 3 — Parallelizzazione
+## Livello 3 — Parallelizzazione
 
 Il parallelismo non è gratis:
 creare i worker, copiare i dati nella loro memoria e raccogliere i risultati 
@@ -401,7 +398,7 @@ La richiesta:
 non è una dimostrazione.
 
 
-# Livello 4 — Hardware
+## Livello 4 — Hardware
 
 Solo dopo aver compreso il carico:
 
@@ -416,11 +413,11 @@ L'hardware può essere assolutamente la soluzione corretta.
 Ma deve essere una conseguenza della diagnosi.
 
 
-# Esempi di diagnosi
+## Esempi di diagnosi
 
 Gli stessi sintomi possono portare a decisioni infrastrutturali molto diverse.
 
-## Scenario database-bound
+### Scenario database-bound
 
 ```text
 CPU: 25%
@@ -434,7 +431,7 @@ L'elaborazione sembra lenta, ma il tempo può essere dominato da Oracle. Aggiung
 
 **Evidenza da raccogliere:** tempi delle query e metriche lato database.
 
-## Scenario CPU-bound
+### Scenario CPU-bound
 
 ```text
 CPU: 95-100%
@@ -452,7 +449,7 @@ Qui ha senso verificare algoritmo, implementazione e parallelizzazione:
 
 Solo dopo si valuta se l'hardware aggiuntivo è giustificato.
 
-## Scenario memory-bound
+### Scenario memory-bound
 
 ```text
 CPU: 30%
@@ -472,7 +469,7 @@ Bisogna capire:
 - se i dati possono essere filtrati o elaborati a blocchi.
 
 
-# Un criterio semplice
+## Un criterio semplice
 
 | Osservazione | Domanda successiva |
 |---|---|---|
@@ -485,31 +482,31 @@ Bisogna capire:
 | R inattivo | Dove viene speso il tempo? |
 
 
-# Che cosa chiedere allo sviluppatore
+## Che cosa chiedere allo sviluppatore
 
 Quando arriva una richiesta tecnica, chiedere almeno:
 
-### Applicazione
+#### Applicazione
 
 - Che cosa fa?
 - È interattiva o batch?
 - Quanti utenti?
 - Quante esecuzioni?
 
-### Dati
+#### Dati
 
 - Da dove arrivano?
 - Quanti dati?
 - Quanto crescono?
 
-### Performance
+#### Performance
 
 - Quanto dura?
 - Qual è il tempo atteso?
 - Quale risorsa è satura?
 - Come è stata misurata?
 
-### Parallelismo
+#### Parallelismo
 
 - Quanti worker?
 - Quanto scala?
