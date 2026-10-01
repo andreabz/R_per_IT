@@ -236,6 +236,37 @@ gc()
 
 `profvis` e gli strumenti di profiling rispondono quindi alla domanda «dove spendo tempo?», mentre il monitoraggio OS risponde a «quali risorse consumo?».
 
+# Diagnosi e benchmark
+
+La **diagnosi** cerca di spiegare perché il workload è lento.
+
+Il **benchmark** misura come cambia il comportamento quando si modifica una variabile controllata, per esempio numero di worker, dimensione del dataset o configurazione hardware.
+
+Un benchmark utile dovrebbe specificare almeno:
+
+- workload e dataset utilizzati;
+- variabile modificata;
+- configurazione mantenuta costante;
+- numero di ripetizioni quando rilevante;
+- tempo misurato;
+- RAM di picco;
+- eventuali altre metriche importanti;
+- versione del software e ambiente.
+
+Nel caso del parallelismo:
+
+```text
+diagnosi → CPU alta + 1 worker
+              ↓
+ipotesi → il lavoro può scalare
+              ↓
+benchmark → 1 / 2 / 4 / 8 worker
+              ↓
+decisione → valutare tempo + RAM + concorrenza
+```
+
+La diagnosi individua il problema; il benchmark fornisce evidenza quantitativa sull'effetto di una modifica.
+
 # Quattro livelli di ottimizzazione
 
 Quando un'elaborazione è lenta:
