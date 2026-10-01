@@ -546,7 +546,7 @@ La divisione concreta dipende dall'organizzazione, ma il principio è che **ogni
 
 # Production readiness
 
-Prima della messa in produzione verificare almeno:
+Prima della messa in produzione, la verifica può essere letta come una serie di domande operative.
 
 ### Codice e versionamento
 - repository versionato;
@@ -592,6 +592,58 @@ Prima della messa in produzione verificare almeno:
 La domanda finale non è «funziona?», ma:
 
 > **possiamo rilasciarlo, monitorarlo, aggiornarlo e ripristinarlo in modo prevedibile?**
+
+## Le domande fondamentali
+
+Quando un prodotto R passa in produzione:
+
+### Dove gira?
+
+PC, VM, container, server?
+
+### Come parte?
+
+Manuale, scheduler, servizio?
+
+### Con quale versione?
+
+Quale commit, tag o artefatto?
+
+### Con quali dipendenze?
+
+Quale R, quali pacchetti, quali driver?
+
+### Con quale identità?
+
+Utente personale o account tecnico?
+
+### Dove accede?
+
+Database, API, filesystem?
+
+### Dove scrive?
+
+Log, file temporanei, output?
+
+### Come viene testato?
+
+Quali controlli vengono eseguiti prima e dopo il rilascio?
+
+### Come viene monitorato?
+
+Come si rileva un errore?
+
+### Come viene aggiornato?
+
+Qual è la procedura di release?
+
+### Come si torna indietro?
+
+Qual è la procedura di rollback?
+
+### Come si ripristina?
+
+Quali sono RTO/RPO e chi esegue il recovery?
 
 # Quando un server dedicato può essere inutile?
 
