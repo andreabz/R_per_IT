@@ -183,6 +183,19 @@ Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativ
 - monitoring?
 - esiste già una piattaforma adatta?
 
+# Matrice decisionale
+
+La stessa logica può essere applicata alle richieste più frequenti.
+
+| Richiesta | Evidenza richiesta | Alternative da verificare | Decisione da motivare |
+|---|---|---|---|
+| Pacchetto R | dipendenze, versione, licenza | pacchetti già disponibili, repository aziendale | installazione e ciclo di vita |
+| RAM | picco, worker, copie, swap | riduzione dati, algoritmo, numero worker | dimensionamento |
+| CPU | utilizzo per core, worker, scaling | algoritmo, parallelizzazione | dimensionamento |
+| Server | workload, frequenza, concorrenza, disponibilità | VM, piattaforma esistente | ambiente di esecuzione |
+| Shiny/API | utenti, traffico, autenticazione, disponibilità | piattaforma web aziendale | architettura |
+
+La matrice non sostituisce la diagnosi: serve a rendere esplicite le **evidenze** che devono precedere la decisione.
 # R non deve fare tutto
 
 Un'architettura può essere:
