@@ -327,6 +327,8 @@ Il container **non rende automaticamente valido il software** e non sostituisce 
 Un flusso controllato può essere:
 
 ```{mermaid}
+#| label: mermaid-05-deployment-01
+#| echo: false
 flowchart LR
     GIT["Codice versionato"] --> BUILD["Build immagine"]
     BUILD --> TEST["Test automatici"]
@@ -485,6 +487,8 @@ Un errore applicativo non dovrebbe trasformarsi in un fallimento silenzioso.
 Un modello semplice:
 
 ```{mermaid}
+#| label: mermaid-05-deployment-02
+#| echo: false
 flowchart TD
     A["Avvio"] --> B["Controlli"]
     B --> C["Elaborazione"]
@@ -905,6 +909,8 @@ Quali sono RTO/RPO e chi esegue il recovery?
 Un esempio realistico può essere rappresentato così:
 
 ```{mermaid}
+#| label: mermaid-05-deployment-03
+#| echo: false
 flowchart LR
     DEV["Sviluppo"] --> GIT["Git"]
     GIT --> PR["Pull Request"]
