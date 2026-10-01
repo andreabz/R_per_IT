@@ -69,6 +69,42 @@ Il materiale è organizzato come un piccolo manuale, con una progressione dal ru
 Il file `materiale.qmd` originale viene mantenuto nel repository come sorgente della versione a slide. Il sito costituisce la versione estesa e consultabile del corso.
 
 
+## Modello operativo del corso
+
+Il corso può essere letto come una catena unica:
+
+```text
+requisito
+  ↓
+workload
+  ↓
+diagnostica
+  ↓
+architettura
+  ↓
+baseline software
+  ↓
+verifica del software
+  ↓
+deployment
+  ↓
+operatività
+  ↓
+modifica
+  ↓
+nuova baseline
+```
+
+La **baseline software** è il riferimento dello stato approvato. Non è un documento statico: cambia quando una modifica autorizzata produce un nuovo stato che viene nuovamente verificato.
+
+Tre domande restano distinte:
+
+| Domanda | Oggetto |
+|---|---|
+| Quanto costa eseguire il lavoro? | performance e dimensionamento |
+| Che cosa stiamo eseguendo? | software, ambiente e configurazione |
+| Il metodo è adeguato allo scopo? | metodo analitico e criteri applicabili |
+
 ## Il percorso mentale
 
 Una richiesta infrastrutturale non dovrebbe partire da una specifica hardware.
