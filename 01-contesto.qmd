@@ -64,8 +64,8 @@ IT deve capire:
 Per IT, R può comparire in molti modi diversi:
 
 ```{mermaid}
-#| label: mermaid-01-contesto-01
-#| echo: false
+%%| label: mermaid-01-contesto-01
+%%| echo: false
 flowchart TD
     R["R"]
 
@@ -102,8 +102,8 @@ La risposta cambia completamente la valutazione IT.
 # R non è RStudio
 
 ```{mermaid}
-#| label: mermaid-01-contesto-02
-#| echo: false
+%%| label: mermaid-01-contesto-02
+%%| echo: false
 flowchart LR
     U["Utente"] --> RS["RStudio"]
     RS --> R["R runtime"]
@@ -126,8 +126,8 @@ Un server può eseguire R senza RStudio.
 Un ambiente R reale comprende più livelli:
 
 ```{mermaid}
-#| label: mermaid-01-contesto-03
-#| echo: false
+%%| label: mermaid-01-contesto-03
+%%| echo: false
 flowchart TD
     APP["Codice applicativo"]
     APP --> R["R"]
@@ -189,8 +189,8 @@ IT deve poter chiedere:
 # Dipendenze
 
 ```{mermaid}
-#| label: mermaid-01-contesto-04
-#| echo: false
+%%| label: mermaid-01-contesto-04
+%%| echo: false
 flowchart TD
     APP["Applicazione R"]
     APP --> X["Pacchetto X"]
