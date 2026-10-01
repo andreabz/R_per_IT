@@ -12,7 +12,7 @@ Una volta compreso il runtime, il passo successivo è diagnosticare la performan
 
 # CPU, RAM, I/O, rete
 
-Una elaborazione può essere limitata da risorse diverse.
+Un'elaborazione può essere limitata da risorse diverse.
 
 ```{mermaid}
 flowchart TD
