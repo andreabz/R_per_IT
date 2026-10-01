@@ -412,6 +412,58 @@ Il problema non è specifico di R: credenziali nel codice possono finire nei rep
 
 In produzione le credenziali dovrebbero essere gestite tramite i meccanismi previsti dall'infrastruttura aziendale.
 
+## Checklist IT per la gestione sicura delle credenziali
+
+Per una soluzione R in produzione, IT dovrebbe poter verificare almeno:
+
+| Controllo | Evidenza da verificare |
+|---|---|
+| Segreti fuori dal codice | ricerca nel repository e nella configurazione versionata; nessuna password, token o chiave hard-coded |
+| Segreti fuori dai log | log applicativi e diagnostici non contengono password, token, connection string complete o altri segreti |
+| Identità dedicata | l'applicazione usa un account tecnico o un'identità di servizio, non l'account personale dello sviluppatore |
+| Least privilege | l'identità dispone solo dei permessi necessari su database, filesystem, API e rete |
+| Recupero a runtime | il segreto viene fornito dall'infrastruttura o dal sistema di secret management al momento dell'esecuzione, senza inserirlo nel codice |
+| Permessi sul segreto | solo i processi e gli amministratori autorizzati possono leggere o modificare il segreto |
+| Rotazione | esiste una procedura per sostituire periodicamente o in caso di compromissione password, token e chiavi |
+| Revoca | è possibile disabilitare rapidamente un'identità senza modificare il codice applicativo |
+| Audit | accessi e modifiche ai segreti sono registrati secondo le policy aziendali |
+| Separazione ambienti | sviluppo, test e produzione non condividono inutilmente le stesse credenziali |
+| Gestione errori | un errore di autenticazione non stampa il segreto né una connection string completa |
+| Dipendenze esterne | eventuali wallet, certificati, file di configurazione o client database sono inclusi nella baseline e hanno permessi appropriati |
+
+Per R, il punto importante è che **R non deve diventare il sistema di gestione dei segreti**. Il codice dovrebbe ricevere un riferimento o un valore già reso disponibile dall'infrastruttura secondo le modalità approvate dall'organizzazione. La soluzione concreta può usare, per esempio, un secret manager, un credential store del sistema operativo o un'identità gestita; la scelta dipende dall'architettura aziendale.
+
+### Domande operative per IT
+
+Prima del rilascio:
+
+1. **Dove viene conservato il segreto?**
+2. **Chi o quale processo può leggerlo?**
+3. **L'applicazione usa un'identità dedicata?**
+4. **Quali permessi ha quell'identità?**
+5. **Come arriva il segreto al processo R?**
+6. **È presente in codice, repository, immagine container, file di configurazione o log?**
+7. **Come viene ruotato?**
+8. **Come viene revocato?**
+9. **Come viene registrato l'accesso?**
+10. **Cosa succede se il segreto scade o viene revocato?**
+11. **Sviluppo, test e produzione usano identità separate?**
+12. **La gestione delle credenziali è documentata nella baseline e nella procedura operativa?**
+
+Un controllo utile consiste nel verificare non solo il repository, ma l'intera catena:
+
+```text
+secret manager / credential store
+          ↓
+runtime / account di servizio
+          ↓
+processo R
+          ↓
+Oracle / API / filesystem
+```
+
+Il principio è **minimizzare il numero di componenti che conoscono il segreto e il tempo per cui il segreto rimane disponibile**.
+
 # Logging
 
 Un job batch dovrebbe almeno permettere di sapere:
