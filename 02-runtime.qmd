@@ -120,6 +120,35 @@ flowchart TD
 
 Il vantaggio dipende dalla possibilità di dividere realmente il lavoro.
 
+# Parallelismo e concorrenza
+
+**Parallelismo** e **concorrenza** non sono la stessa cosa.
+
+- **parallelismo**: una singola elaborazione utilizza più unità di esecuzione nello stesso intervallo di tempo;
+- **concorrenza**: più elaborazioni o richieste sono attive contemporaneamente.
+
+Esempio:
+
+```text
+Caso A — un job:
+1 job → 8 worker
+
+Caso B — più utenti:
+8 job → 1 worker ciascuno
+```
+
+I due casi hanno profili operativi diversi. Nel caso B la contesa può coinvolgere contemporaneamente CPU, RAM, database, rete e scheduler; nel caso A la domanda principale è quanto scala il singolo workload.
+
+Per IT, prima di dimensionare una piattaforma bisogna quindi chiedere entrambe le cose:
+
+> **«Quanti worker usa una singola elaborazione?»**
+
+e
+
+> **«Quante elaborazioni possono essere contemporaneamente attive?»**
+
+Questa distinzione è particolarmente importante per Shiny e API, dove più richieste o sessioni possono essere contemporaneamente in esecuzione.
+
 
 # Il parallelismo ha un costo
 
