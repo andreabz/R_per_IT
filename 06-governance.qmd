@@ -235,7 +235,7 @@ Il pacchetto diventa così un **componente software governato**, non una copia d
 Oltre alle performance, IT dovrebbe considerare il rischio operativo.
 
 | Aspetto | Domanda |
-|||
+|---|---|---|
 | Dipendenze | Possiamo ricostruire l'ambiente? |
 | Sicurezza | Quali dati e credenziali utilizza? |
 | Disponibilità | Cosa succede se il servizio non è disponibile? |
