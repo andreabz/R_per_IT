@@ -232,6 +232,33 @@ Questo facilita:
 - reinstallazione;
 - trasferimento tra ambienti.
 
+# Library, repository, ambiente e lockfile
+
+Per evitare ambiguità, IT dovrebbe distinguere quattro concetti:
+
+| Concetto | Che cosa rappresenta |
+|---|---|
+| **Library** | dove i pacchetti sono fisicamente installati e caricabili da R |
+| **Repository** | da dove vengono recuperati i pacchetti e le loro versioni |
+| **Ambiente** | insieme effettivo di R, pacchetti e componenti necessari a un progetto |
+| **Lockfile** | descrizione versionata delle dipendenze che il progetto intende ricostruire |
+
+Un repository non è una library e un lockfile non è l'ambiente completo. Il percorso operativo è:
+
+```text
+repository
+    ↓
+installazione
+    ↓
+library
+    ↓
+ambiente R
+    ↓
+applicazione
+```
+
+La baseline deve identificare anche i componenti che il lockfile non copre, come sistema operativo, librerie native, driver, client database e configurazione.
+
 # Gestione delle librerie e riproducibilità
 
 Per IT, una libreria R non è semplicemente una cartella che contiene file.
