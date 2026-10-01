@@ -313,6 +313,39 @@ La stessa logica può essere applicata alle richieste più frequenti.
 | Shiny/API | utenti, traffico, autenticazione, disponibilità | piattaforma web aziendale | architettura |
 
 La matrice non sostituisce la diagnosi: serve a rendere esplicite le **evidenze** che devono precedere la decisione.
+# Chi può modificare, verificare, approvare e distribuire?
+
+Per una soluzione controllata è utile distinguere almeno quattro responsabilità:
+
+| Attività | Domanda |
+|---|---|
+| Modificare | chi può cambiare codice, configurazione o ambiente? |
+| Verificare | chi esegue e documenta i test? |
+| Approvare | chi autorizza il nuovo stato secondo la procedura applicabile? |
+| Distribuire | chi porta l'artefatto approvato nell'ambiente target? |
+
+Le responsabilità possono appartenere allo stesso team, ma non devono essere confuse. IT dovrebbe sapere **chi è autorizzato a fare cosa** e quali evidenze rimangono dopo ogni passaggio.
+
+# Tracciabilità del dato e del risultato
+
+La baseline software identifica con quale ambiente è stato eseguito il software, ma da sola non identifica necessariamente il dato elaborato.
+
+Per risultati che devono essere ricostruibili, è utile poter collegare almeno:
+
+```text
+input / dataset identificato
+        ↓
+versione software
+        ↓
+configurazione e parametri
+        ↓
+esecuzione
+        ↓
+output identificato
+```
+
+IT deve verificare dove sono registrati gli identificativi necessari e quali componenti esterni alla baseline software devono essere conservati o riferiti.
+
 # R non deve fare tutto
 
 Un'architettura può essere:
