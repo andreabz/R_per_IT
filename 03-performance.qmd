@@ -377,9 +377,11 @@ L'hardware può essere assolutamente la soluzione corretta.
 Ma deve essere una conseguenza della diagnosi.
 
 
-# Il caso dell'ecologo
+# Esempi di diagnosi
 
-Supponiamo che la diagnostica mostri:
+Gli stessi sintomi possono portare a decisioni infrastrutturali molto diverse.
+
+## Scenario database-bound
 
 ```text
 CPU: 25%
@@ -389,16 +391,11 @@ Network: normale
 Database: query lente
 ```
 
-La richiesta:
+L'elaborazione sembra lenta, ma il tempo può essere dominato da Oracle. Aggiungere CPU al server R non affronta il collo di bottiglia misurato.
 
-> "Server con 16 core"
+**Evidenza da raccogliere:** tempi delle query e metriche lato database.
 
-non affronta necessariamente il problema.
-
-Il primo candidato da analizzare è il database.
-
-
-# Altro scenario
+## Scenario CPU-bound
 
 ```text
 CPU: 95-100%
@@ -407,20 +404,16 @@ Disk: normale
 Database: trascurabile
 ```
 
-Qui la situazione è diversa.
-
-Possibili domande:
+Qui ha senso verificare algoritmo, implementazione e parallelizzazione:
 
 - il codice è ottimizzato?
-- il problema è parallelizzabile?
-- quanti core usa?
-- quanto scala?
-- quanto dura con 1, 2, 4, 8 worker?
+- il lavoro è parallelizzabile?
+- quanti core vengono utilizzati?
+- quanto scala da 1 a 2, 4, 8 worker?
 
-Solo dopo si valuta l'hardware.
+Solo dopo si valuta se l'hardware aggiuntivo è giustificato.
 
-
-# Altro scenario ancora
+## Scenario memory-bound
 
 ```text
 CPU: 30%
@@ -429,13 +422,16 @@ Swap: attivo
 Worker: 8
 ```
 
-Qui aumentare i core potrebbe essere irrilevante.
+Il problema potrebbe essere la memoria, ma la diagnosi non termina con «serve più RAM».
 
-Il problema potrebbe essere la memoria.
+Bisogna capire:
 
-Ma anche qui bisogna capire:
+- quali oggetti occupano memoria;
+- se esistono copie temporanee;
+- quanta memoria utilizza ciascun worker;
+- se il numero di worker può essere ridotto;
+- se i dati possono essere filtrati o elaborati a blocchi.
 
-> perché ogni worker richiede così tanta RAM?
 
 # Un criterio semplice
 
