@@ -176,6 +176,40 @@ risultato
 Il container rende più controllabile la distribuzione dell'ambiente, ma non elimina la necessità di identificare i dati, le configurazioni e i servizi esterni.
 
 
+# Dal caso alla produzione
+
+Il caso può essere esteso fino alla gestione operativa completa:
+
+```text
+richiesta: 16 core / 64 GB
+          ↓
+requisito: < 30 min
+          ↓
+diagnostica: CPU 98%, 1 worker
+          ↓
+profiling + analisi algoritmo
+          ↓
+scaling: 1 / 2 / 4 / 8 worker
+          ↓
+scelta architetturale
+          ↓
+baseline software
+          ↓
+test e verifica
+          ↓
+artefatto / container identificato
+          ↓
+deployment
+          ↓
+monitoring
+          ↓
+modifica futura
+          ↓
+analisi d'impatto + nuova baseline
+```
+
+Questo completa il collegamento tra performance, architettura, deployment e governance. Una decisione infrastrutturale non chiude il ciclo: il sistema deve poter essere mantenuto, modificato e nuovamente verificato.
+
 # La domanda che rimane
 
 Anche se un server potente risolve il problema, bisogna chiedersi:
