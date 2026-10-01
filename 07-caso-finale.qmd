@@ -95,6 +95,20 @@ Sappiamo invece che:
 
 Il dimensionamento deve quindi considerare anche il requisito temporale e la concorrenza.
 
+# Sintesi delle evidenze
+
+Il caso può essere letto come una catena di evidenze e conseguenze:
+
+| Evidenza | Interpretazione | Conseguenza |
+|---|---|---|
+| CPU 98% | carico prevalentemente CPU-bound | analizzare algoritmo e parallelismo |
+| 1 worker | parallelismo non utilizzato | misurare lo scaling |
+| 4 worker → 59 min | beneficio significativo | il parallelismo è utile |
+| 8 worker → 51 min | rendimento decrescente | aggiungere worker ha beneficio limitato |
+| RAM 70 GB | forte crescita della memoria | CPU e RAM vanno dimensionate insieme |
+| database marginale | DB non è il collo di bottiglia principale | non spostare il problema sul database |
+
+Questa tabella non decide quale server acquistare: rende esplicito il percorso con cui una decisione infrastrutturale può essere motivata.
 # La domanda che rimane
 
 Anche se un server potente risolve il problema, bisogna chiedersi:
