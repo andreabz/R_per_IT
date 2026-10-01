@@ -852,58 +852,6 @@ Possibili situazioni:
 
 L'infrastruttura va dimensionata dopo aver compreso il carico e il requisito operativo.
 
-## Le domande fondamentali
-
-Quando un prodotto R passa in produzione:
-
-### Dove gira?
-
-PC, VM, container, server?
-
-### Come parte?
-
-Manuale, scheduler, servizio?
-
-### Con quale versione?
-
-Quale commit, tag o artefatto?
-
-### Con quali dipendenze?
-
-Quale R, quali pacchetti, quali driver?
-
-### Con quale identità?
-
-Utente personale o account tecnico?
-
-### Dove accede?
-
-Database, API, filesystem?
-
-### Dove scrive?
-
-Log, file temporanei, output?
-
-### Come viene testato?
-
-Quali controlli vengono eseguiti prima e dopo il rilascio?
-
-### Come viene monitorato?
-
-Come si rileva un errore?
-
-### Come viene aggiornato?
-
-Qual è la procedura di release?
-
-### Come si torna indietro?
-
-Qual è la procedura di rollback?
-
-### Come si ripristina?
-
-Quali sono RTO/RPO e chi esegue il recovery?
-
 # Una pipeline completa
 
 Un esempio realistico può essere rappresentato così:
