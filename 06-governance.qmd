@@ -71,6 +71,113 @@ Quando possibile, modificare una variabile e misurare il risultato.
 
 La decisione finale dovrebbe poter essere ricostruita mesi dopo.
 
+# Software controllato, verificato e validato
+
+In un laboratorio soggetto a requisiti di qualità è importante non confondere tre problemi diversi.
+
+### 1. Controllo dell'ambiente software
+
+Domanda:
+
+> **Con quale ambiente è stato eseguito il software?**
+
+Le evidenze possono comprendere:
+
+- versione di R;
+- versioni dei pacchetti;
+- lockfile;
+- sistema operativo;
+- librerie native;
+- driver;
+- configurazione;
+- identificativo dell'immagine container.
+
+### 2. Verifica del software
+
+Domanda:
+
+> **Abbiamo evidenza che il software si comporti come previsto?**
+
+Le evidenze possono comprendere:
+
+- test unitari;
+- test di integrazione;
+- test di regressione;
+- casi limite;
+- dataset di riferimento;
+- output attesi;
+- tolleranze definite;
+- esito dei test associato a una specifica versione del codice.
+
+Per codice riutilizzato in più applicazioni può essere utile organizzare la logica in un **pacchetto interno versionato**, con una propria suite di test. Non è necessario che IT gestisca la programmazione dei test: deve poter riconoscere che esistono una versione, un insieme di verifiche e un esito documentato.
+
+### 3. Verifica o validazione del metodo
+
+Domanda:
+
+> **Il metodo analitico è adeguato allo scopo per il quale viene utilizzato?**
+
+Questa è una questione diversa dalla riproducibilità dell'ambiente e dalla verifica del codice.
+
+**`renv` + test + container non equivalgono automaticamente alla validazione di un metodo analitico.**
+
+Nel contesto del laboratorio, la modalità con cui software e metodo vengono verificati o validati deve essere ricondotta alle procedure, ai requisiti e ai criteri di accettazione applicabili.
+
+## Pacchetti interni e test
+
+Quando una parte di codice diventa stabile, riutilizzata da più applicazioni o rilevante per risultati analitici, un pacchetto R interno può offrire vantaggi di controllo:
+
+- versione esplicita;
+- dipendenze dichiarate;
+- struttura standard;
+- test automatici;
+- changelog;
+- possibilità di distribuire una release precisa.
+
+I test non dovrebbero limitarsi alla singola funzione quando il rischio è legato alla sequenza di elaborazione. È quindi utile distinguere:
+
+```text
+funzione → test unitario
+
+funzione A → funzione B → funzione C
+          → test di integrazione
+
+dataset di riferimento → intera elaborazione
+                       → test di regressione
+```
+
+Per un test di regressione è importante poter associare il risultato a:
+
+- versione del codice;
+- ambiente software;
+- dataset di test;
+- output atteso o criterio di accettazione;
+- esito;
+- eventuale tolleranza.
+
+## Baseline software
+
+Per una release significativa può essere utile mantenere una scheda di baseline:
+
+| Elemento | Identificazione |
+|---|---|
+| applicazione | nome e versione |
+| codice | commit/tag |
+| R | versione |
+| pacchetti | lockfile/versioni |
+| OS | versione |
+| container | tag e digest, se utilizzato |
+| driver/client | versione |
+| dati di test | identificativo |
+| suite di test | versione |
+| risultato test | PASS/FAIL |
+| metodo | identificativo/versione |
+
+La baseline permette di rispondere a una domanda operativa importante:
+
+> **Possiamo ricostruire quale ambiente e quale versione del software hanno prodotto questo risultato?**
+
+
 # Valutare il rischio di una soluzione
 
 Oltre alle performance, IT dovrebbe considerare il rischio operativo.
