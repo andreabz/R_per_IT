@@ -294,7 +294,7 @@ Prima di chiedere più hardware bisogna considerare la complessità dell'algorit
 La notazione **O()** descrive come cresce il costo al crescere della dimensione dell'input. Non predice direttamente i secondi su una macchina specifica.
 
 | Complessità | Crescita indicativa quando i dati diventano 10 volte maggiori |
-|:|:|
+|:---:|:---:|
 | O(1) | circa 1× |
 | O(log n) | poco più di 1× |
 | O(n) | circa 10× |
@@ -475,7 +475,7 @@ Bisogna capire:
 # Un criterio semplice
 
 | Osservazione | Domanda successiva |
-|||
+|---|---|---|
 | CPU alta | Il lavoro è parallelizzabile? |
 | CPU bassa | Cosa sta aspettando? |
 | RAM alta | Quali oggetti occupano memoria? |
