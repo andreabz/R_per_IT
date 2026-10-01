@@ -627,6 +627,59 @@ Questo porta a una distinzione importante:
 
 Avere una copia dei dati non dimostra automaticamente di essere in grado di ricostruire l'applicazione.
 
+# Modifiche, impatto e nuova baseline
+
+Una modifica a una soluzione in produzione non dovrebbe essere trattata come una semplice installazione o sostituzione di file.
+
+Il percorso minimo è:
+
+```text
+modifica proposta
+      ↓
+analisi dell'impatto
+      ↓
+test necessari
+      ↓
+esito dei test
+      ↓
+approvazione
+      ↓
+nuova baseline
+      ↓
+deployment
+      ↓
+smoke test e monitoring
+```
+
+Esempi di modifiche che possono richiedere una valutazione:
+
+- aggiornamento di un pacchetto R;
+- nuova versione di R;
+- modifica del codice o dell'algoritmo;
+- aggiornamento del driver Oracle;
+- modifica del sistema operativo;
+- nuova versione dell'immagine container;
+- modifica della configurazione;
+- modifica di un servizio esterno.
+
+L'analisi dell'impatto deve stabilire quali componenti possono cambiare comportamento e quindi quali verifiche sono necessarie. Non tutte le modifiche richiedono gli stessi test.
+
+La registrazione minima della modifica dovrebbe permettere di ricostruire:
+
+| Elemento | Evidenza |
+|---|---|
+| modifica proposta | descrizione e motivo |
+| versione precedente | baseline/artefatto |
+| impatto valutato | componenti interessati |
+| test richiesti | elenco |
+| esito | risultati e criteri di accettazione |
+| approvazione | soggetto/data secondo procedura |
+| nuova baseline | versione/artefatto |
+| deployment | ambiente e data |
+| verifica post-rilascio | smoke test/monitoring |
+
+Questo collega **change management**, **verifica del software** e **baseline**.
+
 # Lifecycle
 
 Una soluzione può rimanere in produzione per anni.
