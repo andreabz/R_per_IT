@@ -63,7 +63,7 @@ Un'analisi della complessità può indicare se il problema cresce troppo rapidam
 Supponiamo di ottenere:
 
 | Worker | Tempo | RAM |
-|:|:|:|
+|:---:|:---:|:|
 | 1 | 192 min | 11 GB |
 | 2 | 104 min | 20 GB |
 | 4 | 59 min | 38 GB |
@@ -233,7 +233,7 @@ Un hardware adeguato non elimina necessariamente un problema applicativo.
 Per rendere valutabile una richiesta di infrastruttura, è utile chiedere una scheda con:
 
 | Informazione | Esempio |
-|||
+|---|---|---|
 | scopo | analisi ecologica |
 | input | dataset monitoraggio |
 | dimensione | 20 GB |
