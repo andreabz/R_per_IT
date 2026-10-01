@@ -1,16 +1,13 @@
 ---
 title: "Deployment e gestione operativa"
 subtitle: "Versionamento, test, CI/CD, rilascio, sicurezza, continuità e ownership"
-toc: true
-toc-depth: 2
-number-sections: false
 ---
 
-# Introduzione
+## Perché questo capitolo
 
 L'architettura descrive dove e come collocare R; il deployment definisce come portare quella soluzione in esercizio e mantenerla nel tempo. Il capitolo segue il percorso dalla versione del codice alla produzione, mettendo in evidenza riproducibilità, test, sicurezza, logging, monitoring, rollback, continuità operativa e responsabilità.
 
-# Dal codice alla produzione
+## Dal codice alla produzione
 
 Un programma che funziona sul PC dello sviluppatore non è automaticamente pronto per essere eseguito in produzione.
 
@@ -28,7 +25,7 @@ Il deployment introduce almeno queste domande:
 
 Il passaggio alla produzione deve quindi essere trattato come un processo controllato, non come la semplice copia di uno script su un server.
 
-# Ambienti: sviluppo, test, produzione
+## Ambienti: sviluppo, test, produzione
 
 È utile distinguere almeno:
 
@@ -48,7 +45,7 @@ La stessa applicazione può quindi richiedere configurazioni diverse senza cambi
 
 Una modifica dovrebbe attraversare gli ambienti secondo una sequenza definita.
 
-# Git e versionamento
+## Git e versionamento
 
 Il codice di produzione deve essere riconducibile a una versione precisa.
 
@@ -69,7 +66,7 @@ modifica → commit → review → test → release → produzione
 
 Il punto non è imporre un particolare modello di branching. Il requisito importante è la **tracciabilità**.
 
-## Commit, tag e release
+### Commit, tag e release
 
 Un commit identifica uno stato del repository.
 
@@ -91,11 +88,11 @@ Una release dovrebbe essere associata almeno a:
 
 > Se non è possibile identificare con precisione ciò che è stato messo in produzione, il rilascio non è realmente tracciato.
 
-# Test: che cosa deve essere verificato?
+## Test: che cosa deve essere verificato?
 
 Non tutto deve essere testato allo stesso modo.
 
-### Test funzionali
+#### Test funzionali
 
 Verificano che l'elaborazione produca il risultato atteso.
 
@@ -103,7 +100,7 @@ Verificano che l'elaborazione produca il risultato atteso.
 input noto → elaborazione → output atteso
 ```
 
-### Test di integrazione
+#### Test di integrazione
 
 Verificano l'interazione con componenti esterni:
 
@@ -113,11 +110,11 @@ Verificano l'interazione con componenti esterni:
 - scheduler;
 - servizi aziendali.
 
-### Test di regressione
+#### Test di regressione
 
 Verificano che una modifica non rompa funzionalità già esistenti.
 
-### Test di performance
+#### Test di performance
 
 Sono necessari quando il requisito riguarda:
 
@@ -130,7 +127,7 @@ Sono necessari quando il requisito riguarda:
 
 Un test di performance deve avere un contesto misurabile. «È veloce» non è un criterio operativo.
 
-# Test e dati di produzione
+## Test e dati di produzione
 
 Quando possibile, i test dovrebbero utilizzare dati:
 
@@ -141,7 +138,7 @@ Quando possibile, i test dovrebbero utilizzare dati:
 
 L'accesso ai dati di produzione non dovrebbe essere considerato automaticamente necessario solo perché un'applicazione deve essere testata.
 
-# CI/CD
+## CI/CD
 
 La **Continuous Integration** automatizza almeno una parte dei controlli dopo una modifica al repository.
 
@@ -178,7 +175,7 @@ Per una soluzione R, una pipeline può verificare:
 
 Non è necessario automatizzare tutto dal primo giorno. Anche una pipeline che impedisce di portare in produzione un progetto che non supera i test di base costituisce un miglioramento significativo.
 
-# Il ruolo del workflow GitHub Actions
+## Il ruolo del workflow GitHub Actions
 
 Per questo progetto il workflow di GitHub Actions è un esempio concreto di CI/CD. In un'organizzazione il medesimo processo può essere implementato con GitHub Actions o con un'altra piattaforma aziendale: il principio da governare è la pipeline, non lo specifico prodotto.
 
@@ -207,7 +204,7 @@ approvazione
 deployment
 ```
 
-# Artefatti
+## Artefatti
 
 Il deployment non dovrebbe dipendere da una copia manuale e non tracciata dei file.
 
@@ -234,7 +231,7 @@ artefatto
 produzione
 ```
 
-# Configurazione e codice
+## Configurazione e codice
 
 Un principio importante è separare:
 
@@ -248,7 +245,7 @@ Questo facilita il passaggio tra ambienti.
 
 La configurazione dovrebbe inoltre essere versionabile quando non contiene segreti.
 
-# Dipendenze R e renv
+## Dipendenze R e renv
 
 Una soluzione R dipende non solo dal codice sviluppato internamente, ma anche da:
 
@@ -274,7 +271,7 @@ In produzione bisogna quindi considerare anche:
 - aggiornamenti di sicurezza;
 - procedura di aggiornamento.
 
-# Baseline software e containerizzazione
+## Baseline software e containerizzazione
 
 Quando la riproducibilità dell'ambiente diventa un requisito operativo, `renv` risolve una parte del problema: descrive le dipendenze R del progetto.
 
@@ -302,7 +299,7 @@ Una **baseline software** può quindi identificare l'insieme delle versioni appr
 | test | suite, dataset e risultato |
 | artefatto | identificativo dell'artefatto rilasciato |
 
-## Containerizzazione
+### Containerizzazione
 
 Un container permette di distribuire insieme una parte molto più ampia dell'ambiente software.
 
@@ -322,7 +319,7 @@ Questo può ridurre le differenze tra sviluppo, test e produzione e rendere più
 
 Il container **non rende automaticamente valido il software** e non sostituisce i test. Fornisce un artefatto distribuibile che può essere identificato, testato e promosso tra ambienti.
 
-## Build, test e release dell'immagine
+### Build, test e release dell'immagine
 
 Un flusso controllato può essere:
 
@@ -343,7 +340,7 @@ L'immagine dovrebbe essere identificabile in modo univoco. Un tag leggibile può
 
 L'obiettivo non è dichiarare che il container sia "immutabile" in senso assoluto. L'obiettivo operativo è **non modificare manualmente un artefatto già testato**: se cambia il contenuto, si costruisce e si testa una nuova versione.
 
-## Cosa non risolve Docker
+### Cosa non risolve Docker
 
 La containerizzazione non risolve automaticamente:
 
@@ -359,7 +356,7 @@ La containerizzazione non risolve automaticamente:
 Inoltre, un container può dipendere da servizi esterni: database, API, filesystem, autenticazione, certificati o scheduler. La baseline deve quindi identificare anche le dipendenze che rimangono fuori dal container.
 
 
-# Repository dei pacchetti e licenze
+## Repository dei pacchetti e licenze
 
 Le dipendenze devono essere governabili anche dal punto di vista organizzativo.
 
@@ -384,7 +381,7 @@ ma anche:
 
 Le verifiche legali sulle licenze devono seguire le policy dell'organizzazione.
 
-# Sicurezza
+## Sicurezza
 
 Una soluzione R può avere accesso a:
 
@@ -399,7 +396,7 @@ Il principio del **least privilege** implica che l'applicazione riceva soltanto 
 
 La richiesta «R deve poter accedere a Oracle» non è quindi sufficiente: bisogna sapere con quale account, verso quali oggetti e per quali operazioni.
 
-# Credenziali
+## Credenziali
 
 Da evitare:
 
@@ -414,7 +411,7 @@ Il problema non è specifico di R: credenziali nel codice possono finire nei rep
 
 In produzione le credenziali dovrebbero essere gestite tramite i meccanismi previsti dall'infrastruttura aziendale.
 
-## Checklist IT per la gestione sicura delle credenziali
+### Checklist IT per la gestione sicura delle credenziali
 
 Per una soluzione R in produzione, IT dovrebbe poter verificare almeno:
 
@@ -435,7 +432,7 @@ Per una soluzione R in produzione, IT dovrebbe poter verificare almeno:
 
 Per R, il punto importante è che **R non deve diventare il sistema di gestione dei segreti**. Il codice dovrebbe ricevere un riferimento o un valore già reso disponibile dall'infrastruttura secondo le modalità approvate dall'organizzazione. La soluzione concreta può usare, per esempio, un secret manager, un credential store del sistema operativo o un'identità gestita; la scelta dipende dall'architettura aziendale.
 
-### Domande operative per IT
+#### Domande operative per IT
 
 Prima del rilascio:
 
@@ -466,7 +463,7 @@ Oracle / API / filesystem
 
 Il principio è **minimizzare il numero di componenti che conoscono il segreto e il tempo per cui il segreto rimane disponibile**.
 
-# Logging
+## Logging
 
 Un job batch dovrebbe almeno permettere di sapere:
 
@@ -480,7 +477,7 @@ Un job batch dovrebbe almeno permettere di sapere:
 
 Un log utile non è necessariamente enorme: deve permettere di ricostruire l'esecuzione.
 
-# Error handling
+## Error handling
 
 Un errore applicativo non dovrebbe trasformarsi in un fallimento silenzioso.
 
@@ -500,11 +497,11 @@ flowchart TD
 
 Per un job notturno, «il processo si è fermato» non è una strategia di gestione dell'errore: bisogna sapere che è fallito e perché.
 
-# Monitoring
+## Monitoring
 
 Il monitoraggio deve essere coerente con il tipo di applicazione.
 
-### Job batch
+#### Job batch
 
 Controllare:
 
@@ -514,7 +511,7 @@ Controllare:
 - output;
 - CPU/RAM quando rilevanti.
 
-### Servizio/API
+#### Servizio/API
 
 Controllare:
 
@@ -525,7 +522,7 @@ Controllare:
 - risorse;
 - eventuali saturazioni.
 
-### Applicazione Shiny
+#### Applicazione Shiny
 
 Aggiungere anche:
 
@@ -535,7 +532,7 @@ Aggiungere anche:
 - errori lato server;
 - comportamento sotto concorrenza.
 
-# Rilascio
+## Rilascio
 
 Un rilascio dovrebbe essere un'operazione identificabile e ripetibile.
 
@@ -552,7 +549,7 @@ Una checklist minima:
 9. monitoring verificato;
 10. esito registrato.
 
-## Smoke test
+### Smoke test
 
 Dopo il deployment è utile eseguire un controllo minimo che verifichi che il sistema sia effettivamente operativo nell'ambiente target.
 
@@ -566,7 +563,7 @@ Esempi:
 
 Lo smoke test non sostituisce i test automatici: verifica che il componente distribuito sia effettivamente utilizzabile nell'ambiente target.
 
-# Rollback
+## Rollback
 
 Un deployment controllato deve prevedere anche il caso in cui la nuova versione non sia utilizzabile.
 
@@ -593,7 +590,7 @@ Il rollback diventa più complesso quando il rilascio modifica anche il database
 
 > Un rollback non documentato è spesso soltanto un'intenzione.
 
-# Backup, RTO e RPO
+## Backup, RTO e RPO
 
 Per i sistemi che producono o gestiscono dati è utile distinguere:
 
@@ -611,7 +608,7 @@ non significa che il sistema debba essere sempre disponibile. Significa che, sec
 
 I valori reali devono essere definiti dal servizio e dalle policy aziendali, non dal linguaggio R.
 
-# Continuità operativa
+## Continuità operativa
 
 Per una soluzione R in produzione bisogna sapere:
 
@@ -631,7 +628,7 @@ Questo porta a una distinzione importante:
 
 Avere una copia dei dati non dimostra automaticamente di essere in grado di ricostruire l'applicazione.
 
-# Modifiche, impatto e nuova baseline
+## Modifiche, impatto e nuova baseline
 
 Una modifica a una soluzione in produzione non dovrebbe essere trattata come una semplice installazione o sostituzione di file.
 
@@ -684,7 +681,7 @@ La registrazione minima della modifica dovrebbe permettere di ricostruire:
 
 Questo collega **change management**, **verifica del software** e **baseline**.
 
-# Lifecycle
+## Lifecycle
 
 Una soluzione può rimanere in produzione per anni.
 
@@ -717,7 +714,7 @@ Durante il ciclo di vita possono cambiare:
 
 Una soluzione non mantenuta può diventare progressivamente più difficile da supportare anche se il codice non cambia.
 
-# Responsabilità
+## Responsabilità
 
 Una soluzione in produzione deve avere responsabilità esplicite.
 
@@ -736,38 +733,38 @@ Una soluzione in produzione deve avere responsabilità esplicite.
 
 La divisione concreta dipende dall'organizzazione, ma il principio è che **ogni componente deve avere un proprietario**.
 
-# Production readiness
+## Production readiness
 
 Prima della messa in produzione, la verifica può essere letta come una serie di domande operative.
 
-### Codice e versionamento
+#### Codice e versionamento
 - repository versionato;
 - commit identificabile;
 - release/tag;
 - review prevista;
 - changelog o note di rilascio.
 
-### Test
+#### Test
 - test funzionali;
 - test di integrazione quando necessari;
 - test di regressione;
 - test di performance quando pertinenti;
 - smoke test post-deployment.
 
-### Runtime
+#### Runtime
 - versione R nota;
 - dipendenze riproducibili;
 - repository dei pacchetti definito;
 - librerie di sistema e driver noti.
 
-### Sicurezza
+#### Sicurezza
 - account tecnico;
 - least privilege;
 - segreti fuori dal codice;
 - accessi di rete definiti;
 - gestione dei certificati.
 
-### Operatività
+#### Operatività
 - logging;
 - monitoring;
 - alert;
@@ -775,7 +772,7 @@ Prima della messa in produzione, la verifica può essere letta come una serie di
 - procedura di rollback;
 - RTO/RPO quando applicabili.
 
-### Ownership
+#### Ownership
 - proprietario applicativo;
 - proprietario infrastrutturale;
 - contatti per gli incidenti;
@@ -785,59 +782,59 @@ La domanda finale non è «funziona?», ma:
 
 > **possiamo rilasciarlo, monitorarlo, aggiornarlo e ripristinarlo in modo prevedibile?**
 
-## Le domande fondamentali
+### Le domande fondamentali
 
 Quando un prodotto R passa in produzione:
 
-### Dove gira?
+#### Dove gira?
 
 PC, VM, container, server?
 
-### Come parte?
+#### Come parte?
 
 Manuale, scheduler, servizio?
 
-### Con quale versione?
+#### Con quale versione?
 
 Quale commit, tag o artefatto?
 
-### Con quali dipendenze?
+#### Con quali dipendenze?
 
 Quale R, quali pacchetti, quali driver?
 
-### Con quale identità?
+#### Con quale identità?
 
 Utente personale o account tecnico?
 
-### Dove accede?
+#### Dove accede?
 
 Database, API, filesystem?
 
-### Dove scrive?
+#### Dove scrive?
 
 Log, file temporanei, output?
 
-### Come viene testato?
+#### Come viene testato?
 
 Quali controlli vengono eseguiti prima e dopo il rilascio?
 
-### Come viene monitorato?
+#### Come viene monitorato?
 
 Come si rileva un errore?
 
-### Come viene aggiornato?
+#### Come viene aggiornato?
 
 Qual è la procedura di release?
 
-### Come si torna indietro?
+#### Come si torna indietro?
 
 Qual è la procedura di rollback?
 
-### Come si ripristina?
+#### Come si ripristina?
 
 Quali sono RTO/RPO e chi esegue il recovery?
 
-# Quando un server dedicato può essere inutile?
+## Quando un server dedicato può essere inutile?
 
 Possibili situazioni:
 
@@ -852,7 +849,7 @@ Possibili situazioni:
 
 L'infrastruttura va dimensionata dopo aver compreso il carico e il requisito operativo.
 
-# Una pipeline completa
+## Una pipeline completa
 
 Un esempio realistico può essere rappresentato così:
 
@@ -875,7 +872,7 @@ flowchart LR
 
 La pipeline non deve necessariamente essere identica per ogni applicazione. Deve però rendere espliciti i passaggi che oggi sono spesso manuali e non tracciati.
 
-# Principio operativo
+## Principio operativo
 
 Per IT, la richiesta:
 
