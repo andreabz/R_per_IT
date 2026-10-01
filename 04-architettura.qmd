@@ -179,6 +179,8 @@ Molte applicazioni R non devono essere servizi permanenti. Devono semplicemente 
 Un'architettura tipica è:
 
 ```{mermaid}
+#| label: mermaid-04-architettura-01
+#| echo: false
 flowchart LR
     S["Scheduler"] --> J["Job R"]
     J --> DB["Oracle"]
@@ -211,6 +213,8 @@ Per un job batch bisogna conoscere:
 Oracle e R possono avere responsabilità diverse.
 
 ```{mermaid}
+#| label: mermaid-04-architettura-02
+#| echo: false
 flowchart LR
     R["R"] -->|query| O["Oracle"]
     O -->|dati necessari| R
@@ -257,6 +261,8 @@ La scelta va verificata con misure: non tutte le operazioni devono essere sposta
 Quando Oracle APEX è già presente nell'organizzazione, può essere naturale usarlo per la parte gestionale e R per la parte analitica.
 
 ```{mermaid}
+#| label: mermaid-04-architettura-03
+#| echo: false
 flowchart LR
     U["Utente"] --> A["APEX"]
     A --> O["Oracle"]
@@ -287,6 +293,8 @@ Questo evita di ricostruire in R funzionalità che l'organizzazione possiede gi�
 Scenario tipico:
 
 ```{mermaid}
+#| label: mermaid-04-architettura-04
+#| echo: false
 flowchart LR
     S["Scheduler"] --> R["R"]
     R --> DB["Oracle"]
@@ -310,6 +318,8 @@ Domande IT:
 Shiny trasforma R in una applicazione web interattiva.
 
 ```{mermaid}
+#| label: mermaid-04-architettura-05
+#| echo: false
 flowchart LR
     USER["Browser"] --> WEB["Server web / Shiny"]
     WEB --> R["Processo R"]
@@ -335,6 +345,8 @@ di una applicazione usata da centinaia di utenti.
 Un'applicazione R può essere esposta tramite API HTTP.
 
 ```{mermaid}
+#| label: mermaid-04-architettura-06
+#| echo: false
 flowchart LR
     C["Client"] --> G["Gateway / reverse proxy"]
     G --> A["API R"]
@@ -419,6 +431,8 @@ Consideriamo un processo che ogni notte:
 Un'architettura possibile è:
 
 ```{mermaid}
+#| label: mermaid-04-architettura-07
+#| echo: false
 flowchart TD
     S["Scheduler"] --> J["Job R"]
     J --> O["Oracle"]
