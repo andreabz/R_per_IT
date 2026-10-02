@@ -9,9 +9,7 @@ Questo capitolo definisce il punto di partenza: per IT, una soluzione R non è s
 
 ## Obiettivi del capitolo
 
-L'obiettivo non è imparare a programmare in R.
-
-L'obiettivo è mettere IT nelle condizioni di:
+L'obiettivo non è imparare a programmare in R ma mettere IT nelle condizioni di:
 
 - capire che cosa sta chiedendo uno sviluppatore R;
 - valutare se una richiesta è tecnicamente motivata;
@@ -334,6 +332,8 @@ Per ogni computer o server multiutente, verificare:
 
 Per diagnosticare il percorso effettivo si possono usare `.libPaths()` e, quando necessario, le variabili `R_LIBS_USER` e `R_LIBS_SITE`. Per un pacchetto critico si può verificare anche il percorso effettivo con `find.package()`.
 
+`packageDescription()` permette di ricavare informazioni complete su un pacchetto, inclusa la sua funzionalità, dipendenze, licenza e versione.
+
 La domanda operativa non è quindi soltanto:
 
 > «Il pacchetto è installato?»
@@ -370,7 +370,12 @@ Questa distinzione diventa importante quando il risultato prodotto dal software 
 
 #### Dal computer dello sviluppatore alla baseline software
 
-Una richiesta di installazione può essere trasformata in una descrizione controllata dell'ambiente:
+
+La descrizione dettagliata dell'ambiente software diventa particolarmente importante quando uno script, un'analisi o un'applicazione deve essere rilasciato, distribuito o portato in produzione.
+
+Durante lo sviluppo o l'esplorazione dei dati non è generalmente necessario formalizzare ogni componente dell'ambiente. Quando invece il software deve essere eseguito in modo ripetibile su un altro computer, su un server o in produzione, è necessario poter identificare con sufficiente precisione l'ambiente nel quale il software è stato sviluppato e testato.
+
+Una semplice richiesta come «installare lo script e farlo funzionare» può quindi essere trasformata in una descrizione controllata dell'ambiente:
 
 | Componente | Informazione da identificare |
 |---|---|
@@ -385,4 +390,8 @@ Una richiesta di installazione può essere trasformata in una descrizione contro
 | Dati di test | identificativo/versione |
 | Test software | versione della suite ed esito |
 
-Questa **baseline software** non è ancora la validazione del metodo. È la descrizione controllata dell'ambiente nel quale il software viene eseguito.
+Questa descrizione costituisce la **baseline software**: una fotografia controllata dell'ambiente necessario per eseguire una determinata versione del software.
+
+La baseline software **non è ancora la validazione del metodo**. Essa documenta infatti con quale ambiente il software viene eseguito; la validazione deve invece stabilire, secondo gli obiettivi e i requisiti del progetto, se il software e il metodo implementato producono risultati corretti e affidabili.
+
+Il livello di dettaglio della baseline dovrebbe essere **proporzionato alla destinazione** del software: può essere minimo durante una fase esplorativa e diventare più strutturato quando il software viene rilasciato o portato in produzione.

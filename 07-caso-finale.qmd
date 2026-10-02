@@ -3,9 +3,11 @@ title: "Dalla richiesta alla decisione"
 subtitle: "Scenari operativi, caso didattico e checklist per IT"
 ---
 
+
 ## Perché questo capitolo
 
 Questo capitolo applica gli strumenti dei capitoli precedenti al problema operativo: classificare una richiesta R, capire quali domande porre, stabilire quali evidenze raccogliere e definire che cosa serve prima della produzione. Gli scenari sono categorie operative: una stessa soluzione può evolvere da sperimentazione a componente gestito.
+
 
 ## Classificare la richiesta
 
@@ -21,11 +23,15 @@ Prima di valutare CPU, RAM, pacchetti o server, IT dovrebbe identificare:
 
 Una progressione utile è:
 
-    sperimentazione → uso personale → job ricorrente → pubblicazione → servizio → componente gestito
+```text
+sperimentazione → uso personale → job ricorrente → pubblicazione → servizio → componente gestito
+```
 
 Il passaggio verso destra non implica necessariamente più hardware. Aumentano soprattutto riproducibilità, controllo, sicurezza, test, osservabilità, ownership e gestione delle modifiche.
 
+
 ## Sei scenari operativi
+
 
 ### Script locale per sperimentazione
 
@@ -33,11 +39,13 @@ IT deve conoscere almeno versione di R, dipendenze, accessi a dati e servizi azi
 
 Buone pratiche: progetto separato, codice versionato quando diventa riutilizzabile, nessuna credenziale nel codice, dipendenze registrate quando il lavoro deve essere riprodotto.
 
+
 ### Script su server per sperimentazione
 
 IT deve conoscere account, directory e dati accessibili, limiti di CPU/RAM/storage, accesso ai database e modalità di installazione dei pacchetti. È opportuno separare sviluppo e produzione ed evitare modifiche non tracciate alle library condivise.
 
 Il fatto che R venga eseguito su un server non rende automaticamente il codice una soluzione di produzione.
+
 
 ### Job ricorrente per uso personale
 
@@ -45,11 +53,13 @@ IT deve chiedere frequenza, durata, modalità di avvio, input/output, dipendenze
 
 Per renderlo gestibile servono almeno codice versionato, ambiente riproducibile, logging, identificazione di input/output e modalità controllata di aggiornamento.
 
+
 ### Job ricorrente da pubblicare
 
 Quando l'output è destinato ad altri utenti o a un processo aziendale aumentano i requisiti: repository e versione, ambiente riproducibile, test, baseline, configurazione separata dal codice, logging, monitoring, ownership e processo di modifica.
 
 Se l'output ha rilevanza analitica, IT verifica che responsabilità ed evidenze previste dal processo siano definite; non determina l'adeguatezza del metodo.
+
 
 ### Applicazione Shiny da pubblicare
 
@@ -57,11 +67,13 @@ IT deve chiedere utenti e sessioni concorrenti, autenticazione/autorizzazione, d
 
 Qui è essenziale distinguere parallelismo e concorrenza: il numero di worker di una singola elaborazione non descrive da solo il carico della piattaforma.
 
+
 ### API R da pubblicare
 
 IT deve chiedere endpoint, autorizzazioni, volume e frequenza delle richieste, concorrenza, tempi di risposta, dimensione delle richieste/risposte, dati trattati, dipendenze esterne, error handling, logging e monitoring.
 
 Per un'API il carico dipende dal rapporto tra costo della singola richiesta, frequenza e concorrenza.
+
 
 ## Matrice operativa
 
@@ -74,14 +86,15 @@ Per un'API il carico dipende dal rapporto tra costo della singola richiesta, fre
 | Shiny | Quanti utenti e richieste concorrenti deve sostenere? | architettura web, sicurezza, test, monitoring |
 | API | Qual è il carico del servizio? | sicurezza, test di carico, osservabilità, lifecycle |
 
-## Dalla richiesta alla decisione
 
+## Dalla richiesta alla decisione
 
 Supponiamo che il job debba essere completato entro 30 minuti.
 
 Questo cambia la domanda:
 
 > Non «quale server serve?», ma «quale configurazione consente di completare il workload entro 30 minuti con margine operativo adeguato?»
+
 
 ### Baseline iniziale
 
@@ -100,6 +113,7 @@ Ma manca ancora una risposta fondamentale:
 
 > **perché viene utilizzato un solo worker?**
 
+
 ### Analizzare l'implementazione
 
 Prima dell'hardware bisogna sapere se il lavoro è:
@@ -112,6 +126,7 @@ Prima dell'hardware bisogna sapere se il lavoro è:
 Un profiling può indicare dove viene speso il tempo.
 
 Un'analisi della complessità può indicare se il problema cresce troppo rapidamente al crescere dei dati.
+
 
 ### Test di scaling
 
@@ -135,6 +150,7 @@ tempo ↓
 RAM ↑
 ```
 
+
 ### Valutare l'infrastruttura
 
 A questo punto è possibile discutere l'infrastruttura con dati concreti.
@@ -149,6 +165,7 @@ Sappiamo invece che:
 - lo scaling presenta rendimenti decrescenti.
 
 Il dimensionamento deve quindi considerare anche il requisito temporale e la concorrenza.
+
 
 ### Sintesi delle evidenze
 
@@ -170,6 +187,7 @@ Questa tabella non decide quale server acquistare: rende esplicito il percorso c
 
 Una richiesta di produzione dovrebbe poter essere ricondotta a una scheda minima.
 
+
 ### Applicazione
 
 - scopo e owner;
@@ -177,6 +195,7 @@ Una richiesta di produzione dovrebbe poter essere ricondotta a una scheda minima
 - input e output;
 - frequenza e concorrenza;
 - requisito temporale e di disponibilità.
+
 
 ### Software
 
@@ -187,12 +206,14 @@ Una richiesta di produzione dovrebbe poter essere ricondotta a una scheda minima
 - dipendenze native, driver e client;
 - configurazione.
 
+
 ### Verifica
 
 - test definiti;
 - dataset di riferimento, quando applicabile;
 - output attesi o criteri di accettazione;
 - esito dei test associato alla versione del software.
+
 
 ### Operatività
 
@@ -203,9 +224,11 @@ Una richiesta di produzione dovrebbe poter essere ricondotta a una scheda minima
 - rollback e continuità, quando applicabili;
 - ownership e processo di modifica.
 
+
 ### Risultati analitici
 
 Quando l'applicazione produce o manipola risultati analitici, IT deve identificare il responsabile del metodo/processo e verificare che siano state eseguite le attività previste e che l'evidenza sia conservata. Questa verifica non trasferisce a IT la responsabilità della validità scientifica o metrologica del metodo.
+
 
 ## Dalla decisione alla produzione
 
@@ -251,7 +274,8 @@ metodo
 
 Le quattro domande non devono essere fuse in una sola.
 
-#### Dal software installato alla configurazione riproducibile
+
+### Dal software installato alla configurazione riproducibile
 
 Se l'applicazione viene distribuita come container, il percorso può diventare:
 
@@ -308,6 +332,7 @@ analisi d'impatto + nuova baseline
 
 Questo completa il collegamento tra performance, architettura, deployment e governance. Una decisione infrastrutturale non chiude il ciclo: il sistema deve poter essere mantenuto, modificato e nuovamente verificato.
 
+
 ### La domanda che rimane
 
 Anche se un server potente risolve il problema, bisogna chiedersi:
@@ -326,13 +351,13 @@ Potrebbero esserci:
 
 Un hardware adeguato non elimina necessariamente un problema applicativo.
 
-## Strumenti operativi per IT
 
+## Strumenti operativi per IT
 
 Per rendere valutabile una richiesta di infrastruttura, è utile chiedere una scheda con:
 
 | Informazione | Esempio |
-|---|---|---|
+|---|---|
 | scopo | elaborazione R |
 | input | dataset monitoraggio |
 | dimensione | 20 GB |
@@ -349,17 +374,19 @@ Per rendere valutabile una richiesta di infrastruttura, è utile chiedere una sc
 
 Una scheda di questo tipo permette a IT di discutere il dimensionamento senza dover diventare sviluppatore R.
 
+
 ## Checklist conclusiva
 
 
-#### Applicazione
+### Applicazione
 
 - [ ] Che cosa deve fare?
 - [ ] È script, job, report, app o API?
 - [ ] Chi la usa?
 - [ ] Qual è il requisito temporale?
 
-#### Performance
+
+### Performance
 
 - [ ] Durata misurata?
 - [ ] CPU misurata?
@@ -369,7 +396,8 @@ Una scheda di questo tipo permette a IT di discutere il dimensionamento senza do
 - [ ] Profiling?
 - [ ] Scaling test?
 
-#### Architettura
+
+### Architettura
 
 - [ ] Dove deve essere eseguita?
 - [ ] Esiste già una piattaforma?
@@ -377,7 +405,8 @@ Una scheda di questo tipo permette a IT di discutere il dimensionamento senza do
 - [ ] Quale componente gestisce l'interfaccia?
 - [ ] Quale componente gestisce l'orchestrazione?
 
-#### Produzione
+
+### Produzione
 
 - [ ] Dipendenze riproducibili?
 - [ ] Credenziali gestite?
@@ -388,6 +417,7 @@ Una scheda di questo tipo permette a IT di discutere il dimensionamento senza do
 - [ ] Aggiornamenti?
 - [ ] Continuità operativa?
 
+
 ### Le quattro domande
 
 1. **Che cosa deve fare?**
@@ -396,6 +426,7 @@ Una scheda di questo tipo permette a IT di discutere il dimensionamento senza do
 4. **Esiste già un componente aziendale adatto?**
 
 Queste quattro domande permettono di trasformare una richiesta tecnica in un problema valutabile.
+
 
 ### Una buona architettura è anche una questione organizzativa
 
@@ -418,6 +449,7 @@ Una soluzione tecnicamente possibile può essere operativamente inadatta.
 
 ### Discussione
 
+
 #### Domande da portare nel proprio contesto
 
 - Quali richieste R arrivano oggi a IT?
@@ -429,3 +461,4 @@ Una soluzione tecnicamente possibile può essere operativamente inadatta.
 - Quali applicazioni R sono già in produzione?
 - Chi ne è responsabile?
 - Quali dati diagnostici vengono normalmente raccolti?
+

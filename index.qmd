@@ -56,10 +56,10 @@ Il materiale è organizzato come un manuale tecnico, con una progressione dai co
 
 ## Quattro domande da ricordare
 
-> **1. Che cosa deve fare?**
-> **2. Quale evidenza dimostra che serve ciò che viene richiesto?**
-> **3. Dove deve essere eseguito il lavoro?**
-> **4. Esiste già un componente aziendale adatto?**
+**1. Che cosa deve fare?**
+**2. Quale evidenza dimostra che serve ciò che viene richiesto?**
+**3. Dove deve essere eseguito il lavoro?**
+**4. Esiste già un componente aziendale adatto?**
 
 
 ## Modello operativo del corso
@@ -100,9 +100,7 @@ Tre domande restano distinte:
 
 ## Il percorso mentale
 
-Una richiesta infrastrutturale non dovrebbe partire da una specifica hardware.
-
-Dovrebbe partire dal workload:
+Una richiesta infrastrutturale non dovrebbe partire dal workload:
 
 ```text
 Che cosa deve fare?

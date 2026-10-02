@@ -54,13 +54,7 @@ Un'esecuzione R normalmente corrisponde almeno a un processo R.
 
 Un **core** è una risorsa hardware capace di eseguire istruzioni.
 
-Avere:
-
-> 16 core
-
-non significa automaticamente:
-
-> R esegue 16 volte più velocemente.
+Avere 16 core non significa automaticamente che R esegua 16 volte più velocemente.
 
 Serve un carico che possa utilizzare effettivamente quei core.
 
@@ -95,36 +89,45 @@ Per IT la domanda importante è:
 
 > **Quanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?**
 
-### Come rispondere a «quanti worker e quanti thread?»
+### Numero di worker
 
-Non esiste una regola generale del tipo «un worker per core» o «un certo numero di thread per worker».
+Non esiste una regola generale del tipo «un worker per core».
 
-La configurazione va determinata sperimentalmente sul workload reale. Per ogni prova è utile registrare almeno:
+Il numero di worker deve essere valutato in funzione del workload e delle risorse disponibili. Aumentare i worker può ridurre il tempo di esecuzione, ma può anche aumentare il consumo di CPU e RAM.
 
-| Worker | Thread/worker | Tempo | RAM di picco | CPU | I/O |
-|:------:|:-------------:|------:|-------------:|----:|-----:|
-| 1 | 1 | ... | ... | ... | ... |
-| 2 | 1 | ... | ... | ... | ... |
-| 4 | 1 | ... | ... | ... | ... |
-| 4 | 2 | ... | ... | ... | ... |
+Per questo il numero di worker va **misurato**, non semplicemente calcolato in base al numero di core.
 
-Il punto non è massimizzare il numero di unità di esecuzione, ma trovare una configurazione che soddisfi il requisito temporale e rimanga compatibile con le risorse disponibili e con la concorrenza attesa.
+Per ogni prova è utile registrare almeno:
 
-Per esempio, 4 worker che utilizzano 4 thread nativi ciascuno possono arrivare a utilizzare 16 thread complessivi. Su una macchina con 8 core questo può produrre **oversubscription**: più unità software competono per meno risorse hardware, con possibile aumento del tempo e del consumo di CPU.
+| Worker | Tempo | RAM di picco | CPU |
+|:------:|------:|-------------:|----:|
+| 1 | ... | ... | ... |
+| 2 | ... | ... | ... |
+| 4 | ... | ... | ... |
+| 8 | ... | ... | ... |
 
-La misura deve quindi considerare almeno due livelli:
+Il punto non è massimizzare il numero di worker, ma trovare una configurazione che:
 
-- parallelismo esplicito dell'applicazione: numero di worker;
-- parallelismo interno delle librerie native: thread utilizzati dalle operazioni.
+- soddisfi il requisito temporale;
+- rimanga entro le risorse disponibili;
+- sia compatibile con il numero di job contemporanei previsto.
 
-Quando entrambi sono configurabili, vanno valutati insieme.
+Per una piattaforma condivisa bisogna inoltre distinguere la configurazione del **singolo job** dalla **concorrenza complessiva**.
 
-Per una piattaforma condivisa bisogna inoltre distinguere la configurazione del singolo job dalla concorrenza complessiva: 4 worker per un job possono essere sostenibili con un solo job attivo, ma non necessariamente con dieci job contemporanei.
+Per esempio:
 
+```text
+1 job × 4 worker = 4 worker complessivi
+
+10 job × 4 worker = 40 worker complessivi
+```
+
+Una configurazione che funziona per un singolo job potrebbe quindi non essere sostenibile quando più job vengono eseguiti contemporaneamente.
+
+> **Il numero di worker è una configurazione da verificare con un benchmark sul workload reale, non un valore da ricavare semplicemente dal numero di core.**
 
 
 ## Parallelismo e scaling
-
 
 Quando il lavoro può essere suddiviso:
 
@@ -182,7 +185,7 @@ Aumentare i worker può significare:
 
 - più CPU utilizzata;
 - più RAM;
-- più dati copiati;
+- più dati trasferiti o copiati;
 - più accessi al database;
 - più I/O;
 - più traffico di rete;
@@ -192,23 +195,31 @@ Quindi:
 
 > **più worker non significa necessariamente meglio.**
 
-Nella maggior parte dei backend paralleli in R (come `PSOCK` o `multisession`), 
-ogni worker è un processo R completamente separato.
-Questo significa che se lo script principale carica 2 GB di dati in memoria,
-ogni singolo worker caricherà 2 GB.
+Nei backend paralleli basati su processi separati, come quelli che utilizzano `PSOCK` o `multisession`, i worker sono normalmente processi R distinti.
+
+Gli oggetti necessari all'elaborazione devono quindi essere disponibili anche nei worker. Questo può aumentare significativamente il consumo di memoria e il trasferimento dei dati.
+
+Per esempio, se un'elaborazione richiede grandi oggetti in memoria, aumentare il numero di worker può far crescere rapidamente il consumo complessivo di RAM.
+
+Per questo il consumo di memoria deve essere misurato insieme al tempo di esecuzione.
+
 
 ### Esempio di scaling
 
 Supponiamo di misurare:
 
 | Worker | Tempo | RAM |
-|:---:|---:|---:|
+|:------:|------:|----:|
 | 1 | 40 min | 4 GB |
 | 2 | 23 min | 8 GB |
 | 4 | 14 min | 16 GB |
 | 8 | 12 min | 32 GB |
 
-Il passaggio da 1 a 4 worker è significativo; quello da 4 a 8 molto meno.
+Aumentando i worker, il tempo diminuisce, ma aumenta anche il consumo di RAM.
+
+Il passaggio da 1 a 4 worker riduce il tempo da 40 a 14 minuti. Il passaggio da 4 a 8 worker riduce invece il tempo soltanto da 14 a 12 minuti, mentre la memoria raddoppia.
+
+Questo mostra perché il numero di worker non deve essere scelto soltanto in base alla velocità massima ottenibile.
 
 La scalabilità reale può essere limitata da:
 
@@ -226,8 +237,8 @@ IT dovrebbe chiedere:
 
 > **Quale beneficio misurato otteniamo aumentando i worker e quale costo aggiuntivo introduciamo in RAM, I/O e database?**
 
-## Memoria e consumo di risorse
 
+## Memoria e consumo di risorse
 
 Un processo R utilizza memoria per gli oggetti R, le strutture interne del runtime, le librerie caricate, i buffer e altre risorse.
 
@@ -235,14 +246,14 @@ La dimensione dei dati su disco non coincide quindi necessariamente con la memor
 
 Un'operazione può richiedere memoria temporanea aggiuntiva:
 
-~~~text
+```text
 oggetto originale:  4 GB
 copia temporanea:  +4 GB
 risultato:          +4 GB
 overhead/runtime:   +...
 -----------------------------
 picco > 12 GB
-~~~
+```
 
 Non tutte le operazioni producono necessariamente una copia completa: R può condividere oggetti e creare copie quando necessario. Per IT è però importante ragionare sul **picco di memoria**, non soltanto sulla dimensione finale del dataset.
 
@@ -254,13 +265,13 @@ La **RAM** è la memoria fisica disponibile al sistema.
 
 La **memoria virtuale** è il meccanismo con cui il sistema operativo presenta ai processi uno spazio di memoria e gestisce le pagine, eventualmente utilizzando anche storage.
 
-~~~text
+```text
 Processo R
    ↓
 memoria virtuale
    ↓
 RAM + eventuale paging
-~~~
+```
 
 La memoria virtuale non equivale a RAM aggiuntiva gratuita. Se il sistema ricorre intensamente a paging/swap, le prestazioni possono degradare perché lo storage è molto più lento della RAM.
 
@@ -274,7 +285,7 @@ R utilizza un **garbage collector (GC)** per recuperare memoria associata a ogge
 
 In termini semplificati:
 
-~~~text
+```text
 creazione oggetti
       ↓
 memoria occupata
@@ -284,54 +295,22 @@ oggetti non più necessari
 garbage collection
       ↓
 memoria recuperabile
-~~~
+```
 
 Il garbage collector non può liberare memoria ancora necessaria all'elaborazione.
 
 Inoltre una fase di garbage collection può avere un costo temporale. Per questo, per diagnosticare un problema di memoria, è utile osservare sia l'andamento della RAM sia il tempo di esecuzione.
 
-### Thread nativi e oversubscription
-
-Il codice R può chiamare librerie native che utilizzano thread propri. Questo introduce una distinzione importante tra:
-
-- worker R;
-- thread del processo;
-- thread utilizzati da librerie numeriche o di I/O.
-
-Un esempio concettuale:
-
-~~~text
-8 worker R
-×
-4 thread nativi per worker
-=
-fino a 32 unità di esecuzione concorrenti
-~~~
-
-Se il server dispone di meno risorse effettivamente utilizzabili, può verificarsi **oversubscription**: troppi thread competono per i core.
-
-Il risultato può essere:
-
-- più context switching;
-- maggiore contesa CPU;
-- maggiore consumo di risorse;
-- peggioramento delle prestazioni.
-
-Per IT la domanda non è quindi soltanto:
-
-> «Quanti worker?»
-
-ma anche:
-
-> «Quanti thread utilizza ciascun worker?»
 
 ### Parallelismo e memoria
 
-Quando i worker sono processi separati, ciascun processo può avere una propria copia degli oggetti necessari.
+Quando i worker sono processi separati, ciascun worker ha una propria memoria di processo.
+
+Gli oggetti necessari all'elaborazione possono quindi dover essere presenti in più processi.
 
 Schema concettuale:
 
-~~~text
+```text
 Processo principale
    │
    ├── dati
@@ -339,59 +318,59 @@ Processo principale
    ├── Worker 2 → dati necessari
    ├── Worker 3 → dati necessari
    └── Worker 4 → dati necessari
-~~~
+```
 
-Perciò, in molti backend basati su processi separati:
+Questo significa che aumentare i worker può aumentare anche il consumo complessivo di RAM.
 
-~~~text
-RAM richiesta
-≈
-memoria base
-+
-memoria per worker
-+
-overhead
-~~~
+Non esiste però una formula universale per calcolare questo consumo: dipende dal programma, dai dati trasferiti ai worker e dalla tecnologia utilizzata.
 
-Non è una formula di dimensionamento esatta, ma è un modello utile per capire perché aumentare i worker può far crescere rapidamente la RAM richiesta.
-
-## Diagnosi operativa
+Per questo, anche in questo caso, il valore importante per IT è il **picco di RAM misurato durante il benchmark**.
 
 
-Quando una soluzione R è lenta, IT può chiedere almeno:
+### Thread nativi e oversubscription
 
-| Domanda | Evidenza |
-|---|---|
-| CPU alta? | utilizzo CPU nel tempo |
-| RAM alta? | memoria del processo e picco |
-| Paging? | metriche del sistema operativo |
-| Un solo core saturo? | utilizzo per core |
-| Più thread? | metriche del processo/libreria |
-| Più worker? | numero di processi/worker |
-| DB lento? | tempi e metriche lato database |
-| I/O lento? | metriche storage |
-| Rete lenta? | throughput e latenza |
-| Quale funzione è lenta? | profiling |
+Un processo R può utilizzare anche thread creati dalle librerie native utilizzate dal programma.
 
-Il profilo della risorsa deve essere osservato **durante** l'elaborazione, non soltanto a fine job.
+Questo introduce un ulteriore livello di parallelismo rispetto ai worker R.
 
-### Domande runtime per IT
+Per esempio, in termini concettuali:
 
-Prima di assegnare risorse aggiuntive chiedere:
+```text
+4 worker R
+×
+più thread utilizzati dalle librerie
+```
 
-- quanti processi R vengono creati?
-- quanti worker?
-- quanti thread per worker?
-- qual è il picco di RAM?
-- qual è l'utilizzo CPU per core?
-- esiste paging?
-- quali operazioni dominano il tempo?
-- il database è coinvolto?
-- il carico è CPU-bound, RAM-bound, I/O-bound o database-bound?
-- la parallelizzazione è già stata testata?
-- come cambia il consumo di RAM aumentando i worker?
-- qual è il tempo obiettivo?
+può produrre un numero di unità di esecuzione superiore al numero di worker.
 
-La domanda finale è:
+Se il numero complessivo di thread diventa elevato rispetto alle risorse disponibili, può verificarsi **oversubscription**: più unità di esecuzione competono per gli stessi core.
 
-> **qual è il collo di bottiglia misurato e quale intervento lo rimuove?**
+Il risultato può essere:
+
+- maggiore contesa della CPU;
+- maggiore overhead;
+- peggioramento delle prestazioni.
+
+Per questo, quando si analizzano workload complessi, non basta sempre conoscere il numero di worker.
+
+> **Il numero di worker descrive il parallelismo dell'applicazione; le librerie utilizzate possono introdurre ulteriore parallelismo interno.**
+
+
+## Dal runtime alla performance
+
+A questo punto abbiamo introdotto le principali componenti che determinano il comportamento di un workload R:
+
+- processo;
+- core;
+- thread;
+- worker;
+- memoria;
+- parallelismo;
+- concorrenza.
+
+Questi concetti permettono di descrivere **come viene eseguito** un workload, ma non sono ancora sufficienti per spiegare **perché è lento**.
+
+Per rispondere a questa seconda domanda bisogna osservare il comportamento del workload durante l'esecuzione e misurare l'utilizzo delle risorse.
+
+Nel capitolo successivo vedremo quindi come identificare il **collo di bottiglia**, distinguendo tra CPU, memoria, I/O, rete e database, e come utilizzare misure e benchmark per valutare eventuali interventi sul software o sull'infrastruttura.
+

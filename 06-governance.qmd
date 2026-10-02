@@ -1,83 +1,368 @@
 ---
 title: "Governance e valutazione delle richieste"
-subtitle: "Come valutare installazioni, risorse, server e alternative"
+subtitle: "Dal requisito alla decisione, con evidenze e responsabilità"
 ---
+
 
 ## Perché questo capitolo
 
-Questo capitolo raccoglie il metodo decisionale che collega i capitoli precedenti. L'obiettivo non è stabilire a priori quale tecnologia utilizzare, ma rendere le richieste confrontabili: partire dal requisito, raccogliere evidenze, identificare il collo di bottiglia, verificare le alternative e documentare la decisione. La stessa logica vale per pacchetti, RAM, CPU, server e scelta architetturale.
+I capitoli precedenti hanno descritto diversi aspetti della gestione di una soluzione R:
+
+- la performance e l'identificazione dei colli di bottiglia;
+- l'architettura e la distribuzione delle responsabilità;
+- il deployment e la gestione operativa.
+
+Questo capitolo mette insieme questi elementi dal punto di vista di IT.
+
+L'obiettivo non è stabilire a priori quale tecnologia utilizzare, ma definire **come valutare una richiesta tecnica in modo coerente, documentabile e ripetibile**.
+
+Una richiesta può riguardare:
+
+- l'installazione di un pacchetto;
+- un aumento della RAM;
+- un aumento della CPU;
+- un nuovo server;
+- una VM o un container;
+- l'esposizione di una Shiny o di un'API;
+- una nuova integrazione;
+- una modifica a una soluzione esistente.
+
+In tutti questi casi il principio è lo stesso:
+
+```text
+requisito
+   ↓
+evidenze
+   ↓
+valutazione
+   ↓
+alternative
+   ↓
+test / verifica
+   ↓
+decisione
+   ↓
+responsabilità
+   ↓
+evidenza conservata
+```
+
+La governance non sostituisce la diagnosi tecnica, l'architettura o il deployment: **utilizza i risultati di questi processi per prendere e documentare una decisione**.
+
 
 ## Dal requisito alla decisione
 
-
-Le richieste più difficili sono quelle che arrivano già accompagnate dalla soluzione:
+Le richieste più difficili sono spesso quelle che arrivano già accompagnate dalla soluzione:
 
 > «Servono 64 GB di RAM.»
+
 > «Servono 16 core.»
+
 > «Serve un server dedicato.»
+
 > «Bisogna installare questo pacchetto.»
 
-La procedura IT dovrebbe riportare la richiesta al problema originale.
+La prima domanda non dovrebbe essere se la soluzione proposta sia tecnicamente possibile.
 
-#### 1. Identificare il requisito
+La domanda è:
 
-Chiedere:
+> **Quale requisito deve essere soddisfatto e quale evidenza dimostra che questa soluzione è necessaria?**
 
-- che cosa deve fare l'applicazione?
-- chi la usa?
-- con quale frequenza?
-- entro quale tempo deve completare il lavoro?
-- quali dati utilizza?
-- quale output produce?
 
-#### 2. Identificare il carico
+### 1. Identificare il requisito
 
-Misurare:
+Occorre chiarire almeno:
 
+- che cosa deve fare l'applicazione;
+- chi la utilizza;
+- con quale frequenza;
+- entro quale tempo deve completare il lavoro;
+- quali dati utilizza;
+- quale output produce;
+- quali vincoli di sicurezza o disponibilità esistono.
+
+Per esempio:
+
+```text
+Richiesta:
+"Servono più CPU."
+
+Requisito da chiarire:
+"Il job deve terminare entro 30 minuti,
+mentre oggi richiede circa 2 ore."
+```
+
+La seconda formulazione permette di valutare il problema.
+
+
+### 2. Raccogliere le evidenze
+
+La natura dell'evidenza dipende dalla richiesta.
+
+Per una richiesta di performance possono essere rilevanti:
+
+- durata;
 - CPU;
 - RAM;
 - I/O;
 - rete;
 - database;
-- numero di processi/worker;
-- durata.
+- numero di worker;
+- risultati di profiling;
+- benchmark.
 
-#### 3. Identificare il collo di bottiglia
+Per una richiesta architetturale possono essere rilevanti:
 
-Una richiesta hardware ha senso solo se esiste un rapporto documentato tra risorsa e problema.
+- numero di utenti;
+- frequenza;
+- requisiti di disponibilità;
+- dati trattati;
+- sistemi da integrare;
+- requisiti di sicurezza.
 
-#### 4. Verificare alternative
+Per una richiesta di deployment possono essere rilevanti:
 
-Prima dell'hardware considerare:
+- versione del codice;
+- dipendenze;
+- artefatto;
+- ambiente target;
+- procedura di rilascio;
+- test;
+- rollback.
 
-- ottimizzazione dell'algoritmo;
-- ottimizzazione dell'implementazione;
-- riduzione dei dati;
-- spostamento di elaborazioni nel database;
+Il principio è:
+
+> **la decisione deve essere proporzionata alle evidenze necessarie per motivarla.**
+
+
+### 3. Identificare il problema
+
+Una richiesta tecnica può avere una causa diversa da quella inizialmente ipotizzata.
+
+Per esempio:
+
+```text
+Problema:
+job troppo lento
+       ↓
+diagnosi
+       ↓
+query Oracle lenta
+```
+
+In questo caso la richiesta:
+
+> «Aumentiamo la CPU del server R»
+
+non affronta necessariamente il problema osservato.
+
+Il capitolo Performance descrive come effettuare questa diagnosi. In Governance interessa invece il passaggio successivo:
+
+> **la decisione infrastrutturale è coerente con l'evidenza raccolta?**
+
+
+### 4. Verificare le alternative
+
+Prima di introdurre una nuova risorsa o un nuovo componente è opportuno considerare le alternative pertinenti.
+
+A seconda del caso possono essere:
+
+- modifica dell'algoritmo;
+- modifica dell'implementazione;
+- riduzione dei dati trasferiti;
+- elaborazione nel database;
 - parallelizzazione;
-- infrastruttura esistente;
-- cambio di architettura.
+- modifica del numero di worker;
+- utilizzo di infrastruttura già disponibile;
+- modifica dell'architettura;
+- modifica del processo operativo.
 
-#### 5. Testare
-
-Quando possibile, modificare una variabile e misurare il risultato.
-
-#### 6. Documentare
-
-La decisione finale dovrebbe poter essere ricostruita mesi dopo.
-
-## Controllare e verificare il software
+Non tutte le alternative devono essere sempre testate. Devono però essere considerate quando sono plausibili e rilevanti per la decisione.
 
 
-In un laboratorio soggetto a requisiti di qualità è importante non confondere tre problemi diversi.
+### 5. Testare quando possibile
 
-#### 1. Controllo dell'ambiente software
+Quando una decisione dipende da un'ipotesi verificabile, è preferibile misurare l'effetto della modifica.
+
+Per esempio:
+
+```text
+ipotesi
+   ↓
+configurazione attuale
+   ↓
+modifica controllata
+   ↓
+misurazione
+   ↓
+confronto
+```
+
+Questo è particolarmente importante per le richieste di dimensionamento.
+
+La domanda non è:
+
+> «16 core sono tanti?»
+
+ma:
+
+> **«Quale miglioramento osserviamo passando dalla configurazione attuale alla configurazione proposta?»**
+
+
+### 6. Documentare la decisione
+
+La decisione dovrebbe essere ricostruibile anche quando le persone coinvolte non sono più disponibili.
+
+Una registrazione utile dovrebbe contenere almeno:
+
+- requisito;
+- evidenze raccolte;
+- ipotesi;
+- alternative considerate;
+- test eseguiti;
+- risultato;
+- decisione;
+- motivazione;
+- responsabilità;
+- eventuali condizioni per una successiva rivalutazione.
+
+
+## Performance: usare la diagnosi senza ripeterla
+
+La diagnosi dettagliata della performance appartiene al capitolo dedicato alla performance.
+
+In Governance è sufficiente utilizzare il suo risultato.
+
+Per esempio:
+
+```text
+Diagnosi Performance
+        ↓
+CPU-bound
+        ↓
+benchmark 1 / 2 / 4 / 8 worker
+        ↓
+evidenza di scaling
+        ↓
+valutazione IT
+        ↓
+dimensionamento
+```
+
+La Governance non deve quindi ripetere:
+
+- come utilizzare `system.time()`;
+- come profilare con `profvis`;
+- come interpretare `top` o `htop`;
+- come analizzare la memoria;
+- come distinguere CPU-bound e I/O-bound.
+
+Questi strumenti appartengono alla diagnosi.
+
+Qui interessa invece verificare che la decisione sia **basata su una diagnosi sufficientemente documentata**.
+
+
+### Esempio
+
+Richiesta:
+
+> «Servono 64 GB di RAM.»
+
+Evidenze:
+
+```text
+RAM disponibile: 32 GB
+picco osservato: 29 GB
+worker: 4
+swap: occasionale
+dataset: 12 GB
+```
+
+La valutazione non dovrebbe limitarsi a:
+
+> «64 GB sono il doppio di 32 GB.»
+
+Bisogna considerare anche:
+
+- se il picco è riproducibile;
+- se dipende dal numero di worker;
+- se esistono copie temporanee;
+- se il numero di worker può essere modificato;
+- se il dataset può essere ridotto;
+- se il requisito temporale richiede davvero quel parallelismo.
+
+La decisione infrastrutturale deve quindi essere il risultato della diagnosi, non il suo punto di partenza.
+
+
+## Valutare l'ambiente software
+
+Una richiesta può riguardare non l'hardware, ma l'ambiente necessario per eseguire l'applicazione.
+
+Per esempio:
+
+> «Installare R e questi 20 pacchetti.»
+
+Anche in questo caso la richiesta deve essere trasformata in informazioni verificabili.
+
+Occorre conoscere:
+
+- applicazione;
+- versione di R richiesta;
+- versioni dei pacchetti;
+- dipendenze indirette;
+- eventuali librerie native;
+- driver;
+- sistema operativo;
+- ambiente di destinazione;
+- modalità di aggiornamento;
+- responsabile dell'applicazione.
+
+Il requisito non dovrebbe essere semplicemente:
+
+> «Installare i pacchetti.»
+
+ma:
+
+> **«Rendere disponibile un ambiente identificabile e riproducibile per una specifica applicazione.»**
+
+
+### Dipendenze e riproducibilità
+
+La riproducibilità dell'ambiente può essere supportata da strumenti come `renv`, lockfile, immagini container e baseline software.
+
+Questi strumenti rispondono a una domanda precisa:
+
+> **Possiamo ricostruire l'ambiente necessario per eseguire questa versione dell'applicazione?**
+
+Non rispondono invece automaticamente alla domanda:
+
+> **Il software è corretto per il suo scopo?**
+
+Questa distinzione è importante.
+
+```text
+ambiente riproducibile
+        ≠
+software verificato
+        ≠
+metodo analitico validato
+```
+
+Sono tre livelli diversi.
+
+
+## Verifica del software e adeguatezza del metodo
+
+In un laboratorio o in un contesto soggetto a requisiti di qualità è importante distinguere almeno tre concetti.
+
+
+### Controllo dell'ambiente
 
 Domanda:
 
 > **Con quale ambiente è stato eseguito il software?**
 
-Le evidenze possono comprendere:
+Evidenze possibili:
 
 - versione di R;
 - versioni dei pacchetti;
@@ -88,7 +373,8 @@ Le evidenze possono comprendere:
 - configurazione;
 - identificativo dell'immagine container.
 
-#### 2. Verifica del software
+
+### Verifica del software
 
 Domanda:
 
@@ -102,58 +388,72 @@ Le evidenze possono comprendere:
 - casi limite;
 - dataset di riferimento;
 - output attesi;
-- tolleranze definite;
-- esito dei test associato a una specifica versione del codice.
+- tolleranze;
+- esito dei test;
+- versione del codice testata.
 
-Per codice riutilizzato in più applicazioni può essere utile organizzare la logica in un **pacchetto interno versionato**, con una propria suite di test. Non è necessario che IT gestisca la programmazione dei test: deve poter riconoscere che esistono una versione, un insieme di verifiche e un esito documentato.
+Per codice riutilizzato da più applicazioni può essere utile organizzare la logica in un **pacchetto interno versionato**, con una propria suite di test.
 
-#### 3. Verifica o validazione del metodo
+
+### Verifica o validazione del metodo
 
 Domanda:
 
 > **Il metodo analitico è adeguato allo scopo per il quale viene utilizzato?**
 
-Questa è una questione diversa dalla riproducibilità dell'ambiente e dalla verifica del codice.
+Questa è una questione diversa dalla verifica del software.
 
-**`renv` + test + container non equivalgono automaticamente alla validazione di un metodo analitico.**
+Per esempio, dimostrare che una funzione restituisce correttamente un determinato risultato su un dataset di riferimento non dimostra da solo che il modello o il metodo scientifico siano appropriati allo scopo.
 
-Nel contesto del laboratorio, la modalità con cui software e metodo vengono verificati o validati deve essere ricondotta alle procedure, ai requisiti e ai criteri di accettazione applicabili.
+Pertanto:
 
-#### Pacchetti interni e test
+> **`renv` + test + container non equivalgono automaticamente alla validazione di un metodo analitico.**
 
-Quando una parte di codice diventa stabile, riutilizzata da più applicazioni o rilevante per risultati analitici, un pacchetto R interno può offrire vantaggi di controllo:
+Le modalità di verifica o validazione devono essere definite secondo i requisiti, le procedure e i criteri di accettazione applicabili.
+
+
+## Pacchetti interni come componenti governati
+
+Quando una parte di codice diventa stabile, riutilizzata o rilevante per risultati analitici, può essere opportuno trattarla come un componente software vero e proprio.
+
+Un pacchetto interno può fornire:
 
 - versione esplicita;
 - dipendenze dichiarate;
 - struttura standard;
 - test automatici;
 - changelog;
-- possibilità di distribuire una release precisa.
+- release identificabili;
+- distribuzione controllata.
 
-I test non dovrebbero limitarsi alla singola funzione quando il rischio è legato alla sequenza di elaborazione. È quindi utile distinguere:
+Questo è particolarmente utile quando:
 
-```text
-funzione → test unitario
+- più applicazioni utilizzano lo stesso codice;
+- il pacchetto viene aggiornato indipendentemente dalle applicazioni;
+- una modifica può influenzare più sistemi;
+- il componente deve essere distribuito in più ambienti.
 
-funzione A → funzione B → funzione C
-          → test di integrazione
+In questi casi IT dovrebbe poter identificare almeno:
 
-dataset di riferimento → intera elaborazione
-                       → test di regressione
-```
+- repository;
+- owner;
+- versione;
+- dipendenze;
+- suite di test;
+- changelog;
+- repository di distribuzione;
+- applicazioni che dipendono dal pacchetto;
+- procedura di aggiornamento;
+- eventuale procedura di deprecazione.
 
-Per un test di regressione è importante poter associare il risultato a:
+Il pacchetto diventa così un **componente software governato**, anziché una copia di funzioni distribuita manualmente.
 
-- versione del codice;
-- ambiente software;
-- dataset di test;
-- output atteso o criterio di accettazione;
-- esito;
-- eventuale tolleranza.
 
-#### Baseline software
+## Baseline e ricostruibilità
 
-Per una release significativa può essere utile mantenere una scheda di baseline:
+Una baseline permette di identificare lo stato di una soluzione in un determinato momento.
+
+Per una release significativa può essere utile registrare:
 
 | Elemento | Identificazione |
 |---|---|
@@ -161,253 +461,22 @@ Per una release significativa può essere utile mantenere una scheda di baseline
 | codice | commit/tag |
 | R | versione |
 | pacchetti | lockfile/versioni |
-| OS | versione |
+| sistema operativo | versione |
 | container | tag e digest, se utilizzato |
 | driver/client | versione |
+| configurazione | versione o identificativo |
 | dati di test | identificativo |
 | suite di test | versione |
-| risultato test | PASS/FAIL |
+| risultato test | esito |
 | metodo | identificativo/versione |
 
-La baseline permette di rispondere a una domanda operativa importante:
+La baseline permette di rispondere a una domanda importante:
 
 > **Possiamo ricostruire quale ambiente e quale versione del software hanno prodotto questo risultato?**
 
+Per risultati che devono essere ricostruibili, la baseline software non è però sempre sufficiente.
 
-## Separare le responsabilità
-
-La verifica tecnica di una soluzione R non significa attribuire a IT la responsabilità della correttezza scientifica o analitica.
-
-In termini generali:
-
-| Ambito | Responsabilità principale |
-|---|---|
-| Infrastruttura e runtime | IT |
-| Dipendenze, deployment e ambiente | IT, in collaborazione con il responsabile applicativo |
-| Codice e logica applicativa | sviluppatore/application owner |
-| Test del software | responsabile applicativo secondo la procedura applicabile |
-| Requisiti del processo | responsabile del processo/metodo |
-| Adeguatezza del metodo e criteri analitici | responsabile del metodo/processo |
-
-IT può e deve chiedere, quando l'applicazione produce o manipola risultati analitici:
-
-> **«L'applicazione è stata verificata secondo i requisiti applicabili? Chi ne è responsabile e dove è conservata l'evidenza?»**
-
-Questa domanda serve a verificare che il requisito sia stato preso in carico. Non significa che IT debba stabilire se un algoritmo è scientificamente adeguato, se un metodo è valido o se un risultato è metrologicamente accettabile.
-
-Anche la distinzione tra **verifica del software** e **verifica/validazione del metodo** deve rimanere esplicita: controllare che il codice produca l'output atteso su un dataset di riferimento non dimostra da solo che il metodo sia adatto allo scopo.
-
-## Costruire e conservare l'evidenza
-
-
-Una richiesta IT dovrebbe lasciare una traccia logica semplice:
-
-```text
-misura
-  ↓
-interpretazione
-  ↓
-ipotesi
-  ↓
-test
-  ↓
-decisione
-  ↓
-evidenza conservata
-```
-
-Esempio:
-
-- **misura**: CPU 98%, un worker;
-- **interpretazione**: il job è prevalentemente CPU-bound;
-- **ipotesi**: il workload può beneficiare del parallelismo;
-- **test**: esecuzioni con 1, 2, 4 e 8 worker;
-- **decisione**: dimensionare sulla configurazione che soddisfa il requisito senza introdurre un costo di memoria non sostenibile;
-- **evidenza conservata**: metriche, risultati dello scaling, versione del software e configurazione testata.
-
-Questa sequenza evita che una decisione infrastrutturale venga registrata soltanto come conclusione («servono 64 GB») senza conservare il percorso che l'ha motivata.
-
-### Pacchetti interni: quando trattarli come componenti
-
-Un pacchetto interno merita un ciclo di vita esplicito quando, per esempio:
-
-- è utilizzato da più applicazioni;
-- contiene logica rilevante per risultati analitici;
-- viene aggiornato indipendentemente dalle applicazioni che lo usano;
-- deve essere distribuito a più ambienti;
-- una modifica al suo comportamento può avere impatto su più sistemi.
-
-In questi casi IT dovrebbe poter identificare:
-
-- repository e owner;
-- versione/release;
-- dipendenze;
-- suite di test;
-- changelog;
-- repository di distribuzione;
-- applicazioni che dipendono dal pacchetto;
-- procedura di deprecazione o sostituzione.
-
-Il pacchetto diventa così un **componente software governato**, non una copia di funzioni condivisa manualmente.
-
-## gestire il ciclo di vita
-
-
-Oltre alle performance, IT dovrebbe considerare il rischio operativo.
-
-| Aspetto | Domanda |
-|---|---|---|
-| Dipendenze | Possiamo ricostruire l'ambiente? |
-| Sicurezza | Quali dati e credenziali utilizza? |
-| Disponibilità | Cosa succede se il servizio non è disponibile? |
-| Manutenzione | Chi aggiorna codice e pacchetti? |
-| Monitoring | Come sappiamo che funziona? |
-| Continuità | Cosa succede se il server viene perso? |
-| Ownership | Chi decide modifiche e aggiornamenti? |
-
-Una soluzione può essere performante ma difficile da mantenere. Le due valutazioni sono distinte.
-
-### Ownership
-
-Una domanda spesso trascurata:
-
-> **Chi è responsabile della soluzione tra un anno?**
-
-Bisogna sapere:
-
-- chi mantiene il codice;
-- chi conosce la logica;
-- chi aggiorna i pacchetti;
-- chi gestisce gli incidenti;
-- chi verifica l'output;
-- chi autorizza modifiche;
-- chi decide quando dismettere il sistema.
-
-Una soluzione tecnicamente funzionante ma senza ownership è un rischio operativo.
-
-#### Ownership nel tempo
-
-L'ownership comprende anche il **fine vita** della soluzione:
-
-- chi valuta gli aggiornamenti tecnologici;
-- chi decide quando sostituire una dipendenza non più sostenibile;
-- chi pianifica la migrazione;
-- chi autorizza la dismissione;
-- chi conserva la documentazione necessaria.
-
-## Applicare la procedura alle richieste IT
-
-
-#### Richiesta
-
-> "Installare R e questi 20 pacchetti."
-
-#### Domande
-
-1. Quale applicazione?
-2. Quale versione di R?
-3. Quali versioni dei pacchetti?
-4. Sono tutte dipendenze necessarie?
-5. Esiste un ambiente riproducibile?
-6. Ci sono dipendenze OS?
-7. Serve accesso Internet?
-8. Come verranno gestiti gli aggiornamenti?
-9. È un ambiente di sviluppo o produzione?
-10. Chi è responsabile dell'applicazione?
-
-### Come valutare una richiesta di RAM
-
-#### Richiesta
-
-> "Servono 64 GB."
-
-#### Domande
-
-- Quanta RAM viene utilizzata oggi?
-- Qual è il picco?
-- Viene utilizzato swap?
-- Qual è la dimensione dei dati?
-- Quanti worker?
-- Quanta RAM usa ogni worker?
-- Ci sono copie degli oggetti?
-- La memoria cresce durante il job?
-- È possibile ridurre i dati caricati?
-
-### Come valutare una richiesta di CPU
-
-#### Richiesta
-
-> "Servono 16 core."
-
-#### Domande
-
-- CPU attuale?
-- Percentuale di utilizzo?
-- Uno o più core?
-- Quanti worker?
-- Il carico è parallelizzabile?
-- Quanto scala da 1 a 2, 4, 8 worker?
-- Qual è il limite?
-- La RAM cresce con i worker?
-- Il database regge il parallelismo?
-
-### Come valutare una richiesta di server
-
-#### Richiesta
-
-> "Serve un server dedicato."
-
-#### Domande
-
-- Per quale workload?
-- Frequenza?
-- Durata?
-- Utenti?
-- Concorrenza?
-- CPU?
-- RAM?
-- I/O?
-- rete?
-- database?
-- disponibilità richiesta?
-- sicurezza?
-- monitoring?
-- esiste già una piattaforma adatta?
-
-### Matrice decisionale
-
-La stessa logica può essere applicata alle richieste più frequenti.
-
-| Richiesta | Evidenza richiesta | Alternative da verificare | Decisione da motivare |
-|---|---|---|---|
-| Pacchetto R | dipendenze, versione, licenza | pacchetti già disponibili, repository aziendale | installazione e ciclo di vita |
-| RAM | picco, worker, copie, swap | riduzione dati, algoritmo, numero worker | dimensionamento |
-| CPU | utilizzo per core, worker, scaling | algoritmo, parallelizzazione | dimensionamento |
-| Server | workload, frequenza, concorrenza, disponibilità | VM, piattaforma esistente | ambiente di esecuzione |
-| Shiny/API | utenti, traffico, autenticazione, disponibilità | piattaforma web aziendale | architettura |
-
-La matrice non sostituisce la diagnosi: serve a rendere esplicite le **evidenze** che devono precedere la decisione.
-
-
-## Definire le responsabilità
-
-Per una soluzione controllata è utile distinguere almeno quattro responsabilità:
-
-| Attività | Domanda |
-|---|---|
-| Modificare | chi può cambiare codice, configurazione o ambiente? |
-| Verificare | chi esegue e documenta i test? |
-| Approvare | chi autorizza il nuovo stato secondo la procedura applicabile? |
-| Distribuire | chi porta l'artefatto approvato nell'ambiente target? |
-
-Le responsabilità possono appartenere allo stesso team, ma non devono essere confuse. IT dovrebbe sapere **chi è autorizzato a fare cosa** e quali evidenze rimangono dopo ogni passaggio.
-
-## Ricostruire il risultato
-
-
-La baseline software identifica con quale ambiente è stato eseguito il software, ma da sola non identifica necessariamente il dato elaborato.
-
-Per risultati che devono essere ricostruibili, è utile poter collegare almeno:
+È utile poter collegare:
 
 ```text
 input / dataset identificato
@@ -421,26 +490,459 @@ esecuzione
 output identificato
 ```
 
-IT deve verificare dove sono registrati gli identificativi necessari e quali componenti esterni alla baseline software devono essere conservati o riferiti.
+In altre parole, la ricostruibilità riguarda non soltanto **con quale software** è stato eseguito il lavoro, ma anche **su quali dati e con quali parametri**.
 
-### R non deve fare tutto
 
-Un'architettura può essere:
+## Separare le responsabilità
 
-```{mermaid}
-%%| label: mermaid-06-governance-01
-%%| echo: false
-flowchart LR
-    ORA["Oracle<br/>Dati"]
-    APEX["APEX<br/>Applicazione"]
-    R["R<br/>Analisi"]
-    Q["Quarto<br/>Report"]
-    SCH["Scheduler<br/>Esecuzione"]
+La governance deve rendere esplicito chi è responsabile dei diversi aspetti della soluzione.
 
-    ORA <--> APEX
-    ORA <--> R
-    SCH --> R
-    R --> Q
+Una possibile distinzione è:
+
+| Ambito | Responsabilità principale |
+|---|---|
+| infrastruttura e runtime | IT |
+| deployment e ambiente | IT, in collaborazione con l'owner applicativo |
+| codice e logica applicativa | sviluppatore / application owner |
+| test del software | responsabile applicativo secondo la procedura applicabile |
+| requisiti del processo | responsabile del processo |
+| adeguatezza del metodo | responsabile del metodo/processo |
+| risultati analitici | responsabile secondo le procedure applicabili |
+
+La distribuzione concreta dipende dall'organizzazione.
+
+Il principio è però generale:
+
+> **chi gestisce l'infrastruttura non deve diventare automaticamente responsabile della correttezza scientifica dell'applicazione.**
+
+IT può e deve chiedere:
+
+> «L'applicazione è stata verificata secondo i requisiti applicabili? Chi ne è responsabile e dove è conservata l'evidenza?»
+
+Questa domanda serve a verificare che la responsabilità sia stata presa in carico.
+
+Non significa che IT debba stabilire:
+
+- se un algoritmo è scientificamente adeguato;
+- se un metodo è valido;
+- se un risultato è analiticamente accettabile.
+
+
+## Ownership
+
+Una delle domande più importanti per una soluzione in produzione è:
+
+> **Chi sarà responsabile della soluzione tra un anno?**
+
+L'ownership non coincide necessariamente con chi ha scritto il codice.
+
+Occorre sapere chi:
+
+- mantiene il codice;
+- conosce la logica applicativa;
+- aggiorna i pacchetti;
+- gestisce gli incidenti applicativi;
+- verifica gli output;
+- autorizza le modifiche;
+- coordina il deployment;
+- decide quando sostituire una dipendenza;
+- decide quando dismettere la soluzione.
+
+Una soluzione tecnicamente funzionante ma senza ownership esplicita costituisce un rischio operativo.
+
+
+### Ownership nel tempo
+
+L'ownership comprende anche il fine vita.
+
+Nel corso degli anni possono cambiare:
+
+- versione di R;
+- pacchetti;
+- sistema operativo;
+- driver;
+- certificati;
+- API esterne;
+- infrastruttura;
+- requisiti di sicurezza.
+
+Deve quindi esistere qualcuno che possa decidere:
+
+```text
+mantenere
+   ↓
+aggiornare
+   ↓
+migrare
+   ↓
+sostituire
+   ↓
+dismettere
 ```
 
-Ogni componente svolge la funzione per cui è più adatto.
+La governance non riguarda soltanto l'ingresso in produzione, ma l'intero ciclo di vita.
+
+
+## Applicare il metodo alle richieste IT
+
+
+### Richiesta di RAM
+
+> «Servono 64 GB.»
+
+Domande:
+
+- qual è il picco osservato?
+- in quale workload?
+- quanti worker erano attivi?
+- viene utilizzato swap?
+- il picco è riproducibile?
+- esistono copie o oggetti temporanei rilevanti?
+- il dataset può essere ridotto?
+- il numero di worker può essere modificato?
+- esiste un requisito temporale che giustifica la configurazione?
+
+La decisione dovrebbe riportare non soltanto la quantità di RAM richiesta, ma **l'evidenza che la motiva**.
+
+
+### Richiesta di CPU
+
+> «Servono 16 core.»
+
+Domande:
+
+- qual è il carico CPU osservato?
+- quanti core vengono effettivamente utilizzati?
+- quanti worker o thread sono attivi?
+- il lavoro è parallelizzabile?
+- quale scaling è stato osservato?
+- quale costo in memoria introduce il parallelismo?
+- esiste un limite esterno, per esempio database o rete?
+
+Il dimensionamento dovrebbe essere collegato al requisito di performance e ai risultati dei benchmark pertinenti.
+
+
+### Richiesta di server
+
+> «Serve un server dedicato.»
+
+Domande:
+
+- quale workload deve ospitare?
+- con quale frequenza?
+- per quanto tempo?
+- quanti utenti o processi?
+- quale concorrenza?
+- quali risorse richiede?
+- quale disponibilità è necessaria?
+- quali requisiti di sicurezza esistono?
+- quali sistemi deve raggiungere?
+- esiste già una VM o una piattaforma adeguata?
+
+Il server dedicato è quindi una **possibile soluzione**, non il requisito stesso.
+
+
+### Richiesta di un pacchetto
+
+> «Bisogna installare il pacchetto X.»
+
+Domande:
+
+- quale applicazione lo richiede?
+- quale versione?
+- è una dipendenza diretta o indiretta?
+- esiste già nel repository aziendale?
+- quali dipendenze native richiede?
+- quale licenza si applica?
+- come viene aggiornato?
+- chi è responsabile dell'applicazione?
+- il pacchetto entra nella baseline dell'ambiente?
+
+
+### Richiesta di Shiny o API
+
+> «Pubblicare l'applicazione R come servizio.»
+
+Domande:
+
+- quanti utenti?
+- quale traffico?
+- interattivo o batch?
+- quale disponibilità?
+- come avviene l'autenticazione?
+- quali dati vengono esposti?
+- quale gateway o reverse proxy aziendale è disponibile?
+- quali log e metriche sono necessari?
+- come viene gestito il rilascio?
+- chi è l'owner?
+
+
+## Una matrice per le richieste più frequenti
+
+| Richiesta | Evidenza principale | Alternative da considerare | Decisione da motivare |
+|---|---|---|---|
+| pacchetto R | dipendenze, versione, utilizzo | repository esistente, altra versione | installazione e ciclo di vita |
+| RAM | picco, worker, swap, workload | riduzione dati, implementazione, worker | dimensionamento |
+| CPU | utilizzo, core, scaling | algoritmo, parallelizzazione | dimensionamento |
+| server | workload, frequenza, concorrenza, disponibilità | VM, piattaforma esistente | ambiente di esecuzione |
+| Shiny/API | utenti, traffico, sicurezza, disponibilità | piattaforma aziendale | architettura |
+| database | tempi query, carico, dati trasferiti | ottimizzazione query, filtri, aggregazioni | distribuzione del carico |
+| container | requisiti runtime, dipendenze | VM, piattaforma esistente | modalità di deployment |
+
+La matrice non sostituisce la diagnosi.
+
+Serve a rendere esplicite le **informazioni necessarie prima di prendere una decisione**.
+
+
+## Definire responsabilità e autorizzazioni
+
+Per una soluzione controllata è utile distinguere almeno quattro attività:
+
+| Attività | Domanda |
+|---|---|
+| Modificare | chi può cambiare codice, configurazione o ambiente? |
+| Verificare | chi esegue e documenta i test? |
+| Approvare | chi autorizza il nuovo stato secondo la procedura applicabile? |
+| Distribuire | chi porta l'artefatto approvato nell'ambiente target? |
+
+Le responsabilità possono appartenere allo stesso team, ma non devono essere confuse.
+
+IT deve poter sapere:
+
+> **chi è autorizzato a fare cosa e quale evidenza rimane dopo ogni passaggio.**
+
+Questo collega governance, deployment e gestione del cambiamento.
+
+
+## Decisioni basate sull'evidenza
+
+Una richiesta tecnica ben governata può essere rappresentata così:
+
+```text
+REQUISITO
+   ↓
+"Il job deve terminare entro 30 minuti"
+   ↓
+MISURA
+   ↓
+"Durata attuale: 2 ore"
+   ↓
+DIAGNOSI
+   ↓
+"CPU-bound"
+   ↓
+IPOTESI
+   ↓
+"Il workload può beneficiare del parallelismo"
+   ↓
+TEST
+   ↓
+"1 / 2 / 4 / 8 worker"
+   ↓
+EVIDENZA
+   ↓
+"4 worker soddisfano il requisito senza saturare la RAM"
+   ↓
+DECISIONE
+   ↓
+"Configurazione con 4 worker"
+   ↓
+BASELINE
+   ↓
+"Versione software + configurazione + ambiente"
+```
+
+La sequenza evita che la documentazione conservi soltanto la conclusione:
+
+> «Servono 64 GB.»
+
+e perda invece il ragionamento che ha portato a quella conclusione.
+
+
+## Quando la soluzione proposta non è il problema
+
+Una parte importante della governance consiste nel riconoscere quando la richiesta iniziale identifica una soluzione invece del problema.
+
+Esempi:
+
+```text
+"Serve più CPU"
+        ↓
+potrebbe essere una query lenta
+```
+
+```text
+"Serve più RAM"
+        ↓
+potrebbero esserci copie o worker eccessivi
+```
+
+```text
+"Serve un server dedicato"
+        ↓
+potrebbe bastare una VM esistente
+```
+
+```text
+"Serve un pacchetto aggiuntivo"
+        ↓
+potrebbe esistere già una funzionalità equivalente
+```
+
+```text
+"Serve fare tutto in R"
+        ↓
+alcune responsabilità potrebbero appartenere a Oracle,
+APEX, Scheduler, gateway o piattaforme aziendali
+```
+
+Questo non significa respingere automaticamente la richiesta.
+
+Significa riportarla alla domanda corretta:
+
+> **Quale problema dobbiamo risolvere e quale soluzione lo risolve con evidenza sufficiente?**
+
+
+## Ciclo di vita della decisione
+
+Una decisione tecnica non dovrebbe essere considerata definitiva per sempre.
+
+Una soluzione può essere rivalutata quando cambiano:
+
+- volume dei dati;
+- numero di utenti;
+- frequenza delle elaborazioni;
+- requisiti di performance;
+- infrastruttura;
+- dipendenze;
+- requisiti di sicurezza;
+- disponibilità;
+- organizzazione;
+- ownership.
+
+Il ciclo può essere rappresentato così:
+
+```text
+requisito
+   ↓
+decisione
+   ↓
+implementazione
+   ↓
+monitoring
+   ↓
+nuove evidenze
+   ↓
+rivalutazione
+   ↓
+nuova decisione
+```
+
+La governance è quindi un processo continuo, non un'approvazione una tantum.
+
+
+## Le domande fondamentali per IT
+
+Quando arriva una nuova richiesta relativa a R, una sequenza di domande può aiutare a riportare la discussione sul problema.
+
+
+### Qual è il requisito?
+
+Che cosa deve essere ottenuto?
+
+
+### Qual è il workload?
+
+Quanti dati, utenti, esecuzioni e processi sono coinvolti?
+
+
+### Qual è l'evidenza?
+
+Come è stato misurato il problema?
+
+
+### Qual è il collo di bottiglia?
+
+CPU, RAM, I/O, rete, database o altro?
+
+
+### Quali alternative sono state considerate?
+
+È possibile modificare algoritmo, implementazione, dati, parallelismo o architettura?
+
+
+### Quale modifica è stata testata?
+
+Quale variabile è stata cambiata e quale risultato ha prodotto?
+
+
+### Quale ambiente è necessario?
+
+Quale versione di R, quali pacchetti, driver, librerie e sistemi esterni?
+
+
+### Chi è responsabile?
+
+Chi mantiene codice, ambiente, metodo e processo?
+
+
+### Come viene gestito il cambiamento?
+
+Qual è la versione approvata e quale procedura porta alla produzione?
+
+
+### Come viene ricostruito il risultato?
+
+Possiamo collegare input, software, configurazione, esecuzione e output?
+
+
+### Come viene gestito il futuro?
+
+Chi aggiorna, monitora, migra o dismette la soluzione?
+
+
+## Principio finale
+
+La governance di una soluzione R non consiste nel decidere se utilizzare R, quanta RAM assegnare o quale server acquistare.
+
+Consiste nel fare in modo che queste decisioni siano **proporzionate al requisito, sostenute da evidenze e attribuite a responsabilità chiare**.
+
+Il percorso può essere sintetizzato così:
+
+```text
+REQUISITO
+   ↓
+EVIDENZA
+   ↓
+DIAGNOSI
+   ↓
+ALTERNATIVE
+   ↓
+TEST
+   ↓
+DECISIONE
+   ↓
+IMPLEMENTAZIONE
+   ↓
+MONITORING
+   ↓
+RIVALUTAZIONE
+```
+
+In questo modello:
+
+- **Performance** aiuta a capire dove si trova il problema;
+- **Architettura** aiuta a distribuire correttamente le responsabilità;
+- **Deployment** permette di portare la soluzione in esercizio e mantenerla;
+- **Governance** collega questi elementi e rende la decisione tracciabile.
+
+La richiesta iniziale:
+
+> «Ho uno script R, mettetelo sul server.»
+
+diventa quindi una richiesta tecnica più completa:
+
+> **Qual è il requisito? Quale workload deve essere supportato? Quali evidenze abbiamo? Quale ambiente è necessario? Quali alternative sono state valutate? Quale versione deve essere rilasciata? Chi è responsabile della soluzione? Come verrà monitorata e mantenuta nel tempo?**
+
+Questa trasformazione è il vero obiettivo della governance: **non scegliere una tecnologia al posto del richiedente, ma creare le condizioni perché la scelta possa essere motivata, verificata e mantenuta nel tempo.**
+
