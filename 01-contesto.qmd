@@ -7,7 +7,7 @@ subtitle: "Che cosa deve sapere IT prima di valutare una soluzione R"
 
 Questo capitolo definisce il punto di partenza: per IT, una soluzione R non è semplicemente un programma da installare, ma un insieme di runtime, pacchetti, dipendenze e risorse collocato in un contesto operativo. Prima di parlare di CPU, RAM o server è quindi necessario capire che ruolo svolge R e quali componenti richiede.
 
-## Obiettivi della giornata
+## Obiettivi del capitolo
 
 L'obiettivo non è imparare a programmare in R.
 
@@ -34,9 +34,9 @@ La domanda che dovrebbe sorgere è:
 > **"Quali evidenze giustificano questa richiesta?"**
 
 
-## Il caso guida: l'ecologo
+## Un caso guida
 
-Un ricercatore utilizza R per un'elaborazione sui dati ambientali.
+Un collega utilizza R per un'elaborazione sui dati ambientali.
 
 Attualmente:
 
@@ -162,9 +162,7 @@ Una richiesta di "installare un pacchetto" può quindi avere conseguenze anche s
 | `profvis` | Profilazione |
 | `renv` | Gestione dell'ambiente e delle dipendenze |
 
-IT non deve conoscere l'API di questi pacchetti.
-
-Deve riconoscerne il **ruolo**.
+IT non deve conoscere l'API di questi pacchetti, ma dovrebbe riconoscerne il **ruolo**.
 
 
 ### Una richiesta di pacchetto non è una semplice installazione
@@ -183,7 +181,6 @@ IT deve poter chiedere:
 - Quale versione del pacchetto?
 - Da quale repository proviene?
 - Ha bisogno di accesso Internet?
-- È compatibile con l'ambiente aziendale?
 - Come verrà aggiornato?
 
 
@@ -262,8 +259,6 @@ applicazione
 La baseline deve identificare anche i componenti che il lockfile non copre, come sistema operativo, librerie native, driver, client database e configurazione.
 
 ### Gestione delle librerie e riproducibilità
-
-Per IT, una libreria R non è semplicemente una cartella che contiene file.
 
 Quando R viene eseguito, cerca i pacchetti nelle **library** disponibili per quel processo. Il percorso effettivo può dipendere dalla configurazione del sistema e dell'utente.
 

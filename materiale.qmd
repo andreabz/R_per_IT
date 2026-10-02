@@ -1,6 +1,6 @@
 ---
 title: "R per l'IT: dall'esecuzione al deployment"
-subtitle: "Capire, valutare e governare soluzioni sviluppate in R"
+subtitle: "Capire, valutare e gestire soluzioni sviluppate in R"
 author: ""
 format:
   revealjs:
@@ -1813,7 +1813,7 @@ IT non deve necessariamente diventare esperto di R.
 
 Deve diventare capace di:
 
-> **capire la richiesta, chiedere evidenze, valutare l'architettura e governare il componente.**
+> **capire la richiesta, chiedere evidenze, valutare l'architettura e gestire il componente.**
 
 ---
 

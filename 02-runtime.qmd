@@ -10,10 +10,6 @@ Per valutare una richiesta infrastrutturale bisogna capire come il lavoro R vien
 ## Il vocabolario del runtime
 
 
-Questi termini sono spesso utilizzati come sinonimi.
-
-Non lo sono.
-
 ```{mermaid}
 %%| label: mermaid-02-runtime-01
 %%| echo: false

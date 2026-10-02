@@ -79,7 +79,7 @@ Shiny può costituire il livello applicativo, ma non deve necessariamente essere
 
 In funzione dell'architettura aziendale, un reverse proxy o un gateway può gestire TLS, routing, autenticazione, limiti di traffico e altre funzioni perimetrali.
 
-Non è quindi corretto considerare «Shiny senza reverse proxy» un errore universale: la questione è capire quali responsabilità sono già coperte dalla piattaforma e quali devono essere gestite dall'applicazione.
+Shiny senza reverse proxy non è necessariamente un errore: la questione è capire in quale contesto deve lavorare l'applicazione e quali funzionalità deve gestire.
 
 #### Duplicare dati tra R e database
 

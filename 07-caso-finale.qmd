@@ -9,7 +9,7 @@ Il caso finale applica il metodo dell'intero corso a una richiesta concreta: un'
 
 ## Come leggere il caso
 
-Il caso dell'ecologo riassume il metodo dell'intero corso.
+Il caso di un collega riassume il metodo dell'intero corso.
 
 La richiesta iniziale è:
 
@@ -61,7 +61,7 @@ Un'analisi della complessità può indicare se il problema cresce troppo rapidam
 Supponiamo di ottenere:
 
 | Worker | Tempo | RAM |
-|:---:|:---:|:|
+|:------:|:-----:|:---:|
 | 1 | 192 min | 11 GB |
 | 2 | 104 min | 20 GB |
 | 4 | 59 min | 38 GB |
@@ -107,10 +107,11 @@ Il caso può essere letto come una catena di evidenze e conseguenze:
 | database marginale | DB non è il collo di bottiglia principale | non spostare il problema sul database |
 
 Questa tabella non decide quale server acquistare: rende esplicito il percorso con cui una decisione infrastrutturale può essere motivata.
+
+
 ## Dalla decisione alla produzione
 
-
-Nel caso dell'ecologo abbiamo verificato il carico computazionale. In un contesto controllato rimane una seconda domanda:
+In questo caso abbiamo verificato il carico computazionale. In un contesto controllato rimane una seconda domanda:
 
 > **Possiamo ricostruire con quale software e quale ambiente è stato prodotto il risultato?**
 

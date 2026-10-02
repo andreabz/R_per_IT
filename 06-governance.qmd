@@ -13,11 +13,8 @@ Questo capitolo raccoglie il metodo decisionale che collega i capitoli precedent
 Le richieste più difficili sono quelle che arrivano già accompagnate dalla soluzione:
 
 > «Servono 64 GB di RAM.»
-
 > «Servono 16 core.»
-
 > «Serve un server dedicato.»
-
 > «Bisogna installare questo pacchetto.»
 
 La procedura IT dovrebbe riportare la richiesta al problema originale.
@@ -230,7 +227,7 @@ In questi casi IT dovrebbe poter identificare:
 
 Il pacchetto diventa così un **componente software governato**, non una copia di funzioni condivisa manualmente.
 
-## Governare il ciclo di vita
+## gestire il ciclo di vita
 
 
 Oltre alle performance, IT dovrebbe considerare il rischio operativo.
@@ -367,8 +364,9 @@ La stessa logica può essere applicata alle richieste più frequenti.
 | Shiny/API | utenti, traffico, autenticazione, disponibilità | piattaforma web aziendale | architettura |
 
 La matrice non sostituisce la diagnosi: serve a rendere esplicite le **evidenze** che devono precedere la decisione.
-## Definire le responsabilità
 
+
+## Definire le responsabilità
 
 Per una soluzione controllata è utile distinguere almeno quattro responsabilità:
 

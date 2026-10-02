@@ -1,11 +1,11 @@
 ---
 title: "R per l'IT"
-subtitle: "Capire, valutare e governare soluzioni sviluppate in R"
+subtitle: "Capire, valutare e gestire soluzioni sviluppate in R"
 ---
 
 ## A chi è rivolto
 
-Questo materiale è pensato per un dipartimento IT che deve **valutare e governare soluzioni sviluppate in R**, non per chi deve imparare a programmare in R.
+Questo materiale è pensato per un dipartimento IT che deve **valutare e gestire soluzioni sviluppate in R**, non per chi deve imparare a programmare in R.
 
 L'obiettivo è fornire un linguaggio comune per affrontare richieste come:
 
@@ -42,7 +42,7 @@ Gestione
 
 ## Come usare questo materiale
 
-Questo materiale non vuole essere un manuale di programmazione R. È una guida per **leggere richieste tecniche e porre le domande corrette**.
+Questo materiale è una guida per **leggere richieste tecniche e porre le domande corrette**.
 
 Il materiale è organizzato come un manuale tecnico, con una progressione dal runtime alla gestione operativa:
 
@@ -57,16 +57,9 @@ Il materiale è organizzato come un manuale tecnico, con una progressione dal ru
 ## Quattro domande da ricordare
 
 > **1. Che cosa deve fare?**
-
 > **2. Quale evidenza dimostra che serve ciò che viene richiesto?**
-
 > **3. Dove deve essere eseguito il lavoro?**
-
 > **4. Esiste già un componente aziendale adatto?**
-
-## Nota
-
-Il materiale nasce come corso per l'IT e viene qui sviluppato in forma estesa. La versione a slide può essere mantenuta separatamente come supporto alla formazione.
 
 
 ## Modello operativo del corso

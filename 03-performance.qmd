@@ -392,13 +392,6 @@ Domande:
 - Quanto costa creare i worker?
 - Quanta memoria usa ogni worker?
 - Il database supporta il carico?
-- Lo speed-up è misurato?
-
-La richiesta:
-
-> "Servono 16 core"
-
-non è una dimostrazione.
 
 
 ### Livello 4 — Hardware
