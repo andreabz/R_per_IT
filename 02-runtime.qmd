@@ -95,6 +95,33 @@ Per IT la domanda importante è:
 
 > **Quanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?**
 
+### Come rispondere a «quanti worker e quanti thread?»
+
+Non esiste una regola generale del tipo «un worker per core» o «un certo numero di thread per worker».
+
+La configurazione va determinata sperimentalmente sul workload reale. Per ogni prova è utile registrare almeno:
+
+| Worker | Thread/worker | Tempo | RAM di picco | CPU | I/O |
+|:------:|:-------------:|------:|-------------:|----:|-----:|
+| 1 | 1 | ... | ... | ... | ... |
+| 2 | 1 | ... | ... | ... | ... |
+| 4 | 1 | ... | ... | ... | ... |
+| 4 | 2 | ... | ... | ... | ... |
+
+Il punto non è massimizzare il numero di unità di esecuzione, ma trovare una configurazione che soddisfi il requisito temporale e rimanga compatibile con le risorse disponibili e con la concorrenza attesa.
+
+Per esempio, 4 worker che utilizzano 4 thread nativi ciascuno possono arrivare a utilizzare 16 thread complessivi. Su una macchina con 8 core questo può produrre **oversubscription**: più unità software competono per meno risorse hardware, con possibile aumento del tempo e del consumo di CPU.
+
+La misura deve quindi considerare almeno due livelli:
+
+- parallelismo esplicito dell'applicazione: numero di worker;
+- parallelismo interno delle librerie native: thread utilizzati dalle operazioni.
+
+Quando entrambi sono configurabili, vanno valutati insieme.
+
+Per una piattaforma condivisa bisogna inoltre distinguere la configurazione del singolo job dalla concorrenza complessiva: 4 worker per un job possono essere sostenibili con un solo job attivo, ma non necessariamente con dieci job contemporanei.
+
+
 
 ## Parallelismo e scaling
 

@@ -44,7 +44,7 @@ Gestione
 
 Questo materiale è una guida per **leggere richieste tecniche e porre le domande corrette**.
 
-Il materiale è organizzato come un manuale tecnico, con una progressione dal runtime alla gestione operativa:
+Il materiale è organizzato come un manuale tecnico, con una progressione dai concetti del runtime alla gestione operativa. Gli scenari d'uso di R vengono ripresi alla fine, quando il lettore dispone già degli strumenti per valutarli:
 
 1. **Contesto e ambiente R** — che cosa vede IT quando arriva una richiesta R.
 2. **Runtime, processi e parallelismo** — processi, core, thread, worker e risorse.
@@ -52,7 +52,7 @@ Il materiale è organizzato come un manuale tecnico, con una progressione dal ru
 4. **Architettura e integrazione** — R, Oracle, APEX, Quarto, Shiny e API.
 5. **Deployment e gestione operativa** — sicurezza, logging, monitoring e ownership.
 6. **Governance e valutazione delle richieste** — come valutare pacchetti, RAM, CPU e server.
-7. **Caso finale e checklist** — applicazione del metodo al caso dell'ecologo.
+7. **Dalla richiesta alla decisione** — scenari operativi, caso didattico e checklist.
 
 ## Quattro domande da ricordare
 
@@ -64,7 +64,7 @@ Il materiale è organizzato come un manuale tecnico, con una progressione dal ru
 
 ## Modello operativo del corso
 
-Il corso può essere letto come una catena unica:
+Il corso può essere letto come una catena unica, nella quale ogni passaggio produce le informazioni necessarie al successivo:
 
 ```text
 requisito
