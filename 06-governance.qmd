@@ -482,20 +482,18 @@ La governance non riguarda soltanto l'ingresso in produzione, ma l'intero ciclo 
 
 ## Una matrice per le richieste più frequenti
 
-| Richiesta | Evidenza principale | Alternative da considerare | Decisione da motivare |
-|---|---|---|---|
-| pacchetto R | dipendenze, versione, utilizzo | repository esistente, altra versione | installazione e ciclo di vita |
-| RAM | picco, worker, swap, workload | riduzione dati, implementazione, worker | dimensionamento |
-| CPU | utilizzo, core, scaling | algoritmo, parallelizzazione | dimensionamento |
-| server | workload, frequenza, concorrenza, disponibilità | VM, piattaforma esistente | ambiente di esecuzione |
-| Shiny/API | utenti, traffico, sicurezza, disponibilità | piattaforma aziendale | architettura |
-| database | tempi query, carico, dati trasferiti | ottimizzazione query, filtri, aggregazioni | distribuzione del carico |
-| container | requisiti runtime, dipendenze | VM, piattaforma esistente | modalità di deployment |
+Le richieste tecniche arrivano spesso già formulate come soluzione: «serve RAM», «serve CPU», «serve un server», «serve un pacchetto».
 
-La matrice non sostituisce la diagnosi.
+La governance non deve sostituire la diagnosi dei capitoli 1–5. Deve invece assicurare che, prima della decisione, siano identificati:
 
-Serve a rendere esplicite le **informazioni necessarie prima di prendere una decisione**.
+- requisito;
+- evidenza disponibile;
+- alternativa considerata;
+- soggetto responsabile;
+- verifica richiesta;
+- stato approvato risultante.
 
+La domanda di governance è quindi **se il processo decisionale sia completo e tracciabile**, non quale risorsa tecnica debba essere scelta.
 
 ## Definire responsabilità e autorizzazioni
 
