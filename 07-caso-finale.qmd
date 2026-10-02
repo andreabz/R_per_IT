@@ -16,24 +16,9 @@ Il lettore deve arrivare qui sapendo già distinguere ambiente, runtime, perform
 
 ## Classificare la richiesta
 
-Prima di valutare CPU, RAM, pacchetti o server, IT dovrebbe identificare:
+Prima di applicare i sei scenari, la richiesta va descritta con pochi elementi: ruolo di R, frequenza, utilizzatori, concorrenza, disponibilità richiesta e destinazione del risultato.
 
-- che cosa fa R;
-- chi esegue il lavoro;
-- quanto spesso viene eseguito;
-- chi utilizza il risultato;
-- quante esecuzioni possono essere contemporanee;
-- quale requisito di disponibilità esiste;
-- se il risultato entra in un processo operativo o analitico controllato.
-
-Una progressione utile è:
-
-```text
-sperimentazione → uso personale → job ricorrente → pubblicazione → servizio → componente gestito
-```
-
-Il passaggio verso destra non implica necessariamente più hardware. Aumentano soprattutto riproducibilità, controllo, sicurezza, test, osservabilità, ownership e gestione delle modifiche.
-
+La classificazione serve a scegliere **quali domande porre**, non a sostituire l'analisi dei capitoli precedenti.
 
 ## Sei scenari operativi
 
@@ -94,99 +79,43 @@ Per un'API il carico dipende dal rapporto tra costo della singola richiesta, fre
 
 ## Dalla richiesta alla decisione
 
-Supponiamo che il job debba essere completato entro 30 minuti.
+Il caso seguente è un esercizio di applicazione. I dati sono volutamente costruiti: non rappresentano una specifica applicazione reale.
 
-Questo cambia la domanda:
-
-> Non «quale server serve?», ma «quale configurazione consente di completare il workload entro 30 minuti con margine operativo adeguato?»
-
-
-### Baseline iniziale
-
-Supponiamo di osservare:
-
-- durata: 3 h 12 min;
-- CPU: 98%;
-- RAM: 11 GB su 32 GB;
-- worker: 1;
-- database: trascurabile;
-- I/O: normale.
-
-La prima ipotesi è un workload CPU-bound.
-
-Ma manca ancora una risposta fondamentale:
-
-> **perché viene utilizzato un solo worker?**
-
-
-### Analizzare l'implementazione
-
-Prima dell'hardware bisogna sapere se il lavoro è:
-
-- seriale per natura;
-- seriale per implementazione;
-- parallelizzabile;
-- dominato da un algoritmo inefficiente.
-
-Un profiling può indicare dove viene speso il tempo.
-
-Un'analisi della complessità può indicare se il problema cresce troppo rapidamente al crescere dei dati.
-
-
-### Test di scaling
-
-Supponiamo di ottenere:
+**Requisito:** un'elaborazione R deve passare da circa 3 ore a meno di 30 minuti.
 
 | Worker | Tempo | RAM |
-|:------:|:-----:|:---:|
+|:---:|---:|---:|
 | 1 | 192 min | 11 GB |
 | 2 | 104 min | 20 GB |
 | 4 | 59 min | 38 GB |
 | 8 | 51 min | 70 GB |
 
-Il parallelismo funziona, ma non scala linearmente.
+Il caso va letto utilizzando gli strumenti dei capitoli precedenti:
 
-Il passaggio da 4 a 8 worker riduce il tempo di soli 8 minuti e aumenta fortemente la memoria.
+1. **Cap. 1 — ambiente:** identificare R, pacchetti, dipendenze e configurazione;
+2. **Cap. 2 — runtime:** descrivere worker, memoria, parallelismo e concorrenza;
+3. **Cap. 3 — performance:** verificare il collo di bottiglia e interpretare il benchmark;
+4. **Cap. 4 — architettura:** decidere dove eseguire il workload e quali componenti coinvolgere;
+5. **Cap. 5 — deployment:** definire artefatto, test, rilascio e operatività;
+6. **Cap. 6 — governance:** associare evidenze, responsabilità e stato approvato.
 
-Questo introduce un trade-off:
+La tabella mostra già due fatti utili: il parallelismo porta beneficio, ma lo scaling è non lineare e il consumo di RAM cresce rapidamente. **Non basta quindi tradurre il requisito in «servono più core»: occorre motivare una configurazione sulla base del workload e dei vincoli complessivi.**
 
-```text
-tempo ↓
-RAM ↑
-```
+### Come leggere il caso
 
+Per ogni passaggio occorre distinguere:
 
-### Valutare l'infrastruttura
+| Passaggio | Domanda |
+|---|---|
+| Requisito | Quale risultato deve essere ottenuto? |
+| Evidenza | Che cosa è stato misurato? |
+| Interpretazione | Che cosa suggeriscono le misure? |
+| Verifica | Quale prova consente di discriminare le alternative? |
+| Decisione | Quale configurazione viene adottata e perché? |
+| Baseline | Quale stato viene identificato come riferimento? |
+| Esercizio | Come viene monitorato e mantenuto? |
 
-A questo punto è possibile discutere l'infrastruttura con dati concreti.
-
-Non sappiamo ancora se servano 16 core.
-
-Sappiamo invece che:
-
-- il carico è CPU-heavy;
-- il parallelismo porta beneficio;
-- 8 worker richiedono molta più RAM;
-- lo scaling presenta rendimenti decrescenti.
-
-Il dimensionamento deve quindi considerare anche il requisito temporale e la concorrenza.
-
-
-### Sintesi delle evidenze
-
-Il caso può essere letto come una catena di evidenze e conseguenze:
-
-| Evidenza | Interpretazione | Conseguenza |
-|---|---|---|
-| CPU 98% | carico prevalentemente CPU-bound | analizzare algoritmo e parallelismo |
-| 1 worker | parallelismo non utilizzato | misurare lo scaling |
-| 4 worker → 59 min | beneficio significativo | il parallelismo è utile |
-| 8 worker → 51 min | rendimento decrescente | aggiungere worker ha beneficio limitato |
-| RAM 70 GB | forte crescita della memoria | CPU e RAM vanno dimensionate insieme |
-| database marginale | DB non è il collo di bottiglia principale | non spostare il problema sul database |
-
-Questa tabella non decide quale server acquistare: rende esplicito il percorso con cui una decisione infrastrutturale può essere motivata.
-
+Il caso non fornisce automaticamente una configurazione finale. Il suo scopo è mostrare **come si passa da una richiesta a una decisione documentata**.
 
 ## Checklist conclusiva
 
