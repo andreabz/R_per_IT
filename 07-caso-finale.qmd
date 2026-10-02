@@ -6,29 +6,19 @@ subtitle: "Scenari operativi, caso didattico e checklist per IT"
 
 ## Perché questo capitolo
 
-Questo capitolo applica gli strumenti dei capitoli precedenti al problema operativo: classificare una richiesta R, capire quali domande porre, stabilire quali evidenze raccogliere e definire che cosa serve prima della produzione. Gli scenari sono categorie operative: una stessa soluzione può evolvere da sperimentazione a componente gestito.
+Questo capitolo **non introduce nuovi concetti**: applica quelli precedenti a sei scenari operativi e a un caso didattico.
 
+La domanda proprietaria è:
+
+> **Come applichiamo il metodo a una richiesta concreta?**
+
+Il lettore deve arrivare qui sapendo già distinguere ambiente, runtime, performance, architettura, deployment e governance. Qui deve imparare a collegarli e a produrre una valutazione IT coerente.
 
 ## Classificare la richiesta
 
-Prima di valutare CPU, RAM, pacchetti o server, IT dovrebbe identificare:
+Prima di applicare i sei scenari, la richiesta va descritta con pochi elementi: ruolo di R, frequenza, utilizzatori, concorrenza, disponibilità richiesta e destinazione del risultato.
 
-- che cosa fa R;
-- chi esegue il lavoro;
-- quanto spesso viene eseguito;
-- chi utilizza il risultato;
-- quante esecuzioni possono essere contemporanee;
-- quale requisito di disponibilità esiste;
-- se il risultato entra in un processo operativo o analitico controllato.
-
-Una progressione utile è:
-
-```text
-sperimentazione → uso personale → job ricorrente → pubblicazione → servizio → componente gestito
-```
-
-Il passaggio verso destra non implica necessariamente più hardware. Aumentano soprattutto riproducibilità, controllo, sicurezza, test, osservabilità, ownership e gestione delle modifiche.
-
+La classificazione serve a scegliere **quali domande porre**, non a sostituire l'analisi dei capitoli precedenti.
 
 ## Sei scenari operativi
 
@@ -89,334 +79,73 @@ Per un'API il carico dipende dal rapporto tra costo della singola richiesta, fre
 
 ## Dalla richiesta alla decisione
 
-Supponiamo che il job debba essere completato entro 30 minuti.
+Il caso seguente è un esercizio di applicazione. I dati sono volutamente costruiti: non rappresentano una specifica applicazione reale.
 
-Questo cambia la domanda:
-
-> Non «quale server serve?», ma «quale configurazione consente di completare il workload entro 30 minuti con margine operativo adeguato?»
-
-
-### Baseline iniziale
-
-Supponiamo di osservare:
-
-- durata: 3 h 12 min;
-- CPU: 98%;
-- RAM: 11 GB su 32 GB;
-- worker: 1;
-- database: trascurabile;
-- I/O: normale.
-
-La prima ipotesi è un workload CPU-bound.
-
-Ma manca ancora una risposta fondamentale:
-
-> **perché viene utilizzato un solo worker?**
-
-
-### Analizzare l'implementazione
-
-Prima dell'hardware bisogna sapere se il lavoro è:
-
-- seriale per natura;
-- seriale per implementazione;
-- parallelizzabile;
-- dominato da un algoritmo inefficiente.
-
-Un profiling può indicare dove viene speso il tempo.
-
-Un'analisi della complessità può indicare se il problema cresce troppo rapidamente al crescere dei dati.
-
-
-### Test di scaling
-
-Supponiamo di ottenere:
+**Requisito:** un'elaborazione R deve passare da circa 3 ore a meno di 30 minuti.
 
 | Worker | Tempo | RAM |
-|:------:|:-----:|:---:|
+|:---:|---:|---:|
 | 1 | 192 min | 11 GB |
 | 2 | 104 min | 20 GB |
 | 4 | 59 min | 38 GB |
 | 8 | 51 min | 70 GB |
 
-Il parallelismo funziona, ma non scala linearmente.
+Il caso va letto utilizzando gli strumenti dei capitoli precedenti:
 
-Il passaggio da 4 a 8 worker riduce il tempo di soli 8 minuti e aumenta fortemente la memoria.
+1. **Cap. 1 — ambiente:** identificare R, pacchetti, dipendenze e configurazione;
+2. **Cap. 2 — runtime:** descrivere worker, memoria, parallelismo e concorrenza;
+3. **Cap. 3 — performance:** verificare il collo di bottiglia e interpretare il benchmark;
+4. **Cap. 4 — architettura:** decidere dove eseguire il workload e quali componenti coinvolgere;
+5. **Cap. 5 — deployment:** definire artefatto, test, rilascio e operatività;
+6. **Cap. 6 — governance:** associare evidenze, responsabilità e stato approvato.
 
-Questo introduce un trade-off:
+La tabella mostra già due fatti utili: il parallelismo porta beneficio, ma lo scaling è non lineare e il consumo di RAM cresce rapidamente. **Non basta quindi tradurre il requisito in «servono più core»: occorre motivare una configurazione sulla base del workload e dei vincoli complessivi.**
 
-```text
-tempo ↓
-RAM ↑
-```
+### Come leggere il caso
 
+Per ogni passaggio occorre distinguere:
 
-### Valutare l'infrastruttura
-
-A questo punto è possibile discutere l'infrastruttura con dati concreti.
-
-Non sappiamo ancora se servano 16 core.
-
-Sappiamo invece che:
-
-- il carico è CPU-heavy;
-- il parallelismo porta beneficio;
-- 8 worker richiedono molta più RAM;
-- lo scaling presenta rendimenti decrescenti.
-
-Il dimensionamento deve quindi considerare anche il requisito temporale e la concorrenza.
-
-
-### Sintesi delle evidenze
-
-Il caso può essere letto come una catena di evidenze e conseguenze:
-
-| Evidenza | Interpretazione | Conseguenza |
-|---|---|---|
-| CPU 98% | carico prevalentemente CPU-bound | analizzare algoritmo e parallelismo |
-| 1 worker | parallelismo non utilizzato | misurare lo scaling |
-| 4 worker → 59 min | beneficio significativo | il parallelismo è utile |
-| 8 worker → 51 min | rendimento decrescente | aggiungere worker ha beneficio limitato |
-| RAM 70 GB | forte crescita della memoria | CPU e RAM vanno dimensionate insieme |
-| database marginale | DB non è il collo di bottiglia principale | non spostare il problema sul database |
-
-Questa tabella non decide quale server acquistare: rende esplicito il percorso con cui una decisione infrastrutturale può essere motivata.
-
-
-## Prima della produzione
-
-Una richiesta di produzione dovrebbe poter essere ricondotta a una scheda minima.
-
-
-### Applicazione
-
-- scopo e owner;
-- utenti o sistemi che la utilizzano;
-- input e output;
-- frequenza e concorrenza;
-- requisito temporale e di disponibilità.
-
-
-### Software
-
-- repository e versione;
-- versione di R;
-- dipendenze e versioni;
-- lockfile, se utilizzato;
-- dipendenze native, driver e client;
-- configurazione.
-
-
-### Verifica
-
-- test definiti;
-- dataset di riferimento, quando applicabile;
-- output attesi o criteri di accettazione;
-- esito dei test associato alla versione del software.
-
-
-### Operatività
-
-- credenziali e segreti;
-- logging e monitoring;
-- gestione degli errori;
-- notifiche;
-- rollback e continuità, quando applicabili;
-- ownership e processo di modifica.
-
-
-### Risultati analitici
-
-Quando l'applicazione produce o manipola risultati analitici, IT deve identificare il responsabile del metodo/processo e verificare che siano state eseguite le attività previste e che l'evidenza sia conservata. Questa verifica non trasferisce a IT la responsabilità della validità scientifica o metrologica del metodo.
-
-
-## Dalla decisione alla produzione
-
-In questo caso abbiamo verificato il carico computazionale. In un contesto controllato rimane una seconda domanda:
-
-> **Possiamo ricostruire con quale software e quale ambiente è stato prodotto il risultato?**
-
-Una scheda minima potrebbe essere:
-
-| Elemento | Esempio |
+| Passaggio | Domanda |
 |---|---|
-| applicazione | elaborazione R |
-| versione codice | tag/release |
-| commit | identificativo Git |
-| R | versione |
-| pacchetti | `renv.lock` |
-| OS | versione |
-| container | immagine e digest, se utilizzato |
-| dataset di riferimento | identificativo |
-| test | suite e versione |
-| risultato test | esito |
-| metodo | identificativo/versione |
+| Requisito | Quale risultato deve essere ottenuto? |
+| Evidenza | Che cosa è stato misurato? |
+| Interpretazione | Che cosa suggeriscono le misure? |
+| Verifica | Quale prova consente di discriminare le alternative? |
+| Decisione | Quale configurazione viene adottata e perché? |
+| Baseline | Quale stato viene identificato come riferimento? |
+| Esercizio | Come viene monitorato e mantenuto? |
 
-Questa evidenza risponde a un problema diverso dal dimensionamento del server.
-
-```text
-performance
-    ↓
-"quanto hardware serve?"
-
-baseline software
-    ↓
-"con quale ambiente è stato prodotto il risultato?"
-
-test software
-    ↓
-"il software si comporta come previsto?"
-
-metodo
-    ↓
-"il metodo è adeguato allo scopo?"
-```
-
-Le quattro domande non devono essere fuse in una sola.
-
-
-### Dal software installato alla configurazione riproducibile
-
-Se l'applicazione viene distribuita come container, il percorso può diventare:
-
-```text
-codice versionato
-      ↓
-dipendenze dichiarate
-      ↓
-build container
-      ↓
-test
-      ↓
-immagine identificata
-      ↓
-deployment
-      ↓
-risultato
-```
-
-Il container rende più controllabile la distribuzione dell'ambiente, ma non elimina la necessità di identificare i dati, le configurazioni e i servizi esterni.
-
-
-### Dal caso alla produzione
-
-Il caso può essere esteso fino alla gestione operativa completa:
-
-```text
-richiesta: 16 core / 64 GB
-          ↓
-requisito: < 30 min
-          ↓
-diagnostica: CPU 98%, 1 worker
-          ↓
-profiling + analisi algoritmo
-          ↓
-scaling: 1 / 2 / 4 / 8 worker
-          ↓
-scelta architetturale
-          ↓
-baseline software
-          ↓
-test e verifica
-          ↓
-artefatto / container identificato
-          ↓
-deployment
-          ↓
-monitoring
-          ↓
-modifica futura
-          ↓
-analisi d'impatto + nuova baseline
-```
-
-Questo completa il collegamento tra performance, architettura, deployment e governance. Una decisione infrastrutturale non chiude il ciclo: il sistema deve poter essere mantenuto, modificato e nuovamente verificato.
-
-
-### La domanda che rimane
-
-Anche se un server potente risolve il problema, bisogna chiedersi:
-
-> **perché il workload richiede così tanto calcolo?**
-
-Potrebbero esserci:
-
-- algoritmo inefficiente;
-- dati non filtrati;
-- elaborazioni ripetute;
-- copie inutili;
-- lavoro che potrebbe essere eseguito in Oracle;
-- assenza di caching;
-- operazioni seriali non necessarie.
-
-Un hardware adeguato non elimina necessariamente un problema applicativo.
-
-
-## Strumenti operativi per IT
-
-Per rendere valutabile una richiesta di infrastruttura, è utile chiedere una scheda con:
-
-| Informazione | Esempio |
-|---|---|
-| scopo | elaborazione R |
-| input | dataset monitoraggio |
-| dimensione | 20 GB |
-| durata attuale | 192 min |
-| obiettivo | < 30 min |
-| CPU | 98% |
-| RAM | 11 GB |
-| worker | 1 |
-| scaling test | 1/2/4/8 |
-| profiling | disponibile |
-| DB | marginale |
-| frequenza | 1–2/giorno |
-| concorrenza | 1–2 job |
-
-Una scheda di questo tipo permette a IT di discutere il dimensionamento senza dover diventare sviluppatore R.
-
+Il caso non fornisce automaticamente una configurazione finale. Il suo scopo è mostrare **come si passa da una richiesta a una decisione documentata**.
 
 ## Checklist conclusiva
 
+La checklist finale non ripete i contenuti dei capitoli precedenti: li usa come riferimenti per una valutazione unica.
 
 ### Applicazione
-
 - [ ] Che cosa deve fare?
-- [ ] È script, job, report, app o API?
-- [ ] Chi la usa?
-- [ ] Qual è il requisito temporale?
+- [ ] Quale scenario operativo descrive la richiesta?
+- [ ] Chi utilizza il risultato?
 
+### Evidenze
+- [ ] Qual è il requisito?
+- [ ] Quale misura o evidenza lo supporta?
+- [ ] Quale verifica è necessaria?
 
-### Performance
+### Collocazione
+- [ ] Dove deve essere eseguito il lavoro?
+- [ ] Quali componenti aziendali esistono già?
+- [ ] Quali confini devono essere definiti tra R e gli altri sistemi?
 
-- [ ] Durata misurata?
-- [ ] CPU misurata?
-- [ ] RAM di picco?
-- [ ] I/O?
-- [ ] Database?
-- [ ] Profiling?
-- [ ] Scaling test?
+### Esercizio
+- [ ] Quale artefatto viene distribuito?
+- [ ] Come viene monitorato?
+- [ ] Come viene modificato o ripristinato?
 
-
-### Architettura
-
-- [ ] Dove deve essere eseguita?
-- [ ] Esiste già una piattaforma?
-- [ ] Quale componente gestisce i dati?
-- [ ] Quale componente gestisce l'interfaccia?
-- [ ] Quale componente gestisce l'orchestrazione?
-
-
-### Produzione
-
-- [ ] Dipendenze riproducibili?
-- [ ] Credenziali gestite?
-- [ ] Logging?
-- [ ] Monitoring?
-- [ ] Gestione degli errori?
-- [ ] Ownership?
-- [ ] Aggiornamenti?
-- [ ] Continuità operativa?
-
+### Responsabilità
+- [ ] Chi mantiene il software?
+- [ ] Chi gestisce l'infrastruttura?
+- [ ] Chi verifica il metodo, quando applicabile?
+- [ ] Quale evidenza rimane della decisione?
 
 ### Le quattro domande
 
@@ -425,40 +154,5 @@ Una scheda di questo tipo permette a IT di discutere il dimensionamento senza do
 3. **Dove deve essere eseguito il lavoro?**
 4. **Esiste già un componente aziendale adatto?**
 
-Queste quattro domande permettono di trasformare una richiesta tecnica in un problema valutabile.
-
-
-### Una buona architettura è anche una questione organizzativa
-
-Non basta che il codice funzioni.
-
-Occorre considerare:
-
-- competenze disponibili;
-- manutenzione;
-- sicurezza;
-- costi;
-- monitoraggio;
-- aggiornamenti;
-- dipendenze;
-- continuità operativa;
-- integrazione con gli standard aziendali.
-
-Una soluzione tecnicamente possibile può essere operativamente inadatta.
-
-
-### Discussione
-
-
-#### Domande da portare nel proprio contesto
-
-- Quali richieste R arrivano oggi a IT?
-- Quali sono difficili da valutare?
-- Quali componenti R sono già presenti?
-- Quali integrazioni con Oracle esistono?
-- Dove viene usato APEX?
-- Quali job R sono già schedulati?
-- Quali applicazioni R sono già in produzione?
-- Chi ne è responsabile?
-- Quali dati diagnostici vengono normalmente raccolti?
+Queste domande chiudono il percorso del corso: non sostituiscono i capitoli precedenti, ma li attivano in una sequenza decisionale.
 

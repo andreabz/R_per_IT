@@ -64,7 +64,7 @@ book:
         contents:
           - 05-deployment.qmd
 
-      - section: "6. Governance e valutazione delle richieste"
+      - section: "6. Governance e responsabilità"
         contents:
           - 06-governance.qmd
 

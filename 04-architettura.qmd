@@ -6,34 +6,13 @@ subtitle: "R, database, APEX, Quarto, Shiny, API e server"
 
 ## Perché questo capitolo
 
-Nei capitoli precedenti abbiamo visto come R utilizza le risorse e come diagnosticare un problema di performance.
+Una volta compreso come R viene eseguito, bisogna decidere **dove collocarlo e quali responsabilità assegnare agli altri componenti**.
 
-Il passo successivo è spostare l'attenzione dalla singola elaborazione al **sistema nel quale l'elaborazione deve vivere**.
+La domanda proprietaria è:
 
-La domanda non è soltanto:
+> **Dove deve vivere la soluzione e come si integra con il resto del sistema?**
 
-> «Dove eseguiamo R?»
-
-ma:
-
-> **«Quale componente deve essere responsabile di ciascuna parte del lavoro?»**
-
-Un'architettura può infatti distribuire le responsabilità tra componenti diversi:
-
-```text
-Oracle       → persistenza, query, integrità
-R            → analisi, modello, algoritmo scientifico
-Quarto       → report
-Scheduler    → esecuzione
-APEX         → interfaccia gestionale
-API gateway  → esposizione del servizio
-Monitoring   → controllo operativo
-```
-
-Il principio generale è semplice:
-
-> **R non deve necessariamente fare tutto. Deve fare bene la parte di lavoro per la quale è stato scelto.**
-
+**Perimetro:** questo capitolo tratta scelte architetturali, confini tra componenti, integrazione e contesto di esecuzione. Build, test, release e gestione delle modifiche appartengono al capitolo 5; responsabilità e approvazioni al capitolo 6.
 
 ## Definire i requisiti
 
@@ -245,16 +224,9 @@ Prima di introdurre un server fisico è però opportuno verificare se una VM o u
 
 ## Container: esecuzione e deployment
 
-Il container può essere considerato sotto due prospettive diverse.
-
-
-### Container come ambiente di esecuzione
-
-In questo capitolo il container rappresenta una **scelta architetturale di esecuzione**.
+Il container può essere considerato anche come **scelta architetturale di esecuzione**.
 
 Il suo scopo è isolare e distribuire il runtime dell'applicazione rispetto all'host e alla piattaforma.
-
-Il modello concettuale è:
 
 ```text
 immagine
@@ -270,34 +242,7 @@ host / piattaforma
 
 Il vantaggio principale per IT è la possibilità di standardizzare e riprodurre l'ambiente applicativo.
 
-
-### Container come artefatto di rilascio
-
-Nel contesto del deployment, invece, il container può essere visto come un artefatto costruito, identificato e distribuito.
-
-L'immagine può essere:
-
-1. costruita;
-2. testata;
-3. versionata;
-4. pubblicata in un registry;
-5. distribuita sulla piattaforma.
-
-Il container non significa però «nessuna gestione».
-
-Restano da gestire:
-
-- immagini;
-- vulnerabilità;
-- aggiornamenti;
-- registry;
-- rete;
-- storage;
-- segreti;
-- risorse;
-- logging;
-- monitoring.
-
+La costruzione, il versionamento e la distribuzione dell'immagine come artefatto appartengono invece al capitolo 5.
 
 ## Eseguire e orchestrare
 
@@ -689,74 +634,6 @@ R non deve diventare contemporaneamente:
 - server di posta.
 
 R svolge il lavoro specialistico per cui è stato scelto.
-
-
-## Dalla richiesta tecnica all'architettura
-
-Quando arriva una richiesta del tipo:
-
-> «Serve un server per R.»
-
-la richiesta deve essere scomposta.
-
-
-### Applicazione
-
-- Che cosa fa?
-- È batch, interattiva, web o API?
-- Deve essere sempre disponibile?
-- Quanti utenti la utilizzano?
-- Quante esecuzioni possono essere contemporaneamente attive?
-
-
-### Dati
-
-- Da dove arrivano?
-- Quanto sono grandi?
-- Quanto crescono?
-- Dove devono essere persistiti?
-- Quale sistema è il riferimento del dato?
-
-
-### Performance
-
-- Quanto dura?
-- Qual è il tempo obiettivo?
-- Quale risorsa è stata osservata come collo di bottiglia?
-- Come è stata misurata?
-- Qual è il picco di RAM?
-- Qual è il livello di CPU?
-
-
-### Parallelismo
-
-- Quanti worker vengono utilizzati?
-- Quanto scala il workload?
-- Quanta memoria utilizza ogni worker?
-- Esistono thread nativi oltre ai worker?
-- Quanti job possono essere contemporaneamente attivi?
-
-
-### Integrazione
-
-- Quale database viene utilizzato?
-- Quale scheduler?
-- Quale sistema di autenticazione?
-- Quale sistema di monitoring?
-- Quale storage?
-- Quale sistema di gestione dei segreti?
-
-
-### Operatività
-
-- Chi esegue il job?
-- Chi lo monitora?
-- Chi riceve gli errori?
-- Come viene aggiornato?
-- Chi mantiene il codice?
-- Qual è il processo di rilascio?
-
-La risposta a queste domande permette di definire l'architettura prima di discutere il dimensionamento della macchina.
 
 
 ## Una regola pratica

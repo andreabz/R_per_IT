@@ -6,47 +6,17 @@ subtitle: "Versionamento, test, CI/CD, rilascio, sicurezza, continuità e owners
 
 ## Perché questo capitolo
 
-L'architettura descrive **come sono distribuite le responsabilità tra i componenti**; il deployment descrive **come una soluzione viene portata in produzione e mantenuta nel tempo**.
+Il capitolo descrive il passaggio da software sviluppato a **artefatto rilasciabile, distribuibile e gestibile in esercizio**.
 
-Un programma che funziona sul PC dello sviluppatore non è automaticamente pronto per essere eseguito in produzione.
+La domanda proprietaria è:
 
-Per essere gestibile, una soluzione deve poter essere:
+> **Come trasformiamo il software in qualcosa di rilasciabile e gestibile?**
 
-- identificata;
-- ricostruita;
-- testata;
-- distribuita;
-- configurata;
-- monitorata;
-- aggiornata;
-- ripristinata.
+Il percorso è:
 
-Il percorso può essere rappresentato così:
+`codice → verifica → build → artefatto → release → deployment → osservabilità → aggiornamento`.
 
-```text
-codice
-  ↓
-versione
-  ↓
-dipendenze
-  ↓
-test
-  ↓
-artefatto
-  ↓
-deployment
-  ↓
-smoke test
-  ↓
-monitoring
-  ↓
-manutenzione
-  ↓
-rollback / recovery
-```
-
-L'obiettivo non è automatizzare ogni passaggio, ma rendere il processo **ripetibile, tracciabile e prevedibile**.
-
+**Perimetro:** qui interessano processo di build e rilascio, test software, dipendenze, sicurezza operativa, osservabilità, rollback e continuità. Le decisioni su ownership, approvazioni e responsabilità appartengono al capitolo 6.
 
 ## Dal codice alla release
 
@@ -815,283 +785,33 @@ Per una soluzione R in produzione bisogna sapere:
 Una procedura di recovery dovrebbe quindi considerare l'intera soluzione e non soltanto il database.
 
 
-## Gestire il cambiamento
-
-Una modifica a una soluzione in produzione non dovrebbe essere trattata come una semplice sostituzione di file.
-
-Il percorso minimo è:
-
-```text
-modifica proposta
-      ↓
-analisi dell'impatto
-      ↓
-test necessari
-      ↓
-esito dei test
-      ↓
-approvazione
-      ↓
-nuova baseline
-      ↓
-deployment
-      ↓
-smoke test
-      ↓
-monitoring
-```
-
-Esempi di modifiche che possono richiedere una valutazione:
-
-- aggiornamento di un pacchetto R;
-- nuova versione di R;
-- modifica del codice;
-- modifica dell'algoritmo;
-- aggiornamento del driver Oracle;
-- modifica del sistema operativo;
-- nuova versione dell'immagine container;
-- modifica della configurazione;
-- modifica di un servizio esterno.
-
-L'analisi dell'impatto deve stabilire quali componenti possono cambiare comportamento e quindi quali verifiche sono necessarie.
-
-Non tutte le modifiche richiedono gli stessi test.
-
-
-### Tracciare la modifica
-
-La registrazione minima dovrebbe permettere di ricostruire:
-
-| Elemento | Evidenza |
-|---|---|
-| modifica proposta | descrizione e motivo |
-| versione precedente | baseline / artefatto |
-| impatto valutato | componenti interessati |
-| test richiesti | elenco |
-| esito | risultati e criteri di accettazione |
-| approvazione | soggetto/data secondo procedura |
-| nuova baseline | versione / artefatto |
-| deployment | ambiente e data |
-| verifica post-rilascio | smoke test / monitoring |
-
-Questo collega:
-
-```text
-change management
-        ↓
-verifica
-        ↓
-baseline
-        ↓
-deployment
-```
-
-
-## Lifecycle
-
-Una soluzione può rimanere in produzione per anni.
-
-Il suo ciclo di vita può essere rappresentato così:
-
-```text
-sviluppo
-   ↓
-rilascio
-   ↓
-esercizio
-   ↓
-manutenzione
-   ↓
-aggiornamento
-   ↓
-ritiro
-```
-
-Durante il ciclo di vita possono cambiare:
-
-- versione di R;
-- pacchetti;
-- sistema operativo;
-- driver Oracle;
-- certificati;
-- API esterne;
-- requisiti di sicurezza;
-- infrastruttura.
-
-Una soluzione non mantenuta può diventare progressivamente più difficile da supportare anche se il codice non cambia.
-
-Per questo il deployment non termina con la prima messa in produzione.
-
-
-## Ownership
-
-Una soluzione in produzione deve avere responsabilità esplicite.
-
-| Area | Sviluppatore | IT |
-|---|---|---|
-| logica scientifica | principale | supporto |
-| codice R | principale | supporto |
-| dipendenze applicative | condivisione | gestione runtime |
-| OS/server | requisiti | principale |
-| database | requisiti applicativi | gestione secondo organizzazione |
-| sicurezza | requisiti | applicazione policy |
-| performance | diagnosi applicativa | infrastruttura |
-| monitoring | requisiti | implementazione operativa |
-| incidenti | analisi codice | gestione infrastruttura |
-| continuità operativa | requisiti applicativi | implementazione infrastrutturale |
-
-La divisione concreta dipende dall'organizzazione.
-
-Il principio però è generale:
-
-> **ogni componente deve avere un proprietario.**
-
-Questo vale anche per:
-
-- codice;
-- repository;
-- artefatti;
-- server;
-- container;
-- database;
-- account tecnici;
-- certificati;
-- dashboard;
-- procedure di recovery.
-
-Una soluzione senza ownership chiara può funzionare tecnicamente e rimanere comunque difficile da gestire.
-
-
 ## Verificare la prontezza alla produzione
 
-Prima della messa in produzione, la verifica può essere letta come una serie di domande operative.
+Prima della messa in produzione, la verifica deve dimostrare che esistono gli elementi operativi necessari al rilascio.
 
+- codice e versione identificabili;
+- test eseguiti e risultati disponibili;
+- runtime e dipendenze identificabili;
+- artefatto riproducibile e identificabile;
+- configurazione e segreti gestiti separatamente dal codice;
+- logging, monitoring e gestione degli errori predisposti;
+- rollback e continuità definiti quando applicabili.
 
-### Codice e versionamento
-
-- Il repository è versionato?
-- Il commit è identificabile?
-- Esiste una release o un tag?
-- La modifica è stata revisionata secondo la procedura prevista?
-- Sono disponibili le note di rilascio?
-
-
-### Test
-
-- Sono stati eseguiti i test funzionali?
-- Sono necessari test di integrazione?
-- Sono stati eseguiti test di regressione?
-- Sono necessari test di performance?
-- È previsto uno smoke test post-deployment?
-
-
-### Runtime
-
-- La versione di R è nota?
-- Le dipendenze sono riproducibili?
-- Il repository dei pacchetti è definito?
-- Le librerie di sistema sono note?
-- I driver sono identificati?
-
-
-### Artefatto
-
-- Quale artefatto viene distribuito?
-- È identificabile in modo univoco?
-- È associato alla versione del codice?
-- È stato testato prima del deployment?
-- È possibile ridistribuire una versione precedente?
-
-
-### Sicurezza
-
-- Esiste un'identità tecnica?
-- Sono applicati i principi di least privilege?
-- I segreti sono fuori dal codice?
-- Gli accessi di rete sono definiti?
-- I certificati sono gestiti?
-- Le identità di sviluppo, test e produzione sono separate quando necessario?
-
-
-### Operatività
-
-- Esiste un logging sufficiente?
-- Esiste un monitoring?
-- Gli errori generano un alert quando necessario?
-- È definita una procedura di rollback?
-- Sono definiti RTO e RPO quando applicabili?
-- È possibile ricostruire l'ambiente?
-
-
-### Ownership
-
-- Esiste un proprietario applicativo?
-- Esiste un proprietario infrastrutturale?
-- Sono definiti i contatti per gli incidenti?
-- È documentata la procedura di manutenzione?
-- È definito chi autorizza i rilasci?
-
+La domanda **chi approva, chi verifica e chi è responsabile** appartiene alla governance del capitolo 6.
 
 ## Le domande fondamentali
 
-Quando un prodotto R passa in produzione, la checklist finale può essere sintetizzata in queste domande.
+Quando un prodotto R viene rilasciato, la verifica operativa può essere sintetizzata in queste domande:
 
-### Quale versione?
+- Quale versione o artefatto viene distribuito?
+- Quali dipendenze e configurazioni richiede?
+- Come viene costruito e testato?
+- Come vengono gestiti identità, segreti e accessi?
+- Come viene verificato il rilascio?
+- Quali log, metriche e alert sono disponibili?
+- Come viene effettuato un rollback o un recovery, quando necessario?
 
-Quale commit, tag o artefatto è in esecuzione?
-
-### Quali dipendenze?
-
-Quale versione di R, quali pacchetti, quali driver e quali librerie sono necessari?
-
-### Come viene costruito?
-
-Quale processo produce l'artefatto?
-
-### Come viene testato?
-
-Quali controlli vengono eseguiti prima del rilascio?
-
-### Come viene configurato?
-
-Quali parametri cambiano tra sviluppo, test e produzione?
-
-### Con quale identità?
-
-Quale account o identità di servizio esegue l'applicazione?
-
-### A cosa può accedere?
-
-Quali database, API, filesystem e servizi può utilizzare?
-
-### Come viene distribuito?
-
-Qual è la procedura di deployment?
-
-### Come verifichiamo il rilascio?
-
-Quale smoke test viene eseguito dopo il deployment?
-
-### Come sappiamo che funziona?
-
-Quali log, metriche e alert sono disponibili?
-
-### Come viene aggiornato?
-
-Qual è il processo per introdurre una nuova versione?
-
-### Come torniamo indietro?
-
-Qual è la procedura di rollback?
-
-### Come ripristiniamo il servizio?
-
-Quali sono RTO e RPO, quando applicabili, e chi esegue il recovery?
-
-### Chi è responsabile?
-
-Chi mantiene codice, infrastruttura, sicurezza, monitoring e procedure operative?
-
+Le responsabilità e le autorizzazioni associate a questi passaggi sono definite nel capitolo 6.
 
 ## Una pipeline completa
 
