@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - quarto-site
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
@@ -46,7 +43,6 @@ jobs:
           path: _site
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/quarto-site'
     needs: build
     runs-on: ubuntu-latest
     environment:
