@@ -174,6 +174,29 @@ La baseline permette di rispondere a una domanda operativa importante:
 > **Possiamo ricostruire quale ambiente e quale versione del software hanno prodotto questo risultato?**
 
 
+## Separare le responsabilità
+
+La verifica tecnica di una soluzione R non significa attribuire a IT la responsabilità della correttezza scientifica o analitica.
+
+In termini generali:
+
+| Ambito | Responsabilità principale |
+|---|---|
+| Infrastruttura e runtime | IT |
+| Dipendenze, deployment e ambiente | IT, in collaborazione con il responsabile applicativo |
+| Codice e logica applicativa | sviluppatore/application owner |
+| Test del software | responsabile applicativo secondo la procedura applicabile |
+| Requisiti del processo | responsabile del processo/metodo |
+| Adeguatezza del metodo e criteri analitici | responsabile del metodo/processo |
+
+IT può e deve chiedere, quando l'applicazione produce o manipola risultati analitici:
+
+> **«L'applicazione è stata verificata secondo i requisiti applicabili? Chi ne è responsabile e dove è conservata l'evidenza?»**
+
+Questa domanda serve a verificare che il requisito sia stato preso in carico. Non significa che IT debba stabilire se un algoritmo è scientificamente adeguato, se un metodo è valido o se un risultato è metrologicamente accettabile.
+
+Anche la distinzione tra **verifica del software** e **verifica/validazione del metodo** deve rimanere esplicita: controllare che il codice produca l'output atteso su un dataset di riferimento non dimostra da solo che il metodo sia adatto allo scopo.
+
 ## Costruire e conservare l'evidenza
 
 
