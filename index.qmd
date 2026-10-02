@@ -1,0 +1,139 @@
+---
+title: "R per l'IT"
+subtitle: "Capire, valutare e governare soluzioni sviluppate in R"
+---
+
+## A chi è rivolto
+
+Questo materiale è pensato per un dipartimento IT che deve **valutare e governare soluzioni sviluppate in R**, non per chi deve imparare a programmare in R.
+
+L'obiettivo è fornire un linguaggio comune per affrontare richieste come:
+
+- installazione di R e pacchetti;
+- aumento di CPU o RAM;
+- richiesta di un server dedicato;
+- introduzione di una Shiny o di un'API;
+- integrazione con Oracle;
+- produzione automatica di report;
+- passaggio da PC a server;
+- messa in produzione e gestione operativa.
+
+## Il principio guida
+
+> **Prima di aumentare le risorse, capire perché servono.**
+
+Una richiesta tecnica dovrebbe seguire questo percorso:
+
+```text
+Richiesta
+   ↓
+Requisiti
+   ↓
+Diagnostica
+   ↓
+Architettura
+   ↓
+Infrastruttura
+   ↓
+Deployment
+   ↓
+Gestione
+```
+
+## Come usare questo materiale
+
+Questo materiale non vuole essere un manuale di programmazione R. È una guida per **leggere richieste tecniche e porre le domande corrette**.
+
+Il materiale è organizzato come un manuale tecnico, con una progressione dal runtime alla gestione operativa:
+
+1. **Contesto e ambiente R** — che cosa vede IT quando arriva una richiesta R.
+2. **Runtime, processi e parallelismo** — processi, core, thread, worker e risorse.
+3. **Performance e diagnostica** — come distinguere CPU, RAM, I/O, rete e database.
+4. **Architettura e integrazione** — R, Oracle, APEX, Quarto, Shiny e API.
+5. **Deployment e gestione operativa** — sicurezza, logging, monitoring e ownership.
+6. **Governance e valutazione delle richieste** — come valutare pacchetti, RAM, CPU e server.
+7. **Caso finale e checklist** — applicazione del metodo al caso dell'ecologo.
+
+## Quattro domande da ricordare
+
+> **1. Che cosa deve fare?**
+
+> **2. Quale evidenza dimostra che serve ciò che viene richiesto?**
+
+> **3. Dove deve essere eseguito il lavoro?**
+
+> **4. Esiste già un componente aziendale adatto?**
+
+## Nota
+
+Il materiale nasce come corso per l'IT e viene qui sviluppato in forma estesa. La versione a slide può essere mantenuta separatamente come supporto alla formazione.
+
+
+## Modello operativo del corso
+
+Il corso può essere letto come una catena unica:
+
+```text
+requisito
+  ↓
+workload
+  ↓
+diagnostica
+  ↓
+architettura
+  ↓
+baseline software
+  ↓
+verifica del software
+  ↓
+deployment
+  ↓
+operatività
+  ↓
+modifica
+  ↓
+nuova baseline
+```
+
+La **baseline software** è il riferimento dello stato approvato. Non è un documento statico: cambia quando una modifica autorizzata produce un nuovo stato che viene nuovamente verificato.
+
+Tre domande restano distinte:
+
+| Domanda | Oggetto |
+|---|---|
+| Quanto costa eseguire il lavoro? | performance e dimensionamento |
+| Che cosa stiamo eseguendo? | software, ambiente e configurazione |
+| Il metodo è adeguato allo scopo? | metodo analitico e criteri applicabili |
+
+## Il percorso mentale
+
+Una richiesta infrastrutturale non dovrebbe partire da una specifica hardware.
+
+Dovrebbe partire dal workload:
+
+```text
+Che cosa deve fare?
+       ↓
+Quanto spesso?
+       ↓
+Con quali dati?
+       ↓
+Quanto deve essere veloce?
+       ↓
+Quale risorsa limita?
+       ↓
+Quali alternative esistono?
+       ↓
+Quale infrastruttura serve?
+```
+
+## Un criterio di lettura
+
+Il materiale distingue, quando possibile, tra:
+
+- **fatto misurato** — per esempio «CPU 98%»;
+- **interpretazione** — per esempio «il workload sembra CPU-bound»;
+- **ipotesi** — per esempio «potrebbe essere parallelizzabile»;
+- **decisione infrastrutturale** — per esempio «valutiamo più core».
+
+Questa distinzione evita di trasformare un'ipotesi in una specifica hardware.

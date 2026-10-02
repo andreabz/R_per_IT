@@ -1,0 +1,332 @@
+---
+title: "Caso finale e checklist"
+subtitle: "Dalla richiesta dell'ecologo alla decisione IT"
+---
+
+## Perché questo capitolo
+
+Il caso finale applica il metodo dell'intero corso a una richiesta concreta: un'elaborazione R è troppo lenta e viene richiesto un server più potente. Il valore del caso non sta nella macchina da scegliere, ma nel percorso che permette di trasformare una richiesta hardware in una decisione tecnica verificabile.
+
+## Come leggere il caso
+
+Il caso dell'ecologo riassume il metodo dell'intero corso.
+
+La richiesta iniziale è:
+
+> «R è troppo lento. Servono 16 core e 64 GB di RAM.»
+
+La richiesta contiene una soluzione proposta, ma non ancora una diagnosi.
+
+## Dalla richiesta alla decisione
+
+
+Supponiamo che il job debba essere completato entro 30 minuti.
+
+Questo cambia la domanda:
+
+> Non «quale server serve?», ma «quale configurazione consente di completare il workload entro 30 minuti con margine operativo adeguato?»
+
+### Secondo passaggio: raccogliere la baseline
+
+Supponiamo di osservare:
+
+- durata: 3 h 12 min;
+- CPU: 98%;
+- RAM: 11 GB su 32 GB;
+- worker: 1;
+- database: trascurabile;
+- I/O: normale.
+
+La prima ipotesi è un workload CPU-bound.
+
+Ma manca ancora una risposta fondamentale:
+
+> **perché viene utilizzato un solo worker?**
+
+### Terzo passaggio: capire l'algoritmo
+
+Prima dell'hardware bisogna sapere se il lavoro è:
+
+- seriale per natura;
+- seriale per implementazione;
+- parallelizzabile;
+- dominato da un algoritmo inefficiente.
+
+Un profiling può indicare dove viene speso il tempo.
+
+Un'analisi della complessità può indicare se il problema cresce troppo rapidamente al crescere dei dati.
+
+### Quarto passaggio: testare il parallelismo
+
+Supponiamo di ottenere:
+
+| Worker | Tempo | RAM |
+|:---:|:---:|:|
+| 1 | 192 min | 11 GB |
+| 2 | 104 min | 20 GB |
+| 4 | 59 min | 38 GB |
+| 8 | 51 min | 70 GB |
+
+Il parallelismo funziona, ma non scala linearmente.
+
+Il passaggio da 4 a 8 worker riduce il tempo di soli 8 minuti e aumenta fortemente la memoria.
+
+Questo introduce un trade-off:
+
+```text
+tempo ↓
+RAM ↑
+```
+
+### Quinto passaggio: valutare il server
+
+A questo punto è possibile discutere l'infrastruttura con dati concreti.
+
+Non sappiamo ancora se servano 16 core.
+
+Sappiamo invece che:
+
+- il carico è CPU-heavy;
+- il parallelismo porta beneficio;
+- 8 worker richiedono molta più RAM;
+- lo scaling presenta rendimenti decrescenti.
+
+Il dimensionamento deve quindi considerare anche il requisito temporale e la concorrenza.
+
+### Sintesi delle evidenze
+
+Il caso può essere letto come una catena di evidenze e conseguenze:
+
+| Evidenza | Interpretazione | Conseguenza |
+|---|---|---|
+| CPU 98% | carico prevalentemente CPU-bound | analizzare algoritmo e parallelismo |
+| 1 worker | parallelismo non utilizzato | misurare lo scaling |
+| 4 worker → 59 min | beneficio significativo | il parallelismo è utile |
+| 8 worker → 51 min | rendimento decrescente | aggiungere worker ha beneficio limitato |
+| RAM 70 GB | forte crescita della memoria | CPU e RAM vanno dimensionate insieme |
+| database marginale | DB non è il collo di bottiglia principale | non spostare il problema sul database |
+
+Questa tabella non decide quale server acquistare: rende esplicito il percorso con cui una decisione infrastrutturale può essere motivata.
+## Dalla decisione alla produzione
+
+
+Nel caso dell'ecologo abbiamo verificato il carico computazionale. In un contesto controllato rimane una seconda domanda:
+
+> **Possiamo ricostruire con quale software e quale ambiente è stato prodotto il risultato?**
+
+Una scheda minima potrebbe essere:
+
+| Elemento | Esempio |
+|---|---|
+| applicazione | analisi ecologica |
+| versione codice | tag/release |
+| commit | identificativo Git |
+| R | versione |
+| pacchetti | `renv.lock` |
+| OS | versione |
+| container | immagine e digest, se utilizzato |
+| dataset di riferimento | identificativo |
+| test | suite e versione |
+| risultato test | esito |
+| metodo | identificativo/versione |
+
+Questa evidenza risponde a un problema diverso dal dimensionamento del server.
+
+```text
+performance
+    ↓
+"quanto hardware serve?"
+
+baseline software
+    ↓
+"con quale ambiente è stato prodotto il risultato?"
+
+test software
+    ↓
+"il software si comporta come previsto?"
+
+metodo
+    ↓
+"il metodo è adeguato allo scopo?"
+```
+
+Le quattro domande non devono essere fuse in una sola.
+
+#### Dal software installato alla configurazione riproducibile
+
+Se l'applicazione viene distribuita come container, il percorso può diventare:
+
+```text
+codice versionato
+      ↓
+dipendenze dichiarate
+      ↓
+build container
+      ↓
+test
+      ↓
+immagine identificata
+      ↓
+deployment
+      ↓
+risultato
+```
+
+Il container rende più controllabile la distribuzione dell'ambiente, ma non elimina la necessità di identificare i dati, le configurazioni e i servizi esterni.
+
+
+### Dal caso alla produzione
+
+Il caso può essere esteso fino alla gestione operativa completa:
+
+```text
+richiesta: 16 core / 64 GB
+          ↓
+requisito: < 30 min
+          ↓
+diagnostica: CPU 98%, 1 worker
+          ↓
+profiling + analisi algoritmo
+          ↓
+scaling: 1 / 2 / 4 / 8 worker
+          ↓
+scelta architetturale
+          ↓
+baseline software
+          ↓
+test e verifica
+          ↓
+artefatto / container identificato
+          ↓
+deployment
+          ↓
+monitoring
+          ↓
+modifica futura
+          ↓
+analisi d'impatto + nuova baseline
+```
+
+Questo completa il collegamento tra performance, architettura, deployment e governance. Una decisione infrastrutturale non chiude il ciclo: il sistema deve poter essere mantenuto, modificato e nuovamente verificato.
+
+### La domanda che rimane
+
+Anche se un server potente risolve il problema, bisogna chiedersi:
+
+> **perché il workload richiede così tanto calcolo?**
+
+Potrebbero esserci:
+
+- algoritmo inefficiente;
+- dati non filtrati;
+- elaborazioni ripetute;
+- copie inutili;
+- lavoro che potrebbe essere eseguito in Oracle;
+- assenza di caching;
+- operazioni seriali non necessarie.
+
+Un hardware adeguato non elimina necessariamente un problema applicativo.
+
+## Strumenti operativi per IT
+
+
+Per rendere valutabile una richiesta di infrastruttura, è utile chiedere una scheda con:
+
+| Informazione | Esempio |
+|---|---|---|
+| scopo | analisi ecologica |
+| input | dataset monitoraggio |
+| dimensione | 20 GB |
+| durata attuale | 192 min |
+| obiettivo | < 30 min |
+| CPU | 98% |
+| RAM | 11 GB |
+| worker | 1 |
+| scaling test | 1/2/4/8 |
+| profiling | disponibile |
+| DB | marginale |
+| frequenza | 1–2/giorno |
+| concorrenza | 1–2 job |
+
+Una scheda di questo tipo permette a IT di discutere il dimensionamento senza dover diventare sviluppatore R.
+
+## Checklist conclusiva
+
+
+#### Applicazione
+
+- [ ] Che cosa deve fare?
+- [ ] È script, job, report, app o API?
+- [ ] Chi la usa?
+- [ ] Qual è il requisito temporale?
+
+#### Performance
+
+- [ ] Durata misurata?
+- [ ] CPU misurata?
+- [ ] RAM di picco?
+- [ ] I/O?
+- [ ] Database?
+- [ ] Profiling?
+- [ ] Scaling test?
+
+#### Architettura
+
+- [ ] Dove deve essere eseguita?
+- [ ] Esiste già una piattaforma?
+- [ ] Quale componente gestisce i dati?
+- [ ] Quale componente gestisce l'interfaccia?
+- [ ] Quale componente gestisce l'orchestrazione?
+
+#### Produzione
+
+- [ ] Dipendenze riproducibili?
+- [ ] Credenziali gestite?
+- [ ] Logging?
+- [ ] Monitoring?
+- [ ] Gestione degli errori?
+- [ ] Ownership?
+- [ ] Aggiornamenti?
+- [ ] Continuità operativa?
+
+### Le quattro domande
+
+1. **Che cosa deve fare?**
+2. **Quale evidenza dimostra che serve ciò che viene richiesto?**
+3. **Dove deve essere eseguito il lavoro?**
+4. **Esiste già un componente aziendale adatto?**
+
+Queste quattro domande permettono di trasformare una richiesta tecnica in un problema valutabile.
+
+### Una buona architettura è anche una questione organizzativa
+
+Non basta che il codice funzioni.
+
+Occorre considerare:
+
+- competenze disponibili;
+- manutenzione;
+- sicurezza;
+- costi;
+- monitoraggio;
+- aggiornamenti;
+- dipendenze;
+- continuità operativa;
+- integrazione con gli standard aziendali.
+
+Una soluzione tecnicamente possibile può essere operativamente inadatta.
+
+
+### Discussione
+
+#### Domande da portare nel proprio contesto
+
+- Quali richieste R arrivano oggi a IT?
+- Quali sono difficili da valutare?
+- Quali componenti R sono già presenti?
+- Quali integrazioni con Oracle esistono?
+- Dove viene usato APEX?
+- Quali job R sono già schedulati?
+- Quali applicazioni R sono già in produzione?
+- Chi ne è responsabile?
+- Quali dati diagnostici vengono normalmente raccolti?

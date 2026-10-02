@@ -1,0 +1,374 @@
+---
+title: "Runtime, processi e parallelismo"
+subtitle: "Processi, core, thread, worker e scaling"
+---
+
+## Perché questo capitolo
+
+Per valutare una richiesta infrastrutturale bisogna capire come il lavoro R viene effettivamente eseguito. Il capitolo costruisce il vocabolario minimo — processo, core, thread, worker e memoria — e lo collega al problema più importante per IT: individuare il consumo reale di risorse e capire che cosa cambia quando si introduce il parallelismo.
+
+## Il vocabolario del runtime
+
+
+Questi termini sono spesso utilizzati come sinonimi.
+
+Non lo sono.
+
+```{mermaid}
+%%| label: mermaid-02-runtime-01
+%%| echo: false
+flowchart TD
+    S["Server"]
+    S --> CPU["CPU"]
+    CPU --> C1["Core 1"]
+    CPU --> C2["Core 2"]
+    CPU --> C3["Core 3"]
+    CPU --> CN["Core N"]
+
+    S --> RAM["RAM"]
+    S --> IO["Storage / rete"]
+```
+
+### Runtime
+
+Il termine **runtime** può indicare due concetti distinti:
+
+- **runtime environment**: l'ambiente software necessario all'esecuzione, come R, pacchetti, librerie di sistema, driver e sistema operativo;
+- **execution time**: il tempo necessario per completare un'elaborazione.
+
+Nel contesto del corso, quando parliamo di performance ci riferiamo soprattutto al secondo concetto. Per analizzarlo dobbiamo capire come il codice utilizza processi, thread, worker e risorse hardware.
+
+
+### Processo
+
+Un **processo** è un'istanza in esecuzione di un programma.
+
+Un processo possiede:
+
+- memoria;
+- stato;
+- risorse;
+- identificativo;
+- file e connessioni eventualmente aperti.
+
+Un'esecuzione R normalmente corrisponde almeno a un processo R.
+
+
+### Core
+
+Un **core** è una risorsa hardware capace di eseguire istruzioni.
+
+Avere:
+
+> 16 core
+
+non significa automaticamente:
+
+> R esegue 16 volte più velocemente.
+
+Serve un carico che possa utilizzare effettivamente quei core.
+
+
+### Thread
+
+Un processo può utilizzare uno o più thread.
+I thread condividono la stessa memoria del processo.
+
+Il motore base di R è prevalentemente *single-thread*. 
+Tuttavia, molte operazioni pesanti (es. moltiplicazioni di matrici, 
+o funzioni di pacchetti come `data.table`, `arrow`, `torch`)
+delegano il lavoro a librerie native in C/C++ che usano i thread.
+
+> **thread ≠ automaticamente parallelismo efficace.**
+
+Il comportamento dipende dal codice, dalle librerie e dal tipo di operazione.
+
+### Worker
+
+"Worker" è soprattutto un termine architetturale.
+
+Un worker è un'unità di lavoro incaricata di eseguire una parte dell'elaborazione.
+
+Può essere realizzato, a seconda della tecnologia, tramite:
+
+- processo;
+- thread;
+- altro meccanismo di esecuzione.
+
+Per IT la domanda importante è:
+
+> **Quanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?**
+
+
+## Parallelismo e scaling
+
+
+Quando il lavoro può essere suddiviso:
+
+```{mermaid}
+%%| label: mermaid-02-runtime-02
+%%| echo: false
+flowchart TD
+    JOB["Elaborazione"]
+    JOB --> W1["Worker 1"]
+    JOB --> W2["Worker 2"]
+    JOB --> W3["Worker 3"]
+    JOB --> W4["Worker 4"]
+
+    W1 --> C1["CPU"]
+    W2 --> C2["CPU"]
+    W3 --> C3["CPU"]
+    W4 --> C4["CPU"]
+```
+
+Il vantaggio dipende dalla possibilità di dividere realmente il lavoro.
+
+### Parallelismo e concorrenza
+
+**Parallelismo** e **concorrenza** non sono la stessa cosa.
+
+- **parallelismo**: una singola elaborazione utilizza più unità di esecuzione nello stesso intervallo di tempo;
+- **concorrenza**: più elaborazioni o richieste sono attive contemporaneamente.
+
+Esempio:
+
+```text
+Caso A — un job:
+1 job → 8 worker
+
+Caso B — più utenti:
+8 job → 1 worker ciascuno
+```
+
+I due casi hanno profili operativi diversi. Nel caso B la contesa può coinvolgere contemporaneamente CPU, RAM, database, rete e scheduler; nel caso A la domanda principale è quanto scala il singolo workload.
+
+Per IT, prima di dimensionare una piattaforma bisogna quindi chiedere entrambe le cose:
+
+> **«Quanti worker usa una singola elaborazione?»**
+
+e
+
+> **«Quante elaborazioni possono essere contemporaneamente attive?»**
+
+Questa distinzione è particolarmente importante per Shiny e API, dove più richieste o sessioni possono essere contemporaneamente in esecuzione.
+
+
+### Il parallelismo ha un costo
+
+Aumentare i worker può significare:
+
+- più CPU utilizzata;
+- più RAM;
+- più dati copiati;
+- più accessi al database;
+- più I/O;
+- più traffico di rete;
+- maggiore complessità.
+
+Quindi:
+
+> **più worker non significa necessariamente meglio.**
+
+Nella maggior parte dei backend paralleli in R (come `PSOCK` o `multisession`), 
+ogni worker è un processo R completamente separato.
+Questo significa che se lo script principale carica 2 GB di dati in memoria,
+ogni singolo worker caricherà 2 GB.
+
+### Esempio di scaling
+
+Supponiamo di misurare:
+
+| Worker | Tempo | RAM |
+|:---:|---:|---:|
+| 1 | 40 min | 4 GB |
+| 2 | 23 min | 8 GB |
+| 4 | 14 min | 16 GB |
+| 8 | 12 min | 32 GB |
+
+Il passaggio da 1 a 4 worker è significativo; quello da 4 a 8 molto meno.
+
+La scalabilità reale può essere limitata da:
+
+- parti seriali;
+- sincronizzazione;
+- trasferimento dati;
+- I/O;
+- database;
+- overhead dei worker;
+- contesa sulle risorse.
+
+Un benchmark reale è quindi più informativo di una stima basata soltanto sul numero di core.
+
+IT dovrebbe chiedere:
+
+> **Quale beneficio misurato otteniamo aumentando i worker e quale costo aggiuntivo introduciamo in RAM, I/O e database?**
+
+## Memoria e consumo di risorse
+
+
+Un processo R utilizza memoria per gli oggetti R, le strutture interne del runtime, le librerie caricate, i buffer e altre risorse.
+
+La dimensione dei dati su disco non coincide quindi necessariamente con la memoria richiesta dal processo.
+
+Un'operazione può richiedere memoria temporanea aggiuntiva:
+
+~~~text
+oggetto originale:  4 GB
+copia temporanea:  +4 GB
+risultato:          +4 GB
+overhead/runtime:   +...
+-----------------------------
+picco > 12 GB
+~~~
+
+Non tutte le operazioni producono necessariamente una copia completa: R può condividere oggetti e creare copie quando necessario. Per IT è però importante ragionare sul **picco di memoria**, non soltanto sulla dimensione finale del dataset.
+
+> «Il dataset è di 10 GB» non implica che servano esattamente 10 GB di RAM.
+
+### RAM e memoria virtuale
+
+La **RAM** è la memoria fisica disponibile al sistema.
+
+La **memoria virtuale** è il meccanismo con cui il sistema operativo presenta ai processi uno spazio di memoria e gestisce le pagine, eventualmente utilizzando anche storage.
+
+~~~text
+Processo R
+   ↓
+memoria virtuale
+   ↓
+RAM + eventuale paging
+~~~
+
+La memoria virtuale non equivale a RAM aggiuntiva gratuita. Se il sistema ricorre intensamente a paging/swap, le prestazioni possono degradare perché lo storage è molto più lento della RAM.
+
+Per IT:
+
+> molto swap disponibile non significa che il server abbia RAM sufficiente per il carico.
+
+### Garbage collection
+
+R utilizza un **garbage collector (GC)** per recuperare memoria associata a oggetti che non sono più necessari.
+
+In termini semplificati:
+
+~~~text
+creazione oggetti
+      ↓
+memoria occupata
+      ↓
+oggetti non più necessari
+      ↓
+garbage collection
+      ↓
+memoria recuperabile
+~~~
+
+Il garbage collector non può liberare memoria ancora necessaria all'elaborazione.
+
+Inoltre una fase di garbage collection può avere un costo temporale. Per questo, per diagnosticare un problema di memoria, è utile osservare sia l'andamento della RAM sia il tempo di esecuzione.
+
+### Thread nativi e oversubscription
+
+Il codice R può chiamare librerie native che utilizzano thread propri. Questo introduce una distinzione importante tra:
+
+- worker R;
+- thread del processo;
+- thread utilizzati da librerie numeriche o di I/O.
+
+Un esempio concettuale:
+
+~~~text
+8 worker R
+×
+4 thread nativi per worker
+=
+fino a 32 unità di esecuzione concorrenti
+~~~
+
+Se il server dispone di meno risorse effettivamente utilizzabili, può verificarsi **oversubscription**: troppi thread competono per i core.
+
+Il risultato può essere:
+
+- più context switching;
+- maggiore contesa CPU;
+- maggiore consumo di risorse;
+- peggioramento delle prestazioni.
+
+Per IT la domanda non è quindi soltanto:
+
+> «Quanti worker?»
+
+ma anche:
+
+> «Quanti thread utilizza ciascun worker?»
+
+### Parallelismo e memoria
+
+Quando i worker sono processi separati, ciascun processo può avere una propria copia degli oggetti necessari.
+
+Schema concettuale:
+
+~~~text
+Processo principale
+   │
+   ├── dati
+   ├── Worker 1 → dati necessari
+   ├── Worker 2 → dati necessari
+   ├── Worker 3 → dati necessari
+   └── Worker 4 → dati necessari
+~~~
+
+Perciò, in molti backend basati su processi separati:
+
+~~~text
+RAM richiesta
+≈
+memoria base
++
+memoria per worker
++
+overhead
+~~~
+
+Non è una formula di dimensionamento esatta, ma è un modello utile per capire perché aumentare i worker può far crescere rapidamente la RAM richiesta.
+
+## Diagnosi operativa
+
+
+Quando una soluzione R è lenta, IT può chiedere almeno:
+
+| Domanda | Evidenza |
+|---|---|
+| CPU alta? | utilizzo CPU nel tempo |
+| RAM alta? | memoria del processo e picco |
+| Paging? | metriche del sistema operativo |
+| Un solo core saturo? | utilizzo per core |
+| Più thread? | metriche del processo/libreria |
+| Più worker? | numero di processi/worker |
+| DB lento? | tempi e metriche lato database |
+| I/O lento? | metriche storage |
+| Rete lenta? | throughput e latenza |
+| Quale funzione è lenta? | profiling |
+
+Il profilo della risorsa deve essere osservato **durante** l'elaborazione, non soltanto a fine job.
+
+### Domande runtime per IT
+
+Prima di assegnare risorse aggiuntive chiedere:
+
+- quanti processi R vengono creati?
+- quanti worker?
+- quanti thread per worker?
+- qual è il picco di RAM?
+- qual è l'utilizzo CPU per core?
+- esiste paging?
+- quali operazioni dominano il tempo?
+- il database è coinvolto?
+- il carico è CPU-bound, RAM-bound, I/O-bound o database-bound?
+- la parallelizzazione è già stata testata?
+- come cambia il consumo di RAM aumentando i worker?
+- qual è il tempo obiettivo?
+
+La domanda finale è:
+
+> **qual è il collo di bottiglia misurato e quale intervento lo rimuove?**
