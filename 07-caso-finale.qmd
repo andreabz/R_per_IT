@@ -1,21 +1,78 @@
 ---
-title: "Caso finale e checklist"
-subtitle: "Dalla richiesta dell'ecologo alla decisione IT"
+title: "Dalla richiesta alla decisione"
+subtitle: "Scenari operativi, caso didattico e checklist per IT"
 ---
 
 ## Perché questo capitolo
 
-Il caso finale applica il metodo dell'intero corso a una richiesta concreta: un'elaborazione R è troppo lenta e viene richiesto un server più potente. Il valore del caso non sta nella macchina da scegliere, ma nel percorso che permette di trasformare una richiesta hardware in una decisione tecnica verificabile.
+Questo capitolo applica gli strumenti dei capitoli precedenti al problema operativo: classificare una richiesta R, capire quali domande porre, stabilire quali evidenze raccogliere e definire che cosa serve prima della produzione. Gli scenari sono categorie operative: una stessa soluzione può evolvere da sperimentazione a componente gestito.
 
-## Come leggere il caso
+## Classificare la richiesta
 
-Il caso di un collega riassume il metodo dell'intero corso.
+Prima di valutare CPU, RAM, pacchetti o server, IT dovrebbe identificare:
 
-La richiesta iniziale è:
+- che cosa fa R;
+- chi esegue il lavoro;
+- quanto spesso viene eseguito;
+- chi utilizza il risultato;
+- quante esecuzioni possono essere contemporanee;
+- quale requisito di disponibilità esiste;
+- se il risultato entra in un processo operativo o analitico controllato.
 
-> «R è troppo lento. Servono 16 core e 64 GB di RAM.»
+Una progressione utile è:
 
-La richiesta contiene una soluzione proposta, ma non ancora una diagnosi.
+    sperimentazione → uso personale → job ricorrente → pubblicazione → servizio → componente gestito
+
+Il passaggio verso destra non implica necessariamente più hardware. Aumentano soprattutto riproducibilità, controllo, sicurezza, test, osservabilità, ownership e gestione delle modifiche.
+
+## Sei scenari operativi
+
+### Script locale per sperimentazione
+
+IT deve conoscere almeno versione di R, dipendenze, accessi a dati e servizi aziendali e presenza di dati riservati. L'utente può sperimentare nel proprio ambiente secondo le regole della postazione.
+
+Buone pratiche: progetto separato, codice versionato quando diventa riutilizzabile, nessuna credenziale nel codice, dipendenze registrate quando il lavoro deve essere riprodotto.
+
+### Script su server per sperimentazione
+
+IT deve conoscere account, directory e dati accessibili, limiti di CPU/RAM/storage, accesso ai database e modalità di installazione dei pacchetti. È opportuno separare sviluppo e produzione ed evitare modifiche non tracciate alle library condivise.
+
+Il fatto che R venga eseguito su un server non rende automaticamente il codice una soluzione di produzione.
+
+### Job ricorrente per uso personale
+
+IT deve chiedere frequenza, durata, modalità di avvio, input/output, dipendenze, credenziali e comportamento in caso di errore.
+
+Per renderlo gestibile servono almeno codice versionato, ambiente riproducibile, logging, identificazione di input/output e modalità controllata di aggiornamento.
+
+### Job ricorrente da pubblicare
+
+Quando l'output è destinato ad altri utenti o a un processo aziendale aumentano i requisiti: repository e versione, ambiente riproducibile, test, baseline, configurazione separata dal codice, logging, monitoring, ownership e processo di modifica.
+
+Se l'output ha rilevanza analitica, IT verifica che responsabilità ed evidenze previste dal processo siano definite; non determina l'adeguatezza del metodo.
+
+### Applicazione Shiny da pubblicare
+
+IT deve chiedere utenti e sessioni concorrenti, autenticazione/autorizzazione, dati accessibili, durata delle elaborazioni, database/API, disponibilità, logging, monitoring ed error handling.
+
+Qui è essenziale distinguere parallelismo e concorrenza: il numero di worker di una singola elaborazione non descrive da solo il carico della piattaforma.
+
+### API R da pubblicare
+
+IT deve chiedere endpoint, autorizzazioni, volume e frequenza delle richieste, concorrenza, tempi di risposta, dimensione delle richieste/risposte, dati trattati, dipendenze esterne, error handling, logging e monitoring.
+
+Per un'API il carico dipende dal rapporto tra costo della singola richiesta, frequenza e concorrenza.
+
+## Matrice operativa
+
+| Scenario | Domanda principale di IT | Controlli da introdurre |
+|---|---|---|
+| Script locale | Che cosa fa e quali dipendenze usa? | ambiente e accessi |
+| Script su server | Quali risorse e dati utilizza? | ambiente, risorse, accessi |
+| Job personale | Come viene eseguito e cosa succede se fallisce? | versionamento, logging, ownership |
+| Job pubblicato | Come garantiamo un output riproducibile? | test, baseline, monitoring, change management |
+| Shiny | Quanti utenti e richieste concorrenti deve sostenere? | architettura web, sicurezza, test, monitoring |
+| API | Qual è il carico del servizio? | sicurezza, test di carico, osservabilità, lifecycle |
 
 ## Dalla richiesta alla decisione
 
