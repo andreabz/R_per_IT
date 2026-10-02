@@ -9,47 +9,26 @@ Questo capitolo definisce il punto di partenza: per IT, una soluzione R non è s
 
 ## Obiettivi del capitolo
 
-L'obiettivo non è imparare a programmare in R ma mettere IT nelle condizioni di:
+L'obiettivo è costruire il modello con cui IT descrive una soluzione R prima di valutarne esecuzione, architettura o produzione.
 
-- capire che cosa sta chiedendo uno sviluppatore R;
-- valutare se una richiesta è tecnicamente motivata;
-- chiedere la diagnostica necessaria;
-- distinguere il tipo di utilizzo di R e il relativo livello di controllo richiesto;
-- distinguere problemi applicativi da problemi infrastrutturali;
-- valutare richieste di CPU, RAM, storage e server;
-- capire come R si integra con i sistemi esistenti;
-- riconoscere quando R è adatto e quando esistono alternative più naturali.
+Al termine del capitolo IT dovrebbe saper identificare:
 
+- il ruolo di R nella soluzione;
+- il runtime e l'ambiente software necessari;
+- pacchetti, dipendenze e repository;
+- library e ambiente di progetto;
+- il significato e i limiti di `renv` e del lockfile;
+- quali elementi devono entrare nella descrizione dell'ambiente.
 
-## Il problema dal punto di vista IT
-
-Una richiesta può arrivare così:
-
-> "L'elaborazione R è troppo lenta.  
-> Servono 16 core, 64 GB di RAM e l'installazione di alcuni pacchetti."
-
-La domanda che dovrebbe sorgere è:
-
-> **"Quali evidenze giustificano questa richiesta?"**
-
+**Perimetro:** questo capitolo descrive **che cosa compone l'ambiente R**. Performance, architettura, deployment e governance vengono affrontati nei capitoli successivi.
 
 ## Una prima classificazione del contesto
 
-R può essere utilizzato in contesti molto diversi: per sperimentare un'analisi, eseguire un'elaborazione ricorrente, produrre un report, pubblicare un'applicazione o esporre un servizio.
+R può essere utilizzato in contesti diversi: sperimentazione, elaborazione ricorrente, report, applicazione o servizio.
 
-Per IT questa distinzione è importante perché cambiano:
+Qui interessa soltanto la conseguenza fondamentale per la descrizione dell'ambiente: **il contesto d'uso determina quali componenti software devono essere identificati**.
 
-- durata e frequenza dell'esecuzione;
-- numero di utenti o richieste concorrenti;
-- requisiti di disponibilità;
-- gestione delle dipendenze;
-- sicurezza e credenziali;
-- logging e monitoring;
-- modalità di aggiornamento e responsabilità.
-
-In questo capitolo non è ancora necessario classificare in dettaglio tutti gli scenari. Il compito è costruire il vocabolario che permette di farlo: **che cosa esegue R, quali componenti utilizza e quale ambiente lo sostiene**.
-
-Gli scenari operativi verranno ripresi nel capitolo finale, quando sarà possibile collegarli a requisiti, evidenze e decisioni IT.
+La classificazione operativa completa degli scenari è rimandata al capitolo 7.
 
 ## Che cosa vede IT quando arriva una richiesta R
 
