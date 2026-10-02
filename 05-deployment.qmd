@@ -801,64 +801,17 @@ La domanda **chi approva, chi verifica e chi è responsabile** appartiene alla g
 
 ## Le domande fondamentali
 
-Quando un prodotto R passa in produzione, la checklist finale può essere sintetizzata in queste domande.
+Quando un prodotto R viene rilasciato, la verifica operativa può essere sintetizzata in queste domande:
 
-### Quale versione?
+- Quale versione o artefatto viene distribuito?
+- Quali dipendenze e configurazioni richiede?
+- Come viene costruito e testato?
+- Come vengono gestiti identità, segreti e accessi?
+- Come viene verificato il rilascio?
+- Quali log, metriche e alert sono disponibili?
+- Come viene effettuato un rollback o un recovery, quando necessario?
 
-Quale commit, tag o artefatto è in esecuzione?
-
-### Quali dipendenze?
-
-Quale versione di R, quali pacchetti, quali driver e quali librerie sono necessari?
-
-### Come viene costruito?
-
-Quale processo produce l'artefatto?
-
-### Come viene testato?
-
-Quali controlli vengono eseguiti prima del rilascio?
-
-### Come viene configurato?
-
-Quali parametri cambiano tra sviluppo, test e produzione?
-
-### Con quale identità?
-
-Quale account o identità di servizio esegue l'applicazione?
-
-### A cosa può accedere?
-
-Quali database, API, filesystem e servizi può utilizzare?
-
-### Come viene distribuito?
-
-Qual è la procedura di deployment?
-
-### Come verifichiamo il rilascio?
-
-Quale smoke test viene eseguito dopo il deployment?
-
-### Come sappiamo che funziona?
-
-Quali log, metriche e alert sono disponibili?
-
-### Come viene aggiornato?
-
-Qual è il processo per introdurre una nuova versione?
-
-### Come torniamo indietro?
-
-Qual è la procedura di rollback?
-
-### Come ripristiniamo il servizio?
-
-Quali sono RTO e RPO, quando applicabili, e chi esegue il recovery?
-
-### Chi è responsabile?
-
-Chi mantiene codice, infrastruttura, sicurezza, monitoring e procedure operative?
-
+Le responsabilità e le autorizzazioni associate a questi passaggi sono definite nel capitolo 6.
 
 ## Una pipeline completa
 
