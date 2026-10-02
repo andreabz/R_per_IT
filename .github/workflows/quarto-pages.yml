@@ -3,7 +3,6 @@ name: Build and deploy Quarto site
 on:
   push:
     branches:
-      - main
       - quarto-site
   pull_request:
     branches:
@@ -37,7 +36,7 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Render Quarto website
+      - name: Render Quarto book
         run: quarto render
 
       - name: Upload rendered site
@@ -47,7 +46,7 @@ jobs:
           path: _site
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/quarto-site'
     needs: build
     runs-on: ubuntu-latest
     environment:
