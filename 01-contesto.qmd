@@ -16,6 +16,7 @@ L'obiettivo è mettere IT nelle condizioni di:
 - capire che cosa sta chiedendo uno sviluppatore R;
 - valutare se una richiesta è tecnicamente motivata;
 - chiedere la diagnostica necessaria;
+- distinguere il tipo di utilizzo di R e il relativo livello di controllo richiesto;
 - distinguere problemi applicativi da problemi infrastrutturali;
 - valutare richieste di CPU, RAM, storage e server;
 - capire come R si integra con i sistemi esistenti;
@@ -34,27 +35,23 @@ La domanda che dovrebbe sorgere è:
 > **"Quali evidenze giustificano questa richiesta?"**
 
 
-## Un caso guida
+## Una prima classificazione del contesto
 
-Un collega utilizza R per un'elaborazione sui dati ambientali.
+R può essere utilizzato in contesti molto diversi: per sperimentare un'analisi, eseguire un'elaborazione ricorrente, produrre un report, pubblicare un'applicazione o esporre un servizio.
 
-Attualmente:
+Per IT questa distinzione è importante perché cambiano:
 
-- l'elaborazione viene eseguita su un PC;
-- dura diverse ore;
-- il PC diventa poco utilizzabile durante l'elaborazione;
-- viene richiesto un server dedicato;
-- la richiesta iniziale è: 16 CPU e 64 GB RAM.
+- durata e frequenza dell'esecuzione;
+- numero di utenti o richieste concorrenti;
+- requisiti di disponibilità;
+- gestione delle dipendenze;
+- sicurezza e credenziali;
+- logging e monitoring;
+- modalità di aggiornamento e responsabilità.
 
-IT deve capire:
+In questo capitolo non è ancora necessario classificare in dettaglio tutti gli scenari. Il compito è costruire il vocabolario che permette di farlo: **che cosa esegue R, quali componenti utilizza e quale ambiente lo sostiene**.
 
-1. qual è il problema;
-2. quale risorsa viene realmente saturata;
-3. se il codice può essere migliorato;
-4. se il parallelismo è possibile;
-5. se il database è coinvolto;
-6. quale infrastruttura è realmente necessaria.
-
+Gli scenari operativi verranno ripresi nel capitolo finale, quando sarà possibile collegarli a requisiti, evidenze e decisioni IT.
 
 ## Che cosa vede IT quando arriva una richiesta R
 
