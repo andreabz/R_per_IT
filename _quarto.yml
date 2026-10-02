@@ -1,6 +1,7 @@
 project:
   type: book
   output-dir: _site
+
   render:
     - index.qmd
     - 01-contesto.qmd
@@ -18,13 +19,16 @@ book:
   subtitle: "Capire, valutare e gestire soluzioni sviluppate in R"
   search: true
   reader-mode: true
+
   repo-url: https://github.com/andreabz/R_per_IT
   repo-branch: main
   description: "Manuale tecnico per IT: capire, valutare e gestire soluzioni sviluppate in R"
   repo-actions: [edit, source, issue]
+
   page-navigation: true
   back-to-top-navigation: true
   bread-crumbs: true
+
   navbar:
     background: light
     left:
@@ -32,35 +36,43 @@ book:
         href: index.qmd
       - text: "Repository"
         href: https://github.com/andreabz/R_per_IT
+
   sidebar:
     style: docked
     collapse-level: 1
     contents:
       - text: "Introduzione"
         href: index.qmd
+
       - section: "1. Contesto e ambiente R"
         contents:
           - 01-contesto.qmd
+
       - section: "2. Runtime, processi e parallelismo"
         contents:
           - 02-runtime.qmd
+
       - section: "3. Performance e diagnostica"
         contents:
           - 03-performance.qmd
+
       - section: "4. Architettura e integrazione"
         contents:
           - 04-architettura.qmd
+
       - section: "5. Deployment e gestione operativa"
         contents:
           - 05-deployment.qmd
+
       - section: "6. Governance e valutazione delle richieste"
         contents:
           - 06-governance.qmd
+
       - section: "7. Caso finale e checklist"
         contents:
           - 07-caso-finale.qmd
+
   chapters:
-    - index.qmd
     - 01-contesto.qmd
     - 02-runtime.qmd
     - 03-performance.qmd
