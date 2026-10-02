@@ -83,7 +83,7 @@ Questo cambia la domanda:
 
 > Non «quale server serve?», ma «quale configurazione consente di completare il workload entro 30 minuti con margine operativo adeguato?»
 
-### Secondo passaggio: raccogliere la baseline
+### Baseline iniziale
 
 Supponiamo di osservare:
 
@@ -100,7 +100,7 @@ Ma manca ancora una risposta fondamentale:
 
 > **perché viene utilizzato un solo worker?**
 
-### Terzo passaggio: capire l'algoritmo
+### Analizzare l'implementazione
 
 Prima dell'hardware bisogna sapere se il lavoro è:
 
@@ -113,7 +113,7 @@ Un profiling può indicare dove viene speso il tempo.
 
 Un'analisi della complessità può indicare se il problema cresce troppo rapidamente al crescere dei dati.
 
-### Quarto passaggio: testare il parallelismo
+### Test di scaling
 
 Supponiamo di ottenere:
 
@@ -135,7 +135,7 @@ tempo ↓
 RAM ↑
 ```
 
-### Quinto passaggio: valutare il server
+### Valutare l'infrastruttura
 
 A questo punto è possibile discutere l'infrastruttura con dati concreti.
 
