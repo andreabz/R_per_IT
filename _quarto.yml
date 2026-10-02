@@ -17,7 +17,7 @@ book:
   search: true
   reader-mode: true
   repo-url: https://github.com/andreabz/R_per_IT
-  repo-branch: quarto-site
+  repo-branch: main
   description: "Manuale tecnico per IT: capire, valutare e governare soluzioni sviluppate in R"
   repo-actions: [edit, source, issue]
   page-navigation: true
