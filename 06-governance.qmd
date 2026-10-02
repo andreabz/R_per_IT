@@ -6,49 +6,13 @@ subtitle: "Dal requisito alla decisione, con evidenze e responsabilità"
 
 ## Perché questo capitolo
 
-I capitoli precedenti hanno descritto diversi aspetti della gestione di una soluzione R:
+I capitoli precedenti descrivono ambiente, esecuzione, diagnosi, architettura e deployment. Questo capitolo definisce **come queste informazioni diventano una decisione governata e tracciabile**.
 
-- la performance e l'identificazione dei colli di bottiglia;
-- l'architettura e la distribuzione delle responsabilità;
-- il deployment e la gestione operativa.
+La domanda proprietaria è:
 
-Questo capitolo mette insieme questi elementi dal punto di vista di IT.
+> **Chi decide, chi verifica, chi approva e chi mantiene cosa?**
 
-L'obiettivo non è stabilire a priori quale tecnologia utilizzare, ma definire **come valutare una richiesta tecnica in modo coerente, documentabile e ripetibile**.
-
-Una richiesta può riguardare:
-
-- l'installazione di un pacchetto;
-- un aumento della RAM;
-- un aumento della CPU;
-- un nuovo server;
-- una VM o un container;
-- l'esposizione di una Shiny o di un'API;
-- una nuova integrazione;
-- una modifica a una soluzione esistente.
-
-In tutti questi casi il principio è lo stesso:
-
-```text
-requisito
-   ↓
-evidenze
-   ↓
-valutazione
-   ↓
-alternative
-   ↓
-test / verifica
-   ↓
-decisione
-   ↓
-responsabilità
-   ↓
-evidenza conservata
-```
-
-La governance non sostituisce la diagnosi tecnica, l'architettura o il deployment: **utilizza i risultati di questi processi per prendere e documentare una decisione**.
-
+**Perimetro:** evidenze, responsabilità, approvazioni, ownership, baseline, ricostruibilità e distinzione tra verifica del software e adeguatezza del metodo.
 
 ## Dal requisito alla decisione
 
@@ -225,73 +189,6 @@ Una registrazione utile dovrebbe contenere almeno:
 - motivazione;
 - responsabilità;
 - eventuali condizioni per una successiva rivalutazione.
-
-
-## Performance: usare la diagnosi senza ripeterla
-
-La diagnosi dettagliata della performance appartiene al capitolo dedicato alla performance.
-
-In Governance è sufficiente utilizzare il suo risultato.
-
-Per esempio:
-
-```text
-Diagnosi Performance
-        ↓
-CPU-bound
-        ↓
-benchmark 1 / 2 / 4 / 8 worker
-        ↓
-evidenza di scaling
-        ↓
-valutazione IT
-        ↓
-dimensionamento
-```
-
-La Governance non deve quindi ripetere:
-
-- come utilizzare `system.time()`;
-- come profilare con `profvis`;
-- come interpretare `top` o `htop`;
-- come analizzare la memoria;
-- come distinguere CPU-bound e I/O-bound.
-
-Questi strumenti appartengono alla diagnosi.
-
-Qui interessa invece verificare che la decisione sia **basata su una diagnosi sufficientemente documentata**.
-
-
-### Esempio
-
-Richiesta:
-
-> «Servono 64 GB di RAM.»
-
-Evidenze:
-
-```text
-RAM disponibile: 32 GB
-picco osservato: 29 GB
-worker: 4
-swap: occasionale
-dataset: 12 GB
-```
-
-La valutazione non dovrebbe limitarsi a:
-
-> «64 GB sono il doppio di 32 GB.»
-
-Bisogna considerare anche:
-
-- se il picco è riproducibile;
-- se dipende dal numero di worker;
-- se esistono copie temporanee;
-- se il numero di worker può essere modificato;
-- se il dataset può essere ridotto;
-- se il requisito temporale richiede davvero quel parallelismo.
-
-La decisione infrastrutturale deve quindi essere il risultato della diagnosi, non il suo punto di partenza.
 
 
 ## Valutare l'ambiente software
@@ -583,100 +480,6 @@ dismettere
 La governance non riguarda soltanto l'ingresso in produzione, ma l'intero ciclo di vita.
 
 
-## Applicare il metodo alle richieste IT
-
-
-### Richiesta di RAM
-
-> «Servono 64 GB.»
-
-Domande:
-
-- qual è il picco osservato?
-- in quale workload?
-- quanti worker erano attivi?
-- viene utilizzato swap?
-- il picco è riproducibile?
-- esistono copie o oggetti temporanei rilevanti?
-- il dataset può essere ridotto?
-- il numero di worker può essere modificato?
-- esiste un requisito temporale che giustifica la configurazione?
-
-La decisione dovrebbe riportare non soltanto la quantità di RAM richiesta, ma **l'evidenza che la motiva**.
-
-
-### Richiesta di CPU
-
-> «Servono 16 core.»
-
-Domande:
-
-- qual è il carico CPU osservato?
-- quanti core vengono effettivamente utilizzati?
-- quanti worker o thread sono attivi?
-- il lavoro è parallelizzabile?
-- quale scaling è stato osservato?
-- quale costo in memoria introduce il parallelismo?
-- esiste un limite esterno, per esempio database o rete?
-
-Il dimensionamento dovrebbe essere collegato al requisito di performance e ai risultati dei benchmark pertinenti.
-
-
-### Richiesta di server
-
-> «Serve un server dedicato.»
-
-Domande:
-
-- quale workload deve ospitare?
-- con quale frequenza?
-- per quanto tempo?
-- quanti utenti o processi?
-- quale concorrenza?
-- quali risorse richiede?
-- quale disponibilità è necessaria?
-- quali requisiti di sicurezza esistono?
-- quali sistemi deve raggiungere?
-- esiste già una VM o una piattaforma adeguata?
-
-Il server dedicato è quindi una **possibile soluzione**, non il requisito stesso.
-
-
-### Richiesta di un pacchetto
-
-> «Bisogna installare il pacchetto X.»
-
-Domande:
-
-- quale applicazione lo richiede?
-- quale versione?
-- è una dipendenza diretta o indiretta?
-- esiste già nel repository aziendale?
-- quali dipendenze native richiede?
-- quale licenza si applica?
-- come viene aggiornato?
-- chi è responsabile dell'applicazione?
-- il pacchetto entra nella baseline dell'ambiente?
-
-
-### Richiesta di Shiny o API
-
-> «Pubblicare l'applicazione R come servizio.»
-
-Domande:
-
-- quanti utenti?
-- quale traffico?
-- interattivo o batch?
-- quale disponibilità?
-- come avviene l'autenticazione?
-- quali dati vengono esposti?
-- quale gateway o reverse proxy aziendale è disponibile?
-- quali log e metriche sono necessari?
-- come viene gestito il rilascio?
-- chi è l'owner?
-
-
 ## Una matrice per le richieste più frequenti
 
 | Richiesta | Evidenza principale | Alternative da considerare | Decisione da motivare |
@@ -716,48 +519,27 @@ Questo collega governance, deployment e gestione del cambiamento.
 
 ## Decisioni basate sull'evidenza
 
-Una richiesta tecnica ben governata può essere rappresentata così:
+Una decisione governata deve conservare il collegamento tra requisito, evidenza, scelta e stato approvato.
+
+La catena generale è:
 
 ```text
 REQUISITO
    ↓
-"Il job deve terminare entro 30 minuti"
-   ↓
-MISURA
-   ↓
-"Durata attuale: 2 ore"
-   ↓
-DIAGNOSI
-   ↓
-"CPU-bound"
-   ↓
-IPOTESI
-   ↓
-"Il workload può beneficiare del parallelismo"
-   ↓
-TEST
-   ↓
-"1 / 2 / 4 / 8 worker"
-   ↓
 EVIDENZA
    ↓
-"4 worker soddisfano il requisito senza saturare la RAM"
+INTERPRETAZIONE
+   ↓
+ALTERNATIVE
+   ↓
+VERIFICA
    ↓
 DECISIONE
    ↓
-"Configurazione con 4 worker"
-   ↓
-BASELINE
-   ↓
-"Versione software + configurazione + ambiente"
+BASELINE APPROVATA
 ```
 
-La sequenza evita che la documentazione conservi soltanto la conclusione:
-
-> «Servono 64 GB.»
-
-e perda invece il ragionamento che ha portato a quella conclusione.
-
+Il dettaglio della diagnosi prestazionale è prodotto dal capitolo 3; il dettaglio della build e del rilascio dal capitolo 5. Qui interessa che **l'evidenza sia associata alla decisione e che sia chiaro chi ne è responsabile**.
 
 ## Quando la soluzione proposta non è il problema
 
@@ -841,108 +623,21 @@ nuova decisione
 La governance è quindi un processo continuo, non un'approvazione una tantum.
 
 
-## Le domande fondamentali per IT
-
-Quando arriva una nuova richiesta relativa a R, una sequenza di domande può aiutare a riportare la discussione sul problema.
-
-
-### Qual è il requisito?
-
-Che cosa deve essere ottenuto?
-
-
-### Qual è il workload?
-
-Quanti dati, utenti, esecuzioni e processi sono coinvolti?
-
-
-### Qual è l'evidenza?
-
-Come è stato misurato il problema?
-
-
-### Qual è il collo di bottiglia?
-
-CPU, RAM, I/O, rete, database o altro?
-
-
-### Quali alternative sono state considerate?
-
-È possibile modificare algoritmo, implementazione, dati, parallelismo o architettura?
-
-
-### Quale modifica è stata testata?
-
-Quale variabile è stata cambiata e quale risultato ha prodotto?
-
-
-### Quale ambiente è necessario?
-
-Quale versione di R, quali pacchetti, driver, librerie e sistemi esterni?
-
-
-### Chi è responsabile?
-
-Chi mantiene codice, ambiente, metodo e processo?
-
-
-### Come viene gestito il cambiamento?
-
-Qual è la versione approvata e quale procedura porta alla produzione?
-
-
-### Come viene ricostruito il risultato?
-
-Possiamo collegare input, software, configurazione, esecuzione e output?
-
-
-### Come viene gestito il futuro?
-
-Chi aggiorna, monitora, migra o dismette la soluzione?
-
-
 ## Principio finale
 
-La governance di una soluzione R non consiste nel decidere se utilizzare R, quanta RAM assegnare o quale server acquistare.
+La governance non sceglie la tecnologia al posto del richiedente. Stabilisce invece che una decisione sia:
 
-Consiste nel fare in modo che queste decisioni siano **proporzionate al requisito, sostenute da evidenze e attribuite a responsabilità chiare**.
+- proporzionata al requisito;
+- sostenuta da evidenze;
+- verificata secondo criteri definiti;
+- attribuita a responsabilità chiare;
+- ricostruibile nel tempo.
 
-Il percorso può essere sintetizzato così:
+IT non determina la validità scientifica o metrologica di un metodo. Deve invece verificare che il responsabile competente sia identificato e che le evidenze richieste dal processo applicabile siano disponibili.
+
+La sequenza conclusiva è:
 
 ```text
-REQUISITO
-   ↓
-EVIDENZA
-   ↓
-DIAGNOSI
-   ↓
-ALTERNATIVE
-   ↓
-TEST
-   ↓
-DECISIONE
-   ↓
-IMPLEMENTAZIONE
-   ↓
-MONITORING
-   ↓
-RIVALUTAZIONE
+requisito → evidenza → decisione → responsabilità → baseline → nuova valutazione quando cambia qualcosa
 ```
-
-In questo modello:
-
-- **Performance** aiuta a capire dove si trova il problema;
-- **Architettura** aiuta a distribuire correttamente le responsabilità;
-- **Deployment** permette di portare la soluzione in esercizio e mantenerla;
-- **Governance** collega questi elementi e rende la decisione tracciabile.
-
-La richiesta iniziale:
-
-> «Ho uno script R, mettetelo sul server.»
-
-diventa quindi una richiesta tecnica più completa:
-
-> **Qual è il requisito? Quale workload deve essere supportato? Quali evidenze abbiamo? Quale ambiente è necessario? Quali alternative sono state valutate? Quale versione deve essere rilasciata? Chi è responsabile della soluzione? Come verrà monitorata e mantenuta nel tempo?**
-
-Questa trasformazione è il vero obiettivo della governance: **non scegliere una tecnologia al posto del richiedente, ma creare le condizioni perché la scelta possa essere motivata, verificata e mantenuta nel tempo.**
 
