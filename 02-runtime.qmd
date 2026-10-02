@@ -5,7 +5,13 @@ subtitle: "Processi, core, thread, worker e scaling"
 
 ## Perché questo capitolo
 
-Per valutare una richiesta infrastrutturale bisogna capire come il lavoro R viene effettivamente eseguito. Il capitolo costruisce il vocabolario minimo — processo, core, thread, worker e memoria — e lo collega al problema più importante per IT: individuare il consumo reale di risorse e capire che cosa cambia quando si introduce il parallelismo.
+Il capitolo descrive **come un workload R viene eseguito**: processo, core, thread, worker, parallelismo, concorrenza e memoria.
+
+La domanda proprietaria è:
+
+> **Come viene eseguito il lavoro e quali risorse può impegnare?**
+
+**Perimetro:** qui si costruisce il modello di esecuzione. La misura del comportamento e la diagnosi del collo di bottiglia appartengono al capitolo 3.
 
 ## Il vocabolario del runtime
 
