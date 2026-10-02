@@ -3,7 +3,7 @@ name: Build and deploy Quarto site
 on:
   push:
     branches:
-      - quarto-site
+      - main
   workflow_dispatch:
 
 permissions:
