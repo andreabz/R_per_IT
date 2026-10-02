@@ -266,6 +266,36 @@ decisione → valutare tempo + RAM + concorrenza
 
 La diagnosi individua il problema; il benchmark fornisce evidenza quantitativa sull'effetto di una modifica.
 
+### Quale evidenza raccogliere
+
+Una diagnosi utile a IT deve permettere di distinguere almeno CPU, memoria, storage, rete e database.
+
+Per la CPU è utile correlare:
+
+- tempo totale dell'elaborazione;
+- tempo CPU user/system;
+- utilizzo dei core;
+- numero di worker e thread;
+- punti del codice che consumano più tempo.
+
+`system.time()` fornisce una prima misura dei tempi; un profiler come `profvis` aiuta a individuare le parti del codice nelle quali viene speso il tempo. Le metriche del sistema operativo completano l'osservazione: su Linux, per esempio, strumenti come `top`, `htop`, `pidstat`, `mpstat` e `vmstat`; su Windows, i contatori di Performance Monitor.
+
+Per I/O bisogna distinguere almeno:
+
+- storage locale o remoto;
+- rete;
+- accesso al database.
+
+Quando è coinvolto un database, il tempo osservato da R dovrebbe essere confrontato, quando disponibile, con le metriche del database: un'attesa lunga in R non dimostra da sola che il collo di bottiglia sia R.
+
+L'evidenza dovrebbe essere raccolta durante un workload rappresentativo e associata alla versione del software e alla configurazione utilizzata.
+
+### Ridurre copie e allocazioni
+
+Anche la scelta dell'implementazione può incidere su tempo e memoria. Per esempio, alcune operazioni di `data.table`, in particolare quelle progettate per modificare i dati in modo efficiente, possono limitare copie e allocazioni intermedie rispetto ad approcci che creano ripetutamente nuovi oggetti.
+
+Non è però corretto assumere che l'uso di un determinato pacchetto elimini le copie o risolva automaticamente un problema di memoria. L'effetto dipende dall'operazione, dai dati e dal codice effettivamente eseguito.
+
 ## Dove intervenire
 
 
