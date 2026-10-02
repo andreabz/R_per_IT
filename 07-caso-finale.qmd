@@ -166,6 +166,47 @@ Il caso può essere letto come una catena di evidenze e conseguenze:
 Questa tabella non decide quale server acquistare: rende esplicito il percorso con cui una decisione infrastrutturale può essere motivata.
 
 
+## Prima della produzione
+
+Una richiesta di produzione dovrebbe poter essere ricondotta a una scheda minima.
+
+### Applicazione
+
+- scopo e owner;
+- utenti o sistemi che la utilizzano;
+- input e output;
+- frequenza e concorrenza;
+- requisito temporale e di disponibilità.
+
+### Software
+
+- repository e versione;
+- versione di R;
+- dipendenze e versioni;
+- lockfile, se utilizzato;
+- dipendenze native, driver e client;
+- configurazione.
+
+### Verifica
+
+- test definiti;
+- dataset di riferimento, quando applicabile;
+- output attesi o criteri di accettazione;
+- esito dei test associato alla versione del software.
+
+### Operatività
+
+- credenziali e segreti;
+- logging e monitoring;
+- gestione degli errori;
+- notifiche;
+- rollback e continuità, quando applicabili;
+- ownership e processo di modifica.
+
+### Risultati analitici
+
+Quando l'applicazione produce o manipola risultati analitici, IT deve identificare il responsabile del metodo/processo e verificare che siano state eseguite le attività previste e che l'evidenza sia conservata. Questa verifica non trasferisce a IT la responsabilità della validità scientifica o metrologica del metodo.
+
 ## Dalla decisione alla produzione
 
 In questo caso abbiamo verificato il carico computazionale. In un contesto controllato rimane una seconda domanda:
