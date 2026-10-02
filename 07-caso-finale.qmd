@@ -217,7 +217,7 @@ Una scheda minima potrebbe essere:
 
 | Elemento | Esempio |
 |---|---|
-| applicazione | analisi ecologica |
+| applicazione | elaborazione R |
 | versione codice | tag/release |
 | commit | identificativo Git |
 | R | versione |
@@ -333,7 +333,7 @@ Per rendere valutabile una richiesta di infrastruttura, è utile chiedere una sc
 
 | Informazione | Esempio |
 |---|---|---|
-| scopo | analisi ecologica |
+| scopo | elaborazione R |
 | input | dataset monitoraggio |
 | dimensione | 20 GB |
 | durata attuale | 192 min |
