@@ -53,9 +53,9 @@ Per R è utile correlare la misura del sistema con ciò che il runtime sta facen
 
 La misura deve essere rappresentativa e ripetibile.
 
-## Misurare il tempo: i tre tempi di system.time()
+## Misurare il tempo: i tre tempi di `system.time()`
 
-La funzione base di R più semplice per misurare un'espressione è system.time(). Restituisce tre quantità:
+La funzione base di R più semplice per misurare un'espressione è `system.time()`. Restituisce tre quantità:
 
 - **user time**: tempo CPU consumato dal processo in user mode;
 - **system time**: tempo CPU consumato dal processo in system/kernel mode;
@@ -72,10 +72,10 @@ system.time({
 
 Il risultato ha concettualmente questa forma:
 
-~~~text
+```text
    user   system  elapsed
    0.08    0.01     0.10
-~~~
+```
 
 I valori reali dipendono dalla macchina.
 
@@ -83,11 +83,11 @@ L'**elapsed** risponde alla domanda «quanto ha aspettato l'utente?». User e sy
 
 Per esempio:
 
-~~~text
+```text
 user     = 2 s
 system   = 1 s
 elapsed  = 10 s
-~~~
+```
 
 non significa che R abbia usato 10 secondi di CPU. Sono trascorsi 10 secondi, mentre il processo ha consumato 3 secondi di CPU nei due modi misurati. Il resto può includere attese, I/O, scheduling, sincronizzazione o lavoro svolto da altre unità.
 
@@ -97,9 +97,9 @@ Per questo, davanti a un benchmark, IT deve sapere **quale dei tre tempi sta con
 
 ### Perché una sola misura non basta?
 
-system.time() misura un'esecuzione. Un benchmark deve invece confrontare esecuzioni ripetute e controllate.
+`system.time()` misura un'esecuzione. Un benchmark deve invece confrontare esecuzioni ripetute e controllate.
 
-~~~text
+```text
 stesso input
     ↓
 stesso ambiente
@@ -109,7 +109,7 @@ ripetizioni
 user / system / elapsed
     ↓
 confronto
-~~~
+```
 
 Quando vogliamo attribuire una differenza a una modifica, dobbiamo mantenere stabili le altre variabili.
 
@@ -148,19 +148,20 @@ summaryRprof("profilo.out")
 
 Il risultato è **evidenza diagnostica**, non una prescrizione automatica di ottimizzazione.
 
-### Profiling interattivo con profvis
+### Profiling interattivo con `profvis`
 
-Quando è utile una lettura visuale del profiling, si può usare **profvis**. È un package R che presenta in forma interattiva il tempo speso nelle diverse chiamate e consente di esplorare più facilmente dove viene eseguito il lavoro.
+Quando è utile una lettura visuale del profiling, si può usare **`profvis`**. È un package R che presenta in forma interattiva il tempo speso nelle diverse chiamate e consente di esplorare più facilmente dove viene eseguito il lavoro.
 
 In un ambiente di prova:
 
 ```{r}
-#| label: profiling-interattivo-profvis
+#| label: profiling-interattivo-`profvis`
 
 # installazione da eseguire una sola volta nell'ambiente di prova:
-# install.packages("profvis")
 
-profvis::profvis({
+# install.packages("`profvis`")
+
+`profvis`::`profvis`({
   misura(5000000)
 })
 ```
@@ -196,7 +197,9 @@ scenario controllato
 misura globale
       ↓
 profiling R + monitoraggio processo/macchina
+
       + misura database quando rilevante
+
       ↓
 ipotesi sul collo di bottiglia
       ↓
@@ -250,7 +253,7 @@ Prima di interpretare le misure, definiamo alcuni termini usati nel ragionamento
 
 Sono ipotesi diagnostiche, non conclusioni automatiche.
 
-Nel caso R, CPU elevata può derivare dal codice R, da BLAS/LAPACK, da thread nativi o da più worker. RAM elevata può derivare da oggetti, copie, garbage collection o memoria duplicata tra processi.
+Nel caso R, CPU elevata può derivare dal codice R, da `BLAS/LAPACK`, da thread nativi o da più worker. RAM elevata può derivare da oggetti, copie, garbage collection o memoria duplicata tra processi.
 
 ## Approfondimento — Vectorization
 
@@ -260,7 +263,7 @@ Per IT il punto è che **due implementazioni con lo stesso risultato possono ave
 
 Questo è un buon esempio di confine tra competenza applicativa e infrastrutturale: IT può misurare il costo, mentre la scelta di cambiare algoritmo o implementazione resta in collaborazione con chi sviluppa il workload.
 
-## Approfondimento — Base R, dplyr e data.table
+## Approfondimento — Base R, `dplyr` e `data.table`
 
 Questa sezione non serve a stabilire quale strumento sia «migliore». Serve a capire perché **due implementazioni R che producono lo stesso risultato possono richiedere quantità molto diverse di CPU e memoria**.
 
@@ -268,7 +271,7 @@ Questa sezione non serve a stabilire quale strumento sia «migliore». Serve a c
 
 - **Base R** non è un package aggiuntivo: è l'insieme di funzionalità disponibili nell'installazione standard di R. Per esempio, un `data.frame` e operazioni come assegnazione, subset e `transform()` possono essere gestiti senza installare un package esterno.
 - **`dplyr`** è un package dell'ecosistema tidyverse che offre un'interfaccia dichiarativa per trasformare e aggregare dati tabellari. Operazioni tipiche sono `filter()`, `mutate()`, `summarise()` e `join`.
-- **`data.table`** è un package per l'elaborazione efficiente di dati tabellari di grandi dimensioni. Oltre a fornire una struttura dati omonima, offre operazioni di subset, aggregazione, join e modifica delle colonne progettate per ridurre overhead e copie.
+- **`data.table`** è un package per l'elaborazione efficiente di dati tabellari di grandi dimensioni. Oltre a fornire una struttura dati omonima, offre operazioni di subset, aggregazione, `join` e modifica delle colonne progettate per ridurre overhead e copie.
 
 Per IT la distinzione importante è quindi:
 
@@ -282,10 +285,10 @@ Consideriamo una tabella con molti milioni di righe. L'operazione è semplice: c
 
 Con base R:
 
-~~~{r}
+```{r}
 #| label: confronto-base-r
 
-df <- data.frame(
+df <- `data.frame`(
   quantita = runif(1000000),
   prezzo = runif(1000000)
 )
@@ -293,29 +296,29 @@ df <- data.frame(
 system.time({
   df$totale <- df$quantita * df$prezzo
 })
-~~~
+```
 
 Con `dplyr`:
 
-~~~{r}
-#| label: confronto-dplyr
+```{r}
+#| label: confronto-`dplyr`
 
-df <- data.frame(
+df <- `data.frame`(
   quantita = runif(1000000),
   prezzo = runif(1000000)
 )
 
 system.time({
-  df <- dplyr::mutate(df, totale = quantita * prezzo)
+  df <- `dplyr`::mutate(df, totale = quantita * prezzo)
 })
-~~~
+```
 
 Con `data.table`:
 
-~~~{r}
+```{r}
 #| label: confronto-datatable
 
-DT <- data.table::data.table(
+DT <- `data.table`::`data.table`(
   quantita = runif(1000000),
   prezzo = runif(1000000)
 )
@@ -323,7 +326,7 @@ DT <- data.table::data.table(
 system.time({
   DT[, totale := quantita * prezzo]
 })
-~~~
+```
 
 L'elemento importante dell'ultimo esempio è `:=`: in molti casi consente a `data.table` di modificare la tabella **in place**, evitando di creare una nuova copia completa della struttura per l'assegnazione. Questo può ridurre il picco di memoria e il lavoro di copia, soprattutto quando le tabelle sono grandi.
 
@@ -346,23 +349,23 @@ Per una prima prova didattica si può aumentare progressivamente il dataset, per
 
 Una misura minima del tempo è:
 
-~~~{r}
+```{r}
 #| label: confronto-tempi-implementazioni
 
 n <- 10000000L
 
-df_base <- data.frame(
+df_base <- `data.frame`(
   quantita = runif(n),
   prezzo = runif(n)
 )
 
 df_dplyr <- df_base
-DT <- data.table::as.data.table(df_base)
+DT <- `data.table`::as.`data.table`(df_base)
 
 system.time(df_base$totale <- df_base$quantita * df_base$prezzo)
-system.time(df_dplyr <- dplyr::mutate(df_dplyr, totale = quantita * prezzo))
+system.time(df_dplyr <- `dplyr`::mutate(df_dplyr, totale = quantita * prezzo))
 system.time(DT[, totale := quantita * prezzo])
-~~~
+```
 
 I tempi prodotti da questo esempio **non sono valori di riferimento universali**: dipendono dall'ambiente di esecuzione. Per confrontare la memoria, è utile osservare il processo durante l'operazione oppure usare uno strumento di profiling della memoria; non basta guardare `object.size()` dopo che l'operazione è terminata.
 
@@ -384,17 +387,17 @@ Per capire meglio il concetto di memoria, confrontiamo una trasformazione che so
 
 Con un `data.frame`, un'assegnazione può comportare lavoro di riallocazione/copia a seconda dell'operazione e della struttura degli oggetti. Con `data.table`, l'operatore `:=` è progettato proprio per effettuare assegnazioni per riferimento:
 
-~~~{r}
+```{r}
 #| label: esempio-modifica-in-place
 
-DT <- data.table::data.table(
+DT <- `data.table`::`data.table`(
   quantita = runif(10000000L),
   prezzo = runif(10000000L)
 )
 
 DT[, totale := quantita * prezzo]
 DT[, prezzo := prezzo * 1.22]
-~~~
+```
 
 Qui la tabella viene modificata senza dover assegnare nuovamente l'oggetto risultante a `DT`. È questo modello di modifica per riferimento, più che una generica promessa di «maggiore velocità», che interessa nella diagnosi della memoria.
 
