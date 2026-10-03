@@ -253,6 +253,57 @@ project library ricostruita
 
 snapshot() registra lo stato della library di progetto nel lockfile; restore() usa il lockfile per installare nella library di progetto le versioni registrate. Il lockfile contiene anche la versione di R e i repository associati al progetto.
 
+### Laboratorio operativo — verificare e ricostruire un ambiente
+
+La conoscenza di `renv.lock` diventa operativa quando IT deve verificare se un ambiente può essere ricostruito. La procedura minima, in un ambiente di prova, è:
+
+1. identificare la versione di R e il progetto;
+2. verificare lo stato delle dipendenze;
+3. ripristinare le dipendenze dichiarate;
+4. verificare che il package richiesto sia effettivamente disponibile nella library attiva;
+5. eseguire un test minimo della soluzione.
+
+Se il progetto usa `renv`, per esempio:
+
+```{r}
+#| label: verifica-e-ripristino-renv
+
+R.version.string
+renv::status()
+
+# In un ambiente di test:
+# renv::restore()
+
+packageVersion("data.table")
+find.package("data.table")
+```
+
+`renv::restore()` non va inteso come un comando da eseguire alla cieca su una macchina di produzione: può modificare la library del progetto installando o aggiornando dipendenze. La ricostruzione va quindi eseguita in un ambiente controllato e verificata prima del deployment.
+
+### Diagnosi di un package mancante o incompatibile
+
+Quando una soluzione non parte, IT deve distinguere almeno tre casi:
+
+- **package non installato**: il package non è presente nelle library disponibili;
+- **versione non compatibile**: il package è presente, ma la versione di R, del package o di una dipendenza non soddisfa i requisiti della soluzione;
+- **dipendenza esterna mancante**: il package R è installato, ma richiede una libreria nativa, un driver o un altro componente non disponibile.
+
+Una diagnosi utile raccoglie almeno:
+
+```{r}
+#| label: diagnosi-package-r
+
+R.version.string
+getOption("repos")
+.libPaths()
+packageVersion("data.table")
+find.package("data.table")
+```
+
+Questi comandi non risolvono da soli l'incompatibilità. Servono a raccogliere evidenze riproducibili da confrontare con l'ambiente atteso e con l'eventuale `renv.lock`.
+
+Se l'errore riguarda compilazione, librerie condivise, driver o altri componenti esterni a R, la diagnosi passa dal runtime R al sistema operativo o al componente esterno. In quel caso IT deve registrare **quale dipendenza manca e in quale fase**, invece di concludere semplicemente che «R non funziona».
+
 ### È obbligatorio usare un lockfile?
 
 **No.**
