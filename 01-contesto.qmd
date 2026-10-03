@@ -11,6 +11,17 @@ Per IT, una richiesta R non è normalmente una richiesta di installazione di un 
 
 Il primo obiettivo non è conoscere l'ecosistema R in dettaglio, ma poter ricostruire il perimetro tecnico della soluzione e capire quali parti sono già governate da IT.
 
+```{mermaid}
+%%| echo: false
+flowchart LR
+  A[Repository] --> B[Library]
+  B --> C[Sessione R]
+  C --> D[Codice]
+  C --> E[Package]
+  E --> F[Dipendenze native]
+  F --> G[Sistema operativo]
+``` 
+
 ## Lessico operativo minimo
 
 Per seguire il corso bastano pochi termini aggiuntivi rispetto al lessico IT abituale:
@@ -111,21 +122,21 @@ Con renv, il progetto dispone di una library isolata logicamente dalle altre. La
 
 ### Che cosa ci dice davvero .libPaths()?
 
-~~~{r}
+```{r}
 #| label: ispezione-library-r
 
 .libPaths()
-~~~
+```
 
 Il risultato va letto come una **lista ordinata di percorsi**. Se un package è presente in più library, l'ordine è rilevante: R può trovare una copia prima di un'altra.
 
 Per una diagnosi IT è utile osservare anche quali package sono presenti in ciascun percorso:
 
-~~~{r}
+```{r}
 #| label: ispezione-package-per-library
 
 lapply(.libPaths(), list.files)
-~~~
+```
 
 Non serve eseguire questo comando in produzione: serve capire che «il package è installato» non risponde alla domanda «quale package viene usato?».
 
