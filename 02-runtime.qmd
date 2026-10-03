@@ -7,7 +7,21 @@ subtitle: "Come R esegue il lavoro"
 
 Una richiesta come «servono più core» o «servono 64 GB» non descrive ancora un requisito verificato.
 
-> **Come viene eseguito il lavoro e quali costi introduce il modello di R?**
+La prima cosa da capire è fondamentale:
+
+> **R normalmente esegue il codice in un processo e in modo sequenziale. Il parallelismo non compare automaticamente perché la macchina ha più core.**
+
+Un workload R diventa parallelo quando il codice, un framework, una libreria nativa o il modello di servizio introduce effettivamente più unità di esecuzione.
+
+Quindi:
+
+~~~text
+16 core disponibili
+        ≠
+16 core utilizzati da R
+~~~
+
+Questo è il punto di partenza per interpretare CPU, RAM e richieste di dimensionamento.
 
 ## Processo, worker e thread
 
@@ -57,9 +71,65 @@ Una misura utile deve quindi riportare almeno il punto temporale, il processo o 
 
 ## Environment e lexical scoping
 
-Un environment associa nomi a oggetti e può collegarsi ad altri environment. Il lexical scoping determina come R risolve i nomi.
+Un **environment** è una struttura che associa nomi a oggetti e contiene un riferimento a un altro environment, detto *enclosing environment*.
 
-Per IT interessa soprattutto una conseguenza: una funzione può mantenere riferimenti a stato e oggetti oltre il punto in cui sono stati creati. Questo aiuta a interpretare consumi di memoria apparentemente inattesi e comportamenti di librerie che conservano stato.
+Possiamo immaginarlo come una catena:
+
+~~~text
+environment locale
+      ↓
+environment della funzione
+      ↓
+environment del package
+      ↓
+base environment
+~~~
+
+Un environment ha identità propria e può essere modificato.
+
+~~~{r}
+#| label: esempio-environment
+
+e <- new.env()
+e$x <- 10
+e$x
+~~~
+
+Qui e contiene l'associazione x → 10. Se un'altra variabile punta allo stesso environment, entrambe osservano lo stesso stato.
+
+### Lexical scoping
+
+Consideriamo:
+
+~~~{r}
+#| label: esempio-lexical-scoping
+
+x <- 10
+
+f <- function() {
+  x
+}
+
+f()
+~~~
+
+Quando f() cerca x, R non cerca semplicemente «dove è stata chiamata» la funzione. La funzione è stata **definita** in un determinato environment e conserva il riferimento a quella catena.
+
+Questo è il **lexical scoping**.
+
+Una funzione R è quindi una *closure*: contiene codice e l'environment associato alla sua definizione.
+
+~~~text
+funzione
+├── codice
+└── environment di definizione
+          ↓
+      nomi visibili
+~~~
+
+Questo spiega funzioni annidate, factory, package e molti oggetti che mantengono stato.
+
+Per IT il concetto è utile perché chiarisce **da dove arriva lo stato che una funzione vede**.
 
 ## Lazy evaluation
 
@@ -91,9 +161,80 @@ La domanda non è quindi soltanto «usa future?», ma **quale backend viene real
 
 ## Fork e PSOCK
 
-Con fork i processi figli derivano da un processo esistente e il sistema operativo può inizialmente condividere pagine di memoria tramite copy-on-write. Con PSOCK vengono avviati processi R distinti che comunicano attraverso connessioni.
+Questi due backend sono spesso citati insieme perché hanno conseguenze diverse sulla memoria e sul trasferimento degli oggetti.
 
-La scelta influenza isolamento, memoria, trasferimento degli oggetti e compatibilità operativa. In particolare, ciò che inizialmente è condiviso dopo un fork può richiedere pagine private quando i processi le modificano.
+### Fork
+
+Con **fork**, un processo figlio deriva dal processo R principale.
+
+~~~text
+R principale
+    │
+   fork
+   ├──────────→ processo principale
+   └──────────→ processo figlio
+~~~
+
+Il figlio eredita lo stato del processo padre. L'OS può inizialmente fare riferimento alle stesse pagine fisiche tramite **copy-on-write**.
+
+Non significa quindi che la RAM venga immediatamente raddoppiata:
+
+~~~text
+inizio:
+padre ──┐
+        ├── pagine condivise
+figlio ─┘
+
+modifica
+   ↓
+pagina privata
+   ↓
+RAM aggiuntiva
+~~~
+
+### PSOCK
+
+Con **PSOCK** vengono avviati processi R separati che comunicano tramite connessioni socket.
+
+~~~text
+R principale
+   │
+   ├── socket ── worker R
+   ├── socket ── worker R
+   └── socket ── worker R
+~~~
+
+Un oggetto necessario al worker può quindi dover essere:
+
+~~~text
+oggetto nel master
+      ↓
+serializzazione
+      ↓
+socket
+      ↓
+deserializzazione
+      ↓
+oggetto nel worker
+~~~
+
+Per oggetti grandi il trasferimento può essere costoso in tempo e memoria.
+
+### Perché interessa a IT?
+
+Se il master contiene un data frame molto grande, non basta sapere il numero di worker. Bisogna chiedersi:
+
+> **quanti dati vengono trasferiti a ciascun worker e quante copie esistono contemporaneamente?**
+
+| | Fork | PSOCK |
+|---|---|---|
+| processo | deriva dal padre | processo separato |
+| memoria iniziale | può condividere pagine via COW | separata |
+| trasferimento dati | può sfruttare lo stato ereditato | richiede comunicazione |
+| costo da osservare | COW e RAM | serializzazione, trasferimento e RAM |
+| portabilità | dipende dall'OS | generalmente più portabile |
+
+Non è una classifica: indica **quali costi misurare**.
 
 ## Serializzazione
 
@@ -115,29 +256,58 @@ Per oggetti grandi, questo overhead può annullare parte del vantaggio del paral
 
 ## BLAS, LAPACK e thread nativi
 
-Molte operazioni numeriche usano BLAS/LAPACK o altre librerie native che possono creare thread.
+Per capire perché un singolo processo R può utilizzare più di un core bisogna introdurre le librerie numeriche.
 
-```text
-4 worker R × 8 thread nativi = 32 thread
-```
+**BLAS** (*Basic Linear Algebra Subprograms*) fornisce operazioni fondamentali di algebra lineare, come prodotti tra vettori e matrici.
 
-Questo può produrre oversubscription. Aumentare contemporaneamente worker e thread nativi può peggiorare le prestazioni.
+**LAPACK** fornisce algoritmi numerici per problemi di algebra lineare, costruiti in larga parte sopra BLAS.
 
-Per un ambiente IT la configurazione da osservare non è quindi solo il numero di core della VM, ma almeno:
+Il percorso può essere:
 
-**worker R + thread nativi + concorrenza di altri workload.**
+~~~text
+codice R
+   ↓
+funzione R
+   ↓
+codice compilato
+   ↓
+BLAS / LAPACK
+   ↓
+CPU
+~~~
 
-### Un esempio di diagnosi
+L'implementazione concreta di BLAS può essere single-thread o multi-thread. Un processo R apparentemente singolo può quindi utilizzare più thread nativi.
 
-Supponiamo una VM con 16 core. Un job usa 4 worker R e una libreria numerica configurata con 8 thread per worker.
+### Worker e thread nativi sono due livelli diversi
 
-```text
-4 worker × 8 thread = 32 thread
-16 core disponibili
-→ possibile oversubscription
-```
+Possiamo avere:
 
-Prima di chiedere una VM più grande, il test utile è separare le due variabili: mantenere fissi i worker e cambiare i thread nativi, poi fare il contrario. Il risultato deve essere confrontato su tempo, CPU e RAM.
+~~~text
+4 worker R
+   ×
+8 thread BLAS per worker
+   =
+32 thread nativi
+~~~
+
+su una macchina con 16 core.
+
+Questo **può** produrre oversubscription. Non significa che 32 thread siano sempre peggiori di 16: significa che abbiamo creato più unità concorrenti dei core disponibili e dobbiamo verificare il risultato.
+
+### Come si diagnostica?
+
+Separiamo le variabili:
+
+1. tenere fissi i worker e cambiare i thread nativi;
+2. tenere fissi i thread nativi e cambiare i worker;
+3. misurare tempo;
+4. misurare CPU;
+5. misurare RAM;
+6. verificare la concorrenza con altri workload.
+
+La domanda infrastrutturale diventa:
+
+> **quale combinazione di worker e thread nativi produce il tempo richiesto senza introdurre un costo eccessivo di RAM o contesa CPU?**
 
 ## Benchmark del runtime
 
