@@ -38,7 +38,7 @@ nuova baseline quando cambia qualcosa
 
 ## Come è organizzato il manuale
 
-I sette capitoli seguono una progressione intenzionale. L'introduzione non è un capitolo numerato: definisce il metodo. I capitoli sono numerati da 1 a 7 e ciascuno risponde a una domanda precisa.
+I sei capitoli seguono una progressione intenzionale. L'introduzione non è un capitolo numerato: definisce il metodo. I capitoli sono numerati da 1 a 6 e ciascuno risponde a una domanda precisa.
 
 1. **Contesto e ambiente R** — che cosa compone una soluzione R e quali dipendenze devono essere governate.
 2. **Runtime, processi e parallelismo** — come R esegue il lavoro, usa memoria, processi, worker e thread.
@@ -50,7 +50,7 @@ I sette capitoli seguono una progressione intenzionale. L'introduzione non è un
 
 La sequenza può essere letta anche come una serie di domande:
 
-> **Che cosa stiamo gestendo? → Come viene eseguito? → Come si comporta? → Dove deve vivere? → Come lo rilasciamo? → Chi ne è responsabile? → Come decidiamo?**
+> **Che cosa stiamo gestendo? → Come viene eseguito? → Come si comporta? → Dove deve vivere? → Come lo rilasciamo? → Come prendiamo una decisione verificabile?**
 
 ## Il modello operativo
 
@@ -78,7 +78,7 @@ Il modello viene applicato a cinque dimensioni ricorrenti:
 
 ## Quattro domande da ricordare
 
-Queste domande sintetizzano il metodo e tornano nel capitolo 7:
+Queste domande sintetizzano il metodo e tornano nel capitolo 6:
 
 1. **Che cosa deve fare?**
 2. **Quale evidenza dimostra che serve ciò che viene richiesto?**
