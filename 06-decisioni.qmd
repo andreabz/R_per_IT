@@ -9,6 +9,14 @@ Nei capitoli precedenti abbiamo visto come R usa ambiente, memoria, CPU, process
 
 Il punto non è aggiungere altra teoria: è collegare **evidenza, decisione e responsabilità**.
 
+## Lessico della decisione
+
+| Termine | Significato operativo |
+|---|---|
+| **collo di bottiglia** | componente o fase che limita significativamente la prestazione complessiva del workload |
+| **baseline** | configurazione di riferimento con cui confrontare una modifica; nel corso include codice, ambiente e risultati misurati |
+| **ownership** | assegnazione esplicita della responsabilità di una decisione, componente o attività operativa |
+
 ## Dal requisito all'evidenza
 
 Il modello operativo è:
