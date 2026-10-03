@@ -1,884 +1,153 @@
 ---
 title: "Deployment e gestione operativa"
-subtitle: "Versionamento, test, CI/CD, rilascio, sicurezza, continuità e ownership"
+subtitle: "Dal codice R alla release"
 ---
-
 
 ## Perché questo capitolo
 
-Un software può funzionare sul computer dello sviluppatore senza essere ancora una soluzione gestibile in esercizio. Questo capitolo segue il passaggio dal codice a una release identificabile, verificata e distribuibile, fino alle attività necessarie per mantenerla osservabile, modificabile e ripristinabile.
+Un software che funziona sul computer dello sviluppatore non è ancora una release.
 
-La domanda del capitolo è:
+> **Come portiamo lo stesso codice e lo stesso ambiente R in un'esecuzione controllata?**
 
-> **Come trasformiamo il software in qualcosa di rilasciabile e gestibile?**
+Per R la difficoltà aggiuntiva è che una release deve rendere riproducibile non solo il codice, ma anche il runtime, i package e le dipendenze che attraversano il confine con il sistema operativo.
 
-Il filo del capitolo è:
-
-`codice → verifica → build → artefatto → release → deployment → osservabilità → aggiornamento`.
-
-Ogni passaggio aggiunge informazioni necessarie per sapere che cosa è stato rilasciato, con quali evidenze e come intervenire quando qualcosa cambia.
-
-**Perimetro:** qui interessano processo di build e rilascio, test software, dipendenze, sicurezza operativa, osservabilità, rollback e continuità. Le decisioni su ownership, approvazioni e responsabilità appartengono al capitolo 6.
-
-## Dal codice alla release
-
-Il primo requisito di un'applicazione in produzione è sapere esattamente **che cosa è stato rilasciato**.
-
-Per IT questo significa poter rispondere a domande come:
-
-- quale versione del codice è in esecuzione?
-- quali file sono cambiati?
-- quali dipendenze sono state utilizzate?
-- quale artefatto è stato distribuito?
-- quale versione era precedente?
-- possiamo ricostruire lo stesso rilascio?
-
-Un flusso semplice può essere:
+## Catena di rilascio
 
 ```text
-modifica
-   ↓
+codice R
+ ↓
 commit
-   ↓
-review
-   ↓
+ ↓
 test
-   ↓
-release
-   ↓
-produzione
-```
-
-Il punto è identificare la **tracciabilità** come requisito fondamentale.
-
-
-### Git, commit e tag
-
-Un commit identifica uno stato preciso del repository.
-
-Un tag può identificare una versione rilasciabile, per esempio:
-
-```text
-v1.4.0
-```
-
-Una release dovrebbe essere associata almeno a:
-
-- versione del codice;
-- dipendenze;
-- configurazione prevista;
-- istruzioni di deployment;
-- eventuali modifiche al database;
-- note sulle modifiche;
-- procedura di rollback.
-
-> Se non è possibile identificare con precisione ciò che è stato messo in produzione, il rilascio non è realmente tracciato.
-
-
-### Baseline
-
-Una **baseline** identifica l'insieme delle componenti approvate per una determinata versione.
-
-Per una soluzione R può comprendere:
-
-| Livello | Esempio di evidenza |
-|---|---|
-| codice | commit / tag Git |
-| R | versione |
-| pacchetti R | lockfile |
-| sistema operativo | versione o immagine |
-| librerie native | versioni |
-| driver/client | versione |
-| configurazione | configurazione dell'ambiente |
-| test | suite e risultati |
-| artefatto | identificativo dell'artefatto |
-
-La baseline permette di sapere non soltanto **quale codice** è stato rilasciato, ma **in quale ambiente e con quali dipendenze**.
-
-
-## Verificare il software
-
-Un deployment controllato richiede verifiche proporzionate al tipo di applicazione.
-
-
-### Test funzionali
-
-Verificano che l'elaborazione produca il risultato atteso.
-
-```text
-input noto
-   ↓
-elaborazione
-   ↓
-output atteso
-```
-
-Per esempio, un modello può essere verificato utilizzando un dataset di riferimento e confrontando il risultato con valori attesi.
-
-
-### Test di integrazione
-
-Verificano l'interazione con componenti esterni:
-
-- Oracle;
-- filesystem;
-- API;
-- scheduler;
-- servizi aziendali;
-- sistemi di autenticazione.
-
-Un programma può funzionare correttamente in isolamento e fallire quando viene collegato all'ambiente reale.
-
-
-### Test di regressione
-
-Verificano che una modifica non rompa funzionalità già esistenti.
-
-Sono particolarmente importanti quando cambiano:
-
-- codice;
-- algoritmo;
-- pacchetti R;
-- versione di R;
-- driver;
-- librerie di sistema.
-
-
-### Test di performance
-
-Sono necessari quando esistono requisiti relativi a:
-
-- tempo massimo;
-- numero di utenti;
-- dimensione del dataset;
-- consumo di RAM;
-- carico CPU;
-- concorrenza.
-
-Un test di performance deve avere un contesto misurabile.
-
-> «È veloce» non è un criterio operativo.
-
-Il dettaglio della diagnosi delle performance appartiene al capitolo dedicato alla performance. Qui interessa soprattutto verificare che il comportamento osservato soddisfi il requisito previsto.
-
-
-### Test e dati
-
-Quando possibile, i test dovrebbero utilizzare dati:
-
-- sintetici;
-- anonimizzati;
-- minimizzati;
-- rappresentativi del comportamento reale.
-
-L'accesso ai dati di produzione non dovrebbe essere considerato automaticamente necessario solo perché un'applicazione deve essere testata.
-
-
-## Dipendenze e riproducibilità
-
-Una soluzione R dipende non soltanto dal codice sviluppato internamente, ma anche da:
-
-- versione di R;
-- pacchetti;
-- versioni dei pacchetti;
-- librerie di sistema;
-- driver;
-- client database;
-- strumenti esterni.
-
-Il requisito non è quindi semplicemente:
-
-> «Installare il pacchetto X».
-
-Il requisito è:
-
-> **poter ricostruire l'ambiente necessario per eseguire una specifica versione dell'applicazione.**
-
-
-### renv
-
-`renv` permette di descrivere in modo riproducibile l'ambiente R del progetto.
-
-Questo consente di associare al codice una versione specifica delle dipendenze R.
-
-Restano però da considerare anche:
-
-- versione di R;
-- sistema operativo;
-- librerie native;
-- driver;
-- client database;
-- strumenti esterni;
-- configurazione.
-
-Per IT è quindi utile considerare `renv` come **una parte della baseline**, non come una soluzione completa alla riproducibilità dell'intero ambiente.
-
-
-### Repository dei pacchetti
-
-In produzione bisogna sapere:
-
-- da dove vengono installati i pacchetti;
-- quali versioni sono disponibili;
-- se l'ambiente può raggiungere Internet;
-- se esiste un repository interno;
-- come vengono gestiti gli aggiornamenti;
-- come viene verificata la compatibilità.
-
-La disponibilità di un pacchetto nel repository dello sviluppatore non garantisce automaticamente che sia disponibile nell'ambiente di produzione.
-
-
-## Artefatti e container
-
-Il deployment non dovrebbe dipendere dalla copia manuale e non tracciata dei file.
-
-Un **artefatto** è il prodotto del processo di build, per esempio:
-
-- sito HTML;
-- pacchetto applicativo;
-- immagine container;
-- bundle di file;
-- report;
-- componente o servizio configurato.
-
-L'artefatto dovrebbe essere associato alla versione del codice che lo ha prodotto.
-
-Il modello è:
-
-```text
-codice sorgente
-     ↓
-build
-     ↓
-artefatto versionato
-     ↓
-test
-     ↓
-produzione
-```
-
-
-### Container come artefatto di deployment
-
-Nel capitolo sull'architettura il container è stato considerato come modalità di esecuzione.
-
-Qui interessa invece il container come **artefatto costruibile, versionabile, testabile e distribuibile**.
-
-Concettualmente:
-
-```text
-immagine container
-├── R
-├── pacchetti R
-├── librerie native
-├── applicazione
-└── strumenti necessari
-```
-
-Il vantaggio operativo è poter distribuire un ambiente software identificabile in modo univoco.
-
-Un flusso controllato può essere:
-
-```{mermaid}
-%%| label: mermaid-05-deployment-01
-%%| echo: false
-flowchart LR
-    GIT["Codice versionato"] --> BUILD["Build"]
-    BUILD --> TEST["Test automatici"]
-    TEST -->|FAIL| DISCARD["Scarto"]
-    TEST -->|PASS| IMAGE["Artefatto versionato"]
-    IMAGE --> REG["Registry"]
-    REG --> DEPLOY["Deployment"]
-    DEPLOY --> SMOKE["Smoke test"]
-```
-
-L'immagine dovrebbe essere identificabile in modo univoco.
-
-Un tag leggibile può essere utile per gli operatori, mentre il digest dell'immagine permette di identificare esattamente l'artefatto distribuito.
-
-L'obiettivo operativo non è modificare manualmente un artefatto già testato.
-
-Se cambia il contenuto:
-
-```text
-nuova modifica
-      ↓
-nuova build
-      ↓
-nuovi test
-      ↓
-nuovo artefatto
-```
-
-
-### Cosa non risolve il container
-
-La containerizzazione non risolve automaticamente:
-
-- la correttezza dell'algoritmo;
-- la qualità dei dati;
-- la gestione dei segreti;
-- la sicurezza dell'immagine;
-- la compatibilità con sistemi esterni;
-- la configurazione dell'ambiente target;
-- il controllo delle modifiche.
-
-Un container può inoltre dipendere da servizi esterni:
-
-- database;
-- API;
-- filesystem;
-- autenticazione;
-- certificati;
-- scheduler.
-
-La baseline deve quindi identificare anche le dipendenze che rimangono fuori dal container.
-
-
-## Automatizzare build e verifica
-
-La **Continuous Integration** automatizza almeno una parte dei controlli dopo una modifica al repository.
-
-Un flusso tipico è:
-
-```text
-push / pull request
-        ↓
-controlli automatici
-        ↓
-test
-        ↓
-build / render
-        ↓
+ ↓
+ambiente riproducibile
+ ↓
 artefatto
-        ↓
-approvazione
-        ↓
-deployment
+ ↓
+deploy
+ ↓
+smoke test
+ ↓
+monitoring
 ```
 
-La Continuous Delivery/Deployment aggiunge il passaggio controllato verso gli ambienti successivi.
+## Git e baseline
 
-Per una soluzione R, una pipeline può verificare:
+Una release R deve essere riconducibile a commit/tag, versione R, dipendenze, configurazione, componenti nativi, dati di test ed esiti.
 
-- struttura del progetto;
-- test automatici;
-- dipendenze;
-- rendering Quarto;
-- costruzione dell'immagine container;
-- presenza dei file richiesti;
-- controlli di sicurezza;
-- produzione dell'artefatto.
+Git identifica il codice; non identifica da solo l'intero ambiente R.
 
-Non è necessario automatizzare tutto dal primo giorno.
+## renv nel deployment
 
-Anche una pipeline che impedisce di portare in produzione un progetto che non supera i test di base costituisce un miglioramento significativo.
+Il lockfile di `renv` registra versione di R, repository e record dei package, incluse versioni e sorgenti quando note. Non è però un inventario completo di OS, librerie native, driver, configurazione, credenziali o dati.
 
+Per alcune installazioni `renv` può inoltre individuare i requisiti di sistema dei package; questi requisiti devono comunque essere soddisfatti dall'ambiente di destinazione.
 
-### Ambienti
+La domanda operativa è quindi:
 
-È utile distinguere almeno:
+> **Posso ricostruire lo stesso ambiente R, non soltanto recuperare lo stesso commit?**
+
+## Container come artefatto
 
 ```text
-sviluppo → test → produzione
+OS base
+ ↓
+R
+ ↓
+librerie native
+ ↓
+package
+ ↓
+codice
+ ↓
+strumenti
 ```
 
-| Ambiente | Obiettivo | Caratteristiche |
-|---|---|---|
-| sviluppo | costruire e modificare | flessibile, modificabile |
-| test | verificare una versione | controllato, ripetibile |
-| produzione | erogare il servizio | stabile, monitorato, tracciato |
+Per una soluzione R il container è particolarmente utile quando serve rendere esplicita la catena R → package → native dependencies.
 
-Una modifica dovrebbe attraversare gli ambienti secondo una sequenza definita.
+Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 
-La stessa applicazione può utilizzare configurazioni differenti nei diversi ambienti senza modificare necessariamente il codice.
+## Test
 
+Una soluzione R dovrebbe avere almeno una distinzione tra quattro livelli di verifica:
 
-### Il ruolo di GitHub Actions
+| Test | Domanda |
+|---|---|
+| Funzionale | il risultato applicativo è corretto? |
+| Integrazione | R comunica correttamente con DB/API/filesystem? |
+| Compatibilità | R, package, driver e native libraries sono coerenti? |
+| Performance | tempo, CPU, RAM e I/O restano entro la baseline? |
 
-GitHub Actions può essere utilizzato come esempio concreto di CI/CD.
+I test di performance devono usare dati rappresentativi e una baseline comparabile. Un test funzionale che passa non dimostra che il workload abbia lo stesso costo operativo.
 
-In un'organizzazione, lo stesso processo può essere implementato con GitHub Actions oppure con un'altra piattaforma aziendale.
+Per un workload R è utile esplicitare anche il caso **“stesso codice, ambiente diverso”**: una modifica di R, package, driver o librerie native può cambiare il comportamento senza alcuna modifica allo script.
 
-Il principio da governare è la **pipeline**, non lo specifico prodotto.
-
-Un esempio semplice:
+Una verifica minima può quindi confrontare:
 
 ```text
-Pull Request
-     ↓
-render + test + controlli
-     ↓
-merge
-     ↓
-build + artefatto
-     ↓
-approvazione
-     ↓
-deployment
+baseline
+   ↓
+stesso input
+   ↓
+nuovo ambiente
+   ↓
+risultato + tempo + RAM
+   ↓
+confronto
 ```
 
-Una Pull Request dovrebbe verificare la modifica senza pubblicarla automaticamente in produzione, salvo che l'organizzazione abbia definito esplicitamente un diverso processo.
+Se il risultato applicativo è corretto ma il tempo passa da 10 a 40 minuti o la RAM da 4 a 20 GB, la release richiede una valutazione tecnica prima del passaggio in produzione.
 
+## Configurazione e segreti
 
-## Separare codice, configurazione e segreti
-
-Un principio importante è distinguere:
-
-- **codice**;
-- **configurazione**;
-- **segreti**.
-
-Per esempio, l'indirizzo del database o il percorso di output non dovrebbero essere necessariamente hard-coded nel programma.
-
-Questo facilita il passaggio tra ambienti.
-
-La configurazione può essere versionata quando non contiene informazioni riservate.
-
-I segreti invece devono essere gestiti tramite i meccanismi previsti dall'infrastruttura aziendale.
-
-
-## Dipendenze e sicurezza
-
-Le dipendenze devono essere governabili anche dal punto di vista organizzativo.
-
-Per ogni dipendenza rilevante è utile conoscere:
-
-- nome;
-- versione;
-- origine;
-- licenza;
-- eventuali dipendenze native;
-- modalità di aggiornamento.
-
-La domanda IT non è soltanto:
-
-> «Il pacchetto funziona?»
-
-ma anche:
-
-> **«Da dove proviene, quale versione utilizziamo e come gestiamo il suo ciclo di vita?»**
-
-Le verifiche legali sulle licenze devono seguire le policy dell'organizzazione.
-
-
-### Sicurezza
-
-Una soluzione R può avere accesso a:
-
-- database;
-- filesystem;
-- API;
-- dati personali;
-- dati scientifici;
-- sistemi interni.
-
-Il principio del **least privilege** implica che l'applicazione riceva soltanto i permessi necessari.
-
-La richiesta:
-
-> «R deve poter accedere a Oracle»
-
-non è quindi sufficiente.
-
-Bisogna sapere:
-
-- con quale identità;
-- verso quali oggetti;
-- con quali operazioni;
-- da quale ambiente;
-- attraverso quale percorso di rete.
-
-
-### Credenziali
-
-Da evitare:
+Codice, configurazione e segreti devono essere separati.
 
 ```{r}
-#| label: esempio-credenziali-in-chiaro
+#| label: esempio-segreto-nel-codice
 
 username <- "utente"
 password <- "password"
 ```
 
-Credenziali inserite nel codice possono finire nei repository, nei backup, nei log o negli artefatti distribuiti.
+Il codice è un esempio di ciò che non deve essere usato in produzione. In esercizio, i valori devono provenire dai meccanismi di configurazione e secret management previsti dall'organizzazione.
 
-In produzione le credenziali dovrebbero essere gestite tramite i meccanismi previsti dall'infrastruttura aziendale.
+## GitHub Actions
 
+Una pipeline può automatizzare checkout, configurazione di R, ripristino dell'ambiente, test, build/render e pubblicazione.
 
-### Checklist per la gestione dei segreti
+Nel repository del corso la pipeline esistente è configurata per eseguire `quarto render`, produrre `_site` e pubblicarlo tramite GitHub Pages quando viene eseguita sul branch `main`. Questa proprietà è stata verificata sulla configurazione del workflow; la riuscita di una run reale resta una verifica separata.
 
-| Controllo | Evidenza da verificare |
+Per un progetto R è utile trattare il render o il test come parte della verifica dell'ambiente: se cambiano R, package o dipendenze native, la pipeline deve rendere visibile la regressione.
+
+## Smoke test e rollback
+
+Dopo il deployment verificare che processo, dipendenze, sistemi esterni e output minimo funzionino.
+
+Il rollback deve ricondurre codice e ambiente a una baseline precedente. Ripristinare soltanto il commit non è sufficiente se l'ambiente è stato modificato manualmente.
+
+## Logging, monitoring e sicurezza
+
+Questi aspetti appartengono al normale esercizio IT; per il corso interessa ciò che deve essere osservabile del workload R:
+
+- job: avvio, durata, esito, output ed errori;
+- servizio: disponibilità, latenza, errori, concorrenza;
+- runtime: CPU, RAM, processi/worker e dipendenze esterne.
+
+Account tecnici, minimo privilegio, segreti, rete e TLS/HTTPS restano requisiti operativi da integrare con gli standard aziendali, non un modulo specifico di R.
+
+## Production readiness
+
+| Aspetto | Evidenza |
 |---|---|
-| Segreti fuori dal codice | nessuna password, token o chiave hard-coded |
-| Segreti fuori dai log | nessun segreto nei log applicativi o diagnostici |
-| Identità dedicata | account tecnico o identità di servizio |
-| Least privilege | solo i permessi necessari |
-| Recupero a runtime | segreto fornito dall'infrastruttura |
-| Permessi sul segreto | accesso limitato ai soggetti autorizzati |
-| Rotazione | procedura per sostituire credenziali e chiavi |
-| Revoca | possibilità di disabilitare rapidamente l'identità |
-| Audit | accessi e modifiche registrati secondo policy |
-| Separazione ambienti | identità separate tra sviluppo, test e produzione |
-| Gestione errori | nessun segreto negli errori |
-| Dipendenze esterne | wallet, certificati e client inclusi nella baseline |
-
-Per R, il principio è:
-
-> **R non deve diventare il sistema di gestione dei segreti.**
-
-Il codice dovrebbe ricevere il riferimento o il valore necessario dall'infrastruttura secondo le modalità approvate dall'organizzazione.
-
-La soluzione concreta può utilizzare, per esempio:
-
-- secret manager;
-- credential store del sistema operativo;
-- identità gestite;
-- altri meccanismi approvati dall'organizzazione.
-
-
-### Domande operative per IT
-
-Prima del rilascio:
-
-1. Dove viene conservato il segreto?
-2. Chi o quale processo può leggerlo?
-3. L'applicazione usa un'identità dedicata?
-4. Quali permessi possiede?
-5. Come arriva il segreto al processo R?
-6. È presente in codice, repository, immagine, configurazione o log?
-7. Come viene ruotato?
-8. Come viene revocato?
-9. Come viene registrato l'accesso?
-10. Cosa succede se il segreto scade o viene revocato?
-11. Sviluppo, test e produzione usano identità separate?
-12. La gestione delle credenziali è documentata?
-
-Un controllo utile considera l'intera catena:
-
-```text
-secret manager / credential store
-          ↓
-runtime / account di servizio
-          ↓
-processo R
-          ↓
-Oracle / API / filesystem
-```
-
-Il principio è **minimizzare il numero di componenti che conoscono il segreto e il tempo per cui il segreto rimane disponibile**.
-
-
-## Rilascio
-
-Un rilascio dovrebbe essere un'operazione identificabile e ripetibile.
-
-Una checklist minima comprende:
-
-1. codice approvato;
-2. test superati;
-3. dipendenze disponibili;
-4. configurazione verificata;
-5. versione identificata;
-6. artefatto identificato;
-7. deployment eseguito;
-8. smoke test;
-9. monitoring verificato;
-10. esito registrato.
-
-
-### Smoke test
-
-Dopo il deployment è utile eseguire un controllo minimo che verifichi che il componente sia effettivamente operativo nell'ambiente target.
-
-Esempi:
-
-- un endpoint risponde;
-- un job può partire;
-- una connessione al database funziona;
-- un report viene prodotto;
-- una pagina Quarto è raggiungibile.
-
-Lo smoke test non sostituisce i test automatici.
-
-Verifica invece che **il componente distribuito sia utilizzabile nell'ambiente target**.
-
-
-## Rollback
-
-Un deployment controllato deve prevedere anche il caso in cui la nuova versione non sia utilizzabile.
-
-```text
-versione N
-   ↓
-release N+1
-   ↓
-smoke test
-   ├── OK → mantenere N+1
-   └── KO → rollback a N
-```
-
-Il rollback può significare:
-
-- ripristinare una precedente versione del codice;
-- ridistribuire un precedente artefatto;
-- ripristinare una configurazione;
-- ripristinare dati, quando previsto dalla procedura.
-
-Il rollback diventa più complesso quando il rilascio modifica anche il database.
-
-In quel caso bisogna considerare esplicitamente la compatibilità tra:
-
-- versione applicativa;
-- schema dati;
-- eventuali migrazioni;
-- versione precedente dell'applicazione.
-
-> Un rollback non documentato è spesso soltanto un'intenzione.
-
-Per questo la procedura dovrebbe essere conosciuta e, quando necessario, verificata.
-
-
-## Operatività e osservabilità
-
-Una volta che l'applicazione è in produzione, il problema cambia.
-
-Non basta sapere che il deployment è terminato correttamente.
-
-Bisogna poter sapere **come sta funzionando l'applicazione**.
-
-
-### Logging
-
-Un job batch dovrebbe almeno permettere di sapere:
-
-- quando è partito;
-- quando è terminato;
-- quale versione ha utilizzato;
-- quale configurazione rilevante ha utilizzato;
-- quanto è durato;
-- se è terminato correttamente;
-- dove si trova l'output;
-- quale errore si è verificato in caso di fallimento.
-
-Un log utile non è necessariamente enorme.
-
-Deve permettere di ricostruire l'esecuzione senza registrare informazioni riservate.
-
-
-### Error handling
-
-Un errore applicativo non dovrebbe trasformarsi in un fallimento silenzioso.
-
-Un modello semplice è:
-
-```{mermaid}
-%%| label: mermaid-05-deployment-02
-%%| echo: false
-flowchart TD
-    A["Avvio"] --> B["Controlli"]
-    B --> C["Elaborazione"]
-    C --> D["Successo"]
-    C --> E["Errore"]
-    E --> F["Log"]
-    F --> G["Alert / presa in carico"]
-```
-
-Per un job notturno:
-
-> «Il processo si è fermato»
-
-non è una strategia di gestione dell'errore.
-
-Bisogna sapere:
-
-- che è fallito;
-- quando;
-- quale versione era in esecuzione;
-- in quale fase;
-- con quale errore;
-- chi deve intervenire.
-
-
-### Monitoring
-
-Il monitoraggio deve essere coerente con il tipo di applicazione.
-
-
-**Job batch**
-
-Controllare:
-
-- esecuzione;
-- durata;
-- successo/fallimento;
-- output;
-- CPU/RAM quando rilevanti.
-
-
-**Servizio o API**
-
-Controllare:
-
-- disponibilità;
-- tempi di risposta;
-- errori;
-- numero di richieste;
-- risorse;
-- eventuali saturazioni.
-
-
-**Applicazione Shiny**
-
-Aggiungere, quando pertinenti:
-
-- numero di sessioni;
-- durata delle sessioni;
-- utilizzo di RAM e CPU;
-- errori lato server;
-- comportamento sotto concorrenza.
-
-Il monitoraggio operativo non sostituisce la diagnosi delle performance.
-
-La differenza è:
-
-> **performance:** perché il workload è lento?
-
-> **monitoring:** l'applicazione in produzione sta rispettando il comportamento operativo atteso?
-
-
-## Continuità operativa
-
-Per i sistemi che producono o gestiscono dati è utile distinguere:
-
-- **RPO — Recovery Point Objective:** quanta perdita di dati è accettabile;
-- **RTO — Recovery Time Objective:** quanto tempo può trascorrere prima del ripristino.
-
-Per esempio:
-
-```text
-RPO = 24 h
-RTO = 4 h
-```
-
-significa, secondo i requisiti definiti, che l'organizzazione deve poter recuperare i dati con una perdita massima prevista di 24 ore e ripristinare il servizio entro 4 ore.
-
-I valori reali devono essere definiti dal servizio e dalle policy aziendali, non dal linguaggio R.
-
-
-### Backup e disaster recovery
-
-Backup e disaster recovery non sono sinonimi.
-
-Avere una copia dei dati non dimostra automaticamente di essere in grado di ricostruire l'applicazione.
-
-Per una soluzione R in produzione bisogna sapere:
-
-- dove si trova il codice;
-- dove si trovano gli artefatti;
-- dove sono le configurazioni;
-- dove sono i dati;
-- come vengono gestiti i segreti;
-- come si ricrea l'ambiente;
-- come si ripristina il servizio;
-- chi esegue il ripristino;
-- come viene verificato il ripristino.
-
-Una procedura di recovery dovrebbe quindi considerare l'intera soluzione e non soltanto il database.
-
-
-## Verificare la prontezza alla produzione
-
-Prima della messa in produzione, la verifica deve dimostrare che esistono gli elementi operativi necessari al rilascio.
-
-- codice e versione identificabili;
-- test eseguiti e risultati disponibili;
-- runtime e dipendenze identificabili;
-- artefatto riproducibile e identificabile;
-- configurazione e segreti gestiti separatamente dal codice;
-- logging, monitoring e gestione degli errori predisposti;
-- rollback e continuità definiti quando applicabili.
-
-La domanda **chi approva, chi verifica e chi è responsabile** appartiene alla governance del capitolo 6.
-
-## Le domande fondamentali
-
-Quando un prodotto R viene rilasciato, la verifica operativa può essere sintetizzata in queste domande:
-
-- Quale versione o artefatto viene distribuito?
-- Quali dipendenze e configurazioni richiede?
-- Come viene costruito e testato?
-- Come vengono gestiti identità, segreti e accessi?
-- Come viene verificato il rilascio?
-- Quali log, metriche e alert sono disponibili?
-- Come viene effettuato un rollback o un recovery, quando necessario?
-
-Le responsabilità e le autorizzazioni associate a questi passaggi sono definite nel capitolo 6.
-
-## Una pipeline completa
-
-Un esempio realistico può essere rappresentato così:
-
-```{mermaid}
-%%| label: mermaid-05-deployment-03
-%%| echo: false
-flowchart LR
-    DEV["Sviluppo"] --> GIT["Git"]
-    GIT --> PR["Pull Request"]
-    PR --> CI["CI: test + controlli"]
-    CI --> ART["Artefatto versionato"]
-    ART --> APPROVE["Approvazione"]
-    APPROVE --> TEST["Ambiente di test"]
-    TEST --> SMOKE["Smoke test"]
-    SMOKE --> PROD["Produzione"]
-    PROD --> MON["Monitoring"]
-    MON -->|anomalia| ROLLBACK["Rollback / recovery"]
-    ROLLBACK --> PROD
-```
-
-La pipeline non deve necessariamente essere identica per ogni applicazione.
-
-Deve però rendere espliciti i passaggi che oggi sono spesso manuali e non tracciati.
-
-Il livello di automazione può crescere nel tempo:
-
-```text
-processo manuale
-      ↓
-controlli documentati
-      ↓
-test automatizzati
-      ↓
-build automatizzata
-      ↓
-artefatto versionato
-      ↓
-deployment controllato
-      ↓
-monitoring e recovery
-```
-
-L'obiettivo non è introdurre strumenti per il solo fatto di introdurli.
-
-L'obiettivo è ridurre la dipendenza da procedure manuali, rendere il rilascio ripetibile e permettere di ricostruire ciò che è accaduto.
-
-
-## Principio operativo
-
-Per IT, la richiesta:
-
-> «Ho uno script R, mettetelo sul server»
-
-dovrebbe essere trasformata in una richiesta più precisa:
-
-> **Quale versione? Quali dipendenze? Quale artefatto? Quali dati? Quali permessi? Quale configurazione? Quali test? Quale monitoring? Quale rollback? Chi è il proprietario?**
-
-La domanda finale non è quindi soltanto:
-
-> **«Funziona?»**
-
-ma:
-
-> **«Possiamo identificarlo, ricostruirlo, testarlo, distribuirlo, monitorarlo, aggiornarlo e ripristinarlo in modo prevedibile?»**
-
-Questa è la differenza tra uno script che funziona e una soluzione che può essere realmente gestita in produzione.
+| Codice | commit/tag |
+| Ambiente R | R + package + native |
+| Configurazione | parametri |
+| Test | esiti |
+| Sicurezza | accessi e segreti |
+| Operatività | logging/monitoring |
+| Ripristino | procedura + baseline |
+| Ownership | responsabili |
+
+Prima del rilascio, la domanda utile non è «abbiamo installato R?», ma **«possiamo ricostruire, verificare e osservare questa specifica baseline R in produzione?»**
+
+Il capitolo 6 usa questa evidenza per trasformare le richieste in decisioni e assegnare ownership.

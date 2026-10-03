@@ -1,357 +1,156 @@
 ---
-title: "Runtime, processi e parallelismo"
-subtitle: "Processi, core, thread, worker e scaling"
+title: "Runtime, memoria e parallelismo"
+subtitle: "Come R esegue il lavoro"
 ---
 
 ## Perché questo capitolo
 
-Per capire una richiesta di CPU o RAM bisogna prima capire come il workload viene eseguito. Processo, core, thread e worker descrivono livelli diversi dello stesso problema; parallelismo e concorrenza spiegano invece come il carico può distribuirsi nel tempo e tra più esecuzioni.
+Una richiesta come «servono più core» o «servono 64 GB» non descrive ancora un requisito verificato.
 
-La domanda del capitolo è:
+> **Come viene eseguito il lavoro e quali costi introduce il modello di R?**
 
-> **Come viene eseguito il lavoro e quali risorse può impegnare?**
+## Processo, worker e thread
 
-**Perimetro:** qui costruiamo il modello necessario per leggere il comportamento di R. La misura, il profiling e la diagnosi vengono affrontati nel capitolo 3: prima dobbiamo sapere che cosa stiamo osservando.
+Per R conviene distinguere tre livelli:
 
-## Il vocabolario del runtime
+- **processo**: ha il proprio spazio di indirizzamento e, normalmente, la propria memoria privata;
+- **worker**: unità a cui viene assegnato lavoro parallelo; a seconda del backend può corrispondere a un processo o a un'altra unità di esecuzione;
+- **thread**: flusso di esecuzione all'interno di un processo, usato dal runtime o da librerie native.
 
+Molte strategie di parallelismo R usano processi distinti, mentre BLAS/LAPACK e altre librerie possono usare thread.
 
-```{mermaid}
-%%| label: mermaid-02-runtime-01
-%%| echo: false
-flowchart TD
-    S["Server"]
-    S --> CPU["CPU"]
-    CPU --> C1["Core 1"]
-    CPU --> C2["Core 2"]
-    CPU --> C3["Core 3"]
-    CPU --> CN["Core N"]
+Quindi «8 worker» non significa necessariamente «8 thread» e non implica che la macchina eseguirà soltanto otto unità di lavoro.
 
-    S --> RAM["RAM"]
-    S --> IO["Storage / rete"]
+## Allocation e copy-on-modify
+
+La memoria necessaria non coincide necessariamente con la dimensione del dataset. Durante un'elaborazione possono coesistere input, risultato, oggetti temporanei e copie.
+
+R usa semantiche che evitano copie non necessarie quando possibile, ma un'operazione che modifica un oggetto può richiedere una nuova allocazione. Il dettaglio dipende anche dalla rappresentazione dell'oggetto e dall'implementazione interna.
+
+> **La memoria di un workload va misurata durante l'esecuzione, non dedotta soltanto dalla dimensione dei dati.**
+
+Questo è uno dei comportamenti R che modifica direttamente il modo in cui IT deve interpretare un requisito RAM.
+
+## Garbage collection
+
+R recupera memoria dagli oggetti non più raggiungibili. La garbage collection usa CPU e non implica che tutta la memoria venga immediatamente restituita al sistema operativo.
+
+```{r}
+#| label: osservazione-garbage-collection
+
+gc()
 ```
 
-### Runtime
+Un picco di RAM non dimostra quindi da solo una perdita di memoria. In un workload reale interessa osservare **quando** il picco avviene e quali oggetti, copie o worker lo spiegano.
 
-Il termine **runtime** può indicare due concetti distinti:
+## Memoria logica, memoria del processo e memoria fisica
 
-- **runtime environment**: l'ambiente software necessario all'esecuzione, come R, pacchetti, librerie di sistema, driver e sistema operativo;
-- **execution time**: il tempo necessario per completare un'elaborazione.
+Per diagnosticare la memoria conviene distinguere almeno tre livelli:
 
-Nel contesto del corso, quando parliamo di performance ci riferiamo soprattutto al secondo concetto. Per analizzarlo dobbiamo capire come il codice utilizza processi, thread, worker e risorse hardware.
+- **dimensione logica** degli oggetti R;
+- **memoria residente del processo** osservata dal sistema operativo;
+- **memoria complessiva** della macchina, che include altri processi e possibili worker.
 
+ALTREP, copie, allocazioni temporanee e più processi fanno sì che questi valori non coincidano.
 
-### Processo
+Una misura utile deve quindi riportare almeno il punto temporale, il processo o worker osservato e il contesto di concorrenza.
 
-Un **processo** è un'istanza in esecuzione di un programma.
+## Environment e lexical scoping
 
-Un processo possiede:
+Un environment associa nomi a oggetti e può collegarsi ad altri environment. Il lexical scoping determina come R risolve i nomi.
 
-- memoria;
-- stato;
-- risorse;
-- identificativo;
-- file e connessioni eventualmente aperti.
+Per IT interessa soprattutto una conseguenza: una funzione può mantenere riferimenti a stato e oggetti oltre il punto in cui sono stati creati. Questo aiuta a interpretare consumi di memoria apparentemente inattesi e comportamenti di librerie che conservano stato.
 
-Un'esecuzione R normalmente corrisponde almeno a un processo R.
+## Lazy evaluation
 
+R usa la lazy evaluation: gli argomenti di una funzione non vengono necessariamente valutati nel momento in cui la funzione viene chiamata, ma quando il loro valore è richiesto.
 
-### Core
+Per IT interessa la conseguenza operativa: **il momento della valutazione di un argomento può essere diverso dal momento della chiamata che lo contiene**.
 
-Un **core** è una risorsa hardware capace di eseguire istruzioni.
+Questo concetto è distinto dalla lazy execution di un database o di un framework analitico, che verrà ripreso nel capitolo 4.
 
-Avere 16 core non significa automaticamente che R esegua 16 volte più velocemente.
+## S3, S4 e R6
 
-Serve un carico che possa utilizzare effettivamente quei core.
+S3, S4 e R6 sono sistemi diversi per rappresentare oggetti e comportamento. S3 è basato sul dispatch per classe e relativamente leggero; S4 è più formale; R6 introduce oggetti a semantica di riferimento e stato mutabile.
 
+Non serve insegnarne la programmazione. Serve sapere che una libreria R può introdurre oggetti con stato e che questo può influire su memoria, serializzazione e comportamento tra worker.
 
-### Thread
+## Parallel e future
 
-Un processo può utilizzare uno o più thread.
-I thread condividono la stessa memoria del processo.
+Parallel espone meccanismi espliciti di parallelizzazione. Future introduce un'astrazione che separa la descrizione del lavoro dalla strategia di esecuzione.
 
-Il motore base di R è prevalentemente *single-thread*. 
-Tuttavia, molte operazioni pesanti (es. moltiplicazioni di matrici, 
-o funzioni di pacchetti come `data.table`, `arrow`, `torch`)
-delegano il lavoro a librerie native in C/C++ che usano i thread.
+Questa astrazione può nascondere dettagli che IT deve comunque conoscere:
 
-> **thread ≠ automaticamente parallelismo efficace.**
-
-Il comportamento dipende dal codice, dalle librerie e dal tipo di operazione.
-
-### Worker
-
-"Worker" è soprattutto un termine architetturale.
-
-Un worker è un'unità di lavoro incaricata di eseguire una parte dell'elaborazione.
-
-Può essere realizzato, a seconda della tecnologia, tramite:
-
-- processo;
-- thread;
-- altro meccanismo di esecuzione.
-
-Per IT la domanda importante è:
-
-> **Quanti worker vengono realmente utilizzati e quali risorse consuma ciascuno?**
-
-### Numero di worker
-
-Non esiste una regola generale del tipo «un worker per core».
-
-Il numero di worker deve essere valutato in funzione del workload e delle risorse disponibili. Aumentare i worker può ridurre il tempo di esecuzione, ma può anche aumentare il consumo di CPU e RAM.
-
-Per questo il numero di worker va **misurato**, non semplicemente calcolato in base al numero di core.
-
-Per ogni prova è utile registrare almeno:
-
-| Worker | Tempo | RAM di picco | CPU |
-|:------:|------:|-------------:|----:|
-| 1 | ... | ... | ... |
-| 2 | ... | ... | ... |
-| 4 | ... | ... | ... |
-| 8 | ... | ... | ... |
-
-Il punto non è massimizzare il numero di worker, ma trovare una configurazione che:
-
-- soddisfi il requisito temporale;
-- rimanga entro le risorse disponibili;
-- sia compatibile con il numero di job contemporanei previsto.
-
-Per una piattaforma condivisa bisogna inoltre distinguere la configurazione del **singolo job** dalla **concorrenza complessiva**.
-
-Per esempio:
-
-```text
-1 job × 4 worker = 4 worker complessivi
-
-10 job × 4 worker = 40 worker complessivi
-```
-
-Una configurazione che funziona per un singolo job potrebbe quindi non essere sostenibile quando più job vengono eseguiti contemporaneamente.
-
-> **Il numero di worker è una configurazione da verificare con un benchmark sul workload reale, non un valore da ricavare semplicemente dal numero di core.**
-
-
-## Parallelismo e scaling
-
-Quando il lavoro può essere suddiviso:
-
-```{mermaid}
-%%| label: mermaid-02-runtime-02
-%%| echo: false
-flowchart TD
-    JOB["Elaborazione"]
-    JOB --> W1["Worker 1"]
-    JOB --> W2["Worker 2"]
-    JOB --> W3["Worker 3"]
-    JOB --> W4["Worker 4"]
-
-    W1 --> C1["CPU"]
-    W2 --> C2["CPU"]
-    W3 --> C3["CPU"]
-    W4 --> C4["CPU"]
-```
-
-Il vantaggio dipende dalla possibilità di dividere realmente il lavoro.
-
-### Parallelismo e concorrenza
-
-**Parallelismo** e **concorrenza** non sono la stessa cosa.
-
-- **parallelismo**: una singola elaborazione utilizza più unità di esecuzione nello stesso intervallo di tempo;
-- **concorrenza**: più elaborazioni o richieste sono attive contemporaneamente.
-
-Esempio:
-
-```text
-Caso A — un job:
-1 job → 8 worker
-
-Caso B — più utenti:
-8 job → 1 worker ciascuno
-```
-
-I due casi hanno profili operativi diversi. Nel caso B la contesa può coinvolgere contemporaneamente CPU, RAM, database, rete e scheduler; nel caso A la domanda principale è quanto scala il singolo workload.
-
-Per IT, prima di dimensionare una piattaforma bisogna quindi chiedere entrambe le cose:
-
-> **«Quanti worker usa una singola elaborazione?»**
-
-e
-
-> **«Quante elaborazioni possono essere contemporaneamente attive?»**
-
-Questa distinzione è particolarmente importante per Shiny e API, dove più richieste o sessioni possono essere contemporaneamente in esecuzione.
-
-
-### Il parallelismo ha un costo
-
-Aumentare i worker può significare:
-
-- più CPU utilizzata;
-- più RAM;
-- più dati trasferiti o copiati;
-- più accessi al database;
-- più I/O;
-- più traffico di rete;
-- maggiore complessità.
-
-Quindi:
-
-> **più worker non significa necessariamente meglio.**
-
-Nei backend paralleli basati su processi separati, come quelli che utilizzano `PSOCK` o `multisession`, i worker sono normalmente processi R distinti.
-
-Gli oggetti necessari all'elaborazione devono quindi essere disponibili anche nei worker. Questo può aumentare significativamente il consumo di memoria e il trasferimento dei dati.
-
-Per esempio, se un'elaborazione richiede grandi oggetti in memoria, aumentare il numero di worker può far crescere rapidamente il consumo complessivo di RAM.
-
-Per questo il consumo di memoria deve essere misurato insieme al tempo di esecuzione.
-
-
-### Esempio di scaling
-
-Supponiamo di misurare:
-
-| Worker | Tempo | RAM |
-|:------:|------:|----:|
-| 1 | 40 min | 4 GB |
-| 2 | 23 min | 8 GB |
-| 4 | 14 min | 16 GB |
-| 8 | 12 min | 32 GB |
-
-Aumentando i worker, il tempo diminuisce, ma aumenta anche il consumo di RAM.
-
-Il passaggio da 1 a 4 worker riduce il tempo da 40 a 14 minuti. Il passaggio da 4 a 8 worker riduce invece il tempo soltanto da 14 a 12 minuti, mentre la memoria raddoppia.
-
-Questo mostra perché il numero di worker non deve essere scelto soltanto in base alla velocità massima ottenibile.
-
-La scalabilità reale può essere limitata da:
-
-- parti seriali;
-- sincronizzazione;
-- trasferimento dati;
-- I/O;
-- database;
-- overhead dei worker;
-- contesa sulle risorse.
-
-Un benchmark reale è quindi più informativo di una stima basata soltanto sul numero di core.
-
-IT dovrebbe chiedere:
-
-> **Quale beneficio misurato otteniamo aumentando i worker e quale costo aggiuntivo introduciamo in RAM, I/O e database?**
-
-
-## Memoria e consumo di risorse
-
-Un processo R utilizza memoria per gli oggetti R, le strutture interne del runtime, le librerie caricate, i buffer e altre risorse.
-
-La dimensione dei dati su disco non coincide quindi necessariamente con la memoria richiesta dal processo.
-
-Un'operazione può richiedere memoria temporanea aggiuntiva:
-
-```text
-oggetto originale:  4 GB
-copia temporanea:  +4 GB
-risultato:          +4 GB
-overhead/runtime:   +...
------------------------------
-picco > 12 GB
-```
-
-Non tutte le operazioni producono necessariamente una copia completa: R può condividere oggetti e creare copie quando necessario. Per IT è però importante ragionare sul **picco di memoria**, non soltanto sulla dimensione finale del dataset.
-
-> «Il dataset è di 10 GB» non implica che servano esattamente 10 GB di RAM.
-
-### RAM e memoria virtuale
-
-La **RAM** è la memoria fisica disponibile al sistema.
-
-La **memoria virtuale** è il meccanismo con cui il sistema operativo presenta ai processi uno spazio di memoria e gestisce le pagine, eventualmente utilizzando anche storage.
-
-```text
-Processo R
-   ↓
-memoria virtuale
-   ↓
-RAM + eventuale paging
-```
-
-La memoria virtuale non equivale a RAM aggiuntiva gratuita. Se il sistema ricorre intensamente a paging/swap, le prestazioni possono degradare perché lo storage è molto più lento della RAM.
-
-Per IT:
-
-> molto swap disponibile non significa che il server abbia RAM sufficiente per il carico.
-
-### Garbage collection
-
-R utilizza un **garbage collector (GC)** per recuperare memoria associata a oggetti che non sono più necessari.
-
-In termini semplificati:
-
-```text
-creazione oggetti
-      ↓
-memoria occupata
-      ↓
-oggetti non più necessari
-      ↓
-garbage collection
-      ↓
-memoria recuperabile
-```
-
-Il garbage collector non può liberare memoria ancora necessaria all'elaborazione.
-
-Inoltre una fase di garbage collection può avere un costo temporale. Per questo, per diagnosticare un problema di memoria, è utile osservare sia l'andamento della RAM sia il tempo di esecuzione.
-
-
-### Thread nativi e oversubscription
-
-Un processo R può utilizzare anche thread creati dalle librerie native utilizzate dal programma.
-
-Questo introduce un ulteriore livello di parallelismo rispetto a quello già introdotto dai worker R.
-
-Per esempio, in termini concettuali:
-
-```text
-4 worker R
-×
-più thread utilizzati dalle librerie
-```
-
-può produrre un numero di unità di esecuzione superiore al numero di worker.
-
-Se il numero complessivo di thread diventa elevato rispetto alle risorse disponibili, può verificarsi **oversubscription**: più unità di esecuzione competono per gli stessi core.
-
-Il risultato può essere:
-
-- maggiore contesa della CPU;
-- maggiore overhead;
-- peggioramento delle prestazioni.
-
-Per questo, quando si analizzano workload complessi, non basta sempre conoscere il numero di worker.
-
-> **Il numero di worker descrive il parallelismo dell'applicazione; le librerie utilizzate possono introdurre ulteriore parallelismo interno.**
-
-
-## Dal runtime alla performance
-
-A questo punto abbiamo introdotto le principali componenti che determinano il comportamento di un workload R:
-
-- processo;
-- core;
-- thread;
-- worker;
-- memoria;
-- parallelismo;
+- numero e tipo di processi;
+- backend;
+- trasferimento degli oggetti;
+- risorse disponibili;
 - concorrenza.
 
-Questi concetti permettono di descrivere **come viene eseguito** un workload, ma non sono ancora sufficienti per spiegare **perché è lento**.
+La domanda non è quindi soltanto «usa future?», ma **quale backend viene realmente utilizzato e che cosa viene trasferito ai worker?**
 
-Per rispondere a questa seconda domanda bisogna osservare il comportamento del workload durante l'esecuzione e misurare l'utilizzo delle risorse.
+## Fork e PSOCK
 
-Nel capitolo successivo vedremo quindi come identificare il **collo di bottiglia**, distinguendo tra CPU, memoria, I/O, rete e database, e come utilizzare misure e benchmark per valutare eventuali interventi sul software o sull'infrastruttura.
+Con fork i processi figli derivano da un processo esistente e il sistema operativo può inizialmente condividere pagine di memoria tramite copy-on-write. Con PSOCK vengono avviati processi R distinti che comunicano attraverso connessioni.
 
+La scelta influenza isolamento, memoria, trasferimento degli oggetti e compatibilità operativa. In particolare, ciò che inizialmente è condiviso dopo un fork può richiedere pagine private quando i processi le modificano.
+
+## Serializzazione
+
+Con processi separati, gli oggetti possono dover essere serializzati, trasferiti e ricostruiti.
+
+```text
+worker principale
+      ↓
+serializzazione
+      ↓
+trasferimento
+      ↓
+deserializzazione
+      ↓
+worker
+```
+
+Per oggetti grandi, questo overhead può annullare parte del vantaggio del parallelismo.
+
+## BLAS, LAPACK e thread nativi
+
+Molte operazioni numeriche usano BLAS/LAPACK o altre librerie native che possono creare thread.
+
+```text
+4 worker R × 8 thread nativi = 32 thread
+```
+
+Questo può produrre oversubscription. Aumentare contemporaneamente worker e thread nativi può peggiorare le prestazioni.
+
+Per un ambiente IT la configurazione da osservare non è quindi solo il numero di core della VM, ma almeno:
+
+**worker R + thread nativi + concorrenza di altri workload.**
+
+### Un esempio di diagnosi
+
+Supponiamo una VM con 16 core. Un job usa 4 worker R e una libreria numerica configurata con 8 thread per worker.
+
+```text
+4 worker × 8 thread = 32 thread
+16 core disponibili
+→ possibile oversubscription
+```
+
+Prima di chiedere una VM più grande, il test utile è separare le due variabili: mantenere fissi i worker e cambiare i thread nativi, poi fare il contrario. Il risultato deve essere confrontato su tempo, CPU e RAM.
+
+## Benchmark del runtime
+
+| Worker | Thread | Tempo | RAM picco | CPU |
+|---:|---:|---:|---:|---:|
+| 1 | 1 | … | … | … |
+| 2 | 1 | … | … | … |
+| 4 | 1 | … | … | … |
+| 4 | 2 | … | … | … |
+| 4 | 4 | … | … | … |
+
+Il test deve permettere di separare l'effetto dei worker da quello dei thread nativi.
+
+> **Non dimensionare CPU e RAM dal numero di worker: misurare il comportamento del workload.**
+
+Il capitolo 3 usa queste misure per distinguere un collo di bottiglia osservato da una semplice ipotesi.

@@ -1,661 +1,125 @@
 ---
 title: "Architettura e integrazione"
-subtitle: "R, database, APEX, Quarto, Shiny, API e server"
+subtitle: "Dove deve vivere R e dove deve essere eseguito il lavoro"
 ---
-
 
 ## Perché questo capitolo
 
-Quando sappiamo che cosa esegue R e quali risorse richiede, possiamo affrontare la domanda architetturale: dove deve essere eseguito il lavoro, quali componenti devono collaborare e quali responsabilità è meglio lasciare a servizi già presenti nell'organizzazione. L'architettura nasce quindi dai requisiti, non dalla tecnologia disponibile.
+Una soluzione R non deve contenere necessariamente database, scheduler, autenticazione, web server e storage.
 
-La domanda del capitolo è:
+> **Quale componente deve svolgere ciascuna responsabilità e dove deve essere eseguito il calcolo?**
 
-> **Dove deve vivere la soluzione e come si integra con il resto del sistema?**
+## Definire il workload
 
-**Perimetro:** qui si definiscono collocazione, confini tra componenti e modalità di integrazione. Il modo in cui una soluzione viene costruita e rilasciata è il tema del capitolo 5; chi verifica, approva e mantiene la soluzione è il tema del capitolo 6.
+Servono almeno: interattivo o batch, utenti e concorrenza, frequenza, tempo di risposta, dimensione e crescita dei dati, disponibilità e sistemi esterni.
 
-## Definire i requisiti
+Per R aggiungere: modalità di esecuzione dello script, dipendenze runtime, quantità di dati trasferita dentro e fuori R e costo atteso della serializzazione o materializzazione.
 
-Prima di scegliere server, VM, container o piattaforme applicative, bisogna definire il tipo di elaborazione.
-
-La domanda non è:
-
-> «Possiamo farlo in R?»
-
-Molte cose sono tecnicamente possibili.
-
-La domanda utile è:
-
-> **«Quali sono i requisiti dell'applicazione e quali responsabilità devono essere coperte?»**
-
-Alcune informazioni fondamentali sono:
-
-| Informazione | Esempio |
-|---|---|
-| Tipo di applicazione | batch |
-| Durata attuale | 3 ore |
-| Durata obiettivo | < 30 min |
-| CPU | 95% |
-| RAM | 18 GB |
-| Worker | 4 |
-| Dataset | 20 GB |
-| Frequenza | 2 volte/giorno |
-| Utenti | 1 |
-| Database | Oracle |
-| I/O | basso |
-| Disponibilità richiesta | finestra batch notturna |
-
-Questi dati sono molto più utili di una richiesta generica come:
-
-> «Servono 16 core.»
-
-Il dimensionamento infrastrutturale dovrebbe essere una conseguenza del workload e dei requisiti, non il punto di partenza.
-
-
-### Tipologia di applicazione
-
-Una prima distinzione riguarda il modo in cui il software viene utilizzato.
-
-| Tipologia | Caratteristiche principali |
-|---|---|
-| Batch | esecuzione automatica, durata e frequenza definite |
-| Interattiva | risposta alle azioni dell'utente |
-| Web | accesso tramite browser |
-| API | servizio invocato da altri sistemi |
-| Reportistica | produzione di documenti o output periodici |
-| Servizio continuo | processo sempre disponibile |
-
-Questa distinzione cambia profondamente i requisiti.
-
-Un job batch che viene eseguito una volta durante la notte ha esigenze diverse da una Shiny utilizzata contemporaneamente da cento utenti.
-
-
-## Evitare di assegnare a R responsabilità non necessarie
-
-Un errore architetturale frequente non consiste nell'utilizzare una tecnologia sbagliata, ma nell'assegnare a un componente responsabilità che potrebbero essere gestite meglio da componenti già presenti nell'organizzazione.
-
-
-### R come database
-
-R può leggere e scrivere CSV, RDS, Parquet e altri formati.
-
-Questi formati possono essere appropriati per:
-
-- scambio dati;
-- snapshot;
-- risultati intermedi;
-- archivi;
-- pipeline analitiche.
-
-Il problema nasce quando un file gestito dall'applicazione viene utilizzato come sostituto di un database aziendale per dati che richiedono:
-
-- persistenza;
-- accesso concorrente;
-- integrità;
-- transazioni;
-- controllo degli accessi;
-- governance.
-
-La domanda per IT è:
-
-> **Qual è il sistema di riferimento del dato e chi ne garantisce consistenza e disponibilità?**
-
-Se Oracle svolge già questo ruolo, R può utilizzarlo come sistema di persistenza invece di creare una copia persistente parallela senza una necessità specifica.
-
-
-### R come scheduler
-
-Uno script R può avviare altri script per semplici orchestrazioni locali.
-
-In produzione, quando esiste uno scheduler aziendale, è generalmente più chiaro affidargli:
-
-- calendario;
-- dipendenze;
-- retry;
-- timeout;
-- logging;
-- notifiche;
-- gestione degli errori.
-
-Il principio è:
-
-> **R decide come elaborare; lo scheduler decide quando e in quali condizioni eseguire il lavoro.**
-
-
-### R come sistema di autenticazione
-
-Un'applicazione R può certamente implementare meccanismi di autenticazione, ma in un contesto aziendale è opportuno verificare prima quali sistemi di identità siano già disponibili.
-
-Quando esistono componenti aziendali per:
-
-- identità;
-- autenticazione;
-- autorizzazione;
-- gestione delle sessioni;
-- audit;
-
-è utile valutare l'integrazione con questi componenti invece di ricostruire autonomamente l'intero sistema.
-
-
-### R come intero web stack
-
-Shiny può costituire il livello applicativo, ma non deve necessariamente essere anche il livello di esposizione, sicurezza e gestione del traffico.
-
-A seconda dell'architettura aziendale, componenti come reverse proxy, load balancer o API gateway possono occuparsi di:
-
-- TLS;
-- routing;
-- autenticazione;
-- limiti di traffico;
-- esposizione verso la rete;
-- gestione delle connessioni.
-
-Shiny senza questi componenti non è automaticamente un errore: la scelta dipende dal contesto e dai requisiti.
-
-
-## Scegliere il contesto di esecuzione
-
-Una volta chiariti i requisiti, bisogna stabilire **dove** deve essere eseguita l'applicazione.
-
-Un'applicazione R può essere eseguita in ambienti diversi:
-
-| Ambiente | Quando può essere adatto | Aspetti IT |
-|---|---|---|
-| PC dello sviluppatore | analisi individuale | gestione locale |
-| VM | job o servizio con isolamento | OS, risorse, patching |
-| Server condiviso | workload compatibili | contesa delle risorse |
-| Server dedicato | workload persistente o particolare | costo e gestione dedicata |
-| Container | deployment riproducibile | immagini, registry, runtime |
-| Piattaforma applicativa | servizio gestito | standard e vincoli aziendali |
-
-La scelta non dipende dal linguaggio R in sé, ma dai requisiti operativi dell'applicazione.
-
-
-### VM
-
-Una VM fornisce un ambiente isolato con un proprio sistema operativo, pur utilizzando hardware fisico condiviso.
-
-Può essere utile quando servono:
-
-- ambiente R separato;
-- versione specifica del sistema operativo;
-- risorse definite;
-- accesso controllato alla rete;
-- gestione centralizzata.
-
-La VM non elimina il problema del dimensionamento.
-
-CPU e RAM assegnate devono comunque essere coerenti con il workload misurato.
-
-
-### Server condiviso
-
-Un server condiviso può essere appropriato quando più workload hanno profili compatibili.
-
-È però necessario considerare la concorrenza:
+## R come componente
 
 ```text
-Job A → CPU + RAM
-Job B → CPU + RAM
-Job C → CPU + RAM
-          ↓
-     server condiviso
+utente / scheduler
+       ↓
+      R
+   ↙     ↘
+Oracle   output
 ```
 
-Un workload che utilizza correttamente 4 worker quando viene eseguito da solo potrebbe creare contesa se contemporaneamente vengono eseguiti altri job.
+R può essere il componente analitico senza diventare sistema di persistenza o intero stack applicativo.
 
-Per questo il dimensionamento deve considerare non soltanto il consumo del singolo job, ma anche:
+La domanda architetturale non è «dove installiamo R?», ma **quale parte del workload deve essere eseguita da R e quale da altri componenti**.
 
-> **quanti workload possono essere contemporaneamente attivi?**
+## DBI e database
 
-
-### Server dedicato
-
-Un server dedicato può essere preso in considerazione quando:
-
-- il carico è elevato o persistente;
-- i workload sono incompatibili tra loro;
-- sono necessari requisiti specifici;
-- l'isolamento è importante;
-- esiste un requisito operativo che lo giustifica.
-
-Prima di introdurre un server fisico è però opportuno verificare se una VM o una piattaforma esistente possa soddisfare gli stessi requisiti.
-
-
-## Container: esecuzione e deployment
-
-Il container può essere considerato anche come **scelta architetturale di esecuzione**.
-
-Il suo scopo è isolare e distribuire il runtime dell'applicazione rispetto all'host e alla piattaforma.
+DBI fornisce un'interfaccia per database; il driver gestisce il sistema concreto.
 
 ```text
-immagine
-  ├── runtime R
-  ├── pacchetti
-  ├── librerie di sistema
-  └── applicazione
-       ↓
-container
-       ↓
-host / piattaforma
+R → DBI → driver → database
 ```
 
-Il vantaggio principale per IT è la possibilità di standardizzare e riprodurre l'ambiente applicativo.
+Il confine influenza autenticazione, rete, connessioni, timeout, logging ed error handling.
 
-La costruzione, il versionamento e la distribuzione dell'immagine come artefatto appartengono invece al capitolo 5.
+Per IT è importante distinguere il tempo speso in R dal tempo speso nel database e sapere quale componente materializza i dati.
 
-## Eseguire e orchestrare
+## Dove deve avvenire il calcolo?
 
-Molte applicazioni R non devono essere servizi permanenti.
-
-Devono semplicemente essere eseguite a intervalli prestabiliti.
-
-Un'architettura batch tipica è:
-
-```{mermaid}
-%%| label: mermaid-04-architettura-01
-%%| echo: false
-flowchart LR
-    S["Scheduler"] --> J["Job R"]
-    J --> DB["Oracle"]
-    J --> Q["Quarto"]
-    Q --> O["PDF / HTML"]
-    J --> L["Log"]
-```
-
-In questo scenario:
-
-- lo scheduler avvia il job;
-- R esegue l'elaborazione;
-- Oracle fornisce o riceve dati;
-- Quarto produce il report;
-- il sistema di logging registra l'esecuzione.
-
-R non deve necessariamente assumere tutte queste responsabilità.
-
-
-### Cosa deve sapere IT
-
-Per un job batch bisogna conoscere almeno:
-
-- frequenza;
-- durata attesa;
-- finestra temporale disponibile;
-- account di esecuzione;
-- sorgenti dati;
-- destinazione degli output;
-- timeout;
-- comportamento in caso di errore;
-- possibilità di riesecuzione;
-- logging;
-- notifiche;
-- dipendenze.
-
-È importante distinguere:
-
-> **job = lavoro da eseguire**
-
-da:
-
-> **scheduler = sistema che decide quando e come eseguirlo.**
-
-
-## Integrare R con il database
-
-Oracle e R possono avere responsabilità differenti.
-
-```{mermaid}
-%%| label: mermaid-04-architettura-02
-%%| echo: false
-flowchart LR
-    R["R"] -->|query| O["Oracle"]
-    O -->|dati necessari| R
-    R --> M["Analisi / modello"]
-    M --> Q["Output"]
-```
-
-Una buona integrazione evita di trasferire a R dati che Oracle può filtrare o aggregare efficacemente.
-
-
-### Esempio
-
-Invece di:
+Per grandi dataset in Oracle, può essere preferibile:
 
 ```text
 Oracle
   ↓
-100 GB
+filtro / aggregazione
+  ↓
+dataset ridotto
   ↓
 R
   ↓
-filtro
-  ↓
-aggregazione
+analisi
 ```
 
-può essere possibile:
+Il principio è il pushdown: eseguire vicino ai dati ciò che il sistema sorgente può fare correttamente ed efficientemente.
+
+Per R questo può ridurre trasferimento, allocation e memoria occupata dal processo R.
+
+Un requisito importante è misurare il confine: tempo della query, volume trasferito, tempo di materializzazione e tempo dell'analisi R. Senza queste misure non è possibile sapere se lo spostamento del calcolo ha risolto il collo di bottiglia.
+
+## Lazy execution
+
+Alcuni strumenti costruiscono una trasformazione senza eseguirla immediatamente. Con backend database, operazioni compatibili possono essere tradotte in SQL.
+
+IT deve distinguere descrizione dell'operazione, momento dell'esecuzione e componente che esegue il calcolo.
+
+Questa distinzione è particolarmente importante quando il codice R costruisce un piano di elaborazione che viene eseguito solo al momento della materializzazione.
+
+## Arrow e DuckDB
+
+Arrow è utile per rappresentazioni e formati colonnari; DuckDB è un motore analitico embedded.
 
 ```text
-Oracle
-  ↓
-filtro + aggregazione
-  ↓
-500 MB
-  ↓
-R
-  ↓
-analisi specialistica
+Parquet / Arrow
+       ↓
+    DuckDB
+       ↓
+filtri / aggregazioni
+       ↓
+dataset ridotto
+       ↓
+       R
 ```
 
-Questo può ridurre:
+Questi strumenti possono spostare parte del lavoro fuori dal processo R e ridurre il costo di trasferimento o materializzazione. La scelta va verificata sul workload e sugli standard dell'organizzazione.
 
-- dati trasferiti;
-- memoria utilizzata da R;
-- tempo di trasferimento;
-- lavoro inutile.
+## Oracle, APEX, Quarto, Shiny e API
 
-Non significa però che ogni operazione debba essere spostata nel database.
+Questa sezione non è un catalogo di prodotti: serve a mostrare come cambia il confine di R.
 
-La scelta deve essere verificata sul workload reale.
+- **Oracle**: persistenza, integrità, query e aggregazioni; R può occuparsi di analisi, modellistica e simulazione.
+- **APEX**: interfaccia e workflow vicino a Oracle, quando il caso d'uso lo richiede.
+- **Quarto**: produzione di report; R resta parte della pipeline di generazione.
+- **Shiny**: introduce sessioni e concorrenza; il dimensionamento dipende dal modello di deployment concreto.
+- **API R**: espone capacità analitiche a sistemi esterni; il contratto e i limiti operativi diventano parte del workload.
 
+In tutti i casi la domanda IT è la stessa: **quale parte del lavoro avviene nel processo R e quale altrove?**
 
-### Evitare copie persistenti non necessarie
+## Container
 
-Copiare dati dal database a R può essere necessario.
+Un container R può includere R, package, lockfile, librerie native, codice e strumenti necessari.
 
-Creare però una seconda copia persistente senza una motivazione introduce possibili problemi di:
+Non include automaticamente database, segreti, storage persistente, rete aziendale o identità.
 
-- sincronizzazione;
-- consistenza;
-- storage;
-- sicurezza;
-- aggiornamento;
-- data lineage.
+> **Containerizzare R non significa containerizzare l'intera soluzione.**
 
-La domanda utile è:
+## Confini
 
-> **Perché questa copia deve esistere e quale responsabilità svolge?**
+Per ogni componente devono essere chiari dati, calcolo, autenticazione, scheduling, output, monitoring e ownership.
 
+Una buona descrizione architetturale dovrebbe poter rispondere, per ogni passaggio, a quattro domande:
 
-## R + APEX
+1. dove sono i dati?
+2. dove avviene il calcolo?
+3. dove viene materializzato il risultato?
+4. quale componente è responsabile?
 
-Quando Oracle APEX è già presente nell'organizzazione, può essere naturale utilizzarlo per la parte gestionale e R per la parte analitica.
+Il risultato architetturale dovrebbe rendere esplicito **dove avviene ogni parte del workload R**.
 
-```{mermaid}
-%%| label: mermaid-04-architettura-03
-%%| echo: false
-flowchart LR
-    U["Utente"] --> A["APEX"]
-    A --> O["Oracle"]
-    A --> R["R"]
-    R --> M["Analisi / modello"]
-    M --> A
-```
-
-APEX può gestire, in funzione dell'architettura aziendale:
-
-- interfaccia;
-- autenticazione;
-- autorizzazioni;
-- CRUD;
-- workflow;
-- transazioni.
-
-R può gestire:
-
-- modelli statistici;
-- simulazioni;
-- algoritmi scientifici;
-- elaborazioni specialistiche.
-
-Il vantaggio architetturale è separare la parte gestionale dalla parte analitica invece di ricostruire in R funzionalità già disponibili.
-
-
-## R + Quarto
-
-Quarto è particolarmente adatto quando R deve produrre documentazione o report riproducibili.
-
-Uno scenario tipico è:
-
-```{mermaid}
-%%| label: mermaid-04-architettura-04
-%%| echo: false
-flowchart LR
-    S["Scheduler"] --> R["R"]
-    R --> DB["Oracle"]
-    R --> Q["Quarto"]
-    Q --> PDF["PDF / HTML"]
-    Q --> OUT["Output"]
-```
-
-In questo scenario:
-
-- lo scheduler avvia il processo;
-- R recupera e analizza i dati;
-- Quarto genera il documento;
-- l'output viene salvato nella destinazione prevista.
-
-Le domande per IT diventano:
-
-- chi avvia il job?
-- con quale account?
-- dove sono i file?
-- dove sono le credenziali?
-- dove vengono scritti i log?
-- cosa succede se il job fallisce?
-- chi riceve l'output?
-- quanto deve essere conservato?
-
-
-## R + Shiny
-
-Shiny trasforma R in un'applicazione web interattiva.
-
-```{mermaid}
-%%| label: mermaid-04-architettura-05
-%%| echo: false
-flowchart LR
-    USER["Browser"] --> WEB["Server web / Shiny"]
-    WEB --> R["Processo R"]
-    R --> DB["Oracle / dati"]
-```
-
-Il passaggio da script a applicazione interattiva modifica però i requisiti operativi.
-
-IT deve considerare:
-
-- numero di utenti;
-- concorrenza;
-- autenticazione;
-- autorizzazioni;
-- risorse per sessione;
-- disponibilità;
-- logging;
-- monitoring;
-- aggiornamenti;
-- sicurezza.
-
-Una Shiny utilizzata da pochi utenti interni non ha necessariamente gli stessi requisiti di un'applicazione utilizzata contemporaneamente da centinaia di utenti.
-
-
-### Concorrenza e risorse
-
-Il numero di utenti non equivale automaticamente al numero di processi o worker.
-
-È necessario capire come l'applicazione gestisce:
-
-- sessioni;
-- richieste;
-- processi;
-- thread;
-- accessi al database;
-- memoria.
-
-Il dimensionamento deve quindi essere basato sul comportamento osservato e sul livello di concorrenza atteso.
-
-
-## R come API
-
-Un'applicazione R può essere esposta tramite API HTTP.
-
-```{mermaid}
-%%| label: mermaid-04-architettura-06
-%%| echo: false
-flowchart LR
-    C["Client"] --> G["Gateway / reverse proxy"]
-    G --> A["API R"]
-    A --> R["Logica R"]
-    R --> O["Oracle"]
-    R --> C
-```
-
-In questo caso R diventa un componente di servizio.
-
-IT deve valutare almeno:
-
-- autenticazione;
-- autorizzazione;
-- HTTPS;
-- timeout;
-- limiti di richiesta;
-- concorrenza;
-- logging;
-- monitoring;
-- gestione degli errori;
-- disponibilità;
-- versioning dell'API.
-
-Il fatto che un codice R possa essere trasformato in API non significa automaticamente che questa sia l'architettura appropriata.
-
-La domanda deve essere:
-
-> **Quale sistema deve consumare il servizio e quali requisiti deve rispettare?**
-
-
-## Definire i confini tra i componenti
-
-Una buona architettura assegna responsabilità chiare.
-
-| Responsabilità | Componente possibile |
-|---|---|
-| Persistenza | Oracle |
-| Query e aggregazioni relazionali | Oracle |
-| Interfaccia gestionale | APEX / piattaforma aziendale |
-| Analisi scientifica | R |
-| Report riproducibile | Quarto |
-| Scheduling | Scheduler aziendale |
-| Esposizione HTTP | API gateway / reverse proxy |
-| Autenticazione | Infrastruttura aziendale |
-| Monitoring | Piattaforma IT |
-| Storage | Infrastruttura aziendale |
-
-Questa tabella non è normativa.
-
-La soluzione concreta dipende dalle piattaforme disponibili, dai requisiti e dai vincoli dell'organizzazione.
-
-Il principio è:
-
-> **ogni componente dovrebbe avere responsabilità chiare e verificabili.**
-
-Quando due componenti svolgono la stessa responsabilità senza una ragione precisa, aumenta la complessità.
-
-
-## Costi e trade-off
-
-Un'architettura non dovrebbe essere valutata soltanto in base al tempo necessario per svilupparla.
-
-Bisogna considerare il **costo complessivo di esercizio**.
-
-| Costo | Che cosa considerare |
-|---|---|
-| Sviluppo | complessità, integrazioni, test |
-| Manutenzione | aggiornamenti, dipendenze, correzione problemi, documentazione |
-| Operativo | VM, server, container, storage, database, monitoring |
-| Formativo | competenze necessarie |
-| Integrazione | IAM, rete, Oracle, scheduler, CI/CD |
-| Sicurezza | patching, segreti, vulnerabilità, controlli |
-| Migrazione | difficoltà di sostituire un componente |
-| Supporto | ownership, assistenza, gestione incidenti |
-
-La soluzione più semplice da sviluppare non è necessariamente quella con il minor costo totale.
-
-Per IT è quindi utile chiedere:
-
-> **«Quanto costa svilupparla?»**
-
-ma anche:
-
-> **«Quanto costa mantenerla, operarla, proteggerla e sostituirla se necessario?»**
-
-
-## Un esempio completo
-
-Consideriamo un processo che ogni notte:
-
-1. legge dati da Oracle;
-2. esegue un modello statistico in R;
-3. produce un report Quarto;
-4. salva il PDF;
-5. notifica l'esito.
-
-Un'architettura possibile è:
-
-```{mermaid}
-%%| label: mermaid-04-architettura-07
-%%| echo: false
-flowchart TD
-    S["Scheduler"] --> J["Job R"]
-    J --> O["Oracle"]
-    J --> M["Modello R"]
-    M --> Q["Quarto"]
-    Q --> P["PDF"]
-    J --> L["Log / monitoring"]
-    L --> N["Notifica"]
-```
-
-Le responsabilità sono quindi distribuite:
-
-```text
-Scheduler  → quando eseguire
-Oracle     → dati
-R          → elaborazione specialistica
-Quarto     → documento
-Storage    → conservazione output
-Monitoring → osservabilità
-Notifica   → comunicazione dell'esito
-```
-
-R non deve diventare contemporaneamente:
-
-- database;
-- scheduler;
-- sistema di autenticazione;
-- sistema di monitoring;
-- server di posta.
-
-R svolge il lavoro specialistico per cui è stato scelto.
-
-
-## Una regola pratica
-
-Quando una proposta architetturale contiene la frase:
-
-> «Facciamo tutto in R.»
-
-è utile scomporla.
-
-Chiedere:
-
-- R deve elaborare?
-- R deve conservare dati?
-- R deve autenticare?
-- R deve fare scheduling?
-- R deve esporre il servizio?
-- R deve produrre il documento?
-- R deve monitorare se stesso?
-
-Spesso la risposta corretta è che R deve fare **una parte** del lavoro.
-
-Il compito dell'architettura è definire quale parte, quali componenti collaborano con R e quali responsabilità rimangono a ciascun componente.
-
-> **Prima si definiscono responsabilità e requisiti; poi si sceglie dove e come eseguire R.**
+Il capitolo 5 traduce questi confini in una release: ciò che è stato deciso deve poter essere ricostruito, testato e portato in esercizio.
