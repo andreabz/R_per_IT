@@ -31,7 +31,7 @@ architettura
    ↓
 deployment
    ↓
-governance
+decisione e responsabilità
    ↓
 nuova baseline quando cambia qualcosa
 ```
@@ -41,7 +41,7 @@ nuova baseline quando cambia qualcosa
 I sei capitoli seguono una progressione intenzionale. L'introduzione non è un capitolo numerato: definisce il metodo. I capitoli sono numerati da 1 a 6 e ciascuno risponde a una domanda precisa.
 
 1. **Contesto e ambiente R** — che cosa compone una soluzione R e quali dipendenze devono essere governate.
-2. **Runtime, processi e parallelismo** — come R esegue il lavoro, usa memoria, processi, worker e thread.
+2. **Runtime, memoria e parallelismo** — come R esegue il lavoro, usa memoria, processi, worker e thread.
 3. **Performance e diagnostica** — come misurare il comportamento e distinguere un collo di bottiglia da un'ipotesi.
 4. **Architettura e integrazione** — dove collocare R e dove devono essere eseguiti dati e calcoli.
 5. **Deployment e gestione operativa** — come trasformare il software in una release riproducibile e gestibile.
