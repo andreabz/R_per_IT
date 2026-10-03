@@ -41,6 +41,12 @@ Un environment associa nomi a oggetti e può collegarsi ad altri environment. Il
 
 Per IT interessa una sola conseguenza: una funzione può mantenere riferimenti a stato e oggetti oltre il punto in cui sono stati creati. Questo aiuta a interpretare consumi di memoria apparentemente inattesi.
 
+## Lazy evaluation
+
+R usa la lazy evaluation: gli argomenti di una funzione non vengono necessariamente valutati nel momento in cui la funzione viene chiamata, ma quando il loro valore è richiesto. Per IT interessa soprattutto una conseguenza: il punto nel codice in cui compare un'operazione non identifica sempre il momento in cui il lavoro viene realmente eseguito.
+
+Questo concetto è distinto dalla lazy execution di un motore database o di un framework analitico, ma aiuta a capire perché il costo computazionale può emergere più avanti rispetto alla costruzione di un'espressione.
+
 ## S3, S4 e R6
 
 S3, S4 e R6 sono sistemi diversi per rappresentare oggetti e comportamento. S3 è leggero, S4 più formale, R6 introduce stato mutabile e semantiche a riferimento.
