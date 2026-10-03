@@ -45,12 +45,11 @@ I sei capitoli seguono una progressione intenzionale. L'introduzione non è un c
 3. **Performance e diagnostica** — come misurare il comportamento e distinguere un collo di bottiglia da un'ipotesi.
 4. **Architettura e integrazione** — dove collocare R e dove devono essere eseguiti dati e calcoli.
 5. **Deployment e gestione operativa** — come trasformare il software in una release riproducibile e gestibile.
-6. **Governance e responsabilità** — come collegare requisiti, evidenze, decisioni, baseline e ownership.
-7. **Laboratorio decisionale** — come applicare il metodo a richieste realistiche.
+6. **Decisioni operative** — come collegare requisiti, evidenze, esperimenti, baseline e ownership.
 
 La sequenza può essere letta anche come una serie di domande:
 
-> **Che cosa stiamo gestendo? → Come viene eseguito? → Come si comporta? → Dove deve vivere? → Come lo rilasciamo? → Come prendiamo una decisione verificabile?**
+> **Che cosa sto gestendo? → Come viene eseguito? → Come posso dimostrare cosa sta succedendo? → Dove deve avvenire il lavoro? → Come porto la soluzione in esercizio? → Come trasformo le evidenze in una decisione?**
 
 ## Il modello operativo
 
