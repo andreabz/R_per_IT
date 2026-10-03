@@ -20,9 +20,9 @@ Il laboratorio non introduce altra teoria. Esercita la capacità di trasformare 
 
 > «Lo script va in errore per memoria. Servono 64 GB.»
 
-Chiedere dimensione dati, RAM di picco, swap, worker, memoria per worker, copie, oggetti intermedi, possibilità di filtrare e concorrenza.
+Chiedere dimensione dati, RAM di picco, swap, worker, memoria per worker, copie, oggetti intermedi, garbage collection, possibilità di filtrare e concorrenza.
 
-La decisione non parte dalla dimensione del dataset ma dal comportamento osservato.
+La decisione non parte dalla dimensione del dataset ma dal comportamento osservato del runtime R.
 
 ## Scenario 2 — CPU
 
@@ -37,11 +37,15 @@ Chiedere numero di core utilizzati, worker, thread nativi, profiling, paralleliz
 | 4 | … | … | … |
 | 8 | … | … | … |
 
+La domanda non è soltanto quanti core vede R, ma **quali processi e thread li stanno usando e con quale beneficio sul tempo di esecuzione**.
+
 ## Scenario 3 — Shiny lenta
 
 Misurare utenti contemporanei, latenza per richiesta, CPU, RAM per sessione, database, rete, caching e operazioni lente.
 
 «Funziona per un utente» non dimostra la capacità di sostenere più utenti.
+
+Per una soluzione Shiny va inoltre identificato il modello di deployment: processi, sessioni, reverse proxy e modalità di scaling cambiano il significato di CPU e RAM osservate.
 
 ## Scenario 4 — Tutto in R
 
@@ -59,6 +63,8 @@ R
 analisi
 ```
 
+La domanda è anche quanta memoria e serializzazione si evita spostando il calcolo verso i dati.
+
 ## Scenario 5 — 20 package
 
 Chiedere dipendenze effettive, versioni, lockfile, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
@@ -68,6 +74,8 @@ L'obiettivo è una baseline ricostruibile, non un numero di package installati.
 ## Scenario 6 — Container
 
 Un container può rendere riproducibili R, package e librerie native. Non risolve automaticamente database, segreti, storage, rete, identità, scheduler e monitoring.
+
+La domanda da verificare è quali parti dell'ambiente R devono essere incluse nell'artefatto e quali restano dipendenze esterne.
 
 ## Esercizio integrato
 
