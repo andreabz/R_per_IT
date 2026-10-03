@@ -15,6 +15,64 @@ Servono almeno: interattivo o batch, utenti e concorrenza, frequenza, tempo di r
 
 Per R aggiungere: modalità di esecuzione dello script, dipendenze runtime, quantità di dati trasferita dentro e fuori R e costo atteso della serializzazione o materializzazione.
 
+## Come può arrivare una soluzione R a IT?
+
+Prima di parlare di server, container o CPU, bisogna identificare **che tipo di soluzione viene consegnata**. Il codice R può essere usato in modi molto diversi e il profilo operativo cambia di conseguenza.
+
+| Forma della soluzione | Come viene eseguita | Requisiti IT principali |
+|---|---|---|
+| **Script personale** | avvio manuale da un utente | R e dipendenze installate, accesso ai dati, permessi, ambiente utente; normalmente non richiede servizio sempre attivo |
+| **Script batch** | scheduler → processo R → output | entrypoint, frequenza, durata, CPU/RAM, directory temporanee, log, exit code, retry, alert, gestione output |
+| **Report Quarto** | render manuale o schedulato → documento | R + package + sorgenti, dati di input, dipendenze del render, destinazione dell'output, log del render e gestione degli artefatti |
+| **Applicazione Shiny** | utente → web/proxy → sessione/processo R | modello di deployment, autenticazione/autorizzazione, concorrenza, latenza, CPU/RAM per sessione, timeout, log, monitoring e scaling |
+| **API con plumber2** | client → HTTP/API → processo R | endpoint e contratto API, autenticazione, rete/TLS, timeout, concorrenza, limiti, logging, monitoring, versioning e gestione degli errori |
+| **Libreria/package R** | altro software importa il package | versione R/package, API del componente, dipendenze, test, compatibilità e processo di release |
+| **Job R integrato in una pipeline** | orchestratore → uno o più step R | contratto input/output, dipendenze tra step, scheduling, retry, idempotenza, log, stato del job e gestione degli errori |
+
+Queste categorie possono anche combinarsi. Per esempio, un report Quarto può essere prodotto da uno script batch schedulato; una Shiny può chiamare un database e un'API; un package può essere usato da più job.
+
+### Che cosa deve consegnare lo sviluppatore?
+
+Per ogni forma di soluzione devono essere espliciti almeno:
+
+```text
+tipo di soluzione
+      ↓
+entrypoint
+      ↓
+runtime + dipendenze
+      ↓
+input / output
+      ↓
+sistemi esterni
+      ↓
+risorse e concorrenza
+      ↓
+configurazione
+      ↓
+logging / monitoring
+      ↓
+sicurezza
+      ↓
+test + baseline
+      ↓
+deployment + recovery
+```
+
+Il livello di dettaglio cambia con la soluzione.
+
+Per esempio, per uno **script personale** la concorrenza e l'alta disponibilità possono non essere requisiti. Per una **API** diventano invece requisiti centrali: il servizio deve definire chi può chiamarlo, come vengono gestite richieste contemporanee, quali timeout sono ammessi e cosa accade quando una dipendenza esterna non risponde.
+
+Per un **report Quarto** il problema principale può essere la riproducibilità del render e la gestione dell'artefatto prodotto. Per una **Shiny**, invece, il problema può essere il consumo di risorse al crescere delle sessioni.
+
+Quindi IT non dovrebbe chiedere soltanto:
+
+> «Dove installiamo R?»
+
+ma prima:
+
+> **«Quale tipo di soluzione stiamo mettendo in esercizio e qual è il suo ciclo di vita?»**
+
 ## R come componente
 
 ```text
