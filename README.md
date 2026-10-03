@@ -37,6 +37,33 @@ L'attenzione è rivolta soprattutto a:
 5. **Deployment e gestione operativa** — come trasformare codice e ambiente in una release riproducibile e gestibile.
 6. **Decisioni operative** — come passare da requisito ed evidenza a decisione, baseline e ownership.
 
+
+## Perché R può entrare nello stack IT
+
+R non è un sostituto generale di Oracle, APEX, scheduler, web server o sistemi di storage. In una soluzione aziendale occupa normalmente **una parte dello stack**: quella in cui servono analisi statistiche, modellistica, simulazione, elaborazione dati o generazione di report analitici.
+
+Un modo semplice per orientarsi è questo:
+
+| Esigenza | Componente tipicamente coinvolto |
+|---|---|
+| Persistenza, integrità e query sui dati | Oracle |
+| Applicazioni web gestionali e workflow vicino a Oracle | APEX |
+| Scheduling e orchestrazione | piattaforma IT aziendale |
+| Autenticazione, rete e TLS | infrastruttura aziendale |
+| Analisi statistica, modellistica e simulazione | R |
+| Report analitici riproducibili | Quarto + R |
+| Interfacce analitiche interattive | Shiny + R |
+| Servizi che espongono capacità analitiche | API + R |
+
+Non è una classifica. Serve a chiarire **quale responsabilità viene aggiunta da R e quali componenti aziendali possono rimanere in carico allo stack esistente**.
+
+Una domanda utile per IT è quindi:
+
+> **Quale problema risolve R che non è già naturalmente coperto da un componente aziendale esistente?**
+
+Se la risposta è chiara, diventa più semplice definire il confine della soluzione e non duplicare funzioni già disponibili.
+
+
 ## Come può presentarsi una soluzione R?
 
 Il corso considera esplicitamente diversi modelli operativi:
@@ -81,6 +108,10 @@ Per portare una soluzione R in produzione devono essere espliciti almeno:
 La regola è:
 
 > **Lo sviluppatore fornisce una descrizione riproducibile del workload e delle evidenze; IT deve poter trasformare queste informazioni in una configurazione, un deployment e un esercizio verificabili.**
+
+## Kit operativo
+
+Il manuale include un'appendice utilizzabile come traccia per l'handover sviluppatore → IT e per una prima verifica di production readiness. La scheda raccoglie identificazione, modello di esecuzione, ambiente R, dati, risorse, sicurezza, test, error handling, deployment, monitoring, aggiornamenti e ownership.
 
 ## Pubblicazione
 
