@@ -13,9 +13,9 @@ Una richiesta come «servono più core» o «servono 64 GB» non descrive ancora
 
 Per R conviene distinguere tre livelli:
 
-- **processo**: ha il proprio spazio di memoria;
-- **worker**: unità a cui viene assegnato lavoro parallelo;
-- **thread**: flusso di esecuzione che può essere creato dal runtime o, più spesso, da librerie native.
+- **processo**: ha il proprio spazio di indirizzamento e, normalmente, la propria memoria privata;
+- **worker**: unità a cui viene assegnato lavoro parallelo; a seconda del backend può corrispondere a un processo o a un'altra unità di esecuzione;
+- **thread**: flusso di esecuzione all'interno di un processo, usato dal runtime o da librerie native.
 
 Molte strategie di parallelismo R usano processi distinti, mentre BLAS/LAPACK e altre librerie possono usare thread.
 
@@ -25,7 +25,7 @@ Quindi «8 worker» non significa necessariamente «8 thread» e non implica che
 
 La memoria necessaria non coincide necessariamente con la dimensione del dataset. Durante un'elaborazione possono coesistere input, risultato, oggetti temporanei e copie.
 
-R utilizza meccanismi che evitano copie quando possibile, ma una modifica può richiedere un'allocazione indipendente.
+R usa semantiche che evitano copie non necessarie quando possibile, ma un'operazione che modifica un oggetto può richiedere una nuova allocazione. Il dettaglio dipende anche dalla rappresentazione dell'oggetto e dall'implementazione interna.
 
 > **La memoria di un workload va misurata durante l'esecuzione, non dedotta soltanto dalla dimensione dei dati.**
 
@@ -33,7 +33,7 @@ Questo è uno dei comportamenti R che modifica direttamente il modo in cui IT de
 
 ## Garbage collection
 
-R recupera memoria da oggetti non più necessari. La garbage collection usa CPU e non implica che tutta la memoria venga immediatamente restituita al sistema operativo.
+R recupera memoria dagli oggetti non più raggiungibili. La garbage collection usa CPU e non implica che tutta la memoria venga immediatamente restituita al sistema operativo.
 
 ```{r}
 #| label: osservazione-garbage-collection
@@ -65,13 +65,13 @@ Per IT interessa soprattutto una conseguenza: una funzione può mantenere riferi
 
 R usa la lazy evaluation: gli argomenti di una funzione non vengono necessariamente valutati nel momento in cui la funzione viene chiamata, ma quando il loro valore è richiesto.
 
-Per IT interessa la conseguenza operativa: **il punto del codice in cui compare un'operazione non identifica sempre il momento in cui il lavoro viene effettivamente eseguito**.
+Per IT interessa la conseguenza operativa: **il momento della valutazione di un argomento può essere diverso dal momento della chiamata che lo contiene**.
 
 Questo concetto è distinto dalla lazy execution di un database o di un framework analitico, che verrà ripreso nel capitolo 4.
 
 ## S3, S4 e R6
 
-S3, S4 e R6 sono sistemi diversi per rappresentare oggetti e comportamento. S3 è leggero, S4 più formale, R6 introduce stato mutabile e semantiche a riferimento.
+S3, S4 e R6 sono sistemi diversi per rappresentare oggetti e comportamento. S3 è basato sul dispatch per classe e relativamente leggero; S4 è più formale; R6 introduce oggetti a semantica di riferimento e stato mutabile.
 
 Non serve insegnarne la programmazione. Serve sapere che una libreria R può introdurre oggetti con stato e che questo può influire su memoria, serializzazione e comportamento tra worker.
 
@@ -91,9 +91,9 @@ La domanda non è quindi soltanto «usa future?», ma **quale backend viene real
 
 ## Fork e PSOCK
 
-Con fork i processi figli derivano da un processo esistente e il sistema operativo può inizialmente condividere pagine di memoria. Con PSOCK vengono avviati processi R distinti che comunicano attraverso connessioni.
+Con fork i processi figli derivano da un processo esistente e il sistema operativo può inizialmente condividere pagine di memoria tramite copy-on-write. Con PSOCK vengono avviati processi R distinti che comunicano attraverso connessioni.
 
-La scelta influenza isolamento, memoria, trasferimento degli oggetti e compatibilità operativa. In particolare, ciò che sembra memoria condivisa dopo un fork può diventare memoria separata quando le pagine vengono modificate.
+La scelta influenza isolamento, memoria, trasferimento degli oggetti e compatibilità operativa. In particolare, ciò che inizialmente è condiviso dopo un fork può richiedere pagine private quando i processi le modificano.
 
 ## Serializzazione
 
