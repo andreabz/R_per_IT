@@ -2,9 +2,9 @@
 
 ## Perché questo capitolo
 
-Una soluzione tecnica deve avere decisioni, evidenze e responsabilità esplicite.
+Una soluzione R deve avere decisioni, evidenze e responsabilità esplicite.
 
-> **Come trasformiamo una richiesta in una decisione verificabile?**
+> **Come trasformiamo una richiesta R in una decisione verificabile?**
 
 ## Il modello
 
@@ -18,11 +18,15 @@ requisito → evidenza → problema → alternative → test → decisione → b
 
 Non è ancora una specifica verificata. Servono workload, durata obiettivo, consumo attuale, picco, worker, concorrenza e alternative considerate.
 
+Il ruolo di IT non è decidere la correttezza del codice R, ma verificare che la richiesta tecnica sia sostenuta da evidenze riproducibili.
+
 ## Ambiente e metodo
 
 IT può verificare R, package, dipendenze, configurazione, risorse, accessi, integrazione e riproducibilità.
 
 Il proprietario applicativo/scientifico verifica correttezza del risultato, adeguatezza del metodo, significato dei dati e requisiti scientifici.
+
+Il confine è importante: **gestire il runtime R e validare il metodo analitico sono responsabilità diverse**.
 
 ## Baseline
 
@@ -32,14 +36,17 @@ commit + R + package + native libraries + configuration + test data + test resul
 
 Una modifica rilevante produce una nuova baseline dopo la verifica.
 
+Per una soluzione R, una modifica apparentemente piccola a R, package o librerie native può cambiare performance o comportamento. La baseline deve quindi rendere visibile anche l'ambiente.
+
 ## Ownership
 
 | Responsabilità | Domanda |
 |---|---|
-| Codice | chi lo modifica? |
+| Codice R | chi lo modifica? |
 | Metodo | chi ne garantisce l'adeguatezza? |
 | Dati | chi li governa? |
-| Runtime | chi lo gestisce? |
+| Runtime R | chi lo gestisce? |
+| Package e dipendenze | chi mantiene la baseline? |
 | Infrastruttura | chi gestisce VM/container/server? |
 | Database | chi gestisce il servizio? |
 | Incidenti | chi interviene? |
@@ -53,7 +60,7 @@ Una modifica rilevante produce una nuova baseline dopo la verifica.
 
 «Serve un server dedicato» può nascondere un requisito di scheduling, sicurezza o disponibilità.
 
-La governance serve a rendere la richiesta verificabile.
+La governance serve a rendere la richiesta verificabile prima di trasformarla in una modifica infrastrutturale.
 
 ## Esperimenti prima delle decisioni costose
 
@@ -66,6 +73,8 @@ evidenza
  ↓
 decisione
 ```
+
+Per R il test controllato deve includere, quando rilevanti, versione del runtime, package, backend di parallelismo, thread nativi e dati rappresentativi.
 
 ## Ciclo di vita
 
