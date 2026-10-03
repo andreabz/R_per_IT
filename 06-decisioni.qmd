@@ -3,8 +3,6 @@ title: "Decisioni operative"
 subtitle: "Dalle evidenze alle scelte tecniche"
 ---
 
-# Decisioni operative
-
 ## Perché questo capitolo
 
 Nei capitoli precedenti abbiamo visto come R usa ambiente, memoria, CPU, processi, thread, database e infrastruttura. Ora utilizziamo queste informazioni per trasformare una richiesta in una decisione tecnica verificabile.
