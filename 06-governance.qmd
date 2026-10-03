@@ -33,7 +33,7 @@ La domanda è:
 > **Quale requisito deve essere soddisfatto e quale evidenza dimostra che questa soluzione è necessaria?**
 
 
-### 1. Identificare il requisito
+### Identificare il requisito
 
 Occorre chiarire almeno:
 
@@ -59,7 +59,7 @@ mentre oggi richiede circa 2 ore."
 La seconda formulazione permette di valutare il problema.
 
 
-### 2. Raccogliere le evidenze
+### Raccogliere le evidenze
 
 La natura dell'evidenza dipende dalla richiesta.
 
@@ -99,7 +99,7 @@ Il principio è:
 > **la decisione deve essere proporzionata alle evidenze necessarie per motivarla.**
 
 
-### 3. Identificare il problema
+### Identificare il problema
 
 Una richiesta tecnica può avere una causa diversa da quella inizialmente ipotizzata.
 
@@ -125,7 +125,7 @@ Il capitolo Performance descrive come effettuare questa diagnosi. In Governance 
 > **la decisione infrastrutturale è coerente con l'evidenza raccolta?**
 
 
-### 4. Verificare le alternative
+### Verificare le alternative
 
 Prima di introdurre una nuova risorsa o un nuovo componente è opportuno considerare le alternative pertinenti.
 
@@ -144,7 +144,7 @@ A seconda del caso possono essere:
 Non tutte le alternative devono essere sempre testate. Devono però essere considerate quando sono plausibili e rilevanti per la decisione.
 
 
-### 5. Testare quando possibile
+### Testare quando possibile
 
 Quando una decisione dipende da un'ipotesi verificabile, è preferibile misurare l'effetto della modifica.
 
@@ -173,7 +173,7 @@ ma:
 > **«Quale miglioramento osserviamo passando dalla configurazione attuale alla configurazione proposta?»**
 
 
-### 6. Documentare la decisione
+### Documentare la decisione
 
 La decisione dovrebbe essere ricostruibile anche quando le persone coinvolte non sono più disponibili.
 

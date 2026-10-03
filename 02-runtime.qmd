@@ -308,36 +308,11 @@ Il garbage collector non può liberare memoria ancora necessaria all'elaborazion
 Inoltre una fase di garbage collection può avere un costo temporale. Per questo, per diagnosticare un problema di memoria, è utile osservare sia l'andamento della RAM sia il tempo di esecuzione.
 
 
-### Parallelismo e memoria
-
-Quando i worker sono processi separati, ciascun worker ha una propria memoria di processo.
-
-Gli oggetti necessari all'elaborazione possono quindi dover essere presenti in più processi.
-
-Schema concettuale:
-
-```text
-Processo principale
-   │
-   ├── dati
-   ├── Worker 1 → dati necessari
-   ├── Worker 2 → dati necessari
-   ├── Worker 3 → dati necessari
-   └── Worker 4 → dati necessari
-```
-
-Questo significa che aumentare i worker può aumentare anche il consumo complessivo di RAM.
-
-Non esiste però una formula universale per calcolare questo consumo: dipende dal programma, dai dati trasferiti ai worker e dalla tecnologia utilizzata.
-
-Per questo, anche in questo caso, il valore importante per IT è il **picco di RAM misurato durante il benchmark**.
-
-
 ### Thread nativi e oversubscription
 
 Un processo R può utilizzare anche thread creati dalle librerie native utilizzate dal programma.
 
-Questo introduce un ulteriore livello di parallelismo rispetto ai worker R.
+Questo introduce un ulteriore livello di parallelismo rispetto a quello già introdotto dai worker R.
 
 Per esempio, in termini concettuali:
 

@@ -49,7 +49,7 @@ release
 produzione
 ```
 
-Il punto non è imporre un particolare modello di branching. Il requisito importante è la **tracciabilità**.
+Il punto è identificare la **tracciabilità** come requisito fondamentale.
 
 
 ### Git, commit e tag
