@@ -7,6 +7,8 @@ subtitle: "Misurare prima di dimensionare"
 
 > **Dove viene speso il tempo e quale risorsa limita il workload R?**
 
+Il capitolo usa una sequenza semplice: **ipotesi → misura → diagnosi → test → decisione**. Una metrica di sistema da sola non basta a stabilire il collo di bottiglia.
+
 ## Misura minima
 
 Registrare almeno durata, CPU, RAM di picco, I/O, rete, tempo nel database, worker, thread e dimensione dei dati.
@@ -37,7 +39,9 @@ Il monitoraggio dice che la macchina è sotto carico; il profiling aiuta a capir
 ```text
 misura globale
    ↓
-profiling R
+ipotesi
+   ↓
+profiling R / osservazione infrastrutturale
    ↓
 candidato collo di bottiglia
    ↓
@@ -66,6 +70,8 @@ Nel caso R, CPU elevata può derivare dal codice R, da BLAS/LAPACK, da thread na
 La vectorization permette a R di esprimere operazioni su insiemi di valori e può ridurre overhead interpretativo delegando lavoro a codice compilato.
 
 Per IT il punto è che **due implementazioni con lo stesso risultato possono avere costi molto diversi in CPU, allocation e memoria**.
+
+Questo è un buon esempio di confine tra competenza applicativa e infrastrutturale: IT può misurare il costo, mentre la scelta di cambiare algoritmo o implementazione resta in collaborazione con chi sviluppa il workload.
 
 ## Base R, data.table e dplyr
 
@@ -99,11 +105,19 @@ Verificare oggetti, copie, garbage collection, worker, memoria per worker e poss
 
 Verificare database, rete, storage, lock, serializzazione e attese.
 
+### Mini-caso: 16 core ma nessun miglioramento
+
+Un job passa da 1 a 4 worker e il tempo diminuisce. Passando a 8 worker il tempo quasi non cambia mentre la RAM cresce.
+
+La lettura corretta non è «la VM ha bisogno di più core». Il test successivo deve verificare se il limite è serializzazione, memoria, parte seriale del workload, database o thread nativi.
+
 ## Benchmark come esperimento
 
 Un benchmark deve controllare dataset, versione di R, package, configurazione, worker, thread e ripetizioni.
 
 La baseline software è quindi parte della validità del confronto.
+
+Una variazione di R, package o librerie native può cambiare il risultato anche quando il codice applicativo non è cambiato. Il confronto va quindi riferito a una baseline esplicita.
 
 ## Tradurre la diagnosi in una richiesta IT
 
@@ -115,4 +129,8 @@ Informativa:
 
 > «Il workload R impiega 192 minuti con un worker; il profiling indica X; il test 1/2/4/8 worker produce A/B/C/D e RAM X/Y/Z/W; il database non è il collo di bottiglia.»
 
+Una richiesta informativa permette a IT di valutare più alternative: modifica del codice, configurazione del parallelismo, aumento delle risorse o spostamento del calcolo.
+
 > **Prima di aumentare le risorse, verificare il collo di bottiglia.**
+
+Il capitolo 4 porta la diagnosi a un livello successivo: se il collo di bottiglia dipende da dove avviene il calcolo, la soluzione può essere architetturale e non infrastrutturale.
