@@ -1,376 +1,95 @@
 ---
 title: "Contesto e ambiente R"
-subtitle: "Che cosa deve sapere IT prima di valutare una soluzione R"
+subtitle: "Che cosa compone una soluzione R"
 ---
 
 ## Perché questo capitolo
 
-Per valutare una soluzione R, IT deve prima sapere che cosa sta effettivamente gestendo. R non è soltanto un programma da installare: intorno al runtime ci sono pacchetti, dipendenze, librerie di sistema, configurazione e risorse che insieme definiscono l'ambiente di esecuzione. Il punto di partenza è quindi descrivere questa composizione prima di ragionare su prestazioni, architettura o produzione.
+Per IT, una richiesta R non è normalmente una richiesta di installazione di un singolo programma. Una soluzione R è un insieme di codice, runtime, pacchetti, dipendenze native, configurazione e sistemi esterni.
 
-## Obiettivi del capitolo
+> **Che cosa stiamo realmente gestendo?**
 
-L'obiettivo è fornire un linguaggio comune per descrivere una soluzione R. Prima si identificano i componenti dell'ambiente; nei capitoli successivi si valuteranno il modo in cui il lavoro viene eseguito, le sue prestazioni, la sua collocazione e il suo ciclo operativo.
+## R non è RStudio
 
-Al termine del capitolo IT dovrebbe saper identificare:
+R è il runtime che esegue il codice. RStudio è un ambiente di sviluppo. In produzione può essere necessario R senza RStudio.
 
-- il ruolo di R nella soluzione;
-- il runtime e l'ambiente software necessari;
-- pacchetti, dipendenze e repository;
-- library e ambiente di progetto;
-- il significato e i limiti di `renv` e del lockfile;
-- quali elementi devono entrare nella descrizione dell'ambiente.
+La baseline deve quindi descrivere ciò che serve all'esecuzione, non tutto ciò che serve allo sviluppatore.
 
-**Perimetro:** questo capitolo descrive **che cosa compone l'ambiente R**. Performance, architettura, deployment e governance vengono affrontati nei capitoli successivi.
-
-## Una prima classificazione del contesto
-
-R può essere utilizzato in contesti diversi: sperimentazione, elaborazione ricorrente, report, applicazione o servizio.
-
-Qui interessa soltanto la conseguenza fondamentale per la descrizione dell'ambiente: **il contesto d'uso determina quali componenti software devono essere identificati**.
-
-La classificazione operativa completa degli scenari è rimandata al capitolo 7.
-
-## Che cosa vede IT quando arriva una richiesta R
-
-
-Per IT, R può comparire in molti modi diversi:
-
-```{mermaid}
-%%| label: mermaid-01-contesto-01
-%%| echo: false
-flowchart TD
-    R["R"]
-
-    R --> SCRIPT["Script"]
-    R --> BATCH["Job batch"]
-    R --> REPORT["Report Quarto"]
-    R --> SHINY["Web app Shiny"]
-    R --> API["API HTTP"]
-    R --> DB["Client database"]
-    R --> MODEL["Modello / analisi"]
-```
-
-Non tutte queste situazioni hanno gli stessi requisiti infrastrutturali.
-
-
-### La domanda fondamentale
-
-> **Che ruolo ha R nel sistema?**
-
-Può essere:
-
-- uno strumento personale;
-- un motore di calcolo;
-- un job batch;
-- un generatore di report;
-- un componente di un'applicazione;
-- un servizio API;
-- un client verso Oracle;
-- un componente di una pipeline.
-
-La risposta cambia completamente la valutazione IT.
-
-
-## Separare ambiente di sviluppo e runtime
-
-
-```{mermaid}
-%%| label: mermaid-01-contesto-02
-%%| echo: false
-flowchart LR
-    U["Utente"] --> RS["RStudio"]
-    RS --> R["R runtime"]
-    R --> P["Pacchetti"]
-    R --> OS["Sistema operativo"]
-    R --> CPU["CPU"]
-    R --> RAM["RAM"]
-    R --> IO["Storage / rete"]
-```
-
-**RStudio** è un ambiente di sviluppo.
-
-**R** è il runtime che esegue il codice.
-
-Un server può eseguire R senza RStudio.
-
-
-## Capire l'ambiente software
-
-
-Un ambiente R reale comprende più livelli:
-
-```{mermaid}
-%%| label: mermaid-01-contesto-03
-%%| echo: false
-flowchart TD
-    APP["Codice applicativo"]
-    APP --> R["R"]
-    R --> PKG["Pacchetti R"]
-    PKG --> DEP["Dipendenze"]
-    DEP --> SYS["Librerie di sistema"]
-    SYS --> OS["Sistema operativo"]
-    OS --> HW["Hardware"]
-```
-
-Una richiesta di "installare un pacchetto" può quindi avere conseguenze anche sul sistema operativo.
-
-
-## Riconoscere le dipendenze
-
-
-| Pacchetto | Utilizzo principale |
-|---|---|---|
-| `data.table` | Manipolazione efficiente dei dati |
-| `ggplot2` | Visualizzazione |
-| `DBI` | Interfaccia standard verso database |
-| `odbc` | Connessioni ODBC |
-| `httr2` | Accesso a API HTTP |
-| `jsonlite` | JSON |
-| `readr` | Import/export dati testuali |
-| `arrow` | Parquet e formato Arrow |
-| `shiny` | Applicazioni web |
-| `quarto` | Report e pubblicazione |
-| `plumber2` | API HTTP |
-| `future` | Parallelizzazione |
-| `parallel` | Parallelizzazione |
-| `profvis` | Profilazione |
-| `renv` | Gestione dell'ambiente e delle dipendenze |
-
-IT non deve conoscere l'API di questi pacchetti, ma dovrebbe riconoscerne il **ruolo**.
-
-
-### Una richiesta di pacchetto non è una semplice installazione
-
-Uno sviluppatore può chiedere:
-
-> "Mi serve il pacchetto X."
-
-IT deve poter chiedere:
-
-- Per quale funzionalità?
-- È indispensabile?
-- Quali dipendenze introduce?
-- Richiede librerie di sistema?
-- Quale versione di R richiede?
-- Quale versione del pacchetto?
-- Da quale repository proviene?
-- Ha bisogno di accesso Internet?
-- Come verrà aggiornato?
-
-
-### Dipendenze
-
-```{mermaid}
-%%| label: mermaid-01-contesto-04
-%%| echo: false
-flowchart TD
-    APP["Applicazione R"]
-    APP --> X["Pacchetto X"]
-    X --> Y["Pacchetto Y"]
-    X --> Z["Pacchetto Z"]
-    Y --> SYS["Libreria di sistema"]
-    Z --> SYS2["Altra libreria di sistema"]
-```
-
-La dipendenza non è solo:
-
-> "R richiede X."
-
-Può essere:
-
-> R → X → Y → libreria OS.
-
-Per questo la gestione dell'ambiente è parte del deployment.
-
-
-### `renv`: perché interessa a IT
-
-`renv` permette di associare a un progetto R un ambiente di pacchetti riproducibile.
-
-Il concetto importante per IT è:
-
-> **L'applicazione deve dichiarare da quali dipendenze dipende.**
-
-Non dovrebbe dipendere casualmente da:
-
-> "quello che è installato oggi sul server".
-
-Questo facilita:
-
-- riproducibilità;
-- aggiornamenti;
-- manutenzione;
-- diagnosi;
-- reinstallazione;
-- trasferimento tra ambienti.
-
-## Gestire l'ambiente e la riproducibilità
-
-
-Per evitare ambiguità, IT dovrebbe distinguere quattro concetti:
-
-| Concetto | Che cosa rappresenta |
-|---|---|
-| **Library** | dove i pacchetti sono fisicamente installati e caricabili da R |
-| **Repository** | da dove vengono recuperati i pacchetti e le loro versioni |
-| **Ambiente** | insieme effettivo di R, pacchetti e componenti necessari a un progetto |
-| **Lockfile** | descrizione versionata delle dipendenze che il progetto intende ricostruire |
-
-Un repository non è una library e un lockfile non è l'ambiente completo. Il percorso operativo è:
+## La composizione dell'ambiente
 
 ```text
-repository
-    ↓
-installazione
-    ↓
-library
-    ↓
-ambiente R
-    ↓
-applicazione
+codice applicativo
+      ↓
+R
+      ↓
+pacchetti R
+      ↓
+dipendenze R
+      ↓
+librerie native / driver
+      ↓
+sistema operativo
+      ↓
+infrastruttura
 ```
 
-La baseline deve identificare anche i componenti che il lockfile non copre, come sistema operativo, librerie native, driver, client database e configurazione.
+Una dipendenza può attraversare più livelli. Un package può utilizzare C/C++ o Fortran compilato e dipendere da librerie di sistema. Installare un package e rendere disponibile l'ambiente necessario all'esecuzione non sono la stessa operazione.
 
-### Gestione delle librerie e riproducibilità
+## Package, library e repository
 
-Quando R viene eseguito, cerca i pacchetti nelle **library** disponibili per quel processo. Il percorso effettivo può dipendere dalla configurazione del sistema e dell'utente.
+| Concetto | Significato |
+|---|---|
+| Package | componente software distribuito per R |
+| Library | posizione dalla quale R carica i package |
+| Repository | sorgente dalla quale i package vengono recuperati |
+| Ambiente | insieme concreto di runtime, package e dipendenze |
+
+La domanda operativa è:
+
+> **Quale versione viene caricata, da quale library e chi può modificarla?**
 
 ```{r}
-#| label: ispezione-librerie-r
+#| label: ispezione-library-r
 
 .libPaths()
 ```
 
-Il comando permette di vedere le library utilizzate dalla sessione R.
+## Dipendenze e riproducibilità
 
-In un ambiente multiutente è utile distinguere concettualmente:
+Un progetto dovrebbe dichiarare le proprie dipendenze R e poter ricostruire un ambiente coerente. Il lockfile di progetto descrive le dipendenze R da ricostruire, ma non congela automaticamente OS, librerie native, driver, client database, configurazione, credenziali o dati.
 
-```text
-sistema / sito
-      │
-      ├── pacchetti condivisi
-      │
-utente
-      │
-      └── pacchetti personali
-      │
-progetto
-      │
-      └── ambiente controllato dal progetto
-```
+Una baseline completa può essere:
 
-Le modalità concrete dipendono dal sistema operativo e dalla configurazione di R. Il punto IT è stabilire **chi può modificare una library, quali versioni contiene e quale ambiente deve essere utilizzato dall'applicazione**.
-
-**Librerie condivise e multiutente**
-
-Su un computer utilizzato da più persone, installare o aggiornare un pacchetto in una library condivisa può modificare il comportamento di applicazioni diverse.
-
-Per questo è utile distinguere:
-
-- ambiente di sviluppo personale;
-- library condivisa;
-- ambiente del progetto;
-- ambiente di test;
-- ambiente di produzione.
-
-La domanda non è soltanto:
-
-> «Il pacchetto è installato?»
-
-ma:
-
-> **«Quale versione del pacchetto viene caricata da questa applicazione e chi può modificarla?»**
-
-**Gestione operativa su computer multiutente**
-
-Su un computer utilizzato da più persone, una library condivisa deve essere trattata come un componente amministrato, non come una cartella nella quale ogni utente può installare liberamente pacchetti.
-
-Per IT, il modello operativo dovrebbe distinguere:
-
-- **library condivisa**: gestita centralmente e utilizzata in lettura dalle applicazioni;
-- **library personale**: spazio nel quale un utente può sperimentare senza modificare l'ambiente condiviso;
-- **library del progetto**: ambiente associato a una specifica applicazione, per esempio tramite `renv`;
-- **ambiente di test**;
-- **ambiente di produzione**.
-
-In produzione, l'account tecnico che esegue l'applicazione dovrebbe normalmente poter leggere le library approvate ma non modificarle. L'installazione o l'aggiornamento dei pacchetti dovrebbe avvenire tramite un processo autorizzato, con test e aggiornamento della baseline.
-
-**Checklist IT per le library**
-
-Per ogni computer o server multiutente, verificare:
-
-1. quali library sono effettivamente utilizzate da ciascun runtime;
-2. chi può scrivere nelle library condivise;
-3. quale procedura autorizza installazione e aggiornamento dei pacchetti;
-4. come vengono impedite modifiche casuali all'ambiente di produzione;
-5. come si identifica la versione realmente caricata da un'applicazione;
-6. come sono separati sviluppo, test e produzione;
-7. come vengono gestite eventuali versioni diverse di R;
-8. come vengono registrati richiesta, installazione, verifica e autorizzazione della modifica.
-
-Per diagnosticare il percorso effettivo si possono usare `.libPaths()` e, quando necessario, le variabili `R_LIBS_USER` e `R_LIBS_SITE`. Per un pacchetto critico si può verificare anche il percorso effettivo con `find.package()`.
-
-`packageDescription()` permette di ricavare informazioni complete su un pacchetto, inclusa la sua funzionalità, dipendenze, licenza e versione.
-
-La domanda operativa non è quindi soltanto:
-
-> «Il pacchetto è installato?»
-
-ma:
-
-> **«Quale versione viene caricata da questa applicazione, da quale library, chi può modificarla e quale processo autorizza la modifica?»**
-
-**Ambiente controllato del progetto**
-
-Per un progetto R è preferibile poter dichiarare in modo esplicito:
-
-- versione di R;
-- pacchetti utilizzati;
-- versioni dei pacchetti;
-- repository di provenienza;
-- eventuali dipendenze di sistema;
-- eventuali driver o software esterni.
-
-`renv` consente di registrare le dipendenze R del progetto in un lockfile e di ricostruire l'ambiente a partire da quella descrizione.
-
-```{r}
-#| label: concetto-riproducibilita-renv
-
-# In un progetto gestito con renv, il lockfile
-# descrive le dipendenze R da ricostruire.
-# Il comando seguente è mostrato come concetto:
-# renv::restore()
-```
-
-Il lockfile non congela però automaticamente tutto l'ambiente di esecuzione: sistema operativo, librerie native, driver, client Oracle, configurazioni e altri componenti esterni devono essere gestiti separatamente.
-
-Questa distinzione diventa importante quando il risultato prodotto dal software deve essere **ricostruibile e verificabile nel tempo**.
-
-**Dal computer dello sviluppatore alla baseline software**
-
-
-La descrizione dettagliata dell'ambiente software diventa particolarmente importante quando uno script, un'analisi o un'applicazione deve essere rilasciato, distribuito o portato in produzione.
-
-Durante lo sviluppo o l'esplorazione dei dati non è generalmente necessario formalizzare ogni componente dell'ambiente. Quando invece il software deve essere eseguito in modo ripetibile su un altro computer, su un server o in produzione, è necessario poter identificare con sufficiente precisione l'ambiente nel quale il software è stato sviluppato e testato.
-
-Una semplice richiesta come «installare lo script e farlo funzionare» può quindi essere trasformata in una descrizione controllata dell'ambiente:
-
-| Componente | Informazione da identificare |
+| Livello | Informazione |
 |---|---|
-| Codice | repository, commit o tag |
+| Codice | commit/tag |
 | R | versione |
-| Pacchetti | versioni e repository |
-| Dipendenze R | lockfile, per esempio `renv.lock` |
-| Sistema operativo | distribuzione e versione |
-| Librerie native | versioni rilevanti |
-| Driver/client | ODBC, Oracle o altri |
-| Configurazione | parametri necessari |
-| Dati di test | identificativo/versione |
-| Test software | versione della suite ed esito |
+| Package | versioni e repository |
+| Dipendenze R | lockfile |
+| Native | librerie e driver |
+| OS | distribuzione/versione |
+| Configurazione | parametri |
+| Sistemi esterni | database, API, filesystem |
+| Test | dati ed esiti |
 
-Questa descrizione costituisce la **baseline software**: una fotografia controllata dell'ambiente necessario per eseguire una determinata versione del software.
+## Componenti nativi
 
-La baseline software **non è ancora la validazione del metodo**. Essa documenta infatti con quale ambiente il software viene eseguito; la validazione deve invece stabilire, secondo gli obiettivi e i requisiti del progetto, se il software e il metodo implementato producono risultati corretti e affidabili.
+R può delegare lavoro a codice compilato. Per IT la conseguenza è che il comportamento dell'applicazione può dipendere da librerie native con versioni, requisiti e gestione dei thread propri.
 
-Il livello di dettaglio della baseline dovrebbe essere **proporzionato alla destinazione** del software: può essere minimo durante una fase esplorativa e diventare più strutturato quando il software viene rilasciato o portato in produzione.
+## Un concetto avanzato: ALTREP
+
+ALTREP permette a R di rappresentare alcuni oggetti senza materializzarne immediatamente tutti i dati. Non è necessario conoscere l'implementazione: basta ricordare che **dimensione logica dell'oggetto e memoria fisica osservata non sono necessariamente equivalenti**.
+
+## Checklist
+
+1. Qual è il ruolo di R?
+2. Quale versione di R?
+3. Quali package e versioni?
+4. Quale library viene usata?
+5. Quale lockfile descrive l'ambiente?
+6. Esistono dipendenze native?
+7. Quali driver/client sono necessari?
+8. Quali sistemi esterni sono coinvolti?
+9. Come viene ricostruita la baseline?
+
+Il capitolo successivo sposta la domanda dall'ambiente al modo in cui R esegue il lavoro.
