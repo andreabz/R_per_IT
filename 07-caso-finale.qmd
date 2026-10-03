@@ -1,158 +1,152 @@
----
-title: "Dalla richiesta alla decisione"
-subtitle: "Scenari operativi, caso didattico e checklist per IT"
----
-
+# Laboratorio decisionale
 
 ## Perché questo capitolo
 
-Il percorso termina applicando il metodo, non aggiungendo altra teoria. I sei scenari servono a riconoscere rapidamente il tipo di richiesta; il caso didattico mostra invece come requisito, evidenze, diagnosi, architettura, operatività e responsabilità si ricompongano in una decisione.
+Il laboratorio non introduce altra teoria. Esercita la capacità di trasformare una richiesta R in un problema tecnico verificabile.
 
-La domanda del capitolo è:
+## Metodo
 
-> **Come applichiamo il metodo a una richiesta concreta?**
+1. identificare il requisito;
+2. chiedere le evidenze mancanti;
+3. formulare ipotesi;
+4. identificare collo di bottiglia o vincolo;
+5. definire un test;
+6. confrontare alternative;
+7. specificare la soluzione;
+8. assegnare responsabilità;
+9. aggiornare la baseline.
 
-Il lettore dovrebbe arrivare qui con gli strumenti dei capitoli 1–6 già acquisiti. Il compito di questo capitolo è usarli in sequenza, mantenendo distinta ogni fase: classificare la richiesta, raccogliere evidenze, interpretarle, verificare le alternative e definire il riferimento operativo risultante.
+## Scenario 1 — RAM
 
-## Classificare la richiesta
+> «Lo script va in errore per memoria. Servono 64 GB.»
 
-Prima di applicare i sei scenari, la richiesta va descritta con pochi elementi: ruolo di R, frequenza, utilizzatori, concorrenza, disponibilità richiesta e destinazione del risultato.
+Chiedere dimensione dati, RAM di picco, swap, worker, memoria per worker, copie, oggetti intermedi, possibilità di filtrare e concorrenza.
 
-La classificazione serve a scegliere **quali domande porre**, non a sostituire l'analisi dei capitoli precedenti.
+La decisione non parte dalla dimensione del dataset ma dal comportamento osservato.
 
-## Sei scenari operativi
+## Scenario 2 — CPU
 
+> «R usa il 100% della CPU. Servono più core.»
 
-### Script locale per sperimentazione
+Chiedere numero di core utilizzati, worker, thread nativi, profiling, parallelizzabilità, scaling, crescita RAM e coinvolgimento del database.
 
-IT deve conoscere almeno versione di R, dipendenze, accessi a dati e servizi aziendali e presenza di dati riservati. L'utente può sperimentare nel proprio ambiente secondo le regole della postazione.
+| Worker | Tempo | RAM | CPU |
+|---:|---:|---:|---:|
+| 1 | … | … | … |
+| 2 | … | … | … |
+| 4 | … | … | … |
+| 8 | … | … | … |
 
-Buone pratiche: progetto separato, codice versionato quando diventa riutilizzabile, nessuna credenziale nel codice, dipendenze registrate quando il lavoro deve essere riprodotto.
+## Scenario 3 — Shiny lenta
 
+Misurare utenti contemporanei, latenza per richiesta, CPU, RAM per sessione, database, rete, caching e operazioni lente.
 
-### Script su server per sperimentazione
+«Funziona per un utente» non dimostra la capacità di sostenere più utenti.
 
-IT deve conoscere account, directory e dati accessibili, limiti di CPU/RAM/storage, accesso ai database e modalità di installazione dei pacchetti. È opportuno separare sviluppo e produzione ed evitare modifiche non tracciate alle library condivise.
+## Scenario 4 — Tutto in R
 
-Il fatto che R venga eseguito su un server non rende automaticamente il codice una soluzione di produzione.
+Per grandi dataset in Oracle chiedere quali filtri e aggregazioni possono essere eseguiti nel database e quali operazioni richiedono davvero R.
 
+```text
+Oracle
+  ↓
+filtro / aggregazione
+  ↓
+dataset ridotto
+  ↓
+R
+  ↓
+analisi
+```
 
-### Job ricorrente per uso personale
+## Scenario 5 — 20 package
 
-IT deve chiedere frequenza, durata, modalità di avvio, input/output, dipendenze, credenziali e comportamento in caso di errore.
+Chiedere dipendenze effettive, versioni, lockfile, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
 
-Per renderlo gestibile servono almeno codice versionato, ambiente riproducibile, logging, identificazione di input/output e modalità controllata di aggiornamento.
+L'obiettivo è una baseline ricostruibile, non un numero di package installati.
 
+## Scenario 6 — Container
 
-### Job ricorrente da pubblicare
+Un container può rendere riproducibili R, package e librerie native. Non risolve automaticamente database, segreti, storage, rete, identità, scheduler e monitoring.
 
-Quando l'output è destinato ad altri utenti o a un processo aziendale aumentano i requisiti: repository e versione, ambiente riproducibile, test, baseline, configurazione separata dal codice, logging, monitoring, ownership e processo di modifica.
+## Esercizio integrato
 
-Se l'output ha rilevanza analitica, IT verifica che responsabilità ed evidenze previste dal processo siano definite; non determina l'adeguatezza del metodo.
+Richiesta:
 
+> «Il mio script R impiega tre ore. Mi serve una VM con 16 core e 64 GB di RAM.»
 
-### Applicazione Shiny da pubblicare
+Dati:
 
-IT deve chiedere utenti e sessioni concorrenti, autenticazione/autorizzazione, dati accessibili, durata delle elaborazioni, database/API, disponibilità, logging, monitoring ed error handling.
+```text
+RAM di picco: 11 GB
+CPU: 98%
+Worker: 1
+Database: poco rilevante
+I/O: normale
+```
 
-Qui è essenziale distinguere parallelismo e concorrenza: il numero di worker di una singola elaborazione non descrive da solo il carico della piattaforma.
-
-
-### API R da pubblicare
-
-IT deve chiedere endpoint, autorizzazioni, volume e frequenza delle richieste, concorrenza, tempi di risposta, dimensione delle richieste/risposte, dati trattati, dipendenze esterne, error handling, logging e monitoring.
-
-Per un'API il carico dipende dal rapporto tra costo della singola richiesta, frequenza e concorrenza.
-
-
-## Matrice operativa
-
-| Scenario | Domanda principale di IT | Controlli da introdurre |
-|---|---|---|
-| Script locale | Che cosa fa e quali dipendenze usa? | ambiente e accessi |
-| Script su server | Quali risorse e dati utilizza? | ambiente, risorse, accessi |
-| Job personale | Come viene eseguito e cosa succede se fallisce? | versionamento, logging, ownership |
-| Job pubblicato | Come garantiamo un output riproducibile? | test, baseline, monitoring, change management |
-| Shiny | Quanti utenti e richieste concorrenti deve sostenere? | architettura web, sicurezza, test, monitoring |
-| API | Qual è il carico del servizio? | sicurezza, test di carico, osservabilità, lifecycle |
-
-
-## Dalla richiesta alla decisione
-
-Il caso seguente è un esercizio di applicazione. I dati sono volutamente costruiti: non rappresentano una specifica applicazione reale.
-
-**Requisito:** un'elaborazione R deve passare da circa 3 ore a meno di 30 minuti.
+Test:
 
 | Worker | Tempo | RAM |
-|:---:|---:|---:|
+|---:|---:|---:|
 | 1 | 192 min | 11 GB |
 | 2 | 104 min | 20 GB |
 | 4 | 59 min | 38 GB |
 | 8 | 51 min | 70 GB |
 
-Il caso va letto utilizzando gli strumenti dei capitoli precedenti:
+### Domande
 
-1. **Cap. 1 — ambiente:** identificare R, pacchetti, dipendenze e configurazione;
-2. **Cap. 2 — runtime:** descrivere worker, memoria, parallelismo e concorrenza;
-3. **Cap. 3 — performance:** verificare il collo di bottiglia e interpretare il benchmark;
-4. **Cap. 4 — architettura:** decidere dove eseguire il workload e quali componenti coinvolgere;
-5. **Cap. 5 — deployment:** definire artefatto, test, rilascio e operatività;
-6. **Cap. 6 — governance:** associare evidenze, responsabilità e stato approvato.
+1. Quali sono i fatti misurati?
+2. Qual è l'ipotesi sul collo di bottiglia?
+3. Quale overhead emerge?
+4. Quale configurazione soddisfa un obiettivo < 60 minuti?
+5. Quale vincolo introduce la RAM?
+6. Quali test mancano?
+7. Quali alternative applicative devono essere considerate?
+8. Quali informazioni entrano nella richiesta IT?
 
-La tabella mostra già due fatti utili: il parallelismo porta beneficio, ma lo scaling è non lineare e il consumo di RAM cresce rapidamente. **Non basta quindi tradurre il requisito in «servono più core»: occorre motivare una configurazione sulla base del workload e dei vincoli complessivi.**
+Il benchmark mostra che il parallelismo riduce il tempo ma aumenta rapidamente la memoria e non scala linearmente. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
 
-### Come leggere il caso
+## Scheda operativa
 
-Per ogni passaggio occorre distinguere:
-
-| Passaggio | Domanda |
+| Campo | Informazione |
 |---|---|
-| Requisito | Quale risultato deve essere ottenuto? |
-| Evidenza | Che cosa è stato misurato? |
-| Interpretazione | Che cosa suggeriscono le misure? |
-| Verifica | Quale prova consente di discriminare le alternative? |
-| Decisione | Quale configurazione viene adottata e perché? |
-| Baseline | Quale stato viene identificato come riferimento? |
-| Esercizio | Come viene monitorato e mantenuto? |
+| Requisito | cosa deve essere ottenuto |
+| Workload | dati, frequenza, durata, concorrenza |
+| Ambiente | R, package, native, OS |
+| Evidenze | misure |
+| Collo di bottiglia | ipotesi verificata |
+| Alternative | opzioni |
+| Test | esperimenti |
+| Decisione | soluzione |
+| Baseline | stato riproducibile |
+| Ownership | responsabilità |
 
-Il caso non fornisce automaticamente una configurazione finale. Il suo scopo è mostrare **come si passa da una richiesta a una decisione documentata**.
-
-## Checklist conclusiva
-
-La checklist finale non ripete i contenuti dei capitoli precedenti: li usa come riferimenti per una valutazione unica.
-
-### Applicazione
-- [ ] Che cosa deve fare?
-- [ ] Quale scenario operativo descrive la richiesta?
-- [ ] Chi utilizza il risultato?
-
-### Evidenze
-- [ ] Qual è il requisito?
-- [ ] Quale misura o evidenza lo supporta?
-- [ ] Quale verifica è necessaria?
-
-### Collocazione
-- [ ] Dove deve essere eseguito il lavoro?
-- [ ] Quali componenti aziendali esistono già?
-- [ ] Quali confini devono essere definiti tra R e gli altri sistemi?
-
-### Esercizio
-- [ ] Quale artefatto viene distribuito?
-- [ ] Come viene monitorato?
-- [ ] Come viene modificato o ripristinato?
-
-### Responsabilità
-- [ ] Chi mantiene il software?
-- [ ] Chi gestisce l'infrastruttura?
-- [ ] Chi verifica il metodo, quando applicabile?
-- [ ] Quale evidenza rimane della decisione?
-
-### Le quattro domande
+## Le quattro domande finali
 
 1. **Che cosa deve fare?**
 2. **Quale evidenza dimostra che serve ciò che viene richiesto?**
 3. **Dove deve essere eseguito il lavoro?**
 4. **Esiste già un componente aziendale adatto?**
 
-Queste domande chiudono il percorso del corso: non sostituiscono i capitoli precedenti, ma li attivano in una sequenza decisionale.
+## Conclusione
 
+Il risultato atteso non è saper programmare R. È saper passare da:
+
+```text
+richiesta
+   ↓
+requisito
+   ↓
+evidenza
+   ↓
+diagnosi
+   ↓
+architettura
+   ↓
+deployment
+   ↓
+ownership
+```
+
+Una soluzione R diventa gestibile quando il suo comportamento può essere osservato, il suo ambiente può essere ricostruito e le decisioni possono essere motivate dalle evidenze.
