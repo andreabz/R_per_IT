@@ -94,6 +94,158 @@ summaryRprof("profilo.out")
 
 > **Regola:** IT deve saper produrre una diagnosi riproducibile, non necessariamente correggere il codice.
 
+## 2. Laboratorio integrato — da una soluzione sconosciuta alla presa in carico
+
+I laboratori dei capitoli precedenti diventano più utili se applicati allo stesso caso. Questo percorso non richiede di sviluppare l'applicazione: richiede di comportarsi come IT davanti a una soluzione R ricevuta da uno sviluppatore.
+
+### Scenario
+
+Lo sviluppatore consegna `report_vendite_giornaliero`, un job batch che:
+
+- legge dati da Oracle;
+- esegue trasformazioni e calcoli in R;
+- produce un file Excel;
+- deve partire ogni mattina;
+- dispone di un repository Git e di un `renv.lock`;
+- segnala che «a volte è lento» e chiede una macchina più grande.
+
+Il compito di IT è **non partire dalla macchina richiesta**, ma ricostruire progressivamente la soluzione.
+
+### Fase 1 — Identificazione e ambiente
+
+**Riferimento:** capitolo 1.
+
+Raccogliere:
+
+- repository, commit/tag ed entrypoint;
+- versione di R;
+- package e repository;
+- presenza e contenuto del lockfile;
+- library effettivamente utilizzate;
+- dipendenze native e driver Oracle.
+
+**Output:** una scheda dell'ambiente che permetta a un secondo tecnico di capire che cosa deve essere ricostruito.
+
+### Fase 2 — Ricostruzione ed esecuzione controllata
+
+**Riferimento:** capitoli 1 e 5.
+
+Ricostruire l'ambiente in test, eseguire il job con un dataset rappresentativo e registrare almeno:
+
+| Misura | Valore |
+|---|---|
+| Versione R | ... |
+| Durata | ... |
+| RAM di picco | ... |
+| CPU | ... |
+| Dimensione input | ... |
+| Tempo Oracle | ... |
+| Output prodotto | ... |
+| Esito | ... |
+
+**Output:** prima baseline riproducibile.
+
+Se la soluzione non parte, il tecnico deve classificare il problema come dipendenza R, dipendenza nativa/driver, configurazione, accesso a sistema esterno o problema applicativo, raccogliendo l'evidenza corrispondente.
+
+### Fase 3 — Diagnosi della lentezza
+
+**Riferimento:** capitolo 3.
+
+Ripetere il workload in condizioni comparabili e distinguere:
+
+1. tempo totale;
+2. tempo CPU;
+3. RAM;
+4. I/O/rete;
+5. tempo Oracle;
+6. eventuale tempo speso nelle principali funzioni R.
+
+Usare, quando serve, `system.time()`, `Rprof()` o `profvis`.
+
+**Output:** non una diagnosi necessariamente definitiva, ma una classificazione:
+
+- evidenza compatibile con problema infrastrutturale;
+- evidenza compatibile con problema applicativo;
+- evidenza insufficiente, con indicazione del test successivo.
+
+### Fase 4 — Valutazione architetturale
+
+**Riferimento:** capitolo 4.
+
+Descrivere il flusso:
+
+```text
+scheduler
+   ↓
+processo R
+   ├──→ Oracle
+   ├──→ calcolo R
+   └──→ file Excel
+```
+
+Chiedersi:
+
+- quali operazioni devono essere eseguite in R;
+- quali possono essere eseguite in Oracle;
+- quali dati vengono trasferiti verso R;
+- quale account e quali permessi servono;
+- quale componente aziendale gestisce scheduling, filesystem e autenticazione, se applicabile.
+
+**Output:** confini chiari tra workload R e componenti IT.
+
+### Fase 5 — Deployment e operatività
+
+**Riferimento:** capitolo 5.
+
+Definire:
+
+- ambiente di test e produzione;
+- procedura di deployment;
+- smoke test;
+- log ed exit code;
+- timeout e retry;
+- comportamento in caso di Oracle indisponibile;
+- gestione dell'output parziale;
+- rollback;
+- monitoring e alert;
+- ownership.
+
+**Output:** una specifica di esercizio, non soltanto una richiesta di installazione.
+
+### Fase 6 — Decisione
+
+**Riferimento:** capitolo 6.
+
+Solo a questo punto valutare la richiesta iniziale di «una macchina più grande».
+
+La decisione deve essere accompagnata da:
+
+- requisito operativo;
+- evidenze;
+- ipotesi sul collo di bottiglia;
+- test eseguiti;
+- alternative considerate;
+- configurazione proposta o modifica applicativa;
+- nuova baseline attesa;
+- responsabilità.
+
+**Output finale:** la richiesta iniziale viene trasformata in una decisione tecnica verificabile e in un handover utilizzabile da IT.
+
+### Criterio di superamento
+
+Il percorso è completato quando un tecnico che non conosce la soluzione sa produrre, senza inventare informazioni:
+
+1. **che cosa è** la soluzione;
+2. **come ricostruire** il suo ambiente;
+3. **come eseguirla** in test;
+4. **come misurarla**;
+5. **come formulare una diagnosi prudente**;
+6. **quali informazioni servono per il deployment**;
+7. **come osservarla e ripristinarla**;
+8. **chi deve intervenire** quando l'evidenza rimanda al codice o al modello applicativo.
+
+Questo è il livello di autonomia operativo atteso dal corso.
+
 ## 2. Esempio: da uno script R a un handover gestibile
 
 ### Situazione iniziale
