@@ -190,6 +190,81 @@ Shiny
 
 Qui diventano centrali autenticazione, sessioni, concorrenza, latenza, timeout, CPU/RAM e comportamento al riavvio.
 
+### Cosa cambia per lo sviluppatore quando una soluzione entra in produzione
+
+Il passaggio in produzione non richiede allo sviluppatore di conoscere tutti i componenti della piattaforma. Richiede però che il confine tra applicazione e infrastruttura sia esplicito.
+
+#### Esempio: una Shiny
+
+Una situazione iniziale può essere:
+
+> «Sul mio PC funziona. Vorrei pubblicarla; è lenta con alcuni utenti, forse serve più CPU.»
+
+Dopo una prima preparazione, la consegna può invece contenere:
+
+| Informazione | Esempio |
+|---|---|
+| Forma | applicazione Shiny |
+| Entrypoint | \`app.R\` |
+| Versione | commit/tag del repository |
+| Ambiente | R + dipendenze ricostruibili |
+| Dati | Oracle + eventuali API |
+| Utenti | 20 utenti previsti |
+| Concorrenza | fino a 5 richieste/sessioni rilevanti contemporaneamente |
+| Prestazione osservata | latenza mediana 7,2 s sul caso di test |
+| Misure disponibili | Oracle 5,5 s; trasferimento 0,8 s; R 0,6 s; rendering 0,3 s |
+| Sicurezza | autenticazione e HTTPS secondo gli standard aziendali |
+| Deployment | ambiente di test separato dalla produzione |
+| Incognite | comportamento sotto carico e modello di scaling da verificare |
+
+Questo cambia la conversazione. IT non deve più ricostruire da zero che cosa sia l'applicazione; può concentrarsi su piattaforma, autenticazione, reverse proxy, certificati, deployment, monitoring e capacità.
+
+Lo sviluppatore **non deve sapere configurare il reverse proxy**. Deve sapere che è un confine architetturale e poter fornire ciò che serve a definirlo: URL o percorso atteso, protocollo, requisiti di autenticazione, eventuali websocket o timeout, dipendenze esterne e comportamento atteso al riavvio.
+
+#### E se lo sviluppatore non sa profilare?
+
+Non bisogna trasformare il profiling in un prerequisito burocratico per chiedere supporto.
+
+Sono sufficienti tre livelli di maturità:
+
+1. **Sintomo documentato** — scenario, dataset, utenti, concorrenza, tempi osservati e baseline.
+2. **Misure raccolte** — per esempio tempo Oracle, CPU, RAM, rete o durata delle singole fasi.
+3. **Ipotesi verificata** — un test che distingue tra più possibili colli di bottiglia.
+
+IT e sviluppatore possono collaborare per passare dal primo al secondo o al terzo livello.
+
+La sequenza corretta è:
+
+~~~text
+sintomo
+   ↓
+scenario riproducibile
+   ↓
+misure
+   ↓
+ipotesi
+   ↓
+test
+   ↓
+decisione
+~~~
+
+Dire «non so ancora se il problema è R, Oracle o la rete» è un'informazione utile, se accompagnata da uno scenario riproducibile.
+
+#### Lo stesso principio per le altre forme
+
+| Soluzione | Consegna utile dello sviluppatore | Focus IT |
+|---|---|---|
+| Script personale | entrypoint, ambiente, dati e permessi | ambiente utente e accessi |
+| Batch | calendario, durata, input/output, exit code, retry | scheduler, account, log, alert e recovery |
+| Quarto | sorgenti, \`renv.lock\`, dati, destinazione e durata del render | ambiente di build, artefatto e pubblicazione |
+| Shiny | entrypoint, utenti, sessioni, latenza, dipendenze e requisiti web | proxy, autenticazione, deployment, monitoring e capacità |
+| API plumber2 | endpoint, contratto, timeout, errori, concorrenza e versioning | gateway/proxy, TLS, autenticazione, limiti e osservabilità |
+| Package | API del componente, dipendenze, test e compatibilità | repository, release e compatibilità |
+| Pipeline | input/output, exit code, retry, idempotenza e dipendenze | orchestrazione, stato, log e recovery |
+
+Il principio è lo stesso per tutte le forme: **lo sviluppatore descrive il workload e fornisce le evidenze disponibili; IT trasforma queste informazioni in un esercizio verificabile**.
+
 #### API con plumber2
 
 ~~~text
