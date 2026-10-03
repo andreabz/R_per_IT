@@ -113,6 +113,60 @@ confronto
 
 Quando vogliamo attribuire una differenza a una modifica, dobbiamo mantenere stabili le altre variabili.
 
+## Laboratorio operativo — benchmark e profiling di base
+
+L'obiettivo non è ottimizzare il codice, ma permettere a IT di produrre una misura ripetibile e una prima diagnosi.
+
+### Misura ripetibile
+
+```{r}
+#| label: benchmark-base-r
+
+misura <- function(n = 1000000) {
+  x <- rnorm(n)
+  sum(x^2)
+}
+
+system.time({
+  risultato <- misura()
+})
+```
+
+Per una baseline reale vanno registrati anche versione di R, package rilevanti, ambiente, dimensione dell'input e condizioni del test.
+
+### Profiling con gli strumenti base di R
+
+```{r}
+#| label: profiling-base-r
+
+Rprof("profilo.out")
+risultato <- misura(5000000)
+Rprof(NULL)
+
+summaryRprof("profilo.out")
+```
+
+Il risultato è **evidenza diagnostica**, non una prescrizione automatica di ottimizzazione.
+
+### Correlare profiling e infrastruttura
+
+```text
+scenario controllato
+      ↓
+misura globale
+      ↓
+profiling R + monitoraggio processo/macchina
+      + misura database quando rilevante
+      ↓
+ipotesi sul collo di bottiglia
+      ↓
+test controllato
+      ↓
+nuova baseline
+```
+
+IT dovrebbe arrivare a una delle tre conclusioni: problema infrastrutturale plausibile con evidenze; problema applicativo plausibile da restituire allo sviluppatore; evidenza insufficiente e quindi necessità di un test migliore.
+
 ## Profiling
 
 Il monitoraggio dice che la macchina è sotto carico; il profiling aiuta a capire **quale parte del codice R consuma il tempo**.
