@@ -22,6 +22,27 @@ flowchart LR
   F --> G[Sistema operativo]
 ``` 
 
+## Come leggere questo capitolo
+
+Il capitolo ha due livelli.
+
+**Livello operativo — da ricordare**
+
+- R è il runtime; RStudio è uno strumento di sviluppo;
+- una soluzione R comprende codice, runtime, package, dipendenze native, configurazione e sistemi esterni;
+- «package installato» non significa necessariamente «ambiente riproducibile»;
+- un lockfile descrive una parte dell'ambiente, non il server completo;
+- la baseline deve comprendere anche ciò che sta fuori da R.
+
+**Livello diagnostico — da usare quando serve**
+
+- library path e ordine di ricerca;
+- lockfile e gestione delle dipendenze;
+- ABI, driver e librerie native;
+- ALTREP e differenza tra dimensione logica e memoria del processo.
+
+Per la prima presa in carico non è necessario conoscere i dettagli interni di R: serve soprattutto saper ricostruire il perimetro della soluzione.
+
 ## Lessico operativo minimo
 
 Per seguire il corso bastano pochi termini aggiuntivi rispetto al lessico IT abituale:
@@ -96,7 +117,7 @@ Quando scriviamo library(data.table), data.table è il **package**; library() è
 
 Questa distinzione diventa importante quando IT deve sapere **quale copia di un package viene caricata e chi può modificarla**.
 
-## Le library di R
+## Approfondimento — Le library di R
 
 R può avere più library contemporaneamente. .libPaths() restituisce il percorso delle library che R considera nella sessione corrente, nell'ordine in cui vengono cercate.
 
@@ -206,7 +227,7 @@ immagine completa del server
 
 Il lockfile controlla una parte importante dell'ambiente R, non l'intera infrastruttura.
 
-## Due termini infrastrutturali
+## Approfondimento — Due termini infrastrutturali
 
 Due termini che possono comparire quando una dipendenza attraversa il confine tra package R e sistema operativo:
 
@@ -241,7 +262,7 @@ R può delegare lavoro a codice compilato. Per IT la conseguenza non è semplice
 
 Questo è uno dei punti in cui una soluzione R si comporta diversamente da un semplice script interpretato: la catena di dipendenze può arrivare sotto il livello dei package.
 
-## Un concetto avanzato: ALTREP
+## Approfondimento — ALTREP
 
 ALTREP è un meccanismo interno di R che permette ad alcuni oggetti di avere una rappresentazione alternativa rispetto alla rappresentazione tradizionale. Un oggetto può quindi essere descritto senza che tutti i suoi dati siano necessariamente materializzati immediatamente nella forma che ci aspettiamo.
 
@@ -276,5 +297,13 @@ ALTREP è quindi un esempio, non una spiegazione completa della memoria. Nel cap
 7. Quali driver/client sono necessari?
 8. Quali sistemi esterni sono coinvolti?
 9. Come viene ricostruita la baseline?
+
+### Domande che IT dovrebbe poter rispondere
+
+1. Qual è l'entrypoint della soluzione?
+2. Quale ambiente R deve essere disponibile?
+3. Quali dipendenze attraversano il confine tra R e sistema operativo?
+4. Quali sistemi esterni sono necessari?
+5. Quale baseline permette di ricostruire l'ambiente?
 
 Il capitolo successivo sposta la domanda dall'ambiente al modo in cui **il runtime R usa memoria, processi, worker e thread**.
