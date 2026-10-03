@@ -11,9 +11,15 @@ Una richiesta come «servono più core» o «servono 64 GB» non descrive ancora
 
 ## Processo, worker e thread
 
-Un processo possiede il proprio spazio di memoria. Un worker è un'unità di lavoro; può essere implementato con processi o thread. Molte forme di parallelismo R usano processi distinti, mentre librerie native possono usare thread.
+Per R conviene distinguere tre livelli:
 
-Il numero di worker e il numero di thread nativi sono quindi dimensioni diverse.
+- **processo**: ha il proprio spazio di memoria;
+- **worker**: unità a cui viene assegnato lavoro parallelo;
+- **thread**: flusso di esecuzione che può essere creato dal runtime o, più spesso, da librerie native.
+
+Molte strategie di parallelismo R usano processi distinti, mentre BLAS/LAPACK e altre librerie possono usare thread.
+
+Quindi «8 worker» non significa necessariamente «8 thread» e non implica che la macchina eseguirà soltanto otto unità di lavoro.
 
 ## Allocation e copy-on-modify
 
@@ -22,6 +28,8 @@ La memoria necessaria non coincide necessariamente con la dimensione del dataset
 R utilizza meccanismi che evitano copie quando possibile, ma una modifica può richiedere un'allocazione indipendente.
 
 > **La memoria di un workload va misurata durante l'esecuzione, non dedotta soltanto dalla dimensione dei dati.**
+
+Questo è uno dei comportamenti R che modifica direttamente il modo in cui IT deve interpretare un requisito RAM.
 
 ## Garbage collection
 
@@ -33,25 +41,27 @@ R recupera memoria da oggetti non più necessari. La garbage collection usa CPU 
 gc()
 ```
 
-Un picco di RAM non dimostra quindi da solo una perdita di memoria.
+Un picco di RAM non dimostra quindi da solo una perdita di memoria. In un workload reale interessa osservare **quando** il picco avviene e quali oggetti, copie o worker lo spiegano.
 
 ## Environment e lexical scoping
 
 Un environment associa nomi a oggetti e può collegarsi ad altri environment. Il lexical scoping determina come R risolve i nomi.
 
-Per IT interessa una sola conseguenza: una funzione può mantenere riferimenti a stato e oggetti oltre il punto in cui sono stati creati. Questo aiuta a interpretare consumi di memoria apparentemente inattesi.
+Per IT interessa soprattutto una conseguenza: una funzione può mantenere riferimenti a stato e oggetti oltre il punto in cui sono stati creati. Questo aiuta a interpretare consumi di memoria apparentemente inattesi e comportamenti di librerie che conservano stato.
 
 ## Lazy evaluation
 
-R usa la lazy evaluation: gli argomenti di una funzione non vengono necessariamente valutati nel momento in cui la funzione viene chiamata, ma quando il loro valore è richiesto. Per IT interessa soprattutto una conseguenza: il punto nel codice in cui compare un'operazione non identifica sempre il momento in cui il lavoro viene realmente eseguito.
+R usa la lazy evaluation: gli argomenti di una funzione non vengono necessariamente valutati nel momento in cui la funzione viene chiamata, ma quando il loro valore è richiesto.
 
-Questo concetto è distinto dalla lazy execution di un motore database o di un framework analitico, ma aiuta a capire perché il costo computazionale può emergere più avanti rispetto alla costruzione di un'espressione.
+Per IT interessa la conseguenza operativa: **il punto del codice in cui compare un'operazione non identifica sempre il momento in cui il lavoro viene effettivamente eseguito**.
+
+Questo concetto è distinto dalla lazy execution di un database o di un framework analitico.
 
 ## S3, S4 e R6
 
 S3, S4 e R6 sono sistemi diversi per rappresentare oggetti e comportamento. S3 è leggero, S4 più formale, R6 introduce stato mutabile e semantiche a riferimento.
 
-Non serve insegnarne la programmazione: serve sapere che una libreria può introdurre oggetti complessi e stato persistente.
+Non serve insegnarne la programmazione. Serve sapere che una libreria R può introdurre oggetti con stato e che questo può influire su memoria, serializzazione e comportamento tra worker.
 
 ## Parallel e future
 
@@ -65,11 +75,13 @@ Questa astrazione può nascondere dettagli che IT deve comunque conoscere:
 - risorse disponibili;
 - concorrenza.
 
+La domanda non è quindi soltanto «usa future?», ma **quale backend viene realmente utilizzato e che cosa viene trasferito ai worker?**
+
 ## Fork e PSOCK
 
 Con fork i processi figli derivano da un processo esistente e il sistema operativo può inizialmente condividere pagine di memoria. Con PSOCK vengono avviati processi R distinti che comunicano attraverso connessioni.
 
-La scelta influenza isolamento, memoria, trasferimento degli oggetti e compatibilità operativa.
+La scelta influenza isolamento, memoria, trasferimento degli oggetti e compatibilità operativa. In particolare, ciò che sembra memoria condivisa dopo un fork può diventare memoria separata quando le pagine vengono modificate.
 
 ## Serializzazione
 
@@ -99,6 +111,10 @@ Molte operazioni numeriche usano BLAS/LAPACK o altre librerie native che possono
 
 Questo può produrre oversubscription. Aumentare contemporaneamente worker e thread nativi può peggiorare le prestazioni.
 
+Per un ambiente IT la configurazione da osservare non è quindi solo il numero di core della VM, ma almeno:
+
+**worker R + thread nativi + concorrenza di altri workload.**
+
 ## Benchmark del runtime
 
 | Worker | Thread | Tempo | RAM picco | CPU |
@@ -108,5 +124,7 @@ Questo può produrre oversubscription. Aumentare contemporaneamente worker e thr
 | 4 | 1 | … | … | … |
 | 4 | 2 | … | … | … |
 | 4 | 4 | … | … | … |
+
+Il test deve permettere di separare l'effetto dei worker da quello dei thread nativi.
 
 > **Non dimensionare CPU e RAM dal numero di worker: misurare il comportamento del workload.**
