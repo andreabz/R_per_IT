@@ -6,13 +6,13 @@ subtitle: "Scenari operativi, caso didattico e checklist per IT"
 
 ## Perché questo capitolo
 
-Questo capitolo **non introduce nuovi concetti**: applica quelli precedenti a sei scenari operativi e a un caso didattico.
+Il percorso termina applicando il metodo, non aggiungendo altra teoria. I sei scenari servono a riconoscere rapidamente il tipo di richiesta; il caso didattico mostra invece come requisito, evidenze, diagnosi, architettura, operatività e responsabilità si ricompongano in una decisione.
 
 La domanda proprietaria è:
 
 > **Come applichiamo il metodo a una richiesta concreta?**
 
-Il lettore deve arrivare qui sapendo già distinguere ambiente, runtime, performance, architettura, deployment e governance. Qui deve imparare a collegarli e a produrre una valutazione IT coerente.
+Il lettore dovrebbe arrivare qui con gli strumenti dei capitoli 1–6 già acquisiti. Il compito di questo capitolo è usarli in sequenza, mantenendo distinta ogni fase: classificare la richiesta, raccogliere evidenze, interpretarle, verificare le alternative e definire il riferimento operativo risultante.
 
 ## Classificare la richiesta
 
