@@ -195,6 +195,15 @@ immagine completa del server
 
 Il lockfile controlla una parte importante dell'ambiente R, non l'intera infrastruttura.
 
+## Due termini infrastrutturali
+
+Due termini che possono comparire quando una dipendenza attraversa il confine tra package R e sistema operativo:
+
+| Termine | Significato operativo |
+|---|---|
+| **ABI** | insieme di convenzioni binarie che permettono a componenti compilati compatibili di comunicare; una libreria può quindi richiedere una specifica compatibilità binaria |
+| **driver** | componente software che permette a un'applicazione o libreria di comunicare con una tecnologia concreta, per esempio un database |
+
 ## Dipendenze e riproducibilità
 
 Un progetto dovrebbe dichiarare le proprie dipendenze R e poter ricostruire un ambiente coerente. Il lockfile di progetto descrive le dipendenze R da ricostruire, ma non congela automaticamente OS, librerie native, driver, configurazione, credenziali o dati.
