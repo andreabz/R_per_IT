@@ -81,6 +81,8 @@ Una variabile dovrebbe essere modificata alla volta, mantenendo stabile il resto
 
 ## Caso 1 — RAM
 
+**Collegamenti:** runtime e copy-on-modify (`02`) → diagnostica (`03`) → eventuale spostamento del calcolo (`04`) → baseline e test (`05`).
+
 > «Lo script va in errore per memoria. Servono 64 GB.»
 
 Chiedere dimensione dei dati, RAM di picco, swap, worker, memoria per worker, copie, oggetti intermedi, garbage collection, possibilità di filtrare e concorrenza.
@@ -88,6 +90,8 @@ Chiedere dimensione dei dati, RAM di picco, swap, worker, memoria per worker, co
 La decisione non parte dalla dimensione del dataset ma dal comportamento osservato del runtime R.
 
 ## Caso 2 — CPU
+
+**Collegamenti:** worker e thread nativi (`02`) → profiling e scaling (`03`) → eventuale modifica dell'architettura (`04`) → verifica della release (`05`).
 
 > «R usa il 100% della CPU. Servono più core.»
 
@@ -104,6 +108,8 @@ La domanda non è soltanto quanti core vede R, ma **quali processi e thread li s
 
 ## Caso 3 — Shiny lenta
 
+**Collegamenti:** processi e concorrenza (`02`) → misure di latenza e risorse (`03`) → modello di deployment e confini (`04`) → monitoring (`05`).
+
 Misurare utenti contemporanei, latenza per richiesta, CPU, RAM per sessione, database, rete, caching e operazioni lente.
 
 «Funziona per un utente» non dimostra la capacità di sostenere più utenti.
@@ -111,6 +117,8 @@ Misurare utenti contemporanei, latenza per richiesta, CPU, RAM per sessione, dat
 Per una soluzione Shiny va inoltre identificato il modello di deployment: processi, sessioni, reverse proxy e modalità di scaling cambiano il significato di CPU e RAM osservate.
 
 ## Caso 4 — Calcolo tutto in R
+
+**Collegamenti:** materializzazione e memoria (`02`) → diagnosi del collo di bottiglia (`03`) → pushdown e confini di calcolo (`04`) → test di integrazione/performance (`05`).
 
 Per grandi dataset in Oracle chiedere quali filtri e aggregazioni possono essere eseguiti nel database e quali operazioni richiedono davvero R.
 
@@ -130,11 +138,15 @@ La domanda è anche quanta memoria e serializzazione si evita spostando il calco
 
 ## Caso 5 — 20 package
 
+**Collegamenti:** ambiente e dipendenze (`01`) → costo del runtime (`02`) → baseline del benchmark (`03`) → riproducibilità del deployment (`05`).
+
 Chiedere dipendenze effettive, versioni, lockfile, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
 
 L'obiettivo è una baseline ricostruibile, non un numero di package installati.
 
 ## Caso 6 — Container
+
+**Collegamenti:** ambiente R (`01`) → runtime e native libraries (`02`) → misure riproducibili (`03`) → confini architetturali (`04`) → artefatto di release (`05`).
 
 Un container può rendere più controllabili R, package e librerie native. Non risolve automaticamente database, segreti, storage, rete, identità, scheduler e monitoring.
 
