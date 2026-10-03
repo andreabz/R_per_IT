@@ -147,6 +147,35 @@ Una domanda utile per IT è quindi:
 
 Se la risposta è chiara, diventa più semplice definire il confine della soluzione e non duplicare funzioni già disponibili.
 
+## Come cambia il rapporto tra sviluppatore e IT
+
+Il manuale non serve soltanto a permettere a IT di comprendere R. Serve anche a rendere più efficace la **consegna di una soluzione R da parte dello sviluppatore**.
+
+Lo sviluppatore non deve diventare amministratore di sistema. Deve però poter distinguere:
+
+- ciò che conosce da ciò che deve ancora essere verificato;
+- il comportamento del workload dalla risorsa infrastrutturale richiesta;
+- il codice applicativo dai componenti aziendali che lo ospitano;
+- una misura da un'ipotesi sulla causa di un problema.
+
+Per esempio, una richiesta come «ho una Shiny, pubblicatela e se è lenta servono più CPU» lascia a IT gran parte della ricostruzione del problema. Una richiesta più utile identifica almeno repository e commit, entrypoint, ambiente e dipendenze, utenti e concorrenza, sistemi esterni, tempi osservati e baseline disponibile. Se il collo di bottiglia non è noto, può essere dichiarato esplicitamente: **non è un prerequisito per chiedere supporto a IT sapere già quale sia la causa**.
+
+Il risultato atteso è quindi una collaborazione a due livelli:
+
+~~~text
+sviluppatore
+  ├── descrive applicazione e workload
+  ├── fornisce ambiente, dati e baseline
+  └── formula o documenta le ipotesi applicative
+                 ↓
+                IT
+  ├── definisce piattaforma e confini infrastrutturali
+  ├── gestisce rete, identità, proxy, deployment e monitoring
+  └── verifica capacità, sicurezza e operabilità
+~~~
+
+Per le richieste reali, la scheda dell'appendice *Kit operativo per IT* può essere usata come traccia di handover.
+
 ## Come usare il manuale
 
 Per una prima lettura non è necessario studiare tutto il funzionamento interno di R. È sufficiente concentrarsi su ciò che cambia una decisione IT.
