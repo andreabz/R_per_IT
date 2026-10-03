@@ -35,6 +35,8 @@ infrastruttura
 
 Una dipendenza può attraversare più livelli. Un package può utilizzare C/C++ o Fortran compilato e dipendere da librerie di sistema. Installare un package e rendere disponibile l'ambiente necessario all'esecuzione non sono la stessa operazione.
 
+**Per R questo confine è particolarmente importante:** il lockfile descrive l'ecosistema dei package, ma non rende automaticamente identiche le librerie native, i driver e il sistema operativo.
+
 ## Package, library e repository
 
 | Concetto | Significato |
@@ -74,11 +76,15 @@ Una baseline completa può essere:
 
 ## Componenti nativi
 
-R può delegare lavoro a codice compilato. Per IT la conseguenza è che il comportamento dell'applicazione può dipendere da librerie native con versioni, requisiti e gestione dei thread propri.
+R può delegare lavoro a codice compilato. Per IT la conseguenza non è semplicemente «serve una libreria»: cambiano anche versioni, ABI, compilatori, driver e gestione dei thread.
+
+Questo è uno dei punti in cui una soluzione R si comporta diversamente da un semplice script interpretato: la catena di dipendenze può arrivare sotto il livello dei package.
 
 ## Un concetto avanzato: ALTREP
 
 ALTREP permette a R di rappresentare alcuni oggetti senza materializzarne immediatamente tutti i dati. Non è necessario conoscere l'implementazione: basta ricordare che **dimensione logica dell'oggetto e memoria fisica osservata non sono necessariamente equivalenti**.
+
+Il concetto diventa utile quando una misura di memoria viene confrontata con la dimensione apparente dei dati.
 
 ## Checklist
 
@@ -92,4 +98,4 @@ ALTREP permette a R di rappresentare alcuni oggetti senza materializzarne immedi
 8. Quali sistemi esterni sono coinvolti?
 9. Come viene ricostruita la baseline?
 
-Il capitolo successivo sposta la domanda dall'ambiente al modo in cui R esegue il lavoro.
+Il capitolo successivo sposta la domanda dall'ambiente al modo in cui **il runtime R usa memoria, processi, worker e thread**.
