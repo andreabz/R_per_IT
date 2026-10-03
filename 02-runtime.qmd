@@ -5,13 +5,13 @@ subtitle: "Processi, core, thread, worker e scaling"
 
 ## Perché questo capitolo
 
-Il capitolo descrive **come un workload R viene eseguito**: processo, core, thread, worker, parallelismo, concorrenza e memoria.
+Per capire una richiesta di CPU o RAM bisogna prima capire come il workload viene eseguito. Processo, core, thread e worker descrivono livelli diversi dello stesso problema; parallelismo e concorrenza spiegano invece come il carico può distribuirsi nel tempo e tra più esecuzioni.
 
 La domanda proprietaria è:
 
 > **Come viene eseguito il lavoro e quali risorse può impegnare?**
 
-**Perimetro:** qui si costruisce il modello di esecuzione. La misura del comportamento e la diagnosi del collo di bottiglia appartengono al capitolo 3.
+**Perimetro:** qui costruiamo il modello necessario per leggere il comportamento di R. La misura, il profiling e la diagnosi vengono affrontati nel capitolo 3: prima dobbiamo sapere che cosa stiamo osservando.
 
 ## Il vocabolario del runtime
 

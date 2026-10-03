@@ -6,15 +6,17 @@ subtitle: "Versionamento, test, CI/CD, rilascio, sicurezza, continuità e owners
 
 ## Perché questo capitolo
 
-Il capitolo descrive il passaggio da software sviluppato a **artefatto rilasciabile, distribuibile e gestibile in esercizio**.
+Un software può funzionare sul computer dello sviluppatore senza essere ancora una soluzione gestibile in esercizio. Questo capitolo segue il passaggio dal codice a una release identificabile, verificata e distribuibile, fino alle attività necessarie per mantenerla osservabile, modificabile e ripristinabile.
 
 La domanda proprietaria è:
 
 > **Come trasformiamo il software in qualcosa di rilasciabile e gestibile?**
 
-Il percorso è:
+Il filo del capitolo è:
 
 `codice → verifica → build → artefatto → release → deployment → osservabilità → aggiornamento`.
+
+Ogni passaggio aggiunge informazioni necessarie per sapere che cosa è stato rilasciato, con quali evidenze e come intervenire quando qualcosa cambia.
 
 **Perimetro:** qui interessano processo di build e rilascio, test software, dipendenze, sicurezza operativa, osservabilità, rollback e continuità. Le decisioni su ownership, approvazioni e responsabilità appartengono al capitolo 6.
 
@@ -703,7 +705,7 @@ Bisogna sapere:
 Il monitoraggio deve essere coerente con il tipo di applicazione.
 
 
-#### Job batch
+**Job batch**
 
 Controllare:
 
@@ -714,7 +716,7 @@ Controllare:
 - CPU/RAM quando rilevanti.
 
 
-#### Servizio o API
+**Servizio o API**
 
 Controllare:
 
@@ -726,7 +728,7 @@ Controllare:
 - eventuali saturazioni.
 
 
-#### Applicazione Shiny
+**Applicazione Shiny**
 
 Aggiungere, quando pertinenti:
 

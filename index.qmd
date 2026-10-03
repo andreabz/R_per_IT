@@ -1,70 +1,68 @@
 ---
-title: "R per l'IT"
 subtitle: "Capire, valutare e gestire soluzioni sviluppate in R"
 ---
 
+# Introduzione {.unnumbered}
+
 ## A chi è rivolto
 
-Questo materiale è pensato per un dipartimento IT che deve **valutare e gestire soluzioni sviluppate in R**, non per chi deve imparare a programmare in R.
+Questo manuale è pensato per chi, in IT, deve **capire, valutare e gestire soluzioni sviluppate in R**. Non è un corso di programmazione R: il codice compare solo quando aiuta a capire una decisione tecnica o un comportamento del runtime.
 
-L'obiettivo è fornire un linguaggio comune per affrontare richieste come:
-
-- installazione di R e pacchetti;
-- aumento di CPU o RAM;
-- richiesta di un server dedicato;
-- introduzione di una Shiny o di un'API;
-- integrazione con Oracle;
-- produzione automatica di report;
-- passaggio da PC a server;
-- messa in produzione e gestione operativa.
+Il problema ricorrente è trasformare una richiesta formulata in termini tecnici — «installare R», «servono più RAM», «serve un server», «pubblichiamo una Shiny» — in una descrizione del problema che possa essere valutata, verificata e gestita nel tempo.
 
 ## Il principio guida
 
 > **Prima di aumentare le risorse, capire perché servono.**
 
-Una richiesta tecnica dovrebbe seguire questo percorso:
+Il principio vale per l'intero manuale. Una richiesta parte dal risultato che deve essere ottenuto; da lì si identificano workload e ambiente, si raccolgono evidenze, si valutano le alternative e solo alla fine si definiscono infrastruttura, rilascio e gestione.
+
+Il percorso generale è:
 
 ```text
-Richiesta
+requisito
    ↓
-Requisiti
+ambiente e workload
    ↓
-Diagnostica
+misura e diagnosi
    ↓
-Architettura
+architettura
    ↓
-Infrastruttura
+deployment
    ↓
-Deployment
+governance e gestione
    ↓
-Gestione
+nuova valutazione quando cambia qualcosa
 ```
 
-## Come usare questo materiale
+## Come è organizzato il manuale
 
-Questo materiale è una guida per **leggere richieste tecniche e porre le domande corrette**.
+I sette capitoli seguono una progressione intenzionale. Ogni capitolo risponde a una domanda e prepara quella successiva; il settimo non aggiunge teoria, ma applica il metodo completo.
 
-Il materiale è organizzato come un manuale tecnico, con una progressione dai concetti del runtime alla gestione operativa. Gli scenari d'uso di R vengono ripresi alla fine, quando il lettore dispone già degli strumenti per valutarli:
+1. **Contesto e ambiente R** — che cosa compone una soluzione R e che cosa deve essere identificato prima di eseguirla.
+2. **Runtime, processi e parallelismo** — come viene eseguito il workload e quali risorse può impegnare.
+3. **Performance e diagnostica** — come misurare il comportamento e distinguere il collo di bottiglia.
+4. **Architettura e integrazione** — dove collocare la soluzione e come definire i confini con database, piattaforme e servizi.
+5. **Deployment e gestione operativa** — come trasformare il software in una release verificata, distribuibile e osservabile.
+6. **Governance e valutazione delle richieste** — come collegare requisiti, evidenze, responsabilità, approvazioni e baseline.
+7. **Dalla richiesta alla decisione** — come applicare tutto il percorso a scenari concreti e a un caso didattico.
 
-1. **Contesto e ambiente R** — che cosa vede IT quando arriva una richiesta R.
-2. **Runtime, processi e parallelismo** — processi, core, thread, worker e risorse.
-3. **Performance e diagnostica** — come distinguere CPU, RAM, I/O, rete e database.
-4. **Architettura e integrazione** — R, Oracle, APEX, Quarto, Shiny e API.
-5. **Deployment e gestione operativa** — sicurezza, logging, monitoring e ownership.
-6. **Governance e valutazione delle richieste** — come valutare pacchetti, RAM, CPU e server.
-7. **Dalla richiesta alla decisione** — scenari operativi, caso didattico e checklist.
+La sequenza può essere letta anche come una serie di domande:
+
+> **Che cosa stiamo gestendo? → Come viene eseguito? → Come si comporta? → Dove deve vivere? → Come lo rilasciamo e lo gestiamo? → Chi verifica e decide? → Come applichiamo il metodo?**
 
 ## Quattro domande da ricordare
 
-**1. Che cosa deve fare?**
-**2. Quale evidenza dimostra che serve ciò che viene richiesto?**
-**3. Dove deve essere eseguito il lavoro?**
-**4. Esiste già un componente aziendale adatto?**
+Queste quattro domande sintetizzano il metodo e tornano nel capitolo finale:
+
+1. **Che cosa deve fare?**
+2. **Quale evidenza dimostra che serve ciò che viene richiesto?**
+3. **Dove deve essere eseguito il lavoro?**
+4. **Esiste già un componente aziendale adatto?**
 
 
-## Modello operativo del corso
+## Un modello operativo unico
 
-Il corso può essere letto come una catena unica, nella quale ogni passaggio produce le informazioni necessarie al successivo:
+I capitoli possono essere letti come una catena nella quale ogni passaggio produce le informazioni necessarie al successivo:
 
 ```text
 requisito
@@ -88,9 +86,9 @@ modifica
 nuova baseline
 ```
 
-La **baseline software** è il riferimento dello stato approvato. Non è un documento statico: cambia quando una modifica autorizzata produce un nuovo stato che viene nuovamente verificato.
+La **baseline software** identifica lo stato dell'ambiente e del software a cui si riferisce una determinata release. Non è un documento statico: cambia quando una modifica autorizzata produce un nuovo stato che viene nuovamente verificato.
 
-Tre domande restano distinte:
+Tre domande restano distinte e non vanno confuse:
 
 | Domanda | Oggetto |
 |---|---|
@@ -98,9 +96,9 @@ Tre domande restano distinte:
 | Che cosa stiamo eseguendo? | software, ambiente e configurazione |
 | Il metodo è adeguato allo scopo? | metodo analitico e criteri applicabili |
 
-## Il percorso mentale
+## Dal problema alla decisione
 
-Una richiesta infrastrutturale non dovrebbe partire dal workload:
+Una richiesta infrastrutturale non dovrebbe partire dalla risorsa desiderata. Il punto di partenza è il problema da risolvere:
 
 ```text
 Che cosa deve fare?
@@ -118,9 +116,9 @@ Quali alternative esistono?
 Quale infrastruttura serve?
 ```
 
-## Un criterio di lettura
+## Come leggere le evidenze
 
-Il materiale distingue, quando possibile, tra:
+Durante il percorso è utile distinguere, quando possibile, tra:
 
 - **fatto misurato** — per esempio «CPU 98%»;
 - **interpretazione** — per esempio «il workload sembra CPU-bound»;

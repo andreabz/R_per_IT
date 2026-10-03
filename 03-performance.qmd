@@ -6,7 +6,7 @@ subtitle: "Identificare il collo di bottiglia prima di cambiare hardware"
 
 ## Perché questo capitolo
 
-Una volta compreso come R utilizza processi, worker, CPU e memoria, il passo successivo è capire **perché un'elaborazione è lenta** o consuma più risorse del previsto.
+Una volta descritto il modello di esecuzione, il problema diventa osservabile: bisogna capire perché un'elaborazione è lenta, dove viene speso il tempo e quale risorsa ne limita il comportamento. La performance non si valuta quindi a partire dalla dimensione della macchina, ma dal rapporto tra workload, misure e risultato atteso.
 
 La domanda corretta non è:
 
@@ -18,9 +18,9 @@ ma:
 
 La diagnosi di performance consiste quindi nel passare da un sintomo a una misura, formulare un'ipotesi e raccogliere l'evidenza necessaria per verificarla.
 
-Il principio fondamentale è:
+Il principio che guida tutto il capitolo è semplice:
 
-> **prima si misura il collo di bottiglia, poi si decide quale intervento effettuare.**
+> **prima si misura il comportamento, poi si formula una diagnosi, infine si sceglie l'intervento.**
 
 Questo è particolarmente importante per IT: aumentare CPU o RAM senza aver identificato il problema può aumentare il costo della piattaforma senza migliorare il tempo di esecuzione.
 
@@ -567,7 +567,7 @@ Esempi frequenti:
 - ricomputazione di risultati già disponibili.
 
 
-#### Copie e memoria
+**Copie e memoria**
 
 Un oggetto da 8 GB non implica automaticamente che siano sufficienti 8 GB di RAM.
 
@@ -738,7 +738,7 @@ La seconda forma permette a IT di valutare la richiesta sulla base di dati osser
 Quando si richiede una modifica infrastrutturale o una valutazione di performance, è utile riportare almeno:
 
 
-#### Applicazione
+**Applicazione**
 
 - cosa fa il job;
 - se è batch o interattivo;
@@ -746,7 +746,7 @@ Quando si richiede una modifica infrastrutturale o una valutazione di performanc
 - tempo obiettivo.
 
 
-#### Workload
+**Workload**
 
 - dataset utilizzato;
 - dimensione dei dati;
@@ -754,7 +754,7 @@ Quando si richiede una modifica infrastrutturale o una valutazione di performanc
 - numero di job contemporaneamente attivi.
 
 
-#### Configurazione
+**Configurazione**
 
 - versione di R;
 - pacchetti rilevanti;
@@ -763,7 +763,7 @@ Quando si richiede una modifica infrastrutturale o una valutazione di performanc
 - eventuali dipendenze esterne.
 
 
-#### Misure
+**Misure**
 
 - tempo di esecuzione;
 - CPU utilizzata;
@@ -773,7 +773,7 @@ Quando si richiede una modifica infrastrutturale o una valutazione di performanc
 - tempi delle query quando è coinvolto un database.
 
 
-#### Benchmark
+**Benchmark**
 
 Se è stata modificata una configurazione:
 
