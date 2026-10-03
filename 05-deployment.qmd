@@ -9,6 +9,8 @@ Un software che funziona sul computer dello sviluppatore non è ancora una relea
 
 > **Come portiamo lo stesso codice e lo stesso ambiente R in un'esecuzione controllata?**
 
+Per R la difficoltà aggiuntiva è che una release deve rendere riproducibile non solo il codice, ma anche il runtime, i package e le dipendenze che attraversano il confine con il sistema operativo.
+
 ## Catena di rilascio
 
 ```text
@@ -65,13 +67,34 @@ Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 
 ## Test
 
-Una soluzione R può richiedere test funzionali, integrazione, regressione e performance.
+Una soluzione R dovrebbe avere almeno una distinzione tra quattro livelli di verifica:
 
-Per R sono importanti anche test di compatibilità dell'ambiente: versione del runtime, package, driver e sistemi esterni.
+| Test | Domanda |
+|---|---|
+| Funzionale | il risultato applicativo è corretto? |
+| Integrazione | R comunica correttamente con DB/API/filesystem? |
+| Compatibilità | R, package, driver e native libraries sono coerenti? |
+| Performance | tempo, CPU, RAM e I/O restano entro la baseline? |
 
-I test di performance devono usare una baseline comparabile.
+I test di performance devono usare dati rappresentativi e una baseline comparabile. Un test funzionale che passa non dimostra che il workload abbia lo stesso costo operativo.
 
-Una modifica può essere funzionalmente corretta e cambiare da 10 a 40 minuti o da 4 a 20 GB di RAM.
+Per un workload R è utile esplicitare anche il caso **“stesso codice, ambiente diverso”**: una modifica di R, package, driver o librerie native può cambiare il comportamento senza alcuna modifica allo script.
+
+Una verifica minima può quindi confrontare:
+
+```text
+baseline
+   ↓
+stesso input
+   ↓
+nuovo ambiente
+   ↓
+risultato + tempo + RAM
+   ↓
+confronto
+```
+
+Se il risultato applicativo è corretto ma il tempo passa da 10 a 40 minuti o la RAM da 4 a 20 GB, la release richiede una valutazione tecnica prima del passaggio in produzione.
 
 ## Configurazione e segreti
 
@@ -84,13 +107,13 @@ username <- "utente"
 password <- "password"
 ```
 
-Il codice è un esempio di ciò che non deve essere usato in produzione.
+Il codice è un esempio di ciò che non deve essere usato in produzione. In esercizio, i valori devono provenire dai meccanismi di configurazione e secret management previsti dall'organizzazione.
 
 ## GitHub Actions
 
 Una pipeline può automatizzare checkout, configurazione di R, ripristino dell'ambiente, test, build/render e pubblicazione.
 
-Nel repository del corso la pipeline esistente esegue `quarto render`, produce `_site` e lo pubblica tramite GitHub Pages.
+Nel repository del corso la pipeline esistente è destinata a eseguire `quarto render`, produrre `_site` e pubblicarlo tramite GitHub Pages. Questa proprietà va verificata dalla run effettiva della pipeline, non assunta dalla sola configurazione.
 
 Per un progetto R è utile trattare il render o il test come parte della verifica dell'ambiente: se cambiano R, package o dipendenze native, la pipeline deve rendere visibile la regressione.
 
@@ -123,4 +146,6 @@ Account tecnici, minimo privilegio, segreti, rete e TLS/HTTPS restano requisiti 
 | Ripristino | procedura + baseline |
 | Ownership | responsabili |
 
-Il capitolo successivo usa queste evidenze per governare le decisioni.
+Prima del rilascio, la domanda utile non è «abbiamo installato R?», ma **«possiamo ricostruire, verificare e osservare questa specifica baseline R in produzione?»**
+
+Il capitolo 6 usa questa evidenza per trasformare le richieste in decisioni e assegnare ownership.
