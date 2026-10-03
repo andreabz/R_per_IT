@@ -1,820 +1,108 @@
 ---
 title: "Performance e diagnostica"
-subtitle: "Identificare il collo di bottiglia prima di cambiare hardware"
+subtitle: "Misurare prima di dimensionare"
 ---
-
 
 ## Perché questo capitolo
 
-Una volta descritto il modello di esecuzione, il problema diventa osservabile: bisogna capire perché un'elaborazione è lenta, dove viene speso il tempo e quale risorsa ne limita il comportamento. La performance non si valuta quindi a partire dalla dimensione della macchina, ma dal rapporto tra workload, misure e risultato atteso.
+> **Dove viene speso il tempo e quale risorsa limita il workload?**
 
-La domanda corretta non è:
+## Misura minima
 
-> «R è lento?»
+Registrare almeno durata, CPU, RAM di picco, I/O, rete, tempo nel database, worker, thread e dimensione dei dati.
 
-ma:
+La misura deve essere rappresentativa e ripetibile.
 
-> **«Quale parte del lavoro determina il tempo di esecuzione e quale risorsa lo limita?»**
-
-La diagnosi di performance consiste quindi nel passare da un sintomo a una misura, formulare un'ipotesi e raccogliere l'evidenza necessaria per verificarla.
-
-Il principio che guida tutto il capitolo è semplice:
-
-> **prima si misura il comportamento, poi si formula una diagnosi, infine si sceglie l'intervento.**
-
-Questo è particolarmente importante per IT: aumentare CPU o RAM senza aver identificato il problema può aumentare il costo della piattaforma senza migliorare il tempo di esecuzione.
-
-
-## Identificare il collo di bottiglia
-
-Un'elaborazione R può essere limitata da risorse diverse.
-
-```{mermaid}
-%%| label: mermaid-03-performance-01
-%%| echo: false
-flowchart TD
-    JOB["Job R"]
-    JOB --> CPU["CPU"]
-    JOB --> RAM["RAM"]
-    JOB --> DISK["Storage / I/O"]
-    JOB --> NET["Rete"]
-    NET --> DB["Database"]
-    NET --> API["API"]
-```
-
-L'obiettivo iniziale non è stabilire immediatamente quale risorsa aumentare, ma capire **quale risorsa limita effettivamente il workload**.
-
-
-### CPU-bound
-
-Un workload può essere prevalentemente **CPU-bound** quando il tempo è dominato dalle operazioni di calcolo.
-
-Indicazioni tipiche:
-
-- CPU molto utilizzata durante l'elaborazione;
-- uno o più core fortemente utilizzati;
-- RAM non prossima al limite;
-- poco tempo trascorso in attesa di I/O;
-- operazioni computazionalmente costose.
-
-In questo caso bisogna considerare, nell'ordine appropriato al problema:
-
-- algoritmo;
-- implementazione;
-- possibilità di parallelizzazione;
-- librerie utilizzate;
-- disponibilità di CPU.
-
-Aumentare la CPU può essere utile, ma solo se la CPU rappresenta effettivamente il collo di bottiglia.
-
-
-### Memory-bound
-
-Un workload può essere prevalentemente **memory-bound** quando la memoria disponibile limita l'elaborazione.
-
-Indicazioni tipiche:
-
-- RAM vicina alla saturazione;
-- elevato consumo di memoria da parte del processo;
-- picchi di memoria durante trasformazioni;
-- utilizzo dello swap;
-- aumento rapido della memoria aumentando i worker.
-
-Possibili interventi:
-
-- ridurre i dati caricati;
-- evitare copie non necessarie;
-- modificare l'algoritmo;
-- elaborare i dati a blocchi;
-- ridurre il numero di worker;
-- aumentare la RAM quando il consumo è giustificato dal workload.
-
-Aumentare i worker senza considerare la memoria può peggiorare il problema.
-
-
-### I/O-bound
-
-Un workload può essere **I/O-bound** quando una parte rilevante del tempo viene trascorsa leggendo o scrivendo dati.
-
-Indicazioni tipiche:
-
-- CPU non completamente utilizzata;
-- tempi elevati di lettura o scrittura;
-- grandi quantità di dati;
-- molti file;
-- storage remoto o lento.
-
-Possibili interventi:
-
-- ridurre la quantità di dati trasferiti;
-- evitare letture ripetute;
-- modificare il formato dei dati;
-- utilizzare strategie di caching quando appropriate;
-- migliorare lo storage;
-- modificare la modalità di elaborazione.
-
-
-### Database-bound
-
-Un caso frequente è quello in cui R attende il database.
-
-```{mermaid}
-%%| label: mermaid-03-performance-02
-%%| echo: false
-flowchart LR
-    R["R"] --> Q["Query"]
-    Q --> DB["Database"]
-    DB --> Q
-    Q --> R
-```
-
-Il programma può apparire semplicemente «lento in R», ma una parte consistente del tempo può essere trascorsa nell'esecuzione delle query.
-
-In questo caso bisogna confrontare, quando possibile:
-
-- tempo totale osservato da R;
-- tempo delle query;
-- numero di query;
-- quantità di dati trasferiti;
-- metriche del database.
-
-Aggiungere CPU al server R non risolve automaticamente un problema che si trova nel database.
-
-
-### Network-bound
-
-Un caso analogo può verificarsi quando R attende un sistema remoto.
-
-```{mermaid}
-%%| label: mermaid-03-performance-03
-%%| echo: false
-flowchart LR
-    R["R"] --> API["API"]
-    API --> EXT["Sistema remoto"]
-    EXT --> API
-    API --> R
-```
-
-Se l'elaborazione dipende da una risposta remota, il tempo può essere determinato da:
-
-- latenza;
-- quantità di dati trasferiti;
-- tempi del sistema remoto;
-- numero di richieste;
-- comportamento dell'API.
-
-Anche in questo caso aumentare CPU o RAM di R può non modificare significativamente il tempo totale.
-
-
-## Misurare il workload
-
-Prima di formulare una richiesta infrastrutturale è utile raccogliere almeno:
-
-- durata dell'elaborazione;
-- CPU utilizzata;
-- RAM utilizzata e picco;
-- numero di processi;
-- numero di worker;
-- dimensione dei dati;
-- quantità di dati letti e trasferiti;
-- eventuali tempi delle query;
-- configurazione software utilizzata.
-
-La misura deve essere associata a un **workload rappresentativo**.
-
-Un test eseguito su un dataset molto piccolo può infatti produrre un comportamento completamente diverso da quello osservato in produzione.
-
-
-### Misurare il tempo in R
-
-Un primo test molto semplice è `system.time()`:
+## Misurare il tempo
 
 ```{r}
-#| label: misura-tempo-elaborazione
+#| label: misura-tempo-r
 
-system.time({
-  # elaborazione da misurare
-})
+t0 <- Sys.time()
+
+# workload rappresentativo
+Sys.sleep(0.1)
+
+Sys.time() - t0
 ```
 
-Il risultato fornisce una prima misura del tempo necessario all'operazione.
+Per confrontare implementazioni è preferibile un benchmark ripetuto.
 
-In particolare permette di distinguere:
+## Profiling
 
-- tempo CPU in user mode;
-- tempo CPU in system mode;
-- tempo trascorso complessivamente.
-
-Non è una profilazione completa, ma è un buon punto di partenza.
-
-
-### Misurare il singolo job
-
-Su Linux è possibile misurare un'intera esecuzione con:
-
-```{bash}
-/usr/bin/time -v Rscript analisi.R
-```
-
-Tra le informazioni più utili:
-
-- **Elapsed time**: durata complessiva del job;
-- **Maximum resident set size**: massimo utilizzo della memoria residente;
-- **Percent of CPU**: utilizzo complessivo della CPU durante l'esecuzione.
-
-Una richiesta come:
-
-> «Lo script è lento e servono più risorse.»
-
-può quindi essere trasformata in una descrizione più utile:
-
-> «Il job impiega 18 minuti, raggiunge un picco di 14 GB di RAM e utilizza mediamente il 350% della CPU.»
-
-La seconda descrizione fornisce a IT informazioni concrete su cui basare una valutazione.
-
-
-### Osservare la macchina durante l'esecuzione
-
-La misura a fine job non è sempre sufficiente. Alcuni problemi si manifestano soltanto durante determinate fasi dell'elaborazione.
-
-Su Linux è possibile osservare il sistema con strumenti semplici come:
-
-```{bash}
-top
-```
-
-oppure:
-
-```{bash}
-free -h
-```
-
-e:
-
-```{bash}
-nproc
-```
-
-`nproc` mostra il numero di CPU logiche disponibili.
-
-`free -h` mostra la situazione della memoria.
-
-`top` permette invece di osservare i processi mentre il job è in esecuzione.
-
-Questi strumenti non spiegano da soli **perché** il programma sia lento. Servono a capire se, durante l'esecuzione, una risorsa mostra un comportamento compatibile con un possibile collo di bottiglia.
-
-L'obiettivo non è raccogliere tutte le metriche disponibili, ma correlare il comportamento del programma con quello della macchina.
-
-
-## Dalla misura alla diagnosi
-
-Una diagnosi efficace segue un percorso progressivo.
+Il monitoraggio dice che la macchina è sotto carico; il profiling aiuta a capire **quale parte del codice consuma il tempo**.
 
 ```text
-Job lento
+misura globale
    ↓
-Misuro il tempo
+profiling
    ↓
-Osservo CPU e RAM
+candidato collo di bottiglia
    ↓
-Controllo eventuale swap e I/O
+modifica
    ↓
-Verifico database e rete se coinvolti
-   ↓
-Formulo un'ipotesi
-   ↓
-Raccolgo l'evidenza necessaria
-   ↓
-Individuo il collo di bottiglia
-   ↓
-Valuto l'intervento
+benchmark
 ```
 
-La distinzione importante è tra **osservazione** e **conclusione**.
+## CPU, memoria, I/O e database
 
-Per esempio:
+| Osservazione | Ipotesi da verificare |
+|---|---|
+| CPU elevata | CPU-bound |
+| RAM vicina al limite / swap | memory-bound |
+| CPU bassa durante attese | I/O o rete |
+| tempo prevalentemente in query | database-bound |
 
-> «La CPU è al 95%.»
+Sono ipotesi diagnostiche, non conclusioni automatiche.
 
-è un'osservazione.
+## Vectorization
 
-> «Il problema è la CPU.»
+La vectorization permette a R di esprimere operazioni su insiemi di valori e può ridurre overhead interpretativo delegando lavoro a codice compilato.
 
-è già una conclusione e richiede ulteriori verifiche.
+Per IT il punto è che **due implementazioni con lo stesso risultato possono avere costi molto diversi in CPU, allocation e memoria**.
 
-La CPU potrebbe infatti essere elevata perché il programma sta eseguendo correttamente un calcolo intensivo, mentre il vero problema potrebbe essere un algoritmo inefficiente.
+## Base R, data.table e dplyr
 
+Non esiste una classifica universale. La performance dipende da operazione, dati, backend, memoria, implementazione, copie e lazy execution.
 
-### CPU elevata
+Un confronto corretto usa stesso input, stesso risultato, ambiente controllato e misure di tempo, RAM e CPU.
 
-Se uno o più core rimangono molto utilizzati durante l'elaborazione, il workload può essere prevalentemente computazionale.
+## Scaling
 
-È utile verificare:
+```text
+speed-up(n) = tempo(1 worker) / tempo(n worker)
+```
 
-- quali operazioni consumano il tempo;
-- quanti core vengono effettivamente utilizzati;
-- se il lavoro è parallelizzabile;
-- quanto scala aumentando i worker;
-- se l'algoritmo può essere migliorato.
+Lo scaling reale è limitato da parti seriali, serializzazione, sincronizzazione, memoria, I/O, database e thread nativi.
 
-La CPU elevata è quindi un **indizio**, non una diagnosi completa.
+## Diagnosi
 
+### CPU alta
 
-### RAM vicina al limite
+Verificare core utilizzati, worker, thread nativi, profiling e parallelizzabilità.
 
-Se il processo utilizza una quantità di memoria prossima alla RAM disponibile, la memoria può rappresentare un collo di bottiglia.
+### RAM alta
 
-Bisogna verificare:
-
-- picco di memoria;
-- memoria utilizzata dal singolo processo;
-- numero di worker;
-- eventuali copie temporanee;
-- numero di job contemporaneamente attivi.
-
-In questo scenario aumentare i worker può peggiorare il consumo di memoria.
-
-
-### Swap elevato
-
-Un utilizzo significativo dello swap indica che il sistema sta utilizzando storage per gestire la memoria.
-
-Se lo swap coincide con un forte rallentamento, la memoria disponibile può rappresentare un collo di bottiglia.
-
-La domanda successiva non dovrebbe essere semplicemente:
-
-> «Quanto swap è disponibile?»
-
-ma:
-
-> **«Perché il workload sta richiedendo più memoria della RAM disponibile?»**
-
+Verificare oggetti, copie, worker, memoria per worker e possibilità di ridurre o spostare i dati.
 
 ### CPU bassa ma job lento
 
-Una CPU poco utilizzata non significa necessariamente che il server abbia risorse sufficienti.
+Verificare database, rete, storage, lock, serializzazione e attese.
 
-Il processo potrebbe essere in attesa di:
+## Benchmark come esperimento
 
-- database;
-- storage;
-- rete;
-- API;
-- altre risorse esterne.
+Un benchmark deve controllare dataset, versione di R, package, configurazione, worker, thread e ripetizioni.
 
-In questo caso bisogna osservare la risorsa che il processo sta aspettando.
-
-
-## Profilare il codice
-
-Il monitoraggio della macchina risponde a una domanda:
-
-> **«Quali risorse sta consumando il processo?»**
-
-La profilazione risponde a una domanda diversa:
-
-> **«Quali parti del codice contribuiscono maggiormente al tempo?»**
-
-Uno strumento noto nell'ecosistema R è `profvis`.
-
-```{r}
-#| label: esempio-profilazione-profvis
-
-library(profvis)
-
-profvis({
-  x <- rnorm(5e6)
-  y <- sort(x)
-  z <- y[y > 0]
-  mean(z)
-})
-```
-
-Il risultato permette di esplorare le chiamate effettuate e il tempo associato alle diverse parti dell'elaborazione.
-
-In un'applicazione reale è importante profilare una porzione rappresentativa del lavoro e, quando possibile, utilizzare dati realistici.
-
-
-### Profilare una funzione applicativa
-
-Per esempio:
-
-```{r}
-#| label: esempio-profilazione-funzione
-
-library(profvis)
-
-elabora_dati <- function(n = 5e6) {
-  x <- rnorm(n)
-  y <- sort(x)
-  mean(y[y > 0])
-}
-
-profvis({
-  risultato <- elabora_dati()
-})
-```
-
-Se il profiling mostra che una determinata operazione domina il tempo, quella parte diventa un candidato naturale per ulteriori analisi.
-
-La profilazione aiuta quindi a passare da:
-
-> «Il job impiega troppo tempo.»
-
-a:
-
-> «Una determinata parte dell'elaborazione concentra gran parte del tempo.»
-
-Questo non significa automaticamente che quella parte debba essere ottimizzata: bisogna prima capire se è effettivamente la causa rilevante del problema e quale intervento sia possibile.
-
-
-### Profilare la memoria
-
-In R è possibile ottenere informazioni di base sugli oggetti e sulla gestione della memoria.
-
-```{r}
-#| label: esempio-diagnostica-memoria
-
-x <- matrix(runif(5e6), nrow = 5000)
-
-object.size(x)
-
-gc()
-```
-
-`object.size()` aiuta a stimare la dimensione di un oggetto R.
-
-`gc()` fornisce informazioni sulla gestione della memoria da parte di R.
-
-Queste informazioni non sostituiscono però la misura del **picco di RAM del processo**. Per una valutazione infrastrutturale bisogna correlare la memoria degli oggetti R con quella osservata dal sistema operativo.
-
-
-## Diagnosi e benchmark
-
-La **diagnosi** cerca di spiegare perché il workload è lento.
-
-Il **benchmark** misura invece come cambia il comportamento quando si modifica una variabile controllata.
-
-Per esempio:
-
-> «Aumentando i worker da 1 a 4, il tempo diminuisce da 40 a 14 minuti.»
-
-è un risultato di benchmark.
-
-Il benchmark non spiega da solo perché il programma scala in quel modo. Serve a misurare l'effetto di una modifica.
-
-Un benchmark utile dovrebbe specificare almeno:
-
-- workload utilizzato;
-- dataset utilizzato;
-- variabile modificata;
-- configurazione mantenuta costante;
-- numero di ripetizioni quando rilevante;
-- tempo misurato;
-- RAM di picco;
-- eventuali altre metriche importanti;
-- versione del software e ambiente.
-
-
-### Benchmark del parallelismo
-
-Nel caso del parallelismo, una prova può confrontare:
-
-```text
-1 worker
-2 worker
-4 worker
-8 worker
-```
-
-registrando almeno:
-
-| Worker | Tempo | RAM di picco |
-|:------:|------:|-------------:|
-| 1 | ... | ... |
-| 2 | ... | ... |
-| 4 | ... | ... |
-| 8 | ... | ... |
-
-L'obiettivo non è trovare il numero più alto di worker, ma verificare il rapporto tra:
-
-- tempo di esecuzione;
-- consumo di RAM;
-- utilizzo della CPU;
-- concorrenza prevista;
-- risorse disponibili.
-
-Per esempio, se il tempo passa da 40 a 14 minuti aumentando da 1 a 4 worker, ma da 4 a 8 worker scende soltanto da 14 a 12 minuti, il secondo incremento deve essere valutato considerando anche il maggiore consumo di RAM.
-
-La diagnosi individua quindi il problema; il benchmark misura l'effetto di una modifica controllata.
-
-
-## Dove intervenire
-
-Quando un'elaborazione è lenta, esistono diversi livelli sui quali intervenire.
-
-```{mermaid}
-%%| label: mermaid-03-performance-04
-%%| echo: false
-flowchart TD
-    P["Problema di performance"]
-    P --> A["Algoritmo"]
-    P --> C["Implementazione"]
-    P --> PA["Parallelizzazione"]
-    P --> H["Hardware"]
-```
-
-L'intervento appropriato dipende dal problema misurato.
-
-
-### Livello 1 — Algoritmo
-
-Prima di aumentare l'hardware bisogna considerare la complessità dell'algoritmo.
-
-La notazione **O()** descrive come cresce il costo al crescere della dimensione dell'input. Non predice direttamente il numero di secondi su una macchina specifica.
-
-| Complessità | Crescita indicativa quando i dati diventano 10 volte maggiori |
-|:---:|:---:|
-| O(1) | circa 1× |
-| O(log n) | poco più di 1× |
-| O(n) | circa 10× |
-| O(n log n) | circa 10–12× |
-| O(n²) | circa 100× |
-| O(2ⁿ) | crescita estremamente rapida |
-
-Sono ordini di crescita ideali: costanti, allocazioni, memoria e implementazione reale possono cambiare significativamente il risultato.
-
-Un algoritmo O(n²), per esempio, può diventare rapidamente impraticabile quando aumenta la dimensione dei dati.
-
-Per IT la domanda utile è:
-
-> **«La richiesta di hardware deriva dal volume dei dati oppure dalla complessità dell'algoritmo?»**
-
-Se il problema è principalmente algoritmico, aggiungere hardware può ridurre il tempo senza risolvere la causa del problema.
-
-
-### Livello 2 — Implementazione
-
-Anche lo stesso algoritmo può essere implementato in modi molto diversi.
-
-Esempi frequenti:
-
-- copie di oggetti;
-- conversioni ripetute;
-- letture ripetute;
-- query ripetute al database;
-- trasferimento inutile di dati;
-- ricomputazione di risultati già disponibili.
-
-
-**Copie e memoria**
-
-Un oggetto da 8 GB non implica automaticamente che siano sufficienti 8 GB di RAM.
-
-Durante una trasformazione possono infatti coesistere:
-
-```text
-originale             8 GB
-copia                  8 GB
-intermedio             8 GB
-risultato              8 GB
-
-picco teorico          32 GB
-```
-
-Questo è uno schema concettuale e non significa che ogni operazione R produca copie complete.
-
-R utilizza infatti una strategia chiamata **copy-on-modify**. Un'assegnazione come:
-
-```{r}
-b <- a
-```
-
-non implica necessariamente una copia immediata dell'intero oggetto.
-
-La copia può essere effettuata quando uno degli oggetti deve essere modificato.
-
-Tuttavia, pipeline di trasformazioni complesse possono produrre oggetti intermedi e aumentare significativamente il consumo di memoria.
-
-Il principio IT è:
-
-> **dimensione dei dati ≠ automaticamente RAM necessaria.**
-
-Con worker separati il costo può crescere ulteriormente, perché ciascun worker può mantenere una propria rappresentazione dei dati.
-
-
-### Livello 3 — Parallelizzazione
-
-Il parallelismo introduce un costo.
-
-Creare worker, trasferire dati, serializzare e deserializzare oggetti e raccogliere i risultati richiede tempo e memoria.
-
-Se il lavoro da eseguire è molto piccolo, il costo del parallelismo può essere maggiore del beneficio.
-
-Prima di aumentare il numero di worker bisogna quindi chiedersi:
-
-- il lavoro è realmente parallelizzabile?
-- le parti sono sufficientemente indipendenti?
-- quanto costa creare i worker?
-- quanta memoria utilizza ogni worker?
-- quanto migliora il tempo aumentando i worker?
-- il database può sostenere il carico aggiuntivo?
-
-Il benchmark permette di rispondere quantitativamente a queste domande.
-
-
-### Livello 4 — Hardware
-
-Quando algoritmo, implementazione e modalità di esecuzione sono stati analizzati, l'hardware può essere il livello appropriato di intervento.
-
-Le risorse da considerare includono:
-
-- CPU;
-- RAM;
-- storage;
-- rete;
-- capacità del database;
-- numero di job concorrenti.
-
-L'hardware può essere assolutamente la soluzione corretta.
-
-Ma la richiesta dovrebbe essere collegata a una misura del workload:
-
-> **quale risorsa è insufficiente e quale evidenza lo dimostra?**
-
-
-## Applicare la diagnosi
-
-Gli stessi sintomi possono corrispondere a problemi molto diversi.
-
-
-### Scenario database-bound
-
-```text
-CPU: 25%
-RAM: 12 GB / 32 GB
-Disk: normale
-Network: normale
-Database: query lente
-```
-
-In questo caso il tempo può essere dominato dal database.
-
-L'evidenza da raccogliere comprende, quando disponibile:
-
-- durata delle query;
-- numero di query;
-- tempi di attesa;
-- quantità di dati trasferiti;
-- metriche lato database.
-
-Aumentare CPU al server R non affronta direttamente un collo di bottiglia che si trova nel database.
-
-
-### Scenario CPU-bound
-
-```text
-CPU: 95-100%
-RAM: 10 GB / 64 GB
-Disk: normale
-Database: trascurabile
-```
-
-In questo caso bisogna verificare:
-
-- quali operazioni consumano il tempo;
-- se l'algoritmo può essere migliorato;
-- se il lavoro è parallelizzabile;
-- quanti core vengono utilizzati;
-- come cambia il tempo aumentando i worker.
-
-Solo dopo queste verifiche si può valutare se l'hardware aggiuntivo è giustificato.
-
-
-### Scenario memory-bound
-
-```text
-CPU: 30%
-RAM: 60 GB / 64 GB
-Swap: attivo
-Worker: 8
-```
-
-In questo caso la memoria può rappresentare il collo di bottiglia.
-
-Bisogna però capire:
-
-- quali oggetti occupano memoria;
-- se esistono copie temporanee;
-- quanta memoria utilizza ciascun worker;
-- quanti job possono essere contemporaneamente attivi;
-- se il numero di worker può essere ridotto;
-- se i dati possono essere filtrati o elaborati a blocchi.
-
-La conclusione non dovrebbe essere automaticamente:
-
-> «Servono più RAM.»
-
-La misura deve prima stabilire se il consumo è necessario o se può essere ridotto intervenendo sul codice o sulla configurazione.
-
+La baseline software è quindi parte della validità del confronto.
 
 ## Tradurre la diagnosi in una richiesta IT
 
-Una diagnosi utile deve poter essere trasformata in una richiesta tecnica verificabile.
+Debole:
 
-Una richiesta debole è:
+> «Servono 16 core.»
 
-> «Lo script è lento, servono più CPU.»
+Informativa:
 
-Una richiesta più utile contiene il workload, le misure e l'ipotesi:
+> «Il workload impiega 192 minuti con un worker; il profiling indica X; il test 1/2/4/8 worker produce A/B/C/D e RAM X/Y/Z/W; il database non è il collo di bottiglia.»
 
-> «Il job X, con dataset Y, impiega 18 minuti. Durante l'esecuzione utilizza mediamente 700% di CPU, raggiunge 12 GB di RAM e utilizza 4 worker. Il benchmark mostra una riduzione del tempo da 32 a 18 minuti passando da 1 a 4 worker. La memoria cresce da 4 a 12 GB. È quindi necessario valutare la configurazione considerando sia il beneficio sul tempo sia il consumo di memoria e la concorrenza prevista.»
-
-La seconda forma permette a IT di valutare la richiesta sulla base di dati osservabili.
-
-
-### Informazioni minime da fornire
-
-Quando si richiede una modifica infrastrutturale o una valutazione di performance, è utile riportare almeno:
-
-
-**Applicazione**
-
-- cosa fa il job;
-- se è batch o interattivo;
-- durata tipica;
-- tempo obiettivo.
-
-
-**Workload**
-
-- dataset utilizzato;
-- dimensione dei dati;
-- frequenza delle esecuzioni;
-- numero di job contemporaneamente attivi.
-
-
-**Configurazione**
-
-- versione di R;
-- pacchetti rilevanti;
-- numero di worker;
-- configurazione della macchina;
-- eventuali dipendenze esterne.
-
-
-**Misure**
-
-- tempo di esecuzione;
-- CPU utilizzata;
-- picco di RAM;
-- eventuale swap;
-- I/O quando rilevante;
-- tempi delle query quando è coinvolto un database.
-
-
-**Benchmark**
-
-Se è stata modificata una configurazione:
-
-- configurazione iniziale;
-- configurazione testata;
-- workload mantenuto costante;
-- tempo ottenuto;
-- RAM di picco;
-- eventuali effetti sulla concorrenza.
-
-
-## La regola operativa
-
-Il processo completo può essere riassunto così:
-
-```text
-Problema di performance
-        ↓
-      misura
-        ↓
-    osservazione
-        ↓
-      ipotesi
-        ↓
-      verifica
-        ↓
- collo di bottiglia
-        ↓
-intervento controllato
-        ↓
-    nuovo benchmark
-```
-
-La regola fondamentale è:
-
-> **non partire dalla risorsa da aumentare; partire dal comportamento da misurare.**
-
-CPU, RAM, worker, storage o hardware più potente sono possibili interventi. La scelta dipende dal collo di bottiglia osservato e dall'effetto misurato della modifica.
-
-Per IT, una buona diagnosi non deve necessariamente spiegare ogni dettaglio del codice. Deve soprattutto permettere di rispondere a tre domande:
-
-1. **Quanto dura il workload?**
-2. **Quale risorsa limita l'elaborazione?**
-3. **Quale evidenza dimostra che l'intervento proposto può migliorare il risultato?**
+> **Prima di aumentare le risorse, verificare il collo di bottiglia.**
