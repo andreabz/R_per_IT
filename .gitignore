@@ -12,3 +12,4 @@ docs/
 *.html
 *.docx
 output/
+**/*.quarto_ipynb
