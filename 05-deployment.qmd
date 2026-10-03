@@ -102,16 +102,20 @@ Il rollback deve ricondurre codice e ambiente a una baseline precedente. Riprist
 
 ## Logging, monitoring e sicurezza
 
-Per un job R interessano avvio, durata, esito, output, errori e consumo risorse. Per un servizio interessano disponibilità, latenza, errori, concorrenza, CPU/RAM e dipendenze esterne.
+Questi aspetti appartengono al normale esercizio IT; per il corso interessa ciò che deve essere osservabile del workload R:
 
-Gestire account tecnici, minimo privilegio, segreti, rete, TLS/HTTPS, permessi e aggiornamenti.
+- job: avvio, durata, esito, output ed errori;
+- servizio: disponibilità, latenza, errori, concorrenza;
+- runtime: CPU, RAM, processi/worker e dipendenze esterne.
+
+Account tecnici, minimo privilegio, segreti, rete e TLS/HTTPS restano requisiti operativi da integrare con gli standard aziendali, non un modulo specifico di R.
 
 ## Production readiness
 
 | Aspetto | Evidenza |
 |---|---|
 | Codice | commit/tag |
-| Ambiente | R + dipendenze |
+| Ambiente R | R + package + native |
 | Configurazione | parametri |
 | Test | esiti |
 | Sicurezza | accessi e segreti |
