@@ -94,7 +94,7 @@ summaryRprof("profilo.out")
 
 > **Regola:** IT deve saper produrre una diagnosi riproducibile, non necessariamente correggere il codice.
 
-## 2. Laboratorio integrato — da una soluzione sconosciuta alla presa in carico
+## Laboratorio integrato — da una soluzione sconosciuta alla presa in carico
 
 I laboratori dei capitoli precedenti diventano più utili se applicati allo stesso caso. Questo percorso non richiede di sviluppare l'applicazione: richiede di comportarsi come IT davanti a una soluzione R ricevuta da uno sviluppatore.
 
@@ -246,7 +246,24 @@ Il percorso è completato quando un tecnico che non conosce la soluzione sa prod
 
 Questo è il livello di autonomia operativo atteso dal corso.
 
-## 2. Esempio: da uno script R a un handover gestibile
+
+### Criteri di autovalutazione
+
+Per ogni fase non è necessario arrivare a una diagnosi definitiva. Il criterio è verificare che l'evidenza raccolta sia sufficiente per il passo successivo.
+
+| Fase | La prova è superata se il tecnico sa… |
+|---|---|
+| 1. Identificazione | indicare repository, versione, entrypoint, dipendenze e sistemi esterni senza inventare informazioni mancanti; |
+| 2. Ricostruzione | riprodurre l'ambiente in test e distinguere un errore di dipendenza, driver/configurazione, accesso esterno o applicazione; |
+| 3. Diagnosi | separare misure da ipotesi e proporre il test successivo quando l'evidenza non basta; |
+| 4. Architettura | rappresentare il flusso R/database/sistemi esterni e identificare i confini di responsabilità; |
+| 5. Operatività | descrivere deployment, smoke test, logging, errori, retry, rollback, monitoring e ownership; |
+| 6. Decisione | collegare requisito, evidenza, test e decisione senza trasformare una richiesta iniziale in una specifica hardware non dimostrata. |
+
+**Errore da evitare:** completare una fase assegnando valori plausibili a dati che non sono disponibili. In un handover reale, *dato non noto* è un risultato valido se viene accompagnato dalla richiesta o dal test necessario per ottenerlo.
+
+
+## Esempio: da uno script R a un handover gestibile
 
 ### Situazione iniziale
 
