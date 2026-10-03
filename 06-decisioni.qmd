@@ -79,6 +79,19 @@ Per R il test controllato deve includere, quando rilevanti, versione del runtime
 
 Una variabile dovrebbe essere modificata alla volta, mantenendo stabile il resto dell'ambiente. Il risultato deve poter essere ripetuto.
 
+## Come leggere i casi
+
+I casi successivi non sono risposte già decise. Sono esercizi di ragionamento.
+
+Per ciascuno bisogna distinguere:
+
+1. **fatto**: una misura osservata;
+2. **ipotesi**: una possibile spiegazione;
+3. **test**: l'esperimento che separa ipotesi alternative;
+4. **decisione**: la modifica che si può giustificare con i risultati.
+
+Per esempio, «CPU 100%» è un fatto. «Il workload è CPU-bound» è un'ipotesi. «Profilo il codice e confronto 1/2/4 worker» è un test. «Aumento i worker a 4» è una decisione solo se i risultati mostrano che soddisfa il requisito.
+
 ## Caso 1 — RAM
 
 **Collegamenti:** runtime e copy-on-modify (`02`) → diagnostica (`03`) → eventuale spostamento del calcolo (`04`) → baseline e test (`05`).
@@ -87,7 +100,7 @@ Una variabile dovrebbe essere modificata alla volta, mantenendo stabile il resto
 
 Chiedere dimensione dei dati, RAM di picco, swap, worker, memoria per worker, copie, oggetti intermedi, garbage collection, possibilità di filtrare e concorrenza.
 
-La decisione non parte dalla dimensione del dataset ma dal comportamento osservato del runtime R.
+La decisione non parte dalla dimensione del dataset ma dal comportamento osservato del runtime R. Se 4 worker portano il tempo sotto l'obiettivo ma la RAM a 38 GB, il dato utile per IT è la combinazione tempo/RAM, non il solo numero di core o GB richiesti.
 
 ## Caso 2 — CPU
 
@@ -104,7 +117,7 @@ Chiedere numero di core utilizzati, worker, thread nativi, profiling, paralleliz
 | 4 | … | … | … |
 | 8 | … | … | … |
 
-La domanda non è soltanto quanti core vede R, ma **quali processi e thread li stanno usando e con quale beneficio sul tempo di esecuzione**.
+La domanda non è soltanto quanti core vede R, ma **quali processi e thread li stanno usando e con quale beneficio sul tempo di esecuzione**. Se l'aumento dei worker porta 100% di CPU ma quasi nessun miglioramento del tempo, abbiamo un segnale da spiegare, non una giustificazione automatica per altra CPU.
 
 ## Caso 3 — Shiny lenta
 
@@ -112,7 +125,7 @@ La domanda non è soltanto quanti core vede R, ma **quali processi e thread li s
 
 Misurare utenti contemporanei, latenza per richiesta, CPU, RAM per sessione, database, rete, caching e operazioni lente.
 
-«Funziona per un utente» non dimostra la capacità di sostenere più utenti.
+«Funziona per un utente» non dimostra la capacità di sostenere più utenti. Il test deve aumentare il numero di sessioni e osservare come cambiano latenza, CPU, RAM e dipendenze esterne.
 
 Per una soluzione Shiny va inoltre identificato il modello di deployment: processi, sessioni, reverse proxy e modalità di scaling cambiano il significato di CPU e RAM osservate.
 
@@ -134,7 +147,7 @@ R
 analisi
 ```
 
-La domanda è anche quanta memoria e serializzazione si evita spostando il calcolo verso i dati.
+La domanda è anche quanta memoria, rete e serializzazione si evita spostando il calcolo verso i dati. La decisione va presa sul tempo totale del workload, non sul tempo della sola query.
 
 ## Caso 5 — 20 package
 
@@ -142,7 +155,7 @@ La domanda è anche quanta memoria e serializzazione si evita spostando il calco
 
 Chiedere dipendenze effettive, versioni, lockfile, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
 
-L'obiettivo è una baseline ricostruibile, non un numero di package installati.
+L'obiettivo è una baseline ricostruibile, non un numero di package installati. Il test minimo è provare la ricostruzione in un ambiente pulito e verificare che il workload produca lo stesso risultato atteso.
 
 ## Caso 6 — Container
 
@@ -150,7 +163,7 @@ L'obiettivo è una baseline ricostruibile, non un numero di package installati.
 
 Un container può rendere più controllabili R, package e librerie native. Non risolve automaticamente database, segreti, storage, rete, identità, scheduler e monitoring.
 
-La domanda da verificare è quali parti dell'ambiente R devono essere incluse nell'artefatto e quali restano dipendenze esterne.
+La domanda da verificare è quali parti dell'ambiente R devono essere incluse nell'artefatto e quali restano dipendenze esterne. Il container va quindi valutato contro il requisito specifico: riproducibilità dell'ambiente, isolamento, deployment o altro.
 
 ## Esercizio integrato
 
