@@ -2,20 +2,10 @@ project:
   type: book
   output-dir: _site
 
-  render:
-    - index.qmd
-    - 01-contesto.qmd
-    - 02-runtime.qmd
-    - 03-performance.qmd
-    - 04-architettura.qmd
-    - 05-deployment.qmd
-    - 06-governance.qmd
-    - 07-caso-finale.qmd
-
 lang: it
 
 book:
-  title: "R per l'IT"
+  title: "R × IT"
   subtitle: "Capire, valutare e gestire soluzioni sviluppate in R"
   search: true
   reader-mode: true
@@ -73,6 +63,7 @@ book:
           - 07-caso-finale.qmd
 
   chapters:
+    - index.qmd
     - 01-contesto.qmd
     - 02-runtime.qmd
     - 03-performance.qmd
