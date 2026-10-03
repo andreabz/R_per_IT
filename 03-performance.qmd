@@ -148,6 +148,46 @@ summaryRprof("profilo.out")
 
 Il risultato è **evidenza diagnostica**, non una prescrizione automatica di ottimizzazione.
 
+### Profiling interattivo con profvis
+
+Quando è utile una lettura visuale del profiling, si può usare **profvis**. È un package R che presenta in forma interattiva il tempo speso nelle diverse chiamate e consente di esplorare più facilmente dove viene eseguito il lavoro.
+
+In un ambiente di prova:
+
+```{r}
+#| label: profiling-interattivo-profvis
+
+# installazione da eseguire una sola volta nell'ambiente di prova:
+# install.packages("profvis")
+
+profvis::profvis({
+  misura(5000000)
+})
+```
+
+`profvis` non sostituisce la misura complessiva del workload e non identifica automaticamente il collo di bottiglia infrastrutturale. Serve a rispondere a una domanda più specifica:
+
+> **Dove viene speso il tempo all'interno dell'esecuzione R?**
+
+Per IT è sufficiente saper leggere il risultato a livello diagnostico:
+
+1. quale funzione o fase concentra il tempo;
+2. se il lavoro sembra effettivamente interno a R;
+3. quali ulteriori misure servono per distinguere CPU, memoria, I/O, rete o database;
+4. quando passare l'evidenza allo sviluppatore.
+
+### Quale strumento usare?
+
+| Strumento | Domanda principale |
+|---|---|
+| `system.time()` | Quanto dura questa esecuzione? |
+| `Rprof()` / `summaryRprof()` | Dove spende tempo R, usando gli strumenti base? |
+| `profvis` | Dove spende tempo R, con una lettura interattiva? |
+| Monitoraggio OS | Che cosa sta facendo il processo e la macchina? |
+| Monitoraggio DB | Quanto lavoro e tempo sono lato database? |
+
+Il percorso didattico è quindi **misurare → localizzare → correlare → testare**, non «eseguire un profiler e applicare automaticamente una correzione».
+
 ### Correlare profiling e infrastruttura
 
 ```text
