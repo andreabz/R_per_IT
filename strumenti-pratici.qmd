@@ -1,0 +1,72 @@
+---
+title: "Strumenti pratici per IT"
+subtitle: "Dalla richiesta R all'handover"
+---
+
+## 1. È arrivata una richiesta R: cosa devo chiedere?
+
+Usare questa lista come primo filtro. Se una risposta non è disponibile, va richiesta allo sviluppatore o al referente.
+
+- [ ] Classificare la soluzione: script, batch, Quarto, Shiny, API plumber2, package, pipeline.
+- [ ] Individuare entry point, repository, versione e owner.
+- [ ] Descrivere ambiente: versione R, sistema operativo, package, renv.lock, librerie native e driver.
+- [ ] Descrivere input, output, volumi e sistemi esterni.
+- [ ] Definire esecuzione: manuale/batch/servizio/interattiva, frequenza, finestra, durata e concorrenza.
+- [ ] Chiedere misure: durata, RAM, CPU, I/O, rete, database, worker/thread e dataset di test.
+- [ ] Verificare account, permessi, autenticazione, configurazione e certificati.
+- [ ] Definire logging, errori, timeout, retry, restart e alert.
+- [ ] Definire test, baseline, deployment, rollback e responsabilità.
+
+> Se la richiesta si limita a «installare R», «serve più RAM» o «pubblicare una Shiny», non è ancora una specifica di esercizio.
+
+## 2. Esempio: da uno script R a un handover gestibile
+
+### Situazione iniziale
+
+> «Ho uno script R che legge Oracle e produce un Excel. Deve partire ogni mattina.»
+
+### Handover minimo compilato
+
+| Campo | Esempio |
+|---|---|
+| Soluzione | report_vendite_giornaliero |
+| Owner | Team Analisi |
+| Repository/versione | repository Git aziendale, tag v1.4.0 |
+| Tipo/entry point | batch, script/run_report.R |
+| Frequenza/finestra | ogni giorno lavorativo, 06:00–07:00 |
+| Durata baseline | 8 min su dataset di riferimento |
+| Input/output | Oracle → report_vendite_YYYYMMDD.xlsx |
+| Ambiente | R e dipendenze definiti dalla baseline e da renv.lock |
+| Account | account tecnico dedicato |
+| Accesso Oracle | sola lettura |
+| RAM di picco | 1,8 GB |
+| CPU | media 35%, picco 80% |
+| Retry | solo per errori transitori |
+| Idempotenza | verificata |
+| Logging | avvio, fine, durata, righe lette, file prodotto, errori |
+| Alert | notifica al fallimento |
+| Smoke test | esecuzione su dataset di test e verifica del file |
+| Rollback | release precedente + configurazione associata |
+| Owner operativo | da assegnare |
+
+### Prima del rilascio
+
+IT verifica che versione e ambiente corrispondano al test, che dipendenze e configurazione siano ricostruibili, che accessi e filesystem siano corretti, che la baseline rappresenti il carico previsto e che logging, alert, rollback e ownership siano definiti.
+
+### Trasformazione
+
+~~~text
+richiesta informale
+        ↓
+classificazione
+        ↓
+entry point + versione + ambiente
+        ↓
+input/output + sistemi esterni
+        ↓
+workload misurato
+        ↓
+test + deployment + rollback
+        ↓
+ownership
+~~~
