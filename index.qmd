@@ -122,6 +122,63 @@ Durante il percorso è utile distinguere tra:
 
 Questa distinzione evita di trasformare un'ipotesi in una specifica hardware.
 
+## Che cosa aggiunge R rispetto a uno stack IT esistente?
+
+R non è un sostituto generale di Oracle, APEX, scheduler, web server o sistemi di storage. In una soluzione aziendale occupa normalmente **una parte dello stack**: quella in cui servono analisi statistiche, modellistica, simulazione, elaborazione dati o generazione di report analitici.
+
+Un modo semplice per orientarsi è questo:
+
+| Esigenza | Componente tipicamente coinvolto |
+|---|---|
+| Persistenza, integrità e query sui dati | Oracle |
+| Applicazioni web gestionali e workflow vicino a Oracle | APEX |
+| Scheduling e orchestrazione | piattaforma IT aziendale |
+| Autenticazione, rete e TLS | infrastruttura aziendale |
+| Analisi statistica, modellistica e simulazione | R |
+| Report analitici riproducibili | Quarto + R |
+| Interfacce analitiche interattive | Shiny + R |
+| Servizi che espongono capacità analitiche | API + R |
+
+Non è una classifica. Serve a chiarire **quale responsabilità viene aggiunta da R e quali componenti aziendali possono rimanere in carico allo stack esistente**.
+
+Una domanda utile per IT è quindi:
+
+> **Quale problema risolve R che non è già naturalmente coperto da un componente aziendale esistente?**
+
+Se la risposta è chiara, diventa più semplice definire il confine della soluzione e non duplicare funzioni già disponibili.
+
+## Come usare il manuale
+
+Per una prima lettura non è necessario studiare tutto il funzionamento interno di R. È sufficiente concentrarsi su ciò che cambia una decisione IT.
+
+**Da ricordare:** forme applicative, dipendenze, ambiente riproducibile, workload, confini tra R e sistemi esterni, deployment, monitoring e ownership.
+
+**Da approfondire quando serve:** memoria, processi, worker, thread, serializzazione, profiling e dettagli del runtime.
+
+Le sezioni più interne del runtime sono quindi deliberatamente più tecniche: servono soprattutto quando IT deve interpretare una misura, diagnosticare un problema o discutere un dimensionamento.
+
+## Il percorso operativo in una richiesta reale
+
+~~~text
+richiesta dello sviluppatore
+          ↓
+     classificazione
+          ↓
+  workload + ambiente
+          ↓
+      evidenze
+          ↓
+ architettura/deployment
+          ↓
+    test + baseline
+          ↓
+ produzione + monitoring
+          ↓
+       ownership
+~~~
+
+Per una richiesta reale, l'Appendice **Kit operativo per IT** fornisce una scheda che può essere utilizzata come traccia di handover e production readiness.
+
 ## Una distinzione fondamentale
 
 Il manuale tiene separate tre domande:
