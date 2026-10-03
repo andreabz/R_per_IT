@@ -221,6 +221,27 @@ Test:
 
 Il benchmark mostra che il parallelismo riduce il tempo ma aumenta rapidamente la memoria e non scala linearmente. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
 
+
+## Scheda di handover e production readiness
+
+La richiesta dello sviluppatore dovrebbe poter essere tradotta in una scheda operativa con almeno queste sezioni:
+
+| Area | Informazione minima |
+|---|---|
+| Identità | repository, commit/tag, owner, entrypoint |
+| Forma | batch, Quarto, Shiny, API, package, pipeline |
+| Ambiente | R, OS, package, lockfile, native dependencies |
+| Workload | dati, frequenza, durata, utenti/concorrenza |
+| Risorse | CPU, RAM, I/O, rete, worker, thread |
+| Sistemi esterni | Oracle, API, filesystem, storage |
+| Sicurezza | account, permessi, autenticazione, segreti, TLS |
+| Test | funzionali, integrazione, compatibilità, performance |
+| Operatività | log, metriche, alert, restart, retry |
+| Recovery | rollback, baseline precedente, runbook |
+| Ownership | chi decide, chi deploya, chi monitora, chi interviene |
+
+La **scheda completa e compilabile** è nell'appendice *Kit operativo per IT*. Il capitolo fornisce il metodo; l'appendice fornisce lo strumento da usare con una richiesta reale.
+
 ## Scheda decisionale
 
 | Campo | Informazione |
