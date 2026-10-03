@@ -17,20 +17,65 @@ Per R è utile correlare la misura del sistema con ciò che il runtime sta facen
 
 La misura deve essere rappresentativa e ripetibile.
 
-## Misurare il tempo
+## Misurare il tempo: i tre tempi di system.time()
 
-```{r}
-#| label: misura-tempo-r
+La funzione base di R più semplice per misurare un'espressione è system.time(). Restituisce tre quantità:
 
-t0 <- Sys.time()
+- **user time**: tempo CPU consumato dal processo in user mode;
+- **system time**: tempo CPU consumato dal processo in system/kernel mode;
+- **elapsed time**: tempo trascorso secondo l'orologio.
 
-# workload rappresentativo
-Sys.sleep(0.1)
+~~~{r}
+#| label: misura-system-time
 
-Sys.time() - t0
-```
+system.time({
+  x <- sum(rnorm(1000000))
+  x
+})
+~~~
 
-Per confrontare implementazioni è preferibile un benchmark ripetuto e controllato.
+Il risultato ha concettualmente questa forma:
+
+~~~text
+   user   system  elapsed
+   0.08    0.01     0.10
+~~~
+
+I valori reali dipendono dalla macchina.
+
+L'**elapsed** risponde alla domanda «quanto ha aspettato l'utente?». User e system descrivono invece consumo di CPU del processo.
+
+Per esempio:
+
+~~~text
+user     = 2 s
+system   = 1 s
+elapsed  = 10 s
+~~~
+
+non significa che R abbia usato 10 secondi di CPU. Sono trascorsi 10 secondi, mentre il processo ha consumato 3 secondi di CPU nei due modi misurati. Il resto può includere attese, I/O, scheduling, sincronizzazione o lavoro svolto da altre unità.
+
+Con parallelismo o thread nativi, il tempo CPU cumulativo può anche superare l'elapsed.
+
+Per questo, davanti a un benchmark, IT deve sapere **quale dei tre tempi sta confrontando**.
+
+### Perché una sola misura non basta?
+
+system.time() misura un'esecuzione. Un benchmark deve invece confrontare esecuzioni ripetute e controllate.
+
+~~~text
+stesso input
+    ↓
+stesso ambiente
+    ↓
+ripetizioni
+    ↓
+user / system / elapsed
+    ↓
+confronto
+~~~
+
+Quando vogliamo attribuire una differenza a una modifica, dobbiamo mantenere stabili le altre variabili.
 
 ## Profiling
 
