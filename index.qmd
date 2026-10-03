@@ -195,6 +195,8 @@ Per le richieste reali, la scheda dell'appendice *Kit operativo per IT* può ess
 
 ## Come usare il manuale
 
+Il percorso si completa con il **laboratorio integrato** nell'appendice operativa: una soluzione R sconosciuta viene presa in carico, ricostruita, eseguita, misurata, diagnosticata e trasformata in una specifica di esercizio. Il laboratorio serve a verificare che le competenze dei singoli capitoli siano trasferibili a una richiesta reale.
+
 Per una prima lettura non è necessario studiare tutto il funzionamento interno di R. È sufficiente concentrarsi su ciò che cambia una decisione IT.
 
 **Da ricordare:** forme applicative, dipendenze, ambiente riproducibile, workload, confini tra R e sistemi esterni, deployment, monitoring e ownership.
