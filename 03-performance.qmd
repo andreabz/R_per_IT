@@ -155,7 +155,7 @@ Quando è utile una lettura visuale del profiling, si può usare **`profvis`**. 
 In un ambiente di prova:
 
 ```{r}
-#| label: profiling-interattivo-`profvis`
+#| label: profiling-interattivo-profvis
 
 # installazione da eseguire una sola volta nell'ambiente di prova:
 
@@ -301,7 +301,7 @@ system.time({
 Con `dplyr`:
 
 ```{r}
-#| label: confronto-`dplyr`
+#| label: confronto-dplyr
 
 df <- `data.frame`(
   quantita = runif(1000000),
