@@ -89,13 +89,15 @@ Questi strumenti possono spostare parte del lavoro fuori dal processo R e ridurr
 
 ## Oracle, APEX, Quarto, Shiny e API
 
-Oracle può occuparsi di persistenza, integrità, query e aggregazioni; R di analisi, modellistica e simulazione.
+Questa sezione non è un catalogo di prodotti: serve a mostrare come cambia il confine di R.
 
-APEX può essere appropriato per CRUD, workflow e interfacce integrate con Oracle.
+- **Oracle**: persistenza, integrità, query e aggregazioni; R può occuparsi di analisi, modellistica e simulazione.
+- **APEX**: interfaccia e workflow vicino a Oracle, quando il caso d'uso lo richiede.
+- **Quarto**: produzione di report; R resta parte della pipeline di generazione.
+- **Shiny**: introduce sessioni e concorrenza; il dimensionamento dipende dal modello di deployment concreto.
+- **API R**: espone capacità analitiche a sistemi esterni; il contratto e i limiti operativi diventano parte del workload.
 
-Quarto può produrre report. Shiny introduce sessioni e concorrenza: una sessione utente non equivale automaticamente a un processo R dedicato, quindi il dimensionamento deve essere misurato sul modello di deployment concreto.
-
-Un'API R espone capacità analitiche a sistemi esterni e richiede contratto, autenticazione, timeout, logging e monitoring.
+In tutti i casi la domanda IT è la stessa: **quale parte del lavoro avviene nel processo R e quale altrove?**
 
 ## Container
 
