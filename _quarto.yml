@@ -38,7 +38,7 @@ book:
         contents:
           - 01-contesto.qmd
 
-      - section: "2. Runtime, processi e parallelismo"
+      - section: "2. Runtime, memoria e parallelismo"
         contents:
           - 02-runtime.qmd
 
@@ -54,13 +54,9 @@ book:
         contents:
           - 05-deployment.qmd
 
-      - section: "6. Governance e responsabilità"
+      - section: "6. Decisioni operative"
         contents:
-          - 06-governance.qmd
-
-      - section: "7. Laboratorio decisionale"
-        contents:
-          - 07-caso-finale.qmd
+          - 06-decisioni.qmd
 
   chapters:
     - index.qmd
