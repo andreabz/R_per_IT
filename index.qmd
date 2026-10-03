@@ -38,6 +38,23 @@ decisione e responsabilità
 nuova baseline quando cambia qualcosa
 ```
 
+## Obiettivi operativi a fine corso
+
+Al termine del percorso, un membro IT non deve diventare sviluppatore R. Deve però essere in grado di prendere in carico una soluzione R che non conosce e svolgere una **diagnostica operativa di base**.
+
+In particolare deve saper:
+
+- installare o ripristinare un package in un ambiente definito;
+- verificare quale versione del package viene effettivamente utilizzata e diagnosticare dipendenze mancanti o incompatibili;
+- ricostruire l'ambiente R quando esiste una specifica delle dipendenze, distinguendo ciò che è descritto da ciò che resta responsabilità dell'infrastruttura;
+- eseguire una soluzione in condizioni controllate e raccogliere una baseline;
+- misurare almeno durata, CPU e memoria e riconoscere quando diventano rilevanti I/O, rete, database, worker o thread;
+- eseguire un benchmark semplice e confrontare varianti del workload mantenendo controllate le altre condizioni;
+- effettuare un profiling di base quando serve capire dove il codice R spende il tempo;
+- distinguere una misura da un'ipotesi e sapere quando restituire il problema allo sviluppatore.
+
+Il livello atteso è quindi **operativo e diagnostico**, non di ottimizzazione algoritmica. L'obiettivo è poter raccogliere evidenze sufficienti per una decisione IT o per un handover tecnico allo sviluppatore.
+
 ## Come è organizzato il manuale
 
 I sei capitoli seguono una progressione intenzionale. L'introduzione non è un capitolo numerato: definisce il metodo. I capitoli sono numerati da 1 a 6 e ciascuno risponde a una domanda precisa.
