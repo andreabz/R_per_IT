@@ -11,6 +11,15 @@ Un software che funziona sul computer dello sviluppatore non è ancora una relea
 
 Per R la difficoltà aggiuntiva è che una release deve rendere riproducibile non solo il codice, ma anche il runtime, i package e le dipendenze che attraversano il confine con il sistema operativo.
 
+## Lessico operativo del deployment
+
+| Termine | Significato operativo |
+|---|---|
+| **RSS (Resident Set Size)** | quantità di memoria fisica attualmente residente associata a un processo, secondo la metrica esposta dal sistema operativo; è una misura operativa e non coincide con la dimensione logica degli oggetti R |
+| **runbook** | procedura operativa documentata per eseguire o gestire un'attività, per esempio deployment, restart o rollback |
+| **retry** | ripetizione automatica di un'operazione dopo un errore, secondo una politica definita |
+| **rollback** | ritorno a una versione precedente conosciuta e verificata di codice e ambiente |
+
 ## Catena di rilascio
 
 ```text
