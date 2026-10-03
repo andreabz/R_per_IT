@@ -43,22 +43,137 @@ Un esempio tipico è un package che si installa correttamente in sviluppo ma in 
 
 ## Package, library e repository
 
-| Concetto | Significato |
-|---|---|
-| Package | componente software distribuito per R |
-| Library | posizione dalla quale R carica i package |
-| Repository | sorgente dalla quale i package vengono recuperati |
-| Ambiente | insieme concreto di runtime, package e dipendenze |
+Un **package** è un componente software per R: contiene codice R e, quando necessario, codice compilato e altre risorse.
 
-La domanda operativa è:
+Una **library** è una directory del filesystem che contiene package installati.
 
-> **Quale versione viene caricata, da quale library e chi può modificarla?**
+Un **repository** è una sorgente dalla quale i package vengono scaricati. CRAN è il repository più noto, ma ne esistono altri.
 
-```{r}
+La sequenza è:
+
+~~~text
+repository
+    ↓ installazione
+library
+    ↓ caricamento
+sessione R
+    ↓ esecuzione
+codice
+~~~
+
+Quando scriviamo library(data.table), data.table è il **package**; library() è la funzione che lo rende disponibile nella sessione. La **library** non è data.table: è la directory che contiene il package.
+
+Questa distinzione diventa importante quando IT deve sapere **quale copia di un package viene caricata e chi può modificarla**.
+
+## Le library di R
+
+R può avere più library contemporaneamente. .libPaths() restituisce il percorso delle library che R considera nella sessione corrente, nell'ordine in cui vengono cercate.
+
+Una situazione concettuale può essere:
+
+~~~text
+project library
+      ↓
+user library
+      ↓
+system library
+~~~
+
+Non è però corretto assumere che questi tre livelli siano sempre presenti o abbiano sempre questi nomi: dipendono dall'installazione e da strumenti come renv.
+
+Possiamo distinguere:
+
+- **system library**: package disponibili a più utenti o all'installazione di R;
+- **user library**: package installati per un singolo utente;
+- **project library**: package associati a uno specifico progetto.
+
+Con renv, il progetto dispone di una library isolata logicamente dalle altre. La directory fisica può anche essere collocata fuori dalla directory del progetto: ciò che conta è che renv la associ a quel progetto e la attivi nella sessione. 
+
+### Che cosa ci dice davvero .libPaths()?
+
+~~~{r}
 #| label: ispezione-library-r
 
 .libPaths()
-```
+~~~
+
+Il risultato va letto come una **lista ordinata di percorsi**. Se un package è presente in più library, l'ordine è rilevante: R può trovare una copia prima di un'altra.
+
+Per una diagnosi IT è utile osservare anche quali package sono presenti in ciascun percorso:
+
+~~~{r}
+#| label: ispezione-package-per-library
+
+lapply(.libPaths(), list.files)
+~~~
+
+Non serve eseguire questo comando in produzione: serve capire che «il package è installato» non risponde alla domanda «quale package viene usato?».
+
+## Che cos'è un lockfile?
+
+Un **lockfile** è un file che registra lo stato delle dipendenze di un progetto in un determinato momento, in modo che quell'ambiente possa essere ricostruito.
+
+Nel caso di renv, il file si chiama normalmente renv.lock e viene **gestito da renv**, non dal runtime R in modo automatico.
+
+Il ciclo tipico è:
+
+~~~text
+renv::init()
+     ↓
+project library
+     ↓
+renv::snapshot()
+     ↓
+renv.lock
+     ↓
+nuova macchina
+     ↓
+renv::restore()
+     ↓
+project library ricostruita
+~~~
+
+snapshot() registra lo stato della library di progetto nel lockfile; restore() usa il lockfile per installare nella library di progetto le versioni registrate. Il lockfile contiene anche la versione di R e i repository associati al progetto.
+
+### È obbligatorio usare un lockfile?
+
+**No.**
+
+R può funzionare perfettamente senza renv e senza lockfile.
+
+Il lockfile diventa utile quando la riproducibilità dell'ambiente è un requisito: sviluppo collaborativo, CI/CD, deployment, manutenzione nel tempo, rollback o audit.
+
+Quindi IT non dovrebbe chiedere «R richiede un lockfile?». La domanda corretta è:
+
+> **Per questo workload abbiamo bisogno di poter ricostruire la stessa combinazione di R e package?**
+
+Se la risposta è sì, renv è una possibile soluzione; non è però l'unica forma teorica di gestione delle dipendenze.
+
+### Che cosa NON congela il lockfile?
+
+Un lockfile renv non è una fotografia dell'intero server.
+
+Non congela automaticamente:
+
+- distribuzione e versione dell'OS;
+- librerie native di sistema;
+- client database e driver esterni;
+- configurazione;
+- credenziali;
+- dati;
+- filesystem;
+- rete;
+- servizi esterni.
+
+Quindi:
+
+~~~text
+renv.lock
+   ≠
+immagine completa del server
+~~~
+
+Il lockfile controlla una parte importante dell'ambiente R, non l'intera infrastruttura.
 
 ## Dipendenze e riproducibilità
 
@@ -88,9 +203,27 @@ Questo è uno dei punti in cui una soluzione R si comporta diversamente da un se
 
 ## Un concetto avanzato: ALTREP
 
-ALTREP permette a R di rappresentare alcuni oggetti senza materializzarne immediatamente tutti i dati. Non è necessario conoscere l'implementazione: basta ricordare che **dimensione logica dell'oggetto e memoria fisica osservata non sono necessariamente equivalenti**.
+ALTREP è un meccanismo interno di R che permette ad alcuni oggetti di avere una rappresentazione alternativa rispetto alla rappresentazione tradizionale. Un oggetto può quindi essere descritto senza che tutti i suoi dati siano necessariamente materializzati immediatamente nella forma che ci aspettiamo.
 
-Il concetto diventa utile quando una misura di memoria viene confrontata con la dimensione apparente dei dati. Il capitolo 2 mostrerà perché anche copie, worker e allocazioni temporanee possono ampliare ulteriormente la differenza.
+Per IT non serve conoscere l'implementazione di ALTREP. Serve capire una conseguenza:
+
+> **la dimensione logica di un oggetto R non è una misura affidabile, da sola, della memoria fisica consumata dal processo.**
+
+Questo diventa importante quando confrontiamo:
+
+~~~text
+dimensione dei dati
+      ↓
+oggetti R
+      ↓
+allocazioni temporanee / copie
+      ↓
+memoria del processo
+      ↓
+memoria della macchina
+~~~
+
+ALTREP è quindi un esempio, non una spiegazione completa della memoria. Nel capitolo 2 vedremo gli altri meccanismi che producono la differenza.
 
 ## Checklist
 
