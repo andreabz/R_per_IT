@@ -1,0 +1,348 @@
+---
+title: "Appendice — Kit operativo per IT"
+subtitle: "Dalla richiesta dello sviluppatore alla specifica di esercizio"
+---
+
+## Perché questa appendice
+
+Questa appendice è pensata per essere usata **fuori dal corso**, durante una richiesta reale di messa in produzione.
+
+L'obiettivo non è chiedere allo sviluppatore una documentazione infinita. È raccogliere le informazioni minime che permettono a IT di capire che cosa deve eseguire, con quali dipendenze, con quali risorse e con quale responsabilità.
+
+> **Una soluzione R è pronta per essere presa in carico quando il workload, l'ambiente, le dipendenze, il comportamento operativo e le responsabilità sono descritti in modo verificabile.**
+
+## 1. Scheda di identificazione
+
+| Campo | Da compilare |
+|---|---|
+| Nome della soluzione | |
+| Owner applicativo | |
+| Repository | |
+| Commit/tag/versione | |
+| Tipo di soluzione | script / batch / Quarto / Shiny / API / package / pipeline |
+| Entry point | |
+| Scopo | |
+| Ambiente previsto | sviluppo / test / produzione |
+
+## 2. Modello di esecuzione
+
+| Campo | Da compilare |
+|---|---|
+| Modalità | manuale / batch / servizio / interattiva |
+| Frequenza | |
+| Finestra di esecuzione | |
+| Durata attesa | |
+| Utenti | |
+| Concorrenza | |
+| Timeout | |
+| Retry | |
+| Restart | |
+| Scheduler o orchestratore | |
+
+Per una soluzione interattiva indicare anche il numero di sessioni o richieste contemporanee previsto e il comportamento atteso quando una dipendenza esterna non risponde.
+
+## 3. Ambiente R
+
+| Campo | Da compilare |
+|---|---|
+| Versione R | |
+| Sistema operativo/versione | |
+| Package | |
+| renv.lock o altra specifica delle dipendenze | |
+| Repository package | |
+| Dipendenze native | |
+| Driver/client database | |
+| BLAS/LAPACK o altre librerie numeriche rilevanti | |
+| Configurazione del runtime | |
+
+### Domanda di controllo
+
+> **Un altro ambiente pulito può ricostruire l'ambiente necessario all'esecuzione?**
+
+Il commit identifica il codice. La specifica delle dipendenze e dell'ambiente identifica ciò che serve per eseguirlo.
+
+## 4. Dati e sistemi esterni
+
+| Campo | Da compilare |
+|---|---|
+| Input | |
+| Output | |
+| Dimensione input | |
+| Crescita prevista | |
+| Oracle | |
+| Altri database | |
+| API | |
+| Filesystem/storage | |
+| Dati temporanei | |
+| Volume trasferito verso R | |
+| Volume trasferito da R | |
+
+Per Oracle, quando rilevante, distinguere:
+
+~~~text
+R costruisce query
+      ↓
+Oracle esegue
+      ↓
+risultato trasferito
+      ↓
+R materializza
+      ↓
+R elabora
+~~~
+
+Questo evita di attribuire automaticamente a R tutto il tempo osservato dal job.
+
+## 5. Risorse e benchmark
+
+| Campo | Da compilare |
+|---|---|
+| Dataset usato per il test | |
+| Durata baseline | |
+| RAM di picco | |
+| CPU | |
+| I/O | |
+| Rete | |
+| Worker | |
+| Thread nativi | |
+| Concorrenza del test | |
+| Numero di ripetizioni | |
+| Versione R/package del test | |
+
+Un requisito come «16 core e 64 GB» dovrebbe essere accompagnato da evidenze che mostrino **quale requisito applicativo soddisfa quella configurazione**.
+
+### Minimo benchmark
+
+~~~text
+stesso input
+    ↓
+stesso ambiente
+    ↓
+1 / 2 / 4 / ... worker
+    ↓
+tempo + RAM + CPU
+    ↓
+confronto
+~~~
+
+Non è necessario fare sempre un benchmark complesso. Il livello di misura deve essere proporzionato al rischio e al costo della decisione.
+
+## 6. Sicurezza e configurazione
+
+| Campo | Da compilare |
+|---|---|
+| Account tecnico | |
+| Permessi filesystem | |
+| Permessi database | |
+| Autenticazione utenti | |
+| Autorizzazioni | |
+| Segreti | meccanismo aziendale |
+| TLS/HTTPS | |
+| Variabili d'ambiente | |
+| File di configurazione | |
+| Certificati | |
+
+**I segreti non devono essere inclusi nel repository, nel codice o nel lockfile.**
+
+## 7. Test di produzione
+
+Prima del rilascio devono essere distinti almeno:
+
+| Verifica | Domanda |
+|---|---|
+| Funzionale | produce il risultato atteso? |
+| Integrazione | raggiunge correttamente DB, API e storage? |
+| Compatibilità | l'ambiente R è coerente? |
+| Performance | rispetta la baseline o il requisito? |
+| Smoke test | il deployment è avviabile e operativo? |
+
+Per servizi e applicazioni interattive aggiungere un test di concorrenza proporzionato al numero atteso di utenti.
+
+## 8. Comportamento in caso di errore
+
+Per ogni dipendenza critica indicare:
+
+~~~text
+dipendenza non disponibile
+        ↓
+errore osservabile
+        ↓
+retry? ── sì/no
+        ↓
+fallback? ── sì/no
+        ↓
+alert
+        ↓
+intervento
+~~~
+
+Domande minime:
+
+- cosa succede se Oracle non risponde?
+- cosa succede se il processo R termina?
+- cosa succede se l'input è invalido?
+- quali errori possono essere ritentati?
+- un retry può produrre effetti duplicati?
+- quale output parziale può rimanere?
+- come viene segnalato il fallimento?
+
+Per i job con scrittura di dati, la **idempotenza** deve essere esplicitamente valutata prima di introdurre retry automatici.
+
+## 9. Deployment e rollback
+
+| Campo | Da compilare |
+|---|---|
+| Artefatto da distribuire | |
+| Procedura di deploy | |
+| Smoke test | |
+| Versione in produzione | |
+| Configurazione associata | |
+| Baseline precedente | |
+| Procedura di rollback | |
+| Tempo stimato di ripristino | |
+| Owner del rollback | |
+
+Il rollback deve ripristinare una combinazione conosciuta di **codice e ambiente**. Ripristinare soltanto il commit può non essere sufficiente.
+
+## 10. Logging e monitoring
+
+### Batch
+
+Registrare almeno:
+
+- avvio e fine;
+- exit code;
+- durata;
+- errori;
+- output prodotto;
+- dimensione degli input;
+- risorse di picco quando rilevanti.
+
+### Shiny/API
+
+Osservare, secondo il caso:
+
+- disponibilità;
+- latenza;
+- errori;
+- richieste/sessioni concorrenti;
+- CPU;
+- RAM;
+- dipendenze esterne;
+- restart.
+
+Il monitoring deve permettere di distinguere almeno:
+
+~~~text
+problema applicativo
+      vs
+problema runtime
+      vs
+problema infrastrutturale
+      vs
+problema dipendenza esterna
+~~~
+
+## 11. Sviluppo, test e produzione
+
+~~~text
+SVILUPPO
+  │
+  │ commit
+  ▼
+TEST
+  │
+  │ verifica
+  ▼
+VALIDAZIONE
+  │
+  │ release
+  ▼
+PRODUZIONE
+~~~
+
+Non assumere che l'ambiente dello sviluppatore sia un modello sufficiente dell'ambiente di produzione.
+
+In particolare, devono essere controllati:
+
+- versione R;
+- package;
+- librerie native;
+- driver;
+- configurazione;
+- credenziali;
+- dati;
+- filesystem;
+- rete.
+
+La domanda non è soltanto «funziona?», ma:
+
+> **funziona nello stesso modo nell'ambiente che verrà realmente gestito da IT?**
+
+## 12. Cambiamenti e aggiornamenti
+
+Ogni modifica che può cambiare il comportamento della soluzione deve produrre una nuova baseline quando la modifica viene accettata.
+
+Sono potenzialmente rilevanti:
+
+- codice;
+- R;
+- package;
+- driver;
+- librerie native;
+- OS;
+- configurazione;
+- query;
+- schema o volume dei dati;
+- modello di parallelismo.
+
+Il percorso minimo è:
+
+~~~text
+modifica
+   ↓
+test
+   ↓
+confronto con baseline
+   ↓
+accettazione
+   ↓
+nuova baseline
+~~~
+
+Questo è particolarmente importante per R perché l'ambiente software può influire sia sul risultato sia sulle performance.
+
+## 13. Ownership
+
+| Responsabilità | Owner |
+|---|---|
+| Correttezza scientifica/applicativa | |
+| Codice | |
+| Package e dipendenze | |
+| Runtime R | |
+| Infrastruttura | |
+| Database | |
+| Deployment | |
+| Monitoring | |
+| Incident response | |
+| Rollback | |
+| Approvazione delle modifiche | |
+
+L'obiettivo non è assegnare tutto a IT. È rendere esplicito **chi deve decidere, chi deve fornire evidenze e chi deve intervenire**.
+
+## 14. Criterio di presa in carico
+
+Una richiesta può essere considerata tecnicamente descritta quando IT può rispondere senza dover ricostruire da solo:
+
+1. **che cosa viene eseguito;**
+2. **come viene avviato;**
+3. **quale ambiente serve;**
+4. **quali dati e sistemi esterni utilizza;**
+5. **quanto costa il workload;**
+6. **come si verifica che funzioni;**
+7. **come si osserva in esercizio;**
+8. **come si aggiorna;**
+9. **come si ripristina;**
+10. **chi è responsabile di ogni parte.**
+
+Questa scheda non sostituisce gli standard aziendali. È un modo per rendere una richiesta R traducibile in requisiti IT.
