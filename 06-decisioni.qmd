@@ -183,7 +183,7 @@ Un container può rendere più controllabili R, package e librerie native. Non r
 
 La domanda da verificare è quali parti dell'ambiente R devono essere incluse nell'artefatto e quali restano dipendenze esterne. Il container va quindi valutato contro il requisito specifico: riproducibilità dell'ambiente, isolamento, deployment o altro.
 
-## Esercizio integrato
+## Esercizio di decisione quantitativa
 
 Richiesta:
 
