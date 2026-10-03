@@ -61,6 +61,8 @@ Il principio è il pushdown: eseguire vicino ai dati ciò che il sistema sorgent
 
 Per R questo può ridurre trasferimento, allocation e memoria occupata dal processo R.
 
+Un requisito importante è misurare il confine: tempo della query, volume trasferito, tempo di materializzazione e tempo dell'analisi R. Senza queste misure non è possibile sapere se lo spostamento del calcolo ha risolto il collo di bottiglia.
+
 ## Lazy execution
 
 Alcuni strumenti costruiscono una trasformazione senza eseguirla immediatamente. Con backend database, operazioni compatibili possono essere tradotte in SQL.
@@ -111,4 +113,13 @@ Non include automaticamente database, segreti, storage persistente, rete azienda
 
 Per ogni componente devono essere chiari dati, calcolo, autenticazione, scheduling, output, monitoring e ownership.
 
+Una buona descrizione architetturale dovrebbe poter rispondere, per ogni passaggio, a quattro domande:
+
+1. dove sono i dati?
+2. dove avviene il calcolo?
+3. dove viene materializzato il risultato?
+4. quale componente è responsabile?
+
 Il risultato architetturale dovrebbe rendere esplicito **dove avviene ogni parte del workload R**.
+
+Il capitolo 5 traduce questi confini in una release: ciò che è stato deciso deve poter essere ricostruito, testato e portato in esercizio.
