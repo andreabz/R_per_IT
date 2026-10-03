@@ -7,11 +7,13 @@ subtitle: "Dove deve vivere R e dove deve essere eseguito il lavoro"
 
 Una soluzione R non deve contenere necessariamente database, scheduler, autenticazione, web server e storage.
 
-> **Quale componente deve svolgere ciascuna responsabilità?**
+> **Quale componente deve svolgere ciascuna responsabilità e dove deve essere eseguito il calcolo?**
 
 ## Definire il workload
 
 Servono almeno: interattivo o batch, utenti e concorrenza, frequenza, tempo di risposta, dimensione e crescita dei dati, disponibilità e sistemi esterni.
+
+Per R aggiungere: modalità di esecuzione dello script, dipendenze runtime, quantità di dati trasferita dentro e fuori R e costo atteso della serializzazione o materializzazione.
 
 ## R come componente
 
@@ -25,6 +27,8 @@ Oracle   output
 
 R può essere il componente analitico senza diventare sistema di persistenza o intero stack applicativo.
 
+La domanda architetturale non è «dove installiamo R?», ma **quale parte del workload deve essere eseguita da R e quale da altri componenti**.
+
 ## DBI e database
 
 DBI fornisce un'interfaccia per database; il driver gestisce il sistema concreto.
@@ -34,6 +38,8 @@ R → DBI → driver → database
 ```
 
 Il confine influenza autenticazione, rete, connessioni, timeout, logging ed error handling.
+
+Per IT è importante distinguere il tempo speso in R dal tempo speso nel database e sapere quale componente materializza i dati.
 
 ## Dove deve avvenire il calcolo?
 
@@ -53,11 +59,15 @@ analisi
 
 Il principio è il pushdown: eseguire vicino ai dati ciò che il sistema sorgente può fare correttamente ed efficientemente.
 
+Per R questo può ridurre trasferimento, allocation e memoria occupata dal processo R.
+
 ## Lazy execution
 
 Alcuni strumenti costruiscono una trasformazione senza eseguirla immediatamente. Con backend database, operazioni compatibili possono essere tradotte in SQL.
 
 IT deve distinguere descrizione dell'operazione, momento dell'esecuzione e componente che esegue il calcolo.
+
+Questa distinzione è particolarmente importante quando il codice R costruisce un piano di elaborazione che viene eseguito solo al momento della materializzazione.
 
 ## Arrow e DuckDB
 
@@ -75,7 +85,7 @@ dataset ridotto
        R
 ```
 
-La scelta va verificata sul workload e sugli standard dell'organizzazione.
+Questi strumenti possono spostare parte del lavoro fuori dal processo R e ridurre il costo di trasferimento o materializzazione. La scelta va verificata sul workload e sugli standard dell'organizzazione.
 
 ## Oracle, APEX, Quarto, Shiny e API
 
@@ -83,7 +93,9 @@ Oracle può occuparsi di persistenza, integrità, query e aggregazioni; R di ana
 
 APEX può essere appropriato per CRUD, workflow e interfacce integrate con Oracle.
 
-Quarto può produrre report. Shiny introduce sessioni e concorrenza. Un'API R espone capacità analitiche a sistemi esterni e richiede contratto, autenticazione, timeout, logging e monitoring.
+Quarto può produrre report. Shiny introduce sessioni e concorrenza: una sessione utente non equivale automaticamente a un processo R dedicato, quindi il dimensionamento deve essere misurato sul modello di deployment concreto.
+
+Un'API R espone capacità analitiche a sistemi esterni e richiede contratto, autenticazione, timeout, logging e monitoring.
 
 ## Container
 
@@ -96,3 +108,5 @@ Non include automaticamente database, segreti, storage persistente, rete azienda
 ## Confini
 
 Per ogni componente devono essere chiari dati, calcolo, autenticazione, scheduling, output, monitoring e ownership.
+
+Il risultato architetturale dovrebbe rendere esplicito **dove avviene ogni parte del workload R**.
