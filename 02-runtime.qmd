@@ -67,7 +67,7 @@ R usa la lazy evaluation: gli argomenti di una funzione non vengono necessariame
 
 Per IT interessa la conseguenza operativa: **il punto del codice in cui compare un'operazione non identifica sempre il momento in cui il lavoro viene effettivamente eseguito**.
 
-Questo concetto è distinto dalla lazy execution di un database o di un framework analitico.
+Questo concetto è distinto dalla lazy execution di un database o di un framework analitico, che verrà ripreso nel capitolo 4.
 
 ## S3, S4 e R6
 
@@ -127,6 +127,18 @@ Per un ambiente IT la configurazione da osservare non è quindi solo il numero d
 
 **worker R + thread nativi + concorrenza di altri workload.**
 
+### Un esempio di diagnosi
+
+Supponiamo una VM con 16 core. Un job usa 4 worker R e una libreria numerica configurata con 8 thread per worker.
+
+```text
+4 worker × 8 thread = 32 thread
+16 core disponibili
+→ possibile oversubscription
+```
+
+Prima di chiedere una VM più grande, il test utile è separare le due variabili: mantenere fissi i worker e cambiare i thread nativi, poi fare il contrario. Il risultato deve essere confrontato su tempo, CPU e RAM.
+
 ## Benchmark del runtime
 
 | Worker | Thread | Tempo | RAM picco | CPU |
@@ -140,3 +152,5 @@ Per un ambiente IT la configurazione da osservare non è quindi solo il numero d
 Il test deve permettere di separare l'effetto dei worker da quello dei thread nativi.
 
 > **Non dimensionare CPU e RAM dal numero di worker: misurare il comportamento del workload.**
+
+Il capitolo 3 usa queste misure per distinguere un collo di bottiglia osservato da una semplice ipotesi.
