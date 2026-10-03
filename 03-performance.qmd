@@ -5,11 +5,13 @@ subtitle: "Misurare prima di dimensionare"
 
 ## Perché questo capitolo
 
-> **Dove viene speso il tempo e quale risorsa limita il workload?**
+> **Dove viene speso il tempo e quale risorsa limita il workload R?**
 
 ## Misura minima
 
 Registrare almeno durata, CPU, RAM di picco, I/O, rete, tempo nel database, worker, thread e dimensione dei dati.
+
+Per R è utile correlare la misura del sistema con ciò che il runtime sta facendo: allocation, garbage collection, worker, serializzazione e chiamate a librerie native.
 
 La misura deve essere rappresentativa e ripetibile.
 
@@ -26,16 +28,16 @@ Sys.sleep(0.1)
 Sys.time() - t0
 ```
 
-Per confrontare implementazioni è preferibile un benchmark ripetuto.
+Per confrontare implementazioni è preferibile un benchmark ripetuto e controllato.
 
 ## Profiling
 
-Il monitoraggio dice che la macchina è sotto carico; il profiling aiuta a capire **quale parte del codice consuma il tempo**.
+Il monitoraggio dice che la macchina è sotto carico; il profiling aiuta a capire **quale parte del codice R consuma il tempo**.
 
 ```text
 misura globale
    ↓
-profiling
+profiling R
    ↓
 candidato collo di bottiglia
    ↓
@@ -43,6 +45,8 @@ modifica
    ↓
 benchmark
 ```
+
+Il profiling non sostituisce il monitoraggio infrastrutturale: mette in relazione il comportamento del codice con quello della macchina.
 
 ## CPU, memoria, I/O e database
 
@@ -54,6 +58,8 @@ benchmark
 | tempo prevalentemente in query | database-bound |
 
 Sono ipotesi diagnostiche, non conclusioni automatiche.
+
+Nel caso R, CPU elevata può derivare dal codice R, da BLAS/LAPACK, da thread nativi o da più worker. RAM elevata può derivare da oggetti, copie, garbage collection o memoria duplicata tra processi.
 
 ## Vectorization
 
@@ -67,6 +73,8 @@ Non esiste una classifica universale. La performance dipende da operazione, dati
 
 Un confronto corretto usa stesso input, stesso risultato, ambiente controllato e misure di tempo, RAM e CPU.
 
+L'obiettivo non è scegliere una tecnologia «migliore», ma capire come un'implementazione R modifica il workload osservato.
+
 ## Scaling
 
 ```text
@@ -74,6 +82,8 @@ speed-up(n) = tempo(1 worker) / tempo(n worker)
 ```
 
 Lo scaling reale è limitato da parti seriali, serializzazione, sincronizzazione, memoria, I/O, database e thread nativi.
+
+Nel caso R bisogna inoltre distinguere lo scaling del codice da quello delle librerie native: aumentare i worker può cambiare contemporaneamente numero di processi, memoria e thread.
 
 ## Diagnosi
 
@@ -83,7 +93,7 @@ Verificare core utilizzati, worker, thread nativi, profiling e parallelizzabilit
 
 ### RAM alta
 
-Verificare oggetti, copie, worker, memoria per worker e possibilità di ridurre o spostare i dati.
+Verificare oggetti, copie, garbage collection, worker, memoria per worker e possibilità di ridurre o spostare i dati.
 
 ### CPU bassa ma job lento
 
@@ -103,6 +113,6 @@ Debole:
 
 Informativa:
 
-> «Il workload impiega 192 minuti con un worker; il profiling indica X; il test 1/2/4/8 worker produce A/B/C/D e RAM X/Y/Z/W; il database non è il collo di bottiglia.»
+> «Il workload R impiega 192 minuti con un worker; il profiling indica X; il test 1/2/4/8 worker produce A/B/C/D e RAM X/Y/Z/W; il database non è il collo di bottiglia.»
 
 > **Prima di aumentare le risorse, verificare il collo di bottiglia.**
