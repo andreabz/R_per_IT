@@ -260,14 +260,161 @@ Per IT il punto è che **due implementazioni con lo stesso risultato possono ave
 
 Questo è un buon esempio di confine tra competenza applicativa e infrastrutturale: IT può misurare il costo, mentre la scelta di cambiare algoritmo o implementazione resta in collaborazione con chi sviluppa il workload.
 
-## Approfondimento — Base R, data.table e dplyr
+## Approfondimento — Base R, dplyr e data.table
 
-Non esiste una classifica universale. La performance dipende da operazione, dati, backend, memoria, implementazione, copie e lazy execution.
+Questa sezione non serve a stabilire quale strumento sia «migliore». Serve a capire perché **due implementazioni R che producono lo stesso risultato possono richiedere quantità molto diverse di CPU e memoria**.
 
-Un confronto corretto usa stesso input, stesso risultato, ambiente controllato e misure di tempo, RAM e CPU.
+### Che cosa stiamo confrontando?
 
-L'obiettivo non è scegliere una tecnologia «migliore», ma capire come un'implementazione R modifica il workload osservato.
+- **Base R** non è un package aggiuntivo: è l'insieme di funzionalità disponibili nell'installazione standard di R. Per esempio, un `data.frame` e operazioni come assegnazione, subset e `transform()` possono essere gestiti senza installare un package esterno.
+- **`dplyr`** è un package dell'ecosistema tidyverse che offre un'interfaccia dichiarativa per trasformare e aggregare dati tabellari. Operazioni tipiche sono `filter()`, `mutate()`, `summarise()` e `join`.
+- **`data.table`** è un package per l'elaborazione efficiente di dati tabellari di grandi dimensioni. Oltre a fornire una struttura dati omonima, offre operazioni di subset, aggregazione, join e modifica delle colonne progettate per ridurre overhead e copie.
 
+Per IT la distinzione importante è quindi:
+
+> **linguaggio/funzionalità standard di R ≠ package aggiuntivo ≠ motore o backend esterno.**
+
+La scelta fra questi strumenti appartiene principalmente allo sviluppatore. IT deve però saper riconoscere quando una scelta implementativa può cambiare significativamente il profilo di CPU, RAM e tempo del workload.
+
+### Un esempio: aggiungere una colonna a una tabella
+
+Consideriamo una tabella con molti milioni di righe. L'operazione è semplice: calcolare `totale = quantita * prezzo`.
+
+Con base R:
+
+~~~{r}
+#| label: confronto-base-r
+
+df <- data.frame(
+  quantita = runif(1000000),
+  prezzo = runif(1000000)
+)
+
+system.time({
+  df$totale <- df$quantita * df$prezzo
+})
+~~~
+
+Con `dplyr`:
+
+~~~{r}
+#| label: confronto-dplyr
+
+df <- data.frame(
+  quantita = runif(1000000),
+  prezzo = runif(1000000)
+)
+
+system.time({
+  df <- dplyr::mutate(df, totale = quantita * prezzo)
+})
+~~~
+
+Con `data.table`:
+
+~~~{r}
+#| label: confronto-datatable
+
+DT <- data.table::data.table(
+  quantita = runif(1000000),
+  prezzo = runif(1000000)
+)
+
+system.time({
+  DT[, totale := quantita * prezzo]
+})
+~~~
+
+L'elemento importante dell'ultimo esempio è `:=`: in molti casi consente a `data.table` di modificare la tabella **in place**, evitando di creare una nuova copia completa della struttura per l'assegnazione. Questo può ridurre il picco di memoria e il lavoro di copia, soprattutto quando le tabelle sono grandi.
+
+Non significa che `data.table` sia sempre più veloce o che `:=` elimini ogni allocazione: l'espressione a destra deve comunque essere calcolata e possono essere necessarie nuove strutture temporanee. Il vantaggio va quindi **misurato sul workload reale**.
+
+### Rendere il confronto misurabile
+
+Per un confronto serio dobbiamo mantenere uguali:
+
+- numero di righe;
+- colonne e tipi;
+- operazione e risultato;
+- versione di R;
+- versione dei package;
+- hardware;
+- stato iniziale dei dati;
+- numero di ripetizioni.
+
+Per una prima prova didattica si può aumentare progressivamente il dataset, per esempio da 1 a 10 milioni di righe, e misurare tempo e memoria.
+
+Una misura minima del tempo è:
+
+~~~{r}
+#| label: confronto-tempi-implementazioni
+
+n <- 10000000L
+
+df_base <- data.frame(
+  quantita = runif(n),
+  prezzo = runif(n)
+)
+
+df_dplyr <- df_base
+DT <- data.table::as.data.table(df_base)
+
+system.time(df_base$totale <- df_base$quantita * df_base$prezzo)
+system.time(df_dplyr <- dplyr::mutate(df_dplyr, totale = quantita * prezzo))
+system.time(DT[, totale := quantita * prezzo])
+~~~
+
+I tempi prodotti da questo esempio **non sono valori di riferimento universali**: dipendono dall'ambiente di esecuzione. Per confrontare la memoria, è utile osservare il processo durante l'operazione oppure usare uno strumento di profiling della memoria; non basta guardare `object.size()` dopo che l'operazione è terminata.
+
+### Che cosa deve osservare IT?
+
+Il punto del benchmark non è raccogliere una classifica. È verificare se l'implementazione modifica materialmente il workload.
+
+| Implementazione | Tempo | Picco RAM | Interpretazione |
+|---|---:|---:|---|
+| base R | misurato | misurato | baseline |
+| `dplyr` | misurato | misurato | confronto |
+| `data.table` con `:=` | misurato | misurato | possibile riduzione di copie |
+
+Se `data.table` produce lo stesso risultato con un picco RAM significativamente inferiore, una possibile conseguenza operativa è **evitare di aumentare la RAM della macchina prima di verificare se l'implementazione può essere modificata**. Questa non è però una conclusione automatica: bisogna considerare leggibilità, manutenzione, compatibilità, altre fasi del workload e costo della modifica.
+
+### Un secondo esempio: copia esplicita contro modifica in place
+
+Per capire meglio il concetto di memoria, confrontiamo una trasformazione che sostituisce una colonna.
+
+Con un `data.frame`, un'assegnazione può comportare lavoro di riallocazione/copia a seconda dell'operazione e della struttura degli oggetti. Con `data.table`, l'operatore `:=` è progettato proprio per effettuare assegnazioni per riferimento:
+
+~~~{r}
+#| label: esempio-modifica-in-place
+
+DT <- data.table::data.table(
+  quantita = runif(10000000L),
+  prezzo = runif(10000000L)
+)
+
+DT[, totale := quantita * prezzo]
+DT[, prezzo := prezzo * 1.22]
+~~~
+
+Qui la tabella viene modificata senza dover assegnare nuovamente l'oggetto risultante a `DT`. È questo modello di modifica per riferimento, più che una generica promessa di «maggiore velocità», che interessa nella diagnosi della memoria.
+
+### Cosa non si deve concludere
+
+Da questo confronto non segue che:
+
+- `data.table` sia sempre migliore di `dplyr`;
+- base R sia inefficiente;
+- ogni uso di `dplyr` crei necessariamente una copia completa;
+- `:=` renda gratuita una trasformazione;
+- il tempo di una singola esecuzione sia sufficiente per scegliere un'architettura.
+
+Il risultato dipende dall'operazione. Un workload può essere dominato dal database, dall'I/O o dalla rete e rendere irrilevante la differenza fra due implementazioni R.
+
+La conclusione utile per IT è più semplice:
+
+> **Prima di dimensionare l'infrastruttura, verificare se il costo osservato appartiene realmente alla macchina oppure a una scelta di implementazione che può essere modificata.**
+
+Questo è anche il motivo per cui il confronto tra implementazioni va inserito nel ciclo **misura → ipotesi → test → nuova baseline**, non usato come classifica permanente dei package.
 ## Diagnostica — Scaling
 
 ```text
