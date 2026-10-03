@@ -7,7 +7,7 @@ subtitle: "Processi, core, thread, worker e scaling"
 
 Per capire una richiesta di CPU o RAM bisogna prima capire come il workload viene eseguito. Processo, core, thread e worker descrivono livelli diversi dello stesso problema; parallelismo e concorrenza spiegano invece come il carico può distribuirsi nel tempo e tra più esecuzioni.
 
-La domanda proprietaria è:
+La domanda del capitolo è:
 
 > **Come viene eseguito il lavoro e quali risorse può impegnare?**
 

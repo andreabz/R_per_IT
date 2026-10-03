@@ -8,7 +8,7 @@ subtitle: "Scenari operativi, caso didattico e checklist per IT"
 
 Il percorso termina applicando il metodo, non aggiungendo altra teoria. I sei scenari servono a riconoscere rapidamente il tipo di richiesta; il caso didattico mostra invece come requisito, evidenze, diagnosi, architettura, operatività e responsabilità si ricompongano in una decisione.
 
-La domanda proprietaria è:
+La domanda del capitolo è:
 
 > **Come applichiamo il metodo a una richiesta concreta?**
 

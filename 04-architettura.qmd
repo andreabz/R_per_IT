@@ -8,7 +8,7 @@ subtitle: "R, database, APEX, Quarto, Shiny, API e server"
 
 Quando sappiamo che cosa esegue R e quali risorse richiede, possiamo affrontare la domanda architetturale: dove deve essere eseguito il lavoro, quali componenti devono collaborare e quali responsabilità è meglio lasciare a servizi già presenti nell'organizzazione. L'architettura nasce quindi dai requisiti, non dalla tecnologia disponibile.
 
-La domanda proprietaria è:
+La domanda del capitolo è:
 
 > **Dove deve vivere la soluzione e come si integra con il resto del sistema?**
 

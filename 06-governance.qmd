@@ -8,7 +8,7 @@ subtitle: "Dal requisito alla decisione, con evidenze e responsabilità"
 
 I capitoli precedenti producono informazioni tecniche: descrivono l'ambiente, il comportamento del workload, le alternative architetturali e il percorso di rilascio. Qui queste informazioni vengono ricomposte in una decisione che deve essere motivata, attribuita e ricostruibile nel tempo.
 
-La domanda proprietaria è:
+La domanda del capitolo è:
 
 > **Chi decide, chi verifica, chi approva e chi mantiene cosa?**
 

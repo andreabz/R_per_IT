@@ -8,7 +8,7 @@ subtitle: "Versionamento, test, CI/CD, rilascio, sicurezza, continuità e owners
 
 Un software può funzionare sul computer dello sviluppatore senza essere ancora una soluzione gestibile in esercizio. Questo capitolo segue il passaggio dal codice a una release identificabile, verificata e distribuibile, fino alle attività necessarie per mantenerla osservabile, modificabile e ripristinabile.
 
-La domanda proprietaria è:
+La domanda del capitolo è:
 
 > **Come trasformiamo il software in qualcosa di rilasciabile e gestibile?**
 
