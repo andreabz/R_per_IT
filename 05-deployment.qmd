@@ -88,6 +88,23 @@ Per una soluzione R il container è particolarmente utile quando serve rendere e
 
 Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 
+
+## Sviluppo, test e produzione
+
+Il deployment deve distinguere almeno tre ambienti o fasi logiche:
+
+~~~text
+sviluppo
+   ↓ commit
+test
+   ↓ validazione
+produzione
+~~~
+
+Il fatto che una soluzione funzioni sul PC dello sviluppatore non dimostra che sia pronta per la produzione. Tra gli ambienti possono cambiare R, package, librerie native, driver, configurazione, credenziali, rete e dati.
+
+Per IT è utile trattare la configurazione di produzione come una baseline esplicita, non come una copia implicita dell'ambiente di sviluppo.
+
 ## Test
 
 Una soluzione R dovrebbe avere almeno una distinzione tra quattro livelli di verifica:
@@ -140,11 +157,47 @@ Nel repository del corso la pipeline esistente è configurata per eseguire `quar
 
 Per un progetto R è utile trattare il render o il test come parte della verifica dell'ambiente: se cambiano R, package o dipendenze native, la pipeline deve rendere visibile la regressione.
 
+
+## Aggiornamenti e nuova baseline
+
+Una modifica a R, package, driver, librerie native, OS o configurazione può cambiare risultato o performance anche senza modificare il codice applicativo.
+
+Il ciclo operativo è:
+
+~~~text
+modifica
+   ↓
+test
+   ↓
+confronto con baseline
+   ↓
+release
+   ↓
+nuova baseline
+~~~
+
+La baseline precedente deve rimanere disponibile per un eventuale rollback.
+
 ## Smoke test e rollback
 
 Dopo il deployment verificare che processo, dipendenze, sistemi esterni e output minimo funzionino.
 
 Il rollback deve ricondurre codice e ambiente a una baseline precedente. Ripristinare soltanto il commit non è sufficiente se l'ambiente è stato modificato manualmente.
+
+
+## Comportamento in caso di errore
+
+Una soluzione in produzione deve descrivere cosa accade quando una dipendenza o il processo R falliscono.
+
+Domande minime:
+
+- Oracle non risponde: il job fallisce, attende, ritenta?
+- un input non è valido: come viene rifiutato e registrato?
+- il processo R termina: chi lo rileva e chi lo riavvia?
+- un retry può duplicare scritture o output?
+- esiste un output parziale che deve essere rimosso o invalidato?
+
+Per i job che producono effetti persistenti, retry e **idempotenza** devono essere valutati insieme.
 
 ## Logging, monitoring e sicurezza
 
