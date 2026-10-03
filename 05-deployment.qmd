@@ -7,12 +7,12 @@ subtitle: "Dal codice R alla release"
 
 Un software che funziona sul computer dello sviluppatore non è ancora una release.
 
-> **Come portiamo lo stesso codice e lo stesso ambiente in un'esecuzione controllata?**
+> **Come portiamo lo stesso codice e lo stesso ambiente R in un'esecuzione controllata?**
 
 ## Catena di rilascio
 
 ```text
-codice
+codice R
  ↓
 commit
  ↓
@@ -31,13 +31,17 @@ monitoring
 
 ## Git e baseline
 
-Una release deve essere riconducibile a commit/tag, versione R, dipendenze, configurazione, componenti nativi, dati di test ed esiti.
+Una release R deve essere riconducibile a commit/tag, versione R, dipendenze, configurazione, componenti nativi, dati di test ed esiti.
 
 Git identifica il codice; non identifica da solo l'intero ambiente R.
 
 ## renv nel deployment
 
 Il lockfile descrive le dipendenze R. Il deployment deve gestire anche librerie native, driver, client database, font, strumenti Quarto e configurazione quando rilevanti.
+
+La domanda operativa è quindi:
+
+> **Posso ricostruire lo stesso ambiente R, non soltanto recuperare lo stesso commit?**
 
 ## Container come artefatto
 
@@ -55,11 +59,17 @@ codice
 strumenti
 ```
 
+Per una soluzione R il container è particolarmente utile quando serve rendere esplicita la catena R → package → native dependencies.
+
 Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 
 ## Test
 
-Una soluzione R può richiedere test funzionali, integrazione, regressione e performance. I test di performance devono usare una baseline comparabile.
+Una soluzione R può richiedere test funzionali, integrazione, regressione e performance.
+
+Per R sono importanti anche test di compatibilità dell'ambiente: versione del runtime, package, driver e sistemi esterni.
+
+I test di performance devono usare una baseline comparabile.
 
 Una modifica può essere funzionalmente corretta e cambiare da 10 a 40 minuti o da 4 a 20 GB di RAM.
 
@@ -80,7 +90,9 @@ Il codice è un esempio di ciò che non deve essere usato in produzione.
 
 Una pipeline può automatizzare checkout, configurazione di R, ripristino dell'ambiente, test, build/render e pubblicazione.
 
-Nel repository del corso la pipeline esistente esegue quarto render, produce _site e lo pubblica tramite GitHub Pages.
+Nel repository del corso la pipeline esistente esegue `quarto render`, produce `_site` e lo pubblica tramite GitHub Pages.
+
+Per un progetto R è utile trattare il render o il test come parte della verifica dell'ambiente: se cambiano R, package o dipendenze native, la pipeline deve rendere visibile la regressione.
 
 ## Smoke test e rollback
 
@@ -90,7 +102,7 @@ Il rollback deve ricondurre codice e ambiente a una baseline precedente. Riprist
 
 ## Logging, monitoring e sicurezza
 
-Per un job interessano avvio, durata, esito, output, errori e consumo risorse. Per un servizio interessano disponibilità, latenza, errori, concorrenza, CPU/RAM e dipendenze esterne.
+Per un job R interessano avvio, durata, esito, output, errori e consumo risorse. Per un servizio interessano disponibilità, latenza, errori, concorrenza, CPU/RAM e dipendenze esterne.
 
 Gestire account tecnici, minimo privilegio, segreti, rete, TLS/HTTPS, permessi e aggiornamenti.
 
