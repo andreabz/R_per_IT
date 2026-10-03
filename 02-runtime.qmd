@@ -34,6 +34,36 @@ flowchart TD
   F --> G[Thread nativi]
 ``` 
 
+## Come leggere questo capitolo
+
+Non tutte le sezioni hanno lo stesso peso per IT.
+
+**Livello operativo — da ricordare**
+
+- processo, worker e thread sono livelli diversi;
+- memoria richiesta e dimensione dei dati non coincidono;
+- più worker possono significare più memoria e trasferimento di dati;
+- un singolo processo può usare thread nativi;
+- il numero di core disponibili non determina da solo il numero di core utilizzati;
+- CPU e RAM vanno dimensionate a partire da misure del workload.
+
+**Livello diagnostico — da usare quando serve**
+
+- allocation e copy-on-modify;
+- garbage collection;
+- serializzazione;
+- fork e PSOCK;
+- BLAS/LAPACK e thread nativi;
+- benchmark separando worker e thread.
+
+**Approfondimento del linguaggio — non necessario alla prima lettura**
+
+- environment e lexical scoping;
+- lazy evaluation;
+- S3, S4 e R6.
+
+Questi ultimi concetti aiutano a capire alcuni comportamenti di R e delle sue librerie, ma non sono prerequisiti per la prima presa in carico di una normale soluzione R.
+
 ## Lessico del runtime
 
 Prima di entrare nei meccanismi di memoria e parallelismo, fissiamo alcuni termini che ricorreranno nel capitolo:
@@ -68,7 +98,7 @@ Per R conviene distinguere tre livelli:
 
 Molte strategie di parallelismo R usano processi distinti, mentre BLAS/LAPACK e altre librerie possono usare thread.
 
-Quindi «8 worker» non significa necessariamente «8 thread» e non implica che la macchina eseguirà soltanto otto unità di lavoro.
+Quindi «8 worker» non significa necessariamente «8 thread» e non implica che la macchina eseguirà soltanto otto unità di lavoro.\n\n> **Per IT: quando qualcuno chiede più CPU, chiedere prima quali processi, worker o thread stanno effettivamente utilizzando la CPU.**
 
 ## Allocation e copy-on-modify
 
@@ -102,9 +132,9 @@ Per diagnosticare la memoria conviene distinguere almeno tre livelli:
 
 ALTREP, copie, allocazioni temporanee e più processi fanno sì che questi valori non coincidano.
 
-Una misura utile deve quindi riportare almeno il punto temporale, il processo o worker osservato e il contesto di concorrenza.
+Una misura utile deve quindi riportare almeno il punto temporale, il processo o worker osservato e il contesto di concorrenza.\n\n> **Per una richiesta RAM, il dato utile è il picco osservato nel workload reale, non la somma delle dimensioni nominali dei dataset.**
 
-## Environment e lexical scoping
+## Approfondimento — Environment e lexical scoping
 
 Un **environment** è una struttura che associa nomi a oggetti e contiene un riferimento a un altro environment, detto *enclosing environment*.
 
@@ -166,7 +196,7 @@ Questo spiega funzioni annidate, factory, package e molti oggetti che mantengono
 
 Per IT il concetto è utile perché chiarisce **da dove arriva lo stato che una funzione vede**.
 
-## Lazy evaluation
+## Approfondimento — Lazy evaluation
 
 R usa la lazy evaluation: gli argomenti di una funzione non vengono necessariamente valutati nel momento in cui la funzione viene chiamata, ma quando il loro valore è richiesto.
 
@@ -174,7 +204,7 @@ Per IT interessa la conseguenza operativa: **il momento della valutazione di un 
 
 Questo concetto è distinto dalla lazy execution di un database o di un framework analitico, che verrà ripreso nel capitolo 4.
 
-## S3, S4 e R6
+## Approfondimento — S3, S4 e R6
 
 S3, S4 e R6 sono sistemi diversi per rappresentare oggetti e comportamento. S3 è basato sul dispatch per classe e relativamente leggero; S4 è più formale; R6 introduce oggetti a semantica di riferimento e stato mutabile.
 
@@ -287,7 +317,7 @@ deserializzazione
 worker
 ```
 
-Per oggetti grandi, questo overhead può annullare parte del vantaggio del parallelismo.
+Per oggetti grandi, questo overhead può annullare parte del vantaggio del parallelismo.\n\n> **Un aumento dei worker può aumentare anche il costo di coordinamento.**
 
 ## BLAS, LAPACK e thread nativi
 
