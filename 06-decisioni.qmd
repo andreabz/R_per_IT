@@ -1,0 +1,220 @@
+# Decisioni operative
+
+## Perché questo capitolo
+
+Nei capitoli precedenti abbiamo visto come R usa ambiente, memoria, CPU, processi, thread, database e infrastruttura. Ora utilizziamo queste informazioni per trasformare una richiesta in una decisione tecnica verificabile.
+
+Il punto non è aggiungere altra teoria: è collegare **evidenza, decisione e responsabilità**.
+
+## Dal requisito all'evidenza
+
+Il modello operativo è:
+
+```
+requisito
+   ↓
+misura
+   ↓
+evidenza
+   ↓
+decisione
+   ↓
+baseline
+   ↓
+responsabilità
+```
+
+> «Servono 64 GB di RAM.»
+
+Non è ancora una specifica verificata. Servono almeno workload, durata obiettivo, consumo attuale, picco, worker, concorrenza e alternative considerate.
+
+Il ruolo di IT non è decidere la correttezza del codice R, ma verificare che la richiesta tecnica sia sostenuta da evidenze riproducibili.
+
+## Baseline
+
+Una baseline di una soluzione R può comprendere:
+
+```
+commit + R + package + native libraries + configuration + test data + test results
+```
+
+Una modifica rilevante produce una nuova baseline dopo la verifica.
+
+Per una soluzione R, una modifica apparentemente piccola a R, package o librerie native può cambiare performance o comportamento. La baseline deve quindi rendere visibile anche l'ambiente.
+
+## Chi è responsabile di cosa
+
+| Area | IT | Owner applicativo/scientifico |
+|---|:---:|:---:|
+| R runtime | ✓ | |
+| Package e dipendenze | ✓ | collaborativo |
+| OS, driver e infrastruttura | ✓ | |
+| Deployment | ✓ | collaborativo |
+| Performance infrastrutturale | ✓ | collaborativo |
+| Correttezza del metodo | | ✓ |
+| Interpretazione scientifica | | ✓ |
+| Significato dei dati | | ✓ |
+| Requisiti applicativi | collaborativo | ✓ |
+
+Il confine non significa che le responsabilità siano isolate: significa che la responsabilità tecnica e quella scientifica devono essere distinguibili.
+
+## Esperimenti prima delle decisioni costose
+
+Una richiesta infrastrutturale può essere formulata come un esperimento:
+
+```
+ipotesi
+ ↓
+test controllato
+ ↓
+evidenza
+ ↓
+decisione
+```
+
+Per R il test controllato deve includere, quando rilevanti, versione del runtime, package, backend di parallelismo, thread nativi e dati rappresentativi.
+
+Una variabile dovrebbe essere modificata alla volta, mantenendo stabile il resto dell'ambiente. Il risultato deve poter essere ripetuto.
+
+## Caso 1 — RAM
+
+> «Lo script va in errore per memoria. Servono 64 GB.»
+
+Chiedere dimensione dei dati, RAM di picco, swap, worker, memoria per worker, copie, oggetti intermedi, garbage collection, possibilità di filtrare e concorrenza.
+
+La decisione non parte dalla dimensione del dataset ma dal comportamento osservato del runtime R.
+
+## Caso 2 — CPU
+
+> «R usa il 100% della CPU. Servono più core.»
+
+Chiedere numero di core utilizzati, worker, thread nativi, profiling, parallelizzabilità, scaling, crescita della RAM e coinvolgimento del database.
+
+| Worker | Tempo | RAM | CPU |
+|---:|---:|---:|---:|
+| 1 | … | … | … |
+| 2 | … | … | … |
+| 4 | … | … | … |
+| 8 | … | … | … |
+
+La domanda non è soltanto quanti core vede R, ma **quali processi e thread li stanno usando e con quale beneficio sul tempo di esecuzione**.
+
+## Caso 3 — Shiny lenta
+
+Misurare utenti contemporanei, latenza per richiesta, CPU, RAM per sessione, database, rete, caching e operazioni lente.
+
+«Funziona per un utente» non dimostra la capacità di sostenere più utenti.
+
+Per una soluzione Shiny va inoltre identificato il modello di deployment: processi, sessioni, reverse proxy e modalità di scaling cambiano il significato di CPU e RAM osservate.
+
+## Caso 4 — Calcolo tutto in R
+
+Per grandi dataset in Oracle chiedere quali filtri e aggregazioni possono essere eseguiti nel database e quali operazioni richiedono davvero R.
+
+```
+Oracle
+  ↓
+filtro / aggregazione
+  ↓
+dataset ridotto
+  ↓
+R
+  ↓
+analisi
+```
+
+La domanda è anche quanta memoria e serializzazione si evita spostando il calcolo verso i dati.
+
+## Caso 5 — 20 package
+
+Chiedere dipendenze effettive, versioni, lockfile, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
+
+L'obiettivo è una baseline ricostruibile, non un numero di package installati.
+
+## Caso 6 — Container
+
+Un container può rendere più controllabili R, package e librerie native. Non risolve automaticamente database, segreti, storage, rete, identità, scheduler e monitoring.
+
+La domanda da verificare è quali parti dell'ambiente R devono essere incluse nell'artefatto e quali restano dipendenze esterne.
+
+## Esercizio integrato
+
+Richiesta:
+
+> «Il mio script R impiega tre ore. Mi serve una VM con 16 core e 64 GB di RAM.»
+
+Dati:
+
+```
+RAM di picco: 11 GB
+CPU: 98%
+Worker: 1
+Database: poco rilevante
+I/O: normale
+```
+
+Test:
+
+| Worker | Tempo | RAM |
+|---:|---:|---:|
+| 1 | 192 min | 11 GB |
+| 2 | 104 min | 20 GB |
+| 4 | 59 min | 38 GB |
+| 8 | 51 min | 70 GB |
+
+### Domande
+
+1. Quali sono i fatti misurati?
+2. Qual è l'ipotesi sul collo di bottiglia?
+3. Quale overhead emerge?
+4. Quale configurazione soddisfa un obiettivo < 60 minuti?
+5. Quale vincolo introduce la RAM?
+6. Quali test mancano?
+7. Quali alternative applicative devono essere considerate?
+8. Quali informazioni entrano nella richiesta IT?
+
+Il benchmark mostra che il parallelismo riduce il tempo ma aumenta rapidamente la memoria e non scala linearmente. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
+
+## Scheda decisionale
+
+| Campo | Informazione |
+|---|---|
+| Requisito | cosa deve essere ottenuto |
+| Workload | dati, frequenza, durata, concorrenza |
+| Ambiente | R, package, native, OS |
+| Evidenze | misure |
+| Collo di bottiglia | ipotesi verificata |
+| Alternative | opzioni |
+| Test | esperimenti |
+| Decisione | soluzione |
+| Baseline | stato riproducibile |
+| Ownership | responsabilità |
+
+## Le quattro domande finali
+
+1. **Che cosa deve fare?**
+2. **Quale evidenza dimostra che serve ciò che viene richiesto?**
+3. **Dove deve essere eseguito il lavoro?**
+4. **Esiste già un componente aziendale adatto?**
+
+Il risultato atteso non è saper programmare R. È saper passare da:
+
+```
+richiesta
+   ↓
+requisito
+   ↓
+evidenza
+   ↓
+diagnosi
+   ↓
+architettura
+   ↓
+deployment
+   ↓
+ownership
+   ↓
+baseline
+```
+
+Una soluzione R diventa gestibile quando il suo comportamento può essere osservato, il suo ambiente può essere ricostruito e le decisioni possono essere motivate dalle evidenze.
