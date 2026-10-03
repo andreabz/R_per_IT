@@ -57,6 +57,11 @@ book:
       - section: "6. Decisioni operative"
         contents:
           - 06-decisioni.qmd
+    - appendice-kit-operativo.qmd
+
+      - section: "Appendice"
+        contents:
+          - appendice-kit-operativo.qmd
 
   chapters:
     - index.qmd
