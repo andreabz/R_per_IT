@@ -16,12 +16,14 @@ Il problema ricorrente è trasformare una richiesta formulata in termini tecnici
 
 Il principio vale per l'intero manuale. Una richiesta parte dal risultato che deve essere ottenuto; da lì si identificano workload e ambiente, si raccolgono evidenze, si valutano le alternative e solo alla fine si definiscono infrastruttura, rilascio e gestione.
 
-Il percorso generale è:
+Il percorso è:
 
 ```text
 requisito
    ↓
-ambiente e workload
+ambiente R e workload
+   ↓
+modello di esecuzione
    ↓
 misura e diagnosi
    ↓
@@ -29,72 +31,61 @@ architettura
    ↓
 deployment
    ↓
-governance e gestione
+governance
    ↓
-nuova valutazione quando cambia qualcosa
+nuova baseline quando cambia qualcosa
 ```
 
 ## Come è organizzato il manuale
 
-I sette capitoli seguono una progressione intenzionale. Ogni capitolo risponde a una domanda e prepara quella successiva; il settimo non aggiunge teoria, ma applica il metodo completo.
+I sette capitoli seguono una progressione intenzionale. L'introduzione non è un capitolo numerato: definisce il metodo. I capitoli sono numerati da 1 a 7 e ciascuno risponde a una domanda precisa.
 
-1. **Contesto e ambiente R** — che cosa compone una soluzione R e che cosa deve essere identificato prima di eseguirla.
-2. **Runtime, processi e parallelismo** — come viene eseguito il workload e quali risorse può impegnare.
-3. **Performance e diagnostica** — come misurare il comportamento e distinguere il collo di bottiglia.
-4. **Architettura e integrazione** — dove collocare la soluzione e come definire i confini con database, piattaforme e servizi.
-5. **Deployment e gestione operativa** — come trasformare il software in una release verificata, distribuibile e osservabile.
-6. **Governance e valutazione delle richieste** — come collegare requisiti, evidenze, responsabilità, approvazioni e baseline.
-7. **Dalla richiesta alla decisione** — come applicare tutto il percorso a scenari concreti e a un caso didattico.
+1. **Contesto e ambiente R** — che cosa compone una soluzione R e quali dipendenze devono essere governate.
+2. **Runtime, processi e parallelismo** — come R esegue il lavoro, usa memoria, processi, worker e thread.
+3. **Performance e diagnostica** — come misurare il comportamento e distinguere un collo di bottiglia da un'ipotesi.
+4. **Architettura e integrazione** — dove collocare R e dove devono essere eseguiti dati e calcoli.
+5. **Deployment e gestione operativa** — come trasformare il software in una release riproducibile e gestibile.
+6. **Governance e responsabilità** — come collegare requisiti, evidenze, decisioni, baseline e ownership.
+7. **Laboratorio decisionale** — come applicare il metodo a richieste realistiche.
 
 La sequenza può essere letta anche come una serie di domande:
 
-> **Che cosa stiamo gestendo? → Come viene eseguito? → Come si comporta? → Dove deve vivere? → Come lo rilasciamo e lo gestiamo? → Chi verifica e decide? → Come applichiamo il metodo?**
+> **Che cosa stiamo gestendo? → Come viene eseguito? → Come si comporta? → Dove deve vivere? → Come lo rilasciamo? → Chi ne è responsabile? → Come decidiamo?**
+
+## Il modello operativo
+
+Il filo conduttore del manuale è:
+
+```text
+requisito
+   ↓
+evidenza
+   ↓
+decisione
+   ↓
+responsabilità
+   ↓
+baseline
+```
+
+Il modello viene applicato a cinque dimensioni ricorrenti:
+
+- **software** — versione di R, pacchetti, dipendenze e componenti nativi;
+- **runtime** — processi, memoria, worker, thread e parallelismo;
+- **workload** — CPU, RAM, I/O, rete e database;
+- **architettura** — confini tra R, database, servizi e piattaforme;
+- **operatività** — release, configurazione, sicurezza, monitoring e ownership.
 
 ## Quattro domande da ricordare
 
-Queste quattro domande sintetizzano il metodo e tornano nel capitolo finale:
+Queste domande sintetizzano il metodo e tornano nel capitolo 7:
 
 1. **Che cosa deve fare?**
 2. **Quale evidenza dimostra che serve ciò che viene richiesto?**
 3. **Dove deve essere eseguito il lavoro?**
 4. **Esiste già un componente aziendale adatto?**
 
-
-## Un modello operativo unico
-
-I capitoli possono essere letti come una catena nella quale ogni passaggio produce le informazioni necessarie al successivo:
-
-```text
-requisito
-  ↓
-workload
-  ↓
-diagnostica
-  ↓
-architettura
-  ↓
-baseline software
-  ↓
-verifica del software
-  ↓
-deployment
-  ↓
-operatività
-  ↓
-modifica
-  ↓
-nuova baseline
-```
-
-La **baseline software** identifica lo stato dell'ambiente e del software a cui si riferisce una determinata release. Non è un documento statico: cambia quando una modifica autorizzata produce un nuovo stato che viene nuovamente verificato.
-
-Tre domande restano distinte e non vanno confuse:
-
-| Domanda | Oggetto |
-|---|---|
-| Quanto costa eseguire il lavoro? | performance e dimensionamento |
-| Che cosa stiamo eseguendo? | software, ambiente e configurazione |
-| Il metodo è adeguato allo scopo? | metodo analitico e criteri applicabili |
+Non sono quattro domande sull'hardware. Servono a impedire che una richiesta infrastrutturale venga trattata come una specifica già dimostrata.
 
 ## Dal problema alla decisione
 
@@ -103,9 +94,9 @@ Una richiesta infrastrutturale non dovrebbe partire dalla risorsa desiderata. Il
 ```text
 Che cosa deve fare?
        ↓
-Quanto spesso?
+Quali dati usa?
        ↓
-Con quali dati?
+Quanto spesso e con quale concorrenza?
        ↓
 Quanto deve essere veloce?
        ↓
@@ -116,13 +107,34 @@ Quali alternative esistono?
 Quale infrastruttura serve?
 ```
 
+Il corso non richiede di conoscere tutta la programmazione R. Richiede però di conoscere abbastanza del **modello computazionale di R** da interpretare correttamente le evidenze. Per esempio, un oggetto R può essere copiato, un worker può richiedere memoria aggiuntiva, una libreria nativa può creare propri thread e una query può essere eseguita dal database invece che da R. Questi dettagli cambiano il significato di una misura di CPU o RAM.
+
 ## Come leggere le evidenze
 
-Durante il percorso è utile distinguere, quando possibile, tra:
+Durante il percorso è utile distinguere tra:
 
 - **fatto misurato** — per esempio «CPU 98%»;
 - **interpretazione** — per esempio «il workload sembra CPU-bound»;
 - **ipotesi** — per esempio «potrebbe essere parallelizzabile»;
-- **decisione infrastrutturale** — per esempio «valutiamo più core».
+- **test** — per esempio «confrontiamo 1, 2, 4 e 8 worker»;
+- **decisione infrastrutturale** — per esempio «valutiamo una configurazione con più core».
 
 Questa distinzione evita di trasformare un'ipotesi in una specifica hardware.
+
+## Una distinzione fondamentale
+
+Il manuale tiene separate tre domande:
+
+| Domanda | Oggetto |
+|---|---|
+| Quanto costa eseguire il lavoro? | performance e dimensionamento |
+| Che cosa stiamo eseguendo? | software, ambiente e configurazione |
+| Il metodo è adeguato allo scopo? | metodo analitico e criteri applicabili |
+
+IT deve poter verificare le prime due senza assumere la responsabilità della terza. La collaborazione tra IT e sviluppatore rimane necessaria quando una decisione tecnica dipende dalla logica applicativa o dal metodo scientifico.
+
+## Una frase guida
+
+> **Non serve che IT sappia programmare in R; serve che sappia riconoscere che cosa cambia quando il workload è R.**
+
+Questa è la chiave di lettura dei capitoli successivi.
