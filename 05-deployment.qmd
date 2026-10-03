@@ -20,6 +20,18 @@ Per R la difficoltà aggiuntiva è che una release deve rendere riproducibile no
 | **retry** | ripetizione automatica di un'operazione dopo un errore, secondo una politica definita |
 | **rollback** | ritorno a una versione precedente conosciuta e verificata di codice e ambiente |
 
+```{mermaid}
+%%| echo: false
+flowchart LR
+  A[Codice] --> B[Commit]
+  B --> C[Test]
+  C --> D[Ambiente riproducibile]
+  D --> E[Artefatto]
+  E --> F[Deploy]
+  F --> G[Smoke test]
+  G --> H[Monitoring]
+``` 
+
 ## Catena di rilascio
 
 ```text
