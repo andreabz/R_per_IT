@@ -17,6 +17,16 @@ Il punto non è aggiungere altra teoria: è collegare **evidenza, decisione e re
 | **baseline** | configurazione di riferimento con cui confrontare una modifica; nel corso include codice, ambiente e risultati misurati |
 | **ownership** | assegnazione esplicita della responsabilità di una decisione, componente o attività operativa |
 
+```{mermaid}
+%%| echo: false
+flowchart LR
+  A[Requisito] --> B[Misura]
+  B --> C[Evidenza]
+  C --> D[Decisione]
+  D --> E[Baseline]
+  E --> F[Responsabilità]
+``` 
+
 ## Dal requisito all'evidenza
 
 Il modello operativo è:
