@@ -57,10 +57,13 @@ book:
       - section: "6. Decisioni operative"
         contents:
           - 06-decisioni.qmd
-    - appendice-kit-operativo.qmd
 
-      - section: "Appendice"
+  appendices:
+    - strumenti-pratici.qmd
+    - appendice-kit-operativo.qmd
+      - section: "Strumenti e appendice"
         contents:
+          - strumenti-pratici.qmd
           - appendice-kit-operativo.qmd
 
   chapters:
