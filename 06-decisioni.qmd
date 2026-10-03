@@ -1,3 +1,8 @@
+---
+title: "Decisioni operative"
+subtitle: "Dalle evidenze alle scelte tecniche"
+---
+
 # Decisioni operative
 
 ## Perché questo capitolo
