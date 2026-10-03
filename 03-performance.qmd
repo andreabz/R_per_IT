@@ -23,6 +23,28 @@ flowchart LR
   G --> H[Decisione]
 ``` 
 
+## Come leggere questo capitolo
+
+Anche qui ci sono due livelli.
+
+**Livello operativo — da ricordare**
+
+- prima si misura, poi si dimensiona;
+- una metrica isolata non identifica automaticamente il collo di bottiglia;
+- `elapsed`, CPU, RAM, I/O e tempo database descrivono aspetti diversi;
+- benchmark e baseline devono essere confrontabili;
+- una richiesta infrastrutturale deve essere collegata a un workload misurato.
+
+**Livello diagnostico — da usare quando serve**
+
+- profiling;
+- CPU-bound, memory-bound e I/O;
+- scaling e speed-up;
+- worker, thread e serializzazione;
+- confronto tra implementazioni.
+
+L'obiettivo non è insegnare a IT a ottimizzare il codice R, ma permettere di distinguere una richiesta supportata da evidenze da una semplice ipotesi di dimensionamento.
+
 ## Misura minima
 
 Registrare almeno durata, CPU, RAM di picco, I/O, rete, tempo nel database, worker, thread e dimensione dei dati.
@@ -111,7 +133,7 @@ benchmark
 
 Il profiling non sostituisce il monitoraggio infrastrutturale: mette in relazione il comportamento del codice con quello della macchina.
 
-## Lessico della diagnostica
+## Approfondimento — Lessico della diagnostica
 
 Prima di interpretare le misure, definiamo alcuni termini usati nel ragionamento sulle performance:
 
@@ -136,7 +158,7 @@ Sono ipotesi diagnostiche, non conclusioni automatiche.
 
 Nel caso R, CPU elevata può derivare dal codice R, da BLAS/LAPACK, da thread nativi o da più worker. RAM elevata può derivare da oggetti, copie, garbage collection o memoria duplicata tra processi.
 
-## Vectorization
+## Approfondimento — Vectorization
 
 La vectorization permette a R di esprimere operazioni su insiemi di valori e può ridurre overhead interpretativo delegando lavoro a codice compilato.
 
@@ -144,7 +166,7 @@ Per IT il punto è che **due implementazioni con lo stesso risultato possono ave
 
 Questo è un buon esempio di confine tra competenza applicativa e infrastrutturale: IT può misurare il costo, mentre la scelta di cambiare algoritmo o implementazione resta in collaborazione con chi sviluppa il workload.
 
-## Base R, data.table e dplyr
+## Approfondimento — Base R, data.table e dplyr
 
 Non esiste una classifica universale. La performance dipende da operazione, dati, backend, memoria, implementazione, copie e lazy execution.
 
@@ -152,7 +174,7 @@ Un confronto corretto usa stesso input, stesso risultato, ambiente controllato e
 
 L'obiettivo non è scegliere una tecnologia «migliore», ma capire come un'implementazione R modifica il workload osservato.
 
-## Scaling
+## Diagnostica — Scaling
 
 ```text
 speed-up(n) = tempo(1 worker) / tempo(n worker)
@@ -162,7 +184,7 @@ Lo scaling reale è limitato da parti seriali, serializzazione, sincronizzazione
 
 Nel caso R bisogna inoltre distinguere lo scaling del codice da quello delle librerie native: aumentare i worker può cambiare contemporaneamente numero di processi, memoria e thread.
 
-## Diagnosi
+## Diagnostica — Interpretazione delle misure
 
 ### CPU alta
 
@@ -201,6 +223,14 @@ Informativa:
 > «Il workload R impiega 192 minuti con un worker; il profiling indica X; il test 1/2/4/8 worker produce A/B/C/D e RAM X/Y/Z/W; il database non è il collo di bottiglia.»
 
 Una richiesta informativa permette a IT di valutare più alternative: modifica del codice, configurazione del parallelismo, aumento delle risorse o spostamento del calcolo.
+
+### Domande che IT dovrebbe poter rispondere
+
+1. Qual è il tempo percepito dall'utente o richiesto dal processo?
+2. Quale risorsa risulta effettivamente limitante?
+3. Quale evidenza collega la risorsa al collo di bottiglia?
+4. Quale test controllato distingue le alternative?
+5. Qual è la baseline rispetto alla quale verrà verificato il cambiamento?
 
 > **Prima di aumentare le risorse, verificare il collo di bottiglia.**
 
