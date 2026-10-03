@@ -117,6 +117,72 @@ Quando scriviamo library(data.table), data.table è il **package**; library() è
 
 Questa distinzione diventa importante quando IT deve sapere **quale copia di un package viene caricata e chi può modificarla**.
 
+## Da dove arrivano i package?
+
+Per IT, sapere che esiste un package non basta: bisogna sapere **da quale repository viene installato**, quale versione viene richiesta e se l'ambiente aziendale consente di raggiungere quella sorgente.
+
+### CRAN
+
+**CRAN (Comprehensive R Archive Network)** è il principale network pubblico di repository per package R. È una sorgente fondamentale per package open source, ma non è l'unica possibile.
+
+In una soluzione aziendale possono comparire, per esempio:
+
+| Sorgente | Uso tipico |
+|---|---|
+| **CRAN** | package open source distribuiti pubblicamente |
+| **repository pubblico diverso da CRAN** | package distribuiti attraverso un altro ecosistema o canale |
+| **repository aziendale interno** | controllo centralizzato di package approvati, versioni o disponibilità |
+| **Git repository** | sviluppo, test o installazione di versioni non ancora pubblicate come release |
+| **sorgente locale/artefatto** | installazioni controllate o package sviluppati internamente |
+
+La scelta della sorgente può coinvolgere proxy, firewall, approvazione delle dipendenze, riproducibilità, disponibilità del repository e supply-chain software.
+
+### Repository e installazione
+
+Quando viene eseguito:
+
+~~~text
+install.packages("data.table")
+~~~
+
+R deve sapere da quale repository recuperare il package. La configurazione può essere esplicita oppure derivare dalle opzioni e dalla configurazione dell'ambiente.
+
+Per vedere i repository configurati nella sessione:
+
+```{r}
+#| label: verifica-repository-r
+
+getOption("repos")
+```
+
+Il risultato è parte della diagnosi dell'ambiente. Due macchine con la stessa versione di R possono utilizzare repository differenti.
+
+### Binario o sorgente?
+
+L'installazione di un package può usare un **binario precompilato** oppure la compilazione da **sorgente**, a seconda del sistema operativo, del repository e della disponibilità del package.
+
+Un'installazione da sorgente può richiedere compilatori, toolchain, header e librerie di sviluppo. Per IT:
+
+~~~text
+package disponibile
+      ≠
+package immediatamente installabile
+~~~
+
+Un errore durante l'installazione non significa quindi necessariamente che il package sia difettoso.
+
+### Repository pubblico e repository aziendale
+
+Per un ambiente di produzione può essere previsto un repository aziendale o un proxy/cache approvato, invece dell'accesso diretto a un repository pubblico. Il corso non prescrive una soluzione unica.
+
+La domanda operativa è:
+
+> **Qual è la sorgente autorizzata dei package per questo ambiente e come viene garantita la disponibilità della versione richiesta?**
+
+### Informazioni da consegnare a IT
+
+Per una soluzione destinata alla produzione, lo sviluppatore dovrebbe indicare almeno package, versioni o lockfile, repository previsti ed eventuali package installati da Git, sorgenti locali o repository interni.
+
 ## Approfondimento — Le library di R
 
 R può avere più library contemporaneamente. .libPaths() restituisce il percorso delle library che R considera nella sessione corrente, nell'ordine in cui vengono cercate.
