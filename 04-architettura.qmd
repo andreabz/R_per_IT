@@ -24,6 +24,20 @@ Prima della tabella delle soluzioni, definiamo i termini che identificano i prin
 | **reverse proxy** | componente che riceve richieste HTTP e le inoltra al servizio applicativo, spesso gestendo anche TLS, routing o autenticazione secondo l'architettura adottata |
 
 Questi termini descrivono **come viene eseguito e consumato il lavoro**, non soltanto quale codice R contiene la soluzione.
+## Lessico architetturale aggiuntivo
+
+Alcuni termini della sezione successiva descrivono componenti o comportamenti che non sono specifici di R:
+
+| Termine | Significato operativo |
+|---|---|
+| **idempotenza** | proprietà per cui ripetere una stessa operazione nelle condizioni previste non produce effetti applicativi indesiderati aggiuntivi; è importante per retry e pipeline |
+| **embedded** | componente eseguito all'interno dello stesso processo o distribuito come parte dell'applicazione, invece di essere necessariamente un servizio remoto separato |
+| **formato colonnare** | formato dati che memorizza insieme i valori di una colonna, utile per alcune scansioni e operazioni analitiche |
+| **Parquet** | formato di file colonnare usato per memorizzare dati strutturati in modo efficiente per molti workload analitici |
+| **Arrow** | ecosistema e formato per rappresentare e trasferire dati tabellari in memoria in modo interoperabile tra linguaggi e strumenti |
+| **DuckDB** | motore SQL analitico eseguibile localmente, utilizzabile come componente embedded anziché come database server separato |
+| **APEX** | piattaforma Oracle per costruire applicazioni web sopra database Oracle; qui è un esempio di componente applicativo esterno a R |
+
 ## Definire il workload
 
 Servono almeno: interattivo o batch, utenti e concorrenza, frequenza, tempo di risposta, dimensione e crescita dei dati, disponibilità e sistemi esterni.
