@@ -61,10 +61,6 @@ book:
   appendices:
     - strumenti-pratici.qmd
     - appendice-kit-operativo.qmd
-      - section: "Strumenti e appendice"
-        contents:
-          - strumenti-pratici.qmd
-          - appendice-kit-operativo.qmd
 
   chapters:
     - index.qmd
