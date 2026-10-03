@@ -23,6 +23,17 @@ Quindi:
 
 Questo è il punto di partenza per interpretare CPU, RAM e richieste di dimensionamento.
 
+```{mermaid}
+%%| echo: false
+flowchart TD
+  A[Codice R] --> B[Processo R]
+  B --> C{Esecuzione}
+  C -->|sequenziale| D[Una unità di lavoro]
+  C -->|parallelismo| E[Worker / processi]
+  B --> F[Librerie native]
+  F --> G[Thread nativi]
+``` 
+
 ## Lessico del runtime
 
 Prima di entrare nei meccanismi di memoria e parallelismo, fissiamo alcuni termini che ricorreranno nel capitolo:
@@ -111,13 +122,13 @@ base environment
 
 Un environment ha identità propria e può essere modificato.
 
-~~~{r}
+```{r}
 #| label: esempio-environment
 
 e <- new.env()
 e$x <- 10
 e$x
-~~~
+```
 
 Qui e contiene l'associazione x → 10. Se un'altra variabile punta allo stesso environment, entrambe osservano lo stesso stato.
 
@@ -125,7 +136,7 @@ Qui e contiene l'associazione x → 10. Se un'altra variabile punta allo stesso 
 
 Consideriamo:
 
-~~~{r}
+```{r}
 #| label: esempio-lexical-scoping
 
 x <- 10
@@ -135,7 +146,7 @@ f <- function() {
 }
 
 f()
-~~~
+```
 
 Quando f() cerca x, R non cerca semplicemente «dove è stata chiamata» la funzione. La funzione è stata **definita** in un determinato environment e conserva il riferimento a quella catena.
 
