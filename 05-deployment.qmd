@@ -135,6 +135,131 @@ Questi aspetti appartengono al normale esercizio IT; per il corso interessa ciò
 
 Account tecnici, minimo privilegio, segreti, rete e TLS/HTTPS restano requisiti operativi da integrare con gli standard aziendali, non un modulo specifico di R.
 
+## Modalità di esecuzione
+
+Prima del deployment bisogna chiarire **come viene avviato il workload**. Lo stesso codice R può avere requisiti operativi molto diversi a seconda del modello di esecuzione.
+
+### Job batch
+
+```text
+scheduler
+   ↓
+processo R
+   ↓
+input → elaborazione → output
+   ↓
+fine processo
+```
+
+In un job batch interessano soprattutto durata, frequenza, dimensione dell'input, risorse di picco, timeout, exit code, log, retry e gestione dei file temporanei. Il processo normalmente ha un ciclo di vita delimitato: parte, esegue il lavoro e termina.
+
+### Servizio o applicazione interattiva
+
+```text
+utente
+   ↓
+web/proxy
+   ↓
+servizio applicativo
+   ↓
+processo/sessione R
+   ↓
+database / API / filesystem
+```
+
+Qui diventano centrali concorrenza, latenza, numero di sessioni o worker, isolamento tra richieste, timeout, disponibilità e comportamento dopo il riavvio. Un benchmark eseguito con un solo utente non descrive automaticamente il comportamento del servizio sotto carico.
+
+La modalità di esecuzione deve quindi essere una voce esplicita della consegna a IT: **batch, servizio, applicazione interattiva o altro modello**, con relativo entrypoint e ciclo di vita.
+
+## Configurazione del runtime
+
+Una soluzione R non è definita soltanto da versione di R e package. Prima del deployment devono essere identificati anche i parametri che possono modificare il comportamento del processo.
+
+Un inventario minimo comprende:
+
+| Area | Informazione da fornire |
+|---|---|
+| Runtime | versione R e sistema operativo supportato |
+| Package | `renv.lock` o altra specifica delle dipendenze |
+| Librerie | posizione e ordine dei library path, se rilevanti |
+| Native | BLAS/LAPACK, librerie di sistema, driver e client |
+| Esecuzione | entrypoint, working directory, directory temporanea |
+| Parallelismo | worker, processi e thread nativi |
+| Configurazione | variabili d'ambiente, file di configurazione, parametri modificabili |
+| Dati | input, output, formati, dimensioni e crescita attesa |
+| Sistemi esterni | database, API, filesystem, storage, proxy e certificati |
+| Sicurezza | account tecnico, permessi, segreti e modalità di autenticazione |
+| Locale | timezone, locale, encoding e impostazioni che influenzano l'output |
+
+L'obiettivo non è documentare ogni dettaglio del sistema, ma rendere espliciti quelli che possono cambiare **risultato, performance, accesso ai dati o comportamento operativo**.
+
+## Handover: le informazioni che lo sviluppatore deve fornire a IT
+
+Il passaggio in produzione è più efficace se viene trattato come una **specifica verificabile del workload**, non come una richiesta generica di infrastruttura.
+
+Una consegna minima dovrebbe contenere:
+
+| Area | Informazione richiesta | Evidenza | Responsabile |
+|---|---|---|---|
+| Applicazione | nome, repository, commit/tag, entrypoint | commit/tag | sviluppatore |
+| Runtime | versione R, OS supportati | `R.version`, documentazione | sviluppatore |
+| Dipendenze | package, versioni, sorgenti, native dependencies | `renv.lock` + inventario | sviluppatore/IT |
+| Workload | batch/servizio, durata, frequenza, concorrenza | descrizione + misure | sviluppatore |
+| Dati | input/output, dimensioni, crescita | dataset o statistiche | sviluppatore |
+| Risorse | CPU, RAM, I/O, rete, worker, thread | benchmark/profiling | sviluppatore + IT |
+| Sistemi esterni | DB, API, filesystem, storage | elenco endpoint e flussi | sviluppatore + IT |
+| Configurazione | parametri, variabili d'ambiente, timeout | configurazione di riferimento | sviluppatore |
+| Sicurezza | account, permessi, segreti, TLS | requisiti e configurazione | IT + owner |
+| Test | funzionali, integrazione, performance | risultati e baseline | sviluppatore |
+| Deployment | artefatto, procedura, smoke test | pipeline/runbook | IT + sviluppatore |
+| Operatività | log, metriche, alert, retry, restart | configurazione operativa | IT |
+| Recovery | rollback e baseline precedente | procedura verificata | IT + sviluppatore |
+| Ownership | chi decide e chi interviene | matrice responsabilità | team |
+
+Questa tabella separa tre cose che spesso vengono confuse:
+
+1. **che cosa chiede lo sviluppatore**;
+2. **quale evidenza giustifica la richiesta**;
+3. **chi è responsabile della verifica e della gestione**.
+
+### Da una richiesta generica a una specifica verificabile
+
+Una richiesta come:
+
+> «Lo script R necessita di 16 core e 64 GB di RAM.»
+
+non è ancora una specifica infrastrutturale sufficiente. Mancano almeno workload, ambiente, concorrenza, durata obiettivo e misura che giustifica quelle risorse.
+
+Una consegna più utile potrebbe descrivere, per esempio:
+
+```text
+R: versione dichiarata
+Ambiente: renv.lock + OS supportato
+Input: 30 GB
+Output: 2 GB
+Esecuzione: batch, 2 volte/giorno
+Target: < 60 minuti
+Worker: 1, BLAS threads: 1
+Picco RSS osservato: 11 GB
+CPU osservata: 98%
+Database: Oracle
+Volume trasferito: 40 GB
+```
+
+e allegare un benchmark controllato:
+
+| Worker | Tempo | RAM di picco |
+|---:|---:|---:|
+| 1 | 192 min | 11 GB |
+| 2 | 104 min | 20 GB |
+| 4 | 59 min | 38 GB |
+
+Queste evidenze consentono a IT di discutere una configurazione concreta e di identificare ciò che resta da verificare. Non trasformano automaticamente i numeri osservati nella capacità definitiva: la configurazione deve considerare anche concorrenza, overhead, margine operativo, stabilità e vincoli della piattaforma.
+
+La regola operativa è:
+
+> **Lo sviluppatore deve fornire una descrizione riproducibile del workload e delle evidenze; IT deve poter trasformare queste informazioni in una configurazione, un deployment e un esercizio verificabili.**
+
 ## Production readiness
 
 | Aspetto | Evidenza |
