@@ -6,13 +6,13 @@ subtitle: "R, database, APEX, Quarto, Shiny, API e server"
 
 ## Perché questo capitolo
 
-Una volta compreso come R viene eseguito, bisogna decidere **dove collocarlo e quali responsabilità assegnare agli altri componenti**.
+Quando sappiamo che cosa esegue R e quali risorse richiede, possiamo affrontare la domanda architetturale: dove deve essere eseguito il lavoro, quali componenti devono collaborare e quali responsabilità è meglio lasciare a servizi già presenti nell'organizzazione. L'architettura nasce quindi dai requisiti, non dalla tecnologia disponibile.
 
 La domanda proprietaria è:
 
 > **Dove deve vivere la soluzione e come si integra con il resto del sistema?**
 
-**Perimetro:** questo capitolo tratta scelte architetturali, confini tra componenti, integrazione e contesto di esecuzione. Build, test, release e gestione delle modifiche appartengono al capitolo 5; responsabilità e approvazioni al capitolo 6.
+**Perimetro:** qui si definiscono collocazione, confini tra componenti e modalità di integrazione. Il modo in cui una soluzione viene costruita e rilasciata è il tema del capitolo 5; chi verifica, approva e mantiene la soluzione è il tema del capitolo 6.
 
 ## Definire i requisiti
 
