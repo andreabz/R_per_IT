@@ -97,6 +97,18 @@ benchmark
 
 Il profiling non sostituisce il monitoraggio infrastrutturale: mette in relazione il comportamento del codice con quello della macchina.
 
+## Lessico della diagnostica
+
+Prima di interpretare le misure, definiamo alcuni termini usati nel ragionamento sulle performance:
+
+| Termine | Significato operativo |
+|---|---|
+| **CPU-bound** | workload il cui tempo è limitato principalmente dal calcolo CPU, dopo aver escluso altri colli di bottiglia rilevanti |
+| **memory-bound** | workload in cui il limite principale è legato all'accesso o alla capacità della memoria, non semplicemente alla quantità di RAM installata |
+| **I/O** | operazioni di ingresso/uscita verso storage, rete o altri dispositivi; possono introdurre attese mentre la CPU resta poco utilizzata |
+| **overhead** | costo aggiuntivo necessario per coordinare o eseguire il lavoro, oltre al calcolo utile; può derivare da processi, thread, serializzazione, sincronizzazione o trasferimenti |
+| **scaling** | variazione delle prestazioni al variare delle risorse o del grado di parallelismo |
+
 ## CPU, memoria, I/O e database
 
 | Osservazione | Ipotesi da verificare |
