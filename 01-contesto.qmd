@@ -11,6 +11,26 @@ Per IT, una richiesta R non è normalmente una richiesta di installazione di un 
 
 Il primo obiettivo non è conoscere l'ecosistema R in dettaglio, ma poter ricostruire il perimetro tecnico della soluzione e capire quali parti sono già governate da IT.
 
+## Lessico operativo minimo
+
+Per seguire il corso bastano pochi termini aggiuntivi rispetto al lessico IT abituale:
+
+| Termine | Significato operativo |
+|---|---|
+| **runtime** | software e ambiente che eseguono il codice; qui, principalmente R e ciò che gli permette di funzionare |
+| **dipendenza nativa** | libreria o componente compilato fornito dall'OS o da un altro software, usato direttamente o indirettamente da R/package |
+| **processo** | istanza in esecuzione con il proprio spazio di memoria visto dal sistema operativo |
+| **worker** | unità incaricata di eseguire una parte del lavoro parallelo |
+| **thread** | flusso di esecuzione all'interno di un processo |
+| **serializzazione** | trasformazione di un oggetto in una rappresentazione trasferibile o memorizzabile, per esempio tra processi |
+| **profiling** | misura dettagliata di dove il programma spende tempo o risorse |
+| **benchmark** | confronto controllato tra esecuzioni dello stesso workload o di varianti del workload |
+| **baseline** | stato di riferimento, descritto e misurato, contro cui confrontare una modifica |
+| **artefatto** | risultato prodotto dalla build e destinato al deployment, per esempio un'immagine container o un pacchetto di release |
+| **smoke test** | verifica breve eseguita dopo il deployment per accertare che il servizio o job sia avviabile e svolga il percorso minimo atteso |
+
+Il resto del manuale introduce i termini R-specifici nel punto in cui diventano necessari.
+
 ## R non è RStudio
 
 R è il runtime che esegue il codice. RStudio è un ambiente di sviluppo. In produzione può essere necessario R senza RStudio.
