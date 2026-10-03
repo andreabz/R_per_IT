@@ -65,8 +65,7 @@ book:
     - 03-performance.qmd
     - 04-architettura.qmd
     - 05-deployment.qmd
-    - 06-governance.qmd
-    - 07-caso-finale.qmd
+    - 06-decisioni.qmd
 
 format:
   html:
