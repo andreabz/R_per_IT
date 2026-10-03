@@ -9,6 +9,21 @@ Una soluzione R non deve contenere necessariamente database, scheduler, autentic
 
 > **Quale componente deve svolgere ciascuna responsabilità e dove deve essere eseguito il calcolo?**
 
+## Lessico delle forme applicative
+
+Prima della tabella delle soluzioni, definiamo i termini che identificano i principali modelli:
+
+| Termine | Significato operativo |
+|---|---|
+| **Quarto** | strumento di pubblicazione che combina testo, codice e risultati per produrre documenti o siti; nel corso può eseguire codice R durante il render |
+| **Shiny** | framework R per costruire applicazioni web interattive in cui il codice R risponde alle interazioni degli utenti |
+| **API** | interfaccia attraverso cui un altro software può invocare funzionalità di una soluzione secondo un contratto definito |
+| **plumber2** | framework/package R per esporre codice R come servizio HTTP/API; introduce quindi un modello di esecuzione orientato a richieste concorrenti |
+| **entrypoint** | punto di avvio concreto della soluzione: script, comando, processo o altra istruzione che avvia il workload |
+| **scheduler** | componente che decide quando avviare un job e, secondo la piattaforma, ne gestisce stato, retry e calendario |
+| **reverse proxy** | componente che riceve richieste HTTP e le inoltra al servizio applicativo, spesso gestendo anche TLS, routing o autenticazione secondo l'architettura adottata |
+
+Questi termini descrivono **come viene eseguito e consumato il lavoro**, non soltanto quale codice R contiene la soluzione.
 ## Definire il workload
 
 Servono almeno: interattivo o batch, utenti e concorrenza, frequenza, tempo di risposta, dimensione e crescita dei dati, disponibilità e sistemi esterni.
