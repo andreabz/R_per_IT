@@ -122,6 +122,101 @@ ma prima:
 
 > **«Quale tipo di soluzione stiamo mettendo in esercizio e qual è il suo ciclo di vita?»**
 
+
+## R rispetto ai componenti IT già presenti
+
+In un'organizzazione che dispone già di Oracle, APEX, scheduler, reverse proxy, sistemi di autenticazione e storage, introdurre R non significa sostituire automaticamente questi componenti.
+
+La domanda è **quale parte del problema R deve risolvere**.
+
+| Componente | Ruolo tipico | Confine con R |
+|---|---|---|
+| Oracle | dati, integrità, query, aggregazioni | R riceve dati già ridotti quando il pushdown è appropriato |
+| APEX | interfaccia e workflow applicativo vicino a Oracle | R può fornire analisi o calcoli specialistici |
+| Scheduler/orchestratore | quando e con quale sequenza eseguire i job | R esegue lo step analitico |
+| Reverse proxy | ingresso HTTP, routing, TLS secondo l'architettura | inoltra verso Shiny/API |
+| R | analisi, modellistica, simulazione, trasformazioni e reportistica analitica | deve avere un entrypoint e un ambiente riproducibile |
+| Quarto | costruzione del documento/artefatto | usa R durante il render quando richiesto |
+| Shiny | interfaccia web interattiva | introduce sessioni e concorrenza |
+| API | contratto di integrazione | espone funzionalità R a sistemi esterni |
+
+Questa tabella non indica quale tecnologia sia preferibile. Serve a evitare due errori opposti: chiedere a R di diventare l'intero stack applicativo oppure duplicare con R funzioni già coperte da componenti aziendali.
+
+### Cinque reference architecture
+
+#### Job R + Oracle
+
+~~~text
+scheduler
+    ↓
+processo R
+    ├──────────→ Oracle
+    │              ↓
+    │         dati ridotti
+    ↓
+elaborazione R
+    ↓
+output
+~~~
+
+IT deve conoscere almeno entrypoint, calendario, account, dipendenze R, query/oggetti Oracle coinvolti, risorse, output, log, retry e ownership.
+
+#### Report Quarto
+
+~~~text
+scheduler / manuale
+        ↓
+    Quarto + R
+        ↓
+     HTML / PDF
+        ↓
+filesystem / pubblicazione
+~~~
+
+Il principale problema operativo è la riproducibilità del render e la gestione dell'artefatto. Non è un servizio web permanente solo perché produce un documento che poi viene consultato via web.
+
+#### Shiny
+
+~~~text
+browser
+   ↓
+reverse proxy
+   ↓
+Shiny
+   ├── sessioni
+   ├── Oracle
+   └── API / filesystem
+~~~
+
+Qui diventano centrali autenticazione, sessioni, concorrenza, latenza, timeout, CPU/RAM e comportamento al riavvio.
+
+#### API con plumber2
+
+~~~text
+client
+   ↓ HTTP
+reverse proxy / gateway
+   ↓
+API R
+   ├── validazione input
+   ├── log
+   └── Oracle / altri servizi
+~~~
+
+Il contratto dell'API, gli errori, i timeout, i limiti, l'autenticazione e la compatibilità tra versioni fanno parte della specifica operativa.
+
+#### R dentro una pipeline
+
+~~~text
+orchestratore
+   ├── SQL
+   ├── R
+   ├── validazione
+   └── pubblicazione
+~~~
+
+Lo sviluppatore deve descrivere input/output dello step R, dipendenze, exit code, retry e idempotenza. IT deve poter osservare lo stato dello step senza dover interpretare il codice R.
+
 ## R come componente
 
 ```text
