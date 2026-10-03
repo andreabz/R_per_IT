@@ -16,6 +16,8 @@ Il problema ricorrente è trasformare una richiesta formulata in termini tecnici
 
 Il principio vale per l'intero manuale. Una richiesta parte dal risultato che deve essere ottenuto; da lì si identificano workload e ambiente, si raccolgono evidenze, si valutano le alternative e solo alla fine si definiscono infrastruttura, rilascio e gestione.
 
+Il percorso è intenzionale: ogni capitolo risponde a una domanda e prepara quella successiva.
+
 Il percorso è:
 
 ```text
@@ -136,4 +138,4 @@ IT deve poter verificare le prime due senza assumere la responsabilità della te
 
 > **Non serve che IT sappia programmare in R; serve che sappia riconoscere che cosa cambia quando il workload è R.**
 
-Questa è la chiave di lettura dei capitoli successivi.
+Questa è la chiave di lettura dei capitoli successivi. Quando il testo usa concetti IT già noti — database, container, Git, monitoring, CI/CD — li tratta come confini operativi e non come materie da re-insegnare.
