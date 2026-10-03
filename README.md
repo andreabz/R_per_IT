@@ -2,80 +2,102 @@
 
 **Capire, valutare e gestire soluzioni sviluppate in R**
 
-Manuale tecnico pensato per chi, in ambito IT, deve comprendere richieste, valutare architetture, dimensionare risorse e governare soluzioni sviluppate in R senza dover diventare sviluppatore R.
+Manuale tecnico per sistemisti, architetti, DevOps, team piattaforma e responsabili tecnici che devono comprendere, valutare, portare in esercizio e governare soluzioni sviluppate in R senza dover diventare sviluppatori R.
 
 ## Obiettivo
 
-Il corso fornisce un modello operativo per passare da una richiesta tecnica a una decisione IT motivata.
+Il corso insegna a riconoscere che cosa cambia quando il workload è R e a trasformare una richiesta tecnica in una specifica verificabile.
 
 Il percorso segue questa sequenza:
 
-**contesto → runtime → performance → architettura → deployment → governance → applicazione a casi concreti**
+**contesto → runtime → performance → architettura → deployment → decisioni**
+
+Il modello operativo è:
+
+**requisito → evidenza → decisione → responsabilità → baseline**
 
 L'attenzione è rivolta soprattutto a:
 
-- ambiente R, pacchetti e dipendenze;
-- processi, thread, worker, parallelismo e memoria;
-- misura e diagnosi delle performance;
-- architetture R e integrazione con database e sistemi aziendali;
-- VM, container, job, Shiny e API;
+- ambiente R, package, library, repository, dipendenze e riproducibilità;
+- processi, memoria, worker, thread, parallelismo e librerie native;
+- misura, profiling, benchmark e diagnosi delle performance;
+- architetture R e integrazione con database, filesystem, API e altri sistemi;
+- diverse forme di soluzione: script personale, batch, report Quarto, Shiny, API plumber2, package e job in pipeline;
 - build, test, artefatti, release e deployment;
-- sicurezza, osservabilità, rollback e continuità operativa;
-- responsabilità, evidenze, verifiche e governance;
-- valutazione strutturata di richieste relative a soluzioni R.
-
-Il corso distingue inoltre tre piani che non devono essere confusi:
-
-1. **performance** — quanto costa eseguire il lavoro;
-2. **software** — che cosa viene eseguito e come viene gestito;
-3. **metodo** — se il metodo applicato è adeguato allo scopo secondo i requisiti pertinenti.
+- configurazione, sicurezza, logging, monitoring, rollback e continuità operativa;
+- handover tra sviluppatore e IT;
+- trasformazione delle evidenze in decisioni tecniche.
 
 ## Struttura
 
-1. **Contesto e ambiente R** — componenti dell'ambiente software, pacchetti, dipendenze e riproducibilità.
-2. **Runtime, processi e parallelismo** — modello di esecuzione e consumo delle risorse.
-3. **Performance e diagnostica** — misura, profiling, benchmark, colli di bottiglia e scaling.
-4. **Architettura e integrazione** — collocazione della soluzione e confini tra R e gli altri componenti.
-5. **Deployment e gestione operativa** — dal codice all'artefatto, al rilascio e all'esercizio.
-6. **Governance e responsabilità** — evidenze, ownership, verifiche, approvazioni e ricostruibilità.
-7. **Caso finale e checklist** — scenari operativi e applicazione del metodo a un caso didattico.
+1. **Contesto e ambiente R** — che cosa compone una soluzione R, come sono organizzati runtime, package, library, repository e dipendenze.
+2. **Runtime, memoria e parallelismo** — come R esegue il lavoro e come interpretare processi, worker, thread e memoria.
+3. **Performance e diagnostica** — come misurare tempo, CPU, RAM, I/O, database, profiling e scaling.
+4. **Architettura e integrazione** — dove collocare il calcolo e come presentare a IT i diversi tipi di soluzione R.
+5. **Deployment e gestione operativa** — come trasformare codice e ambiente in una release riproducibile e gestibile.
+6. **Decisioni operative** — come passare da requisito ed evidenza a decisione, baseline e ownership.
 
-## Pubblico
+## Come può presentarsi una soluzione R?
 
-Il materiale è rivolto principalmente a:
+Il corso considera esplicitamente diversi modelli operativi:
 
-- sistemisti e amministratori IT;
-- architetti e responsabili di infrastruttura;
-- team DevOps e piattaforme;
-- IT governance e supporto applicativo;
-- responsabili tecnici che devono valutare richieste relative a R.
+| Soluzione | Domanda IT principale |
+|---|---|
+| Script personale | quale ambiente deve avere l'utente e quali dati può utilizzare? |
+| Script batch | quando parte, quanto dura, quali risorse usa e come viene monitorato? |
+| Report Quarto | come viene generato, con quale ambiente e dove viene pubblicato l'artefatto? |
+| Applicazione Shiny | come vengono gestite sessioni, concorrenza, autenticazione e scaling? |
+| API plumber2 | quale contratto espone, chi può chiamarla e quali sono timeout, limiti e monitoring? |
+| Package R | quale API fornisce, quali dipendenze ha e come viene versionato e testato? |
+| Job R in pipeline | quali sono input/output, dipendenze, retry, stato e responsabilità dello step? |
 
-Non è un corso introduttivo alla programmazione in R. Gli esempi di codice sono utilizzati per illustrare concetti utili alla valutazione tecnica.
+Una soluzione può combinare più modelli: per esempio un report Quarto generato da un job batch, oppure una Shiny che utilizza database e API.
 
 ## Principio guida
 
 > **Prima di aumentare le risorse, capire perché servono.**
 
-Una richiesta come «servono più CPU», «serve più RAM» o «serve un server dedicato» viene quindi trattata come una richiesta da verificare, non come una specifica infrastrutturale già definita.
+Una richiesta come «servono più CPU», «serve più RAM» o «serve un server dedicato» viene trattata come una richiesta da verificare, non come una specifica infrastrutturale già definita.
 
 L'approccio parte da requisito e workload, passa attraverso misure ed evidenze e arriva a una decisione architetturale, operativa e governata.
 
-## Sito del corso
+## Handover sviluppatore → IT
 
-Il manuale è pubblicato come sito Quarto tramite GitHub Pages.
+Per portare una soluzione R in produzione devono essere espliciti almeno:
+
+- applicazione, repository, commit/tag ed entrypoint;
+- versione R, OS e dipendenze;
+- package, lockfile e dipendenze native;
+- modalità di esecuzione, workload, durata, frequenza e concorrenza;
+- input, output, dimensioni e crescita dei dati;
+- CPU, RAM, I/O, rete, worker e thread;
+- database, API, filesystem, storage e altri sistemi esterni;
+- configurazione, timeout, directory temporanee e variabili d'ambiente;
+- autenticazione, autorizzazioni, segreti e TLS;
+- test funzionali, integrazione, compatibilità e performance;
+- deployment, smoke test, logging, monitoring, restart e rollback;
+- ownership e responsabilità.
+
+La regola è:
+
+> **Lo sviluppatore fornisce una descrizione riproducibile del workload e delle evidenze; IT deve poter trasformare queste informazioni in una configurazione, un deployment e un esercizio verificabili.**
+
+## Pubblicazione
+
+Il manuale è scritto in Quarto e pubblicato tramite GitHub Actions su GitHub Pages.
 
 - Repository: https://github.com/andreabz/R_per_IT
 - Sito: https://andreabz.github.io/R_per_IT/
 
+Il workflow di pubblicazione esegue il restore dell'ambiente renv, il render Quarto e il deploy dell'artefatto `_site` su GitHub Pages.
+
 ## Tecnologia
 
-Il materiale è scritto in Quarto e pubblicato automaticamente tramite GitHub Actions.
-
-L'ambiente R del progetto è gestito con `renv`; il repository include il relativo lockfile per rendere riproducibile l'ambiente utilizzato dalla build.
+Il progetto usa Quarto per il manuale, R per gli esempi e il rendering dei contenuti, renv per la gestione riproducibile delle dipendenze R, GitHub Actions per build e pubblicazione e GitHub Pages per il sito.
 
 ## Stato del materiale
 
-Il repository contiene la versione corrente del corso. Il contenuto è organizzato come manuale tecnico e viene mantenuto nel repository insieme alla configurazione necessaria per la pubblicazione.
+Il repository contiene la versione corrente del corso. Il materiale è organizzato come manuale tecnico per IT e viene mantenuto insieme alla configurazione necessaria alla pubblicazione.
 
 ## Licenza
 
