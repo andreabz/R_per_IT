@@ -6,13 +6,13 @@ subtitle: "Dal requisito alla decisione, con evidenze e responsabilità"
 
 ## Perché questo capitolo
 
-I capitoli precedenti descrivono ambiente, esecuzione, diagnosi, architettura e deployment. Questo capitolo definisce **come queste informazioni diventano una decisione governata e tracciabile**.
+I capitoli precedenti producono informazioni tecniche: descrivono l'ambiente, il comportamento del workload, le alternative architetturali e il percorso di rilascio. Qui queste informazioni vengono ricomposte in una decisione che deve essere motivata, attribuita e ricostruibile nel tempo.
 
 La domanda proprietaria è:
 
 > **Chi decide, chi verifica, chi approva e chi mantiene cosa?**
 
-**Perimetro:** evidenze, responsabilità, approvazioni, ownership, baseline, ricostruibilità e distinzione tra verifica del software e adeguatezza del metodo.
+**Perimetro:** il capitolo riguarda il processo decisionale e le responsabilità: evidenze, baseline, ownership, approvazioni e distinzione tra verifica del software e adeguatezza del metodo. Non sostituisce la diagnosi tecnica dei capitoli precedenti e non attribuisce a IT responsabilità scientifiche che appartengono al responsabile del metodo.
 
 ## Dal requisito alla decisione
 
