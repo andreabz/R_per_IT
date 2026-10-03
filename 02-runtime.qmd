@@ -23,6 +23,30 @@ Quindi:
 
 Questo è il punto di partenza per interpretare CPU, RAM e richieste di dimensionamento.
 
+## Lessico del runtime
+
+Prima di entrare nei meccanismi di memoria e parallelismo, fissiamo alcuni termini che ricorreranno nel capitolo:
+
+| Termine | Significato operativo |
+|---|---|
+| **allocation** | richiesta di memoria per creare o mantenere un oggetto o un risultato |
+| **copy-on-modify** | comportamento per cui una rappresentazione può essere condivisa finché una modifica richiede una copia separata |
+| **backend** | componente o strategia concreta che realizza un modello di esecuzione; nel parallelismo determina come vengono creati e gestiti i worker |
+| **BLAS** | libreria/interfaccia per operazioni numeriche di algebra lineare, come prodotti tra vettori e matrici; può avere implementazioni multithread |
+| **LAPACK** | insieme di routine per algebra lineare numerica, usato da R e da altre librerie per problemi come sistemi lineari e decomposizioni di matrici |
+| **socket** | meccanismo di comunicazione tra processi; PSOCK usa connessioni socket per far comunicare processi R distinti |
+| **thread nativo** | thread creato o utilizzato da codice compilato, per esempio da una libreria numerica, e non necessariamente visibile come worker R |
+
+La distinzione importante è quindi:
+
+```text
+R
+├── processi / worker
+└── librerie native
+      └── thread nativi
+```
+
+Un singolo processo R può quindi essere associato a più thread nativi anche quando il codice applicativo non ha creato worker R.
 ## Processo, worker e thread
 
 Per R conviene distinguere tre livelli:
