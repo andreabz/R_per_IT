@@ -9,6 +9,20 @@ subtitle: "Misurare prima di dimensionare"
 
 Il capitolo usa una sequenza semplice: **ipotesi → misura → diagnosi → test → decisione**. Una metrica di sistema da sola non basta a stabilire il collo di bottiglia.
 
+```{mermaid}
+%%| echo: false
+flowchart LR
+  A[Workload] --> B[Misura]
+  B --> C[CPU / RAM / I/O / rete]
+  B --> D[Tempo]
+  B --> E[Database]
+  C --> F[Diagnosi]
+  D --> F
+  E --> F
+  F --> G[Test controllato]
+  G --> H[Decisione]
+``` 
+
 ## Misura minima
 
 Registrare almeno durata, CPU, RAM di picco, I/O, rete, tempo nel database, worker, thread e dimensione dei dati.
@@ -25,14 +39,14 @@ La funzione base di R più semplice per misurare un'espressione è system.time()
 - **system time**: tempo CPU consumato dal processo in system/kernel mode;
 - **elapsed time**: tempo trascorso secondo l'orologio.
 
-~~~{r}
+```{r}
 #| label: misura-system-time
 
 system.time({
   x <- sum(rnorm(1000000))
   x
 })
-~~~
+```
 
 Il risultato ha concettualmente questa forma:
 
