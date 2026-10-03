@@ -9,6 +9,8 @@ Per IT, una richiesta R non è normalmente una richiesta di installazione di un 
 
 > **Che cosa stiamo realmente gestendo?**
 
+Il primo obiettivo non è conoscere l'ecosistema R in dettaglio, ma poter ricostruire il perimetro tecnico della soluzione e capire quali parti sono già governate da IT.
+
 ## R non è RStudio
 
 R è il runtime che esegue il codice. RStudio è un ambiente di sviluppo. In produzione può essere necessario R senza RStudio.
@@ -37,6 +39,8 @@ Una dipendenza può attraversare più livelli. Un package può utilizzare C/C++ 
 
 **Per R questo confine è particolarmente importante:** il lockfile descrive l'ecosistema dei package, ma non rende automaticamente identiche le librerie native, i driver e il sistema operativo.
 
+Un esempio tipico è un package che si installa correttamente in sviluppo ma in produzione richiede una libreria di sistema o un client database assente. Il problema non è necessariamente nel codice R: la catena di dipendenze attraversa un confine gestito da IT.
+
 ## Package, library e repository
 
 | Concetto | Significato |
@@ -58,7 +62,7 @@ La domanda operativa è:
 
 ## Dipendenze e riproducibilità
 
-Un progetto dovrebbe dichiarare le proprie dipendenze R e poter ricostruire un ambiente coerente. Il lockfile di progetto descrive le dipendenze R da ricostruire, ma non congela automaticamente OS, librerie native, driver, client database, configurazione, credenziali o dati.
+Un progetto dovrebbe dichiarare le proprie dipendenze R e poter ricostruire un ambiente coerente. Il lockfile di progetto descrive le dipendenze R da ricostruire, ma non congela automaticamente OS, librerie native, driver, configurazione, credenziali o dati.
 
 Una baseline completa può essere:
 
@@ -74,6 +78,8 @@ Una baseline completa può essere:
 | Sistemi esterni | database, API, filesystem |
 | Test | dati ed esiti |
 
+Questa baseline tornerà nel capitolo 5, quando l'ambiente deve diventare parte di una release, e nel capitolo 6, quando una modifica deve produrre una nuova baseline.
+
 ## Componenti nativi
 
 R può delegare lavoro a codice compilato. Per IT la conseguenza non è semplicemente «serve una libreria»: cambiano anche versioni, ABI, compilatori, driver e gestione dei thread.
@@ -84,7 +90,7 @@ Questo è uno dei punti in cui una soluzione R si comporta diversamente da un se
 
 ALTREP permette a R di rappresentare alcuni oggetti senza materializzarne immediatamente tutti i dati. Non è necessario conoscere l'implementazione: basta ricordare che **dimensione logica dell'oggetto e memoria fisica osservata non sono necessariamente equivalenti**.
 
-Il concetto diventa utile quando una misura di memoria viene confrontata con la dimensione apparente dei dati.
+Il concetto diventa utile quando una misura di memoria viene confrontata con la dimensione apparente dei dati. Il capitolo 2 mostrerà perché anche copie, worker e allocazioni temporanee possono ampliare ulteriormente la differenza.
 
 ## Checklist
 
