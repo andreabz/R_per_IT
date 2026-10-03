@@ -43,6 +43,18 @@ gc()
 
 Un picco di RAM non dimostra quindi da solo una perdita di memoria. In un workload reale interessa osservare **quando** il picco avviene e quali oggetti, copie o worker lo spiegano.
 
+## Memoria logica, memoria del processo e memoria fisica
+
+Per diagnosticare la memoria conviene distinguere almeno tre livelli:
+
+- **dimensione logica** degli oggetti R;
+- **memoria residente del processo** osservata dal sistema operativo;
+- **memoria complessiva** della macchina, che include altri processi e possibili worker.
+
+ALTREP, copie, allocazioni temporanee e più processi fanno sì che questi valori non coincidano.
+
+Una misura utile deve quindi riportare almeno il punto temporale, il processo o worker osservato e il contesto di concorrenza.
+
 ## Environment e lexical scoping
 
 Un environment associa nomi a oggetti e può collegarsi ad altri environment. Il lexical scoping determina come R risolve i nomi.
