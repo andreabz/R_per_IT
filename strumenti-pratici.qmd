@@ -19,6 +19,81 @@ Usare questa lista come primo filtro. Se una risposta non è disponibile, va ric
 
 > Se la richiesta si limita a «installare R», «serve più RAM» o «pubblicare una Shiny», non è ancora una specifica di esercizio.
 
+## 2. Procedura rapida: installare, eseguire, misurare, diagnosticare
+
+Quando IT riceve una soluzione R sconosciuta, la sequenza minima è:
+
+~~~text
+1. identificare R, package, versioni e repository
+                         ↓
+2. ricostruire l'ambiente
+                         ↓
+3. eseguire un caso di test noto
+                         ↓
+4. misurare tempo / CPU / RAM
+                         ↓
+5. osservare DB / I/O / rete se rilevanti
+                         ↓
+6. profilare il codice se il problema sembra interno a R
+                         ↓
+7. documentare evidenza, ipotesi e prossimo test
+~~~
+
+### Verificare la sorgente dei package
+
+In un ambiente di prova:
+
+```{r}
+#| label: verifica-repository-it
+
+getOption("repos")
+```
+
+IT deve poter rispondere a tre domande distinte:
+
+1. quale package serve?
+2. quale versione serve?
+3. da quale repository autorizzato deve essere recuperato?
+
+### Installazione e verifica
+
+```{r}
+#| label: procedura-package-it
+
+install.packages("data.table")
+packageVersion("data.table")
+find.package("data.table")
+```
+
+Il comando di installazione non è sufficiente: occorre verificare **sorgente, versione e percorso effettivamente usati**. Se l'installazione richiede compilazione, verificare anche toolchain e librerie native.
+
+### Misura e profiling
+
+Per uno script o una funzione:
+
+```{r}
+#| label: procedura-misura-it
+
+system.time({
+  risultato <- funzione_da_testare()
+})
+```
+
+Se serve capire dove il codice R spende il tempo:
+
+```{r}
+#| label: procedura-profiling-it
+
+Rprof("profilo.out")
+risultato <- funzione_da_testare()
+Rprof(NULL)
+summaryRprof("profilo.out")
+```
+
+`funzione_da_testare()` è un segnaposto da sostituire con l'entry point o la funzione fornita dallo sviluppatore.
+
+> **Regola:** IT deve saper produrre una diagnosi riproducibile, non necessariamente correggere il codice.
+
 ## 2. Esempio: da uno script R a un handover gestibile
 
 ### Situazione iniziale
