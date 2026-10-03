@@ -44,6 +44,26 @@ Servono almeno: interattivo o batch, utenti e concorrenza, frequenza, tempo di r
 
 Per R aggiungere: modalità di esecuzione dello script, dipendenze runtime, quantità di dati trasferita dentro e fuori R e costo atteso della serializzazione o materializzazione.
 
+```{mermaid}
+%%| echo: false
+flowchart TD
+  A[Soluzione R] --> B{Forma}
+  B --> C[Script personale]
+  B --> D[Batch]
+  B --> E[Report Quarto]
+  B --> F[Shiny]
+  B --> G[API plumber2]
+  B --> H[Package]
+  B --> I[Job in pipeline]
+  C --> J[Requisiti IT]
+  D --> J
+  E --> J
+  F --> J
+  G --> J
+  H --> J
+  I --> J
+``` 
+
 ## Come può arrivare una soluzione R a IT?
 
 Prima di parlare di server, container o CPU, bisogna identificare **che tipo di soluzione viene consegnata**. Il codice R può essere usato in modi molto diversi e il profilo operativo cambia di conseguenza.
