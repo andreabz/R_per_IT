@@ -39,7 +39,9 @@ Git identifica il codice; non identifica da solo l'intero ambiente R.
 
 ## renv nel deployment
 
-Il lockfile descrive le dipendenze R. Il deployment deve gestire anche librerie native, driver, client database, font, strumenti Quarto e configurazione quando rilevanti.
+Il lockfile di `renv` registra versione di R, repository e record dei package, incluse versioni e sorgenti quando note. Non è però un inventario completo di OS, librerie native, driver, configurazione, credenziali o dati.
+
+Per alcune installazioni `renv` può inoltre individuare i requisiti di sistema dei package; questi requisiti devono comunque essere soddisfatti dall'ambiente di destinazione.
 
 La domanda operativa è quindi:
 
@@ -113,7 +115,7 @@ Il codice è un esempio di ciò che non deve essere usato in produzione. In eser
 
 Una pipeline può automatizzare checkout, configurazione di R, ripristino dell'ambiente, test, build/render e pubblicazione.
 
-Nel repository del corso la pipeline esistente è destinata a eseguire `quarto render`, produrre `_site` e pubblicarlo tramite GitHub Pages. Questa proprietà va verificata dalla run effettiva della pipeline, non assunta dalla sola configurazione.
+Nel repository del corso la pipeline esistente è configurata per eseguire `quarto render`, produrre `_site` e pubblicarlo tramite GitHub Pages quando viene eseguita sul branch `main`. Questa proprietà è stata verificata sulla configurazione del workflow; la riuscita di una run reale resta una verifica separata.
 
 Per un progetto R è utile trattare il render o il test come parte della verifica dell'ambiente: se cambiano R, package o dipendenze native, la pipeline deve rendere visibile la regressione.
 
