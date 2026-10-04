@@ -37,7 +37,11 @@ jobs:
         run: quarto render
 
       - name: Render RevealJS presentation
-        run: quarto render slides.qmd --output-dir _site/presentazione
+        run: |
+          quarto render slides.qmd --output slides.html
+          mkdir -p _site/presentazione
+          cp slides.html _site/presentazione/
+          cp -R slides_files _site/presentazione/
 
       - name: Upload rendered site
         if: github.event_name != 'pull_request'
