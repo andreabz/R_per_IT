@@ -52,6 +52,22 @@ smoke test
 monitoring
 ```
 
+## Codice sorgente, artefatto e ambiente
+
+Nel deployment vanno distinti tre oggetti:
+
+| Oggetto | Che cosa identifica |
+|---|---|
+| **codice sorgente** | ciò che viene versionato e modificato dallo sviluppatore |
+| **artefatto di release** | ciò che viene effettivamente distribuito o utilizzato per il deployment |
+| **ambiente di esecuzione** | R, package, librerie native, configurazione e sistemi esterni necessari |
+
+Un commit non è necessariamente un artefatto eseguibile. Allo stesso modo, un artefatto non contiene necessariamente tutte le dipendenze esterne.
+
+La domanda operativa è:
+
+> **Che cosa viene promosso da test a produzione e come si dimostra che l'ambiente che lo esegue è quello previsto?**
+
 ## Git e baseline
 
 Una release R deve essere riconducibile a commit/tag, versione R, dipendenze, configurazione, componenti nativi, dati di test ed esiti.
@@ -266,6 +282,30 @@ Un inventario minimo comprende:
 | Locale | timezone, locale, encoding e impostazioni che influenzano l'output |
 
 L'obiettivo non è documentare ogni dettaglio del sistema, ma rendere espliciti quelli che possono cambiare **risultato, performance, accesso ai dati o comportamento operativo**.
+
+## Production come ciclo di vita
+
+La messa in produzione non è un evento unico. Una soluzione gestibile deve avere un percorso esplicito:
+
+```text
+sviluppo
+   ↓
+test
+   ↓
+validazione
+   ↓
+release
+   ↓
+deployment
+   ↓
+smoke test
+   ↓
+monitoring
+   ↓
+aggiornamento / rollback
+```
+
+Ogni passaggio deve lasciare abbastanza evidenza da permettere a un altro tecnico di capire quale versione è in esercizio, con quale ambiente e con quale configurazione.
 
 ## Handover: le informazioni che lo sviluppatore deve fornire a IT
 
