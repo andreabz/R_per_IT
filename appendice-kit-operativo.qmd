@@ -346,3 +346,20 @@ Una richiesta può essere considerata tecnicamente descritta quando IT può risp
 10. **chi è responsabile di ogni parte.**
 
 Questa scheda non sostituisce gli standard aziendali. È un modo per rendere una richiesta R traducibile in requisiti IT.
+
+## 15. Checklist breve per una prima riunione
+
+Quando la soluzione è ancora in fase di definizione, non serve compilare subito tutta la scheda. Una prima riunione può partire da queste dieci domande:
+
+- [ ] Che cosa deve fare la soluzione?
+- [ ] Qual è la forma operativa: batch, Quarto, Shiny, API, package o pipeline?
+- [ ] Qual è l'entrypoint e dove si trova il codice?
+- [ ] Quale versione di R e quali dipendenze servono?
+- [ ] Quali dati e sistemi esterni vengono utilizzati?
+- [ ] Chi la utilizza e con quale frequenza/concorrenza?
+- [ ] Qual è la baseline osservata?
+- [ ] Come viene configurata senza inserire segreti nel codice?
+- [ ] Come viene testata, monitorata e ripristinata?
+- [ ] Chi è owner applicativo e chi è owner operativo?
+
+Se una risposta non è ancora disponibile, non va inventata: va registrata come **informazione mancante** e associata al responsabile o al test necessario per ottenerla.
