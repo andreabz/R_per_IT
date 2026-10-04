@@ -1,0 +1,746 @@
+---
+title: "R × IT"
+subtitle: "Capire, valutare e gestire soluzioni sviluppate in R"
+author: "ARPAL"
+date: today
+format:
+  revealjs:
+    theme: default
+    slide-number: true
+    transition: none
+    width: 1280
+    height: 720
+    margin: 0.08
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+# R × IT
+
+## Quando un prodotto sviluppato in R deve entrare in produzione
+
+::: {.notes}
+Obiettivo: non imparare R, ma capire quali domande fare quando arriva una soluzione R.
+:::
+
+---
+
+# La situazione
+
+> «Ho sviluppato una cosa in R. Sul mio PC funziona. Possiamo metterla sul server?»
+
+**Prima domanda:** che cosa significa «una cosa in R»?
+
+---
+
+# Obiettivo
+
+- riconoscere il **tipo di soluzione**;
+- capire **come viene eseguita**;
+- individuare **dipendenze e sistemi esterni**;
+- chiedere le **evidenze necessarie**;
+- capire che cosa serve per **portarla in produzione**.
+
+Non dovete diventare sviluppatori R.
+
+---
+
+# R in una frase
+
+> **R è un linguaggio e un ambiente per analisi, statistica, modellistica e automazione dei dati.**
+
+R è spesso **un componente**, non l'intera applicazione.
+
+---
+
+# R e lo stack aziendale
+
+| Esigenza | Componente possibile |
+|---|---|
+| dati | Oracle |
+| applicazioni gestionali | APEX |
+| scheduling | piattaforma IT |
+| autenticazione / rete | infrastruttura aziendale |
+| analisi / modelli | **R** |
+| report | **Quarto + R** |
+| applicazioni analitiche | **Shiny + R** |
+| API analitiche | **plumber2 + R** |
+
+---
+
+# Prima idea chiave
+
+## Non esiste «il deployment di R».
+
+Esiste il deployment di uno **specifico workload** che utilizza R.
+
+---
+
+# Quattro domande
+
+1. **Che cosa fa?**
+2. **Come viene eseguita?**
+3. **Da cosa dipende?**
+4. **Come sappiamo che funziona in produzione?**
+
+---
+
+# Le forme applicative
+
+~~~{mermaid}
+flowchart TB
+ R[R] --> S[Script]
+ R --> B[Batch]
+ R --> Q[Quarto]
+ R --> H[Shiny]
+ R --> A[API plumber2]
+ R --> P[Package / pipeline]
+~~~
+
+La forma cambia il problema IT.
+
+---
+
+# Script e batch
+
+**Script**
+
+utente → R → risultato
+
+**Batch**
+
+scheduler → R → output
+
+Da chiarire:
+
+- chi lo avvia?
+- quando?
+- quanto dura?
+- cosa succede se fallisce?
+
+---
+
+# Quarto
+
+~~~text
+dati
+ ↓
+R + Quarto
+ ↓
+HTML / PDF
+ ↓
+pubblicazione
+~~~
+
+**Non è necessariamente un servizio web.**
+
+---
+
+# Shiny
+
+~~~{mermaid}
+flowchart LR
+ U[Browser] --> P[Proxy]
+ P --> H[Shiny]
+ H --> R[R]
+ R --> DB[(Oracle)]
+~~~
+
+Da chiarire:
+
+- utenti;
+- sessioni concorrenti;
+- autenticazione;
+- risorse;
+- disponibilità.
+
+---
+
+# API plumber2
+
+~~~{mermaid}
+flowchart LR
+ C[Client] --> G[Gateway / Proxy]
+ G --> A[API R]
+ A --> DB[(Oracle)]
+~~~
+
+Da chiarire:
+
+- contratto;
+- autenticazione;
+- timeout;
+- errori;
+- logging;
+- concorrenza.
+
+---
+
+# Discussione
+
+## «Ho una Shiny che funziona sul mio PC.»
+
+**Quali sono le prime cinque informazioni che chiedereste?**
+
+::: {.notes}
+Lasciare spazio alla discussione.
+:::
+
+---
+
+# Dal codice all'esecuzione
+
+~~~{mermaid}
+flowchart TB
+ C[Codice R] --> R[Runtime R]
+ R --> P[Package]
+ P --> N[Librerie native]
+ N --> D[Driver / client]
+ D --> O[Sistema operativo]
+~~~
+
+Il codice è solo una parte dell'ambiente.
+
+---
+
+# RStudio ≠ R
+
+**R**
+
+- runtime;
+- esegue il codice;
+- può funzionare senza interfaccia grafica.
+
+**RStudio**
+
+- ambiente di sviluppo;
+- editor;
+- console.
+
+> Un server di produzione non ha bisogno di RStudio per eseguire R.
+
+---
+
+# Dipendenze
+
+Una soluzione può dipendere da:
+
+- package R;
+- package da Git;
+- librerie native;
+- driver Oracle;
+- client esterni;
+- file di configurazione;
+- servizi di rete.
+
+**«Funziona sul mio PC» non descrive queste dipendenze.**
+
+---
+
+# renv.lock
+
+Aiuta a descrivere:
+
+- versione di R;
+- package e versioni;
+- sorgenti.
+
+Non descrive necessariamente:
+
+- OS;
+- librerie native;
+- driver;
+- rete;
+- credenziali;
+- configurazione aziendale.
+
+---
+
+# Baseline
+
+~~~{mermaid}
+flowchart TB
+ C[commit / tag] --> R[versione R]
+ R --> P[dipendenze]
+ P --> O[OS / librerie / driver]
+ O --> K[configurazione]
+ K --> T[test + risultato atteso]
+~~~
+
+**La baseline deve essere ricostruibile e verificabile.**
+
+---
+
+# Oracle: dove passa il tempo?
+
+~~~{mermaid}
+flowchart LR
+ R1[R] --> Q[query]
+ Q --> O[(Oracle)]
+ O --> X[risultato]
+ X --> R2[R]
+ R2 --> A[elaborazione]
+~~~
+
+Un job R «lento» non significa necessariamente che R sia lento.
+
+---
+
+# Performance
+
+| Osservazione | Conclusione prematura |
+|---|---|
+| CPU 95% | «serve più CPU» |
+| RAM 90% | «serve più RAM» |
+| job lento | «R è lento» |
+| Oracle lento | «server R sottodimensionato» |
+
+**Misura → ipotesi → test → decisione**
+
+---
+
+# Un workload ha un costo
+
+Chiedere:
+
+- durata;
+- CPU;
+- RAM;
+- I/O;
+- rete;
+- worker;
+- concorrenza;
+- dimensione dei dati.
+
+Non chiedere soltanto:
+
+> «Quanti core e quanta RAM servono?»
+
+---
+
+# R dentro l'architettura
+
+~~~{mermaid}
+flowchart TB
+ U[Utenti / sistemi] --> I[Infrastruttura aziendale]
+ I --> R[R workload]
+ R --> DB[(Oracle)]
+ R --> API[Altri servizi]
+ R --> FS[Filesystem / storage]
+ I --> SCH[Scheduler]
+~~~
+
+Il punto non è sostituire l'infrastruttura.
+
+È **integrarsi con essa**.
+
+---
+
+# Autenticazione ≠ autorizzazione
+
+**Autenticazione**
+
+> Chi sei?
+
+**Autorizzazione**
+
+> Che cosa puoi fare?
+
+La soluzione deve dichiarare identità, permessi e punto in cui avviene il controllo.
+
+---
+
+# I segreti
+
+Non devono stare:
+
+- nel repository;
+- nel codice;
+- nel lockfile;
+- nei file pubblicati.
+
+Devono essere gestiti tramite il **meccanismo aziendale previsto**.
+
+---
+
+# Dal PC alla produzione
+
+~~~{mermaid}
+flowchart LR
+ D[Sviluppo] --> T[Test]
+ T --> V[Validazione]
+ V --> R[Release]
+ R --> P[Produzione]
+ P --> M[Monitoring]
+ M --> U[Aggiornamento / rollback]
+~~~
+
+La produzione è un **ciclo di vita**.
+
+---
+
+# Codice, artefatto, ambiente
+
+| Oggetto | Significa |
+|---|---|
+| Codice sorgente | ciò che viene sviluppato |
+| Artefatto | ciò che viene distribuito |
+| Ambiente | ciò che serve per eseguirlo |
+
+Un commit non è necessariamente un artefatto.
+
+---
+
+# Quando è «pronto»?
+
+Non:
+
+> «Sul mio PC funziona.»
+
+Ma:
+
+> **«Abbiamo una versione identificata, un ambiente descritto, test verificabili e un comportamento operativo noto.»**
+
+---
+
+# Handover
+
+Non:
+
+> «Mi dai tutto quello che hai?»
+
+Ma:
+
+> **«Quali informazioni servono per eseguire, verificare e gestire questa soluzione?»**
+
+---
+
+# La scheda di handover
+
+~~~{mermaid}
+mindmap
+ root((Soluzione R))
+  Identità
+  Esecuzione
+  Ambiente
+  Dati
+  Risorse
+  Sicurezza
+  Test
+  Errori
+  Deployment
+  Monitoring
+  Ownership
+~~~
+
+---
+
+# Identità + esecuzione
+
+**Identità**
+
+- nome;
+- owner;
+- repository;
+- versione;
+- tipo;
+- entrypoint.
+
+**Esecuzione**
+
+- modalità;
+- frequenza;
+- durata;
+- utenti;
+- concorrenza;
+- timeout;
+- retry.
+
+---
+
+# Ambiente + dati
+
+**Ambiente**
+
+- R;
+- OS;
+- package;
+- lockfile;
+- librerie native;
+- driver;
+- configurazione.
+
+**Dati**
+
+- input/output;
+- Oracle;
+- API;
+- filesystem;
+- dimensioni;
+- volumi trasferiti.
+
+---
+
+# Risorse
+
+> **16 core + 64 GB RAM**
+
+non è ancora un requisito verificabile.
+
+Servono:
+
+- dataset di test;
+- durata;
+- RAM di picco;
+- CPU;
+- concorrenza;
+- baseline.
+
+---
+
+# Sicurezza + test
+
+**Sicurezza**
+
+- account;
+- permessi;
+- autenticazione;
+- segreti;
+- TLS.
+
+**Test**
+
+- funzionale;
+- integrazione;
+- compatibilità;
+- performance;
+- smoke test.
+
+---
+
+# Errori e rollback
+
+~~~{mermaid}
+flowchart TB
+ E[Errore] --> R{Retry?}
+ R -->|sì| T[Retry controllato]
+ R -->|no| A[Alert]
+ T --> A
+ A --> I[Intervento]
+~~~
+
+Da definire:
+
+- retry;
+- fallback;
+- alert;
+- idempotenza;
+- output parziali;
+- rollback.
+
+---
+
+# Monitoring
+
+### Batch
+
+- avvio/fine;
+- exit code;
+- durata;
+- errori;
+- output.
+
+### Shiny / API
+
+- disponibilità;
+- latenza;
+- errori;
+- concorrenza;
+- CPU/RAM;
+- dipendenze;
+- restart.
+
+---
+
+# Ownership
+
+| Area | Possibile owner |
+|---|---|
+| correttezza applicativa | sviluppatore / owner |
+| codice | sviluppatore |
+| dipendenze | sviluppatore + IT |
+| runtime | IT |
+| infrastruttura | IT |
+| database | DBA |
+| deployment | IT |
+| monitoring | IT |
+| incident response | da definire |
+
+Non tutto è responsabilità di IT.
+
+---
+
+# Caso 1 · Batch
+
+> «Ogni notte uno script R legge Oracle e produce un CSV.»
+
+Chiediamo:
+
+- quando?
+- quanto dura?
+- quali dati?
+- quale output?
+- quale account?
+- cosa succede se Oracle non risponde?
+- come sappiamo che è riuscito?
+
+---
+
+# Caso 2 · Quarto
+
+> «Ogni mattina deve essere prodotto un report.»
+
+Chiediamo:
+
+- dati e query;
+- ambiente;
+- durata;
+- output;
+- destinazione;
+- pubblicazione;
+- errore;
+- notifica.
+
+**Non è necessariamente un'applicazione web.**
+
+---
+
+# Caso 3 · Shiny
+
+> «20 persone devono usare questa applicazione.»
+
+Chiediamo:
+
+- autenticazione;
+- autorizzazione;
+- sessioni concorrenti;
+- RAM;
+- CPU;
+- Oracle;
+- timeout;
+- logging;
+- restart.
+
+**Qui il workload è un servizio.**
+
+---
+
+# Caso 4 · API
+
+> «Un altro sistema deve chiamare R via HTTP.»
+
+Chiediamo:
+
+- endpoint;
+- input/output;
+- autenticazione;
+- autorizzazione;
+- timeout;
+- errori;
+- concorrenza;
+- logging;
+- versioning.
+
+**Qui serve un contratto tra sistemi.**
+
+---
+
+# Una richiesta ben fatta
+
+### Prima
+
+> «Ho una Shiny R. Potete metterla sul server?»
+
+### Dopo
+
+> «Shiny, repository X, release Y, R 4.x, ambiente Z, Oracle, autenticazione aziendale, 20 utenti, 5 sessioni concorrenti, baseline 7 s, logging richiesto, test disponibili.»
+
+La seconda richiesta è **operabile**.
+
+---
+
+# La checklist breve
+
+- [ ] che cosa fa?
+- [ ] quale forma ha?
+- [ ] qual è l'entrypoint?
+- [ ] quale ambiente serve?
+- [ ] quali sistemi esterni usa?
+- [ ] chi la utilizza?
+- [ ] quale baseline abbiamo?
+- [ ] come si configura?
+- [ ] come si testa e monitora?
+- [ ] chi è owner?
+
+---
+
+# Se manca un'informazione
+
+Non va inventata.
+
+Va classificata:
+
+~~~{mermaid}
+flowchart LR
+ M[Informazione mancante] --> R[Responsabile]
+ M --> T[Test necessario]
+ M --> D[Decisione da prendere]
+~~~
+
+---
+
+# Quattro idee da portare a casa
+
+## 1
+**R è un componente, non un'architettura.**
+
+## 2
+**Il workload determina il deployment.**
+
+## 3
+**Il codice da solo non descrive l'ambiente.**
+
+## 4
+**Un buon handover rende verificabile l'esercizio.**
+
+---
+
+# La domanda da fare domani
+
+Quando uno sviluppatore dice:
+
+> «Ho fatto una cosa in R.»
+
+non chiedere subito:
+
+> «Dove la installiamo?»
+
+Chiedere:
+
+> **«Che cosa deve fare, come viene eseguita, da cosa dipende e come dimostriamo che è pronta?»**
+
+---
+
+# Fine
+
+## R × IT
+
+**Il punto non è conoscere R.**
+
+Il punto è poter gestire consapevolmente una soluzione che utilizza R.
+
+::: {.notes}
+Discussione finale: quali informazioni mancano oggi nelle richieste reali che arrivano a IT?
+:::
