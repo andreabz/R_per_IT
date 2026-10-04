@@ -6,7 +6,7 @@ Manuale tecnico per sistemisti, architetti, DevOps, team piattaforma e responsab
 
 ## Obiettivo
 
-Il corso insegna a riconoscere che cosa cambia quando il workload è R e a trasformare una richiesta tecnica in una specifica verificabile.
+Il manuale insegna a riconoscere che cosa cambia quando il workload è R e a trasformare una richiesta tecnica in una specifica verificabile. L'obiettivo non è formare sviluppatori R, ma fornire a IT un modello per classificare una soluzione, valutarne ambiente e workload, definire il perimetro del deployment e gestirne l'esercizio.
 
 Il percorso segue questa sequenza:
 
@@ -108,6 +108,8 @@ Per portare una soluzione R in produzione devono essere espliciti almeno:
 La regola è:
 
 > **Lo sviluppatore fornisce una descrizione riproducibile del workload e delle evidenze; IT deve poter trasformare queste informazioni in una configurazione, un deployment e un esercizio verificabili.**
+
+La checklist breve dell'appendice può essere usata già nella prima riunione: quando un'informazione manca, va registrata come informazione mancante e associata al responsabile o al test necessario per ottenerla.
 
 ## Kit operativo
 
