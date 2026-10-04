@@ -123,6 +123,22 @@ ma prima:
 > **«Quale tipo di soluzione stiamo mettendo in esercizio e qual è il suo ciclo di vita?»**
 
 
+## Le forme applicative cambiano il problema IT
+
+La stessa base di codice R può essere utilizzata in modelli operativi molto diversi. Prima di discutere server e risorse conviene quindi classificare **come il lavoro viene consumato**.
+
+| Forma | Esecuzione | Utenti/concorrenza | Domanda IT principale |
+|---|---|---:|---|
+| Script personale | manuale | normalmente 1 | ambiente e accessi dell'utente |
+| Batch | schedulata | normalmente 1 per run | calendario, risorse, exit code, retry |
+| Quarto | render schedulato o manuale | normalmente nessuna sessione | ambiente, dati, artefatto e pubblicazione |
+| Shiny | servizio interattivo | più sessioni | autenticazione, concorrenza, risorse e disponibilità |
+| API plumber2 | servizio HTTP | richieste concorrenti | contratto, autenticazione, timeout, limiti e monitoring |
+| Package | componente riusabile | dipende dal chiamante | versionamento, dipendenze e test |
+| Pipeline | step orchestrato | dipende dalla pipeline | input/output, stato, retry e ownership |
+
+La classificazione è importante perché **non si fa il deployment di R in astratto**: si porta in esercizio uno specifico modello di esecuzione.
+
 ## R rispetto ai componenti IT già presenti
 
 In un'organizzazione che dispone già di Oracle, APEX, scheduler, reverse proxy, sistemi di autenticazione e storage, introdurre R non significa sostituire automaticamente questi componenti.
@@ -463,6 +479,17 @@ container
 Quindi:
 
 > **containerizzare R significa controllare una parte dell'ambiente, non eliminare i confini infrastrutturali.**
+
+## Autenticazione, autorizzazione e responsabilità
+
+Per le soluzioni interattive è utile distinguere:
+
+- **autenticazione** — identificare chi sta effettuando la richiesta;
+- **autorizzazione** — stabilire che cosa quella identità può fare.
+
+Queste funzioni non devono essere necessariamente implementate da R. In un'architettura aziendale possono essere fornite da componenti già presenti, per esempio reverse proxy, identity provider o API gateway.
+
+La soluzione R deve però dichiarare **quali identità e quali autorizzazioni richiede** e dove avviene il controllo.
 
 ## Confini
 
