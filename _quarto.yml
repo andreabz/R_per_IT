@@ -1,6 +1,9 @@
 project:
   type: book
   output-dir: _site
+  render:
+    - "*.qmd"
+    - "!slides.qmd"
 
 lang: it
 
@@ -24,6 +27,8 @@ book:
     left:
       - text: "Manuale"
         href: index.qmd
+      - text: "Presentazione"
+        href: presentazione/slides.html
       - text: "Repository"
         href: https://github.com/andreabz/R_per_IT
 

@@ -36,6 +36,9 @@ jobs:
       - name: Render Quarto book
         run: quarto render
 
+      - name: Render RevealJS presentation
+        run: quarto render slides.qmd --output-dir _site/presentazione
+
       - name: Upload rendered site
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v4
