@@ -40,20 +40,20 @@ nuova baseline quando cambia qualcosa
 
 ## Obiettivi operativi a fine corso
 
-Al termine del percorso, un membro IT non deve diventare sviluppatore R. Deve però essere in grado di prendere in carico una soluzione R che non conosce e svolgere una **diagnostica operativa di base**.
+Al termine del percorso, un membro IT non deve diventare sviluppatore R. Deve però poter **ricevere una soluzione R, farne emergere i requisiti operativi e capire quali informazioni mancano prima di portarla in esercizio**.
 
 In particolare deve saper:
 
-- installare o ripristinare un package in un ambiente definito;
-- verificare quale versione del package viene effettivamente utilizzata e diagnosticare dipendenze mancanti o incompatibili;
-- ricostruire l'ambiente R quando esiste una specifica delle dipendenze, distinguendo ciò che è descritto da ciò che resta responsabilità dell'infrastruttura;
-- eseguire una soluzione in condizioni controllate e raccogliere una baseline;
-- misurare almeno durata, CPU e memoria e riconoscere quando diventano rilevanti I/O, rete, database, worker o thread;
-- eseguire un benchmark semplice e confrontare varianti del workload mantenendo controllate le altre condizioni;
-- effettuare un profiling di base quando serve capire dove il codice R spende il tempo;
-- distinguere una misura da un'ipotesi e sapere quando restituire il problema allo sviluppatore.
+- riconoscere le principali forme di soluzione R: script, batch, report Quarto, Shiny, API, package e job di pipeline;
+- distinguere R dal suo ambiente di esecuzione e identificare package, dipendenze native, driver e sistemi esterni;
+- capire che cosa descrivono un repository, un commit/tag e un lockfile e che cosa invece resta fuori dalla loro portata;
+- leggere un workload in termini di input, output, frequenza, durata, utenti/concorrenza e risorse;
+- distinguere una misura da un'ipotesi e chiedere le evidenze necessarie prima di trasformare una richiesta in una specifica infrastrutturale;
+- rappresentare i confini tra R, Oracle, filesystem, API, scheduler, proxy e altri componenti aziendali;
+- verificare che deployment, configurazione, sicurezza, logging, monitoring, rollback e ownership siano descritti;
+- restituire allo sviluppatore una richiesta di informazioni concreta quando l'handover è incompleto.
 
-Il livello atteso è quindi **operativo e diagnostico**, non di ottimizzazione algoritmica. L'obiettivo è poter raccogliere evidenze sufficienti per una decisione IT o per un handover tecnico allo sviluppatore.
+Il livello atteso è **di comprensione e presa in carico operativa**, non di sviluppo R né di ottimizzazione algoritmica. Il manuale contiene approfondimenti diagnostici per i casi in cui serva capire meglio un problema.
 
 ## Come è organizzato il manuale
 
