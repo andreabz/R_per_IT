@@ -21,7 +21,7 @@ Questa è la **scheda unica di passaggio di consegne**: il capitolo [Architettur
 | Owner applicativo | |
 | Repository | |
 | Commit/tag/versione | |
-| Tipo di soluzione | script / batch / Quarto / Shiny / API / package / pipeline |
+| Tipo di soluzione | script / batch / Quarto / `Shiny` / API / package / pipeline |
 | punto di ingresso | |
 | Scopo | |
 | Ambiente previsto | sviluppo / test / produzione |
@@ -50,7 +50,7 @@ Per una soluzione interattiva indicare anche il numero di sessioni o richieste c
 | Versione R | |
 | Sistema operativo/versione | |
 | Package | |
-| renv.lock o altra specifica delle dipendenze | |
+| `renv`.lock o altra specifica delle dipendenze | |
 | Repository package | |
 | Dipendenze native | |
 | Driver/client database | |
@@ -354,7 +354,7 @@ Questa scheda non sostituisce gli standard aziendali. È un modo per rendere una
 Quando la soluzione è ancora in fase di definizione, non serve compilare subito tutta la scheda. Una prima riunione può partire da queste dieci domande:
 
 - [ ] Che cosa deve fare la soluzione?
-- [ ] Qual è la forma operativa: batch, Quarto, Shiny, API, package o pipeline?
+- [ ] Qual è la forma operativa: batch, Quarto, `Shiny`, API, package o pipeline?
 - [ ] Qual è l'punto di ingresso e dove si trova il codice?
 - [ ] Quale versione di R e quali dipendenze servono?
 - [ ] Quali dati e sistemi esterni vengono utilizzati?
