@@ -159,9 +159,9 @@ In un ambiente di prova:
 
 # installazione da eseguire una sola volta nell'ambiente di prova:
 
-# install.packages("`profvis`")
+# install.packages("profvis")
 
-`profvis`::`profvis`({
+profvis::profvis({
   misura(5000000)
 })
 ```
@@ -188,6 +188,41 @@ Per IT è sufficiente saper leggere il risultato a livello diagnostico:
 | Monitoraggio DB | Quanto lavoro e tempo sono lato database? |
 
 Il percorso didattico è quindi **misurare → localizzare → correlare → testare**, non «eseguire un profiler e applicare automaticamente una correzione».
+
+### Laboratorio specifico — profiling con input e baseline controllati
+
+- **Input:** la funzione sintetica `misura()` definita sopra, eseguita con lo stesso valore di `n`.
+- **Ambiente:** registrare versione R, OS e condizioni di carico; eseguire una prova di riscaldamento e poi almeno tre misure comparabili.
+- **Metodo:** raccogliere `system.time()`, profilo `Rprof()` e misure del processo dal sistema operativo. Confrontare la mediana delle durate e controllare l'equivalenza del risultato.
+- **Metriche:** elapsed, user/system CPU, picco RSS, CPU del processo, eventuale I/O e tempi esterni quando presenti.
+- **Limiti:** `Rprof()` campiona lo stack R e non attribuisce da solo tempi di rete o query; i profiler introducono overhead. Un profilo CPU non è una misura completa della memoria.
+
+```{r}
+#| label: laboratorio-profiling-ripetibile
+#| eval: false
+
+n <- 5000000L
+ripetizioni <- 3L
+
+tempi <- replicate(ripetizioni, {
+  system.time(risultato <- misura(n))["elapsed"]
+})
+
+Rprof("profilo.out")
+risultato <- misura(n)
+Rprof(NULL)
+profilo <- summaryRprof("profilo.out")
+unlink("profilo.out")
+
+list(
+  tempi_elapsed = unname(tempi),
+  mediana_elapsed = median(tempi),
+  profilo = head(profilo$by.total, 10)
+)
+```
+
+Il chunk riusa `misura()` definita nel laboratorio precedente ed è escluso dal rendering automatico per non duplicare il carico di profiling durante ogni build. Per una prova autonoma, eseguire i chunk nello stesso ambiente o includere la definizione della funzione nello script di laboratorio.
+
 
 ### Correlare profiling e infrastruttura
 
@@ -254,6 +289,59 @@ Prima di interpretare le misure, definiamo alcuni termini usati nel ragionamento
 Sono ipotesi diagnostiche, non conclusioni automatiche.
 
 Nel caso R, CPU elevata può derivare dal codice R, da `BLAS/LAPACK`, da thread nativi o da più worker. RAM elevata può derivare da oggetti, copie, garbage collection o memoria duplicata tra processi.
+
+### Laboratorio specifico — trasferimento completo contro pushdown Oracle
+
+**Prerequisiti:** ambiente di test autorizzato con Oracle, package `DBI`, driver aziendale e connessione `con` già configurata. Non inserire credenziali nel codice.
+
+- **Input:** tabella di test `VENDITE_TEST` con colonne `DATA_VENDITA`, `PRODOTTO_ID` e `IMPORTO`; usare lo stesso intervallo e lo stesso insieme di righe per entrambe le strategie.
+- **Ambiente:** annotare versione R, driver, database, rete e dimensione del dataset.
+- **Metodo A:** leggere le colonne necessarie e aggregare in R.
+- **Metodo B:** applicare filtro e aggregazione in Oracle, trasferendo soltanto il risultato.
+- **Metriche:** righe/colonne trasferite, dimensione del risultato, tempo totale, tempo query quando disponibile, materializzazione e aggregazione R.
+- **Limiti:** piani di esecuzione, cache, indici e carico del database influenzano i risultati. Il codice è illustrativo e va adattato allo schema e alle policy aziendali.
+
+```{r}
+#| label: laboratorio-pushdown-oracle
+#| eval: false
+
+tempo_completo <- system.time({
+  vendite <- DBI::dbGetQuery(
+    con,
+    "SELECT DATA_VENDITA, PRODOTTO_ID, IMPORTO
+     FROM VENDITE_TEST
+     WHERE DATA_VENDITA >= DATE '2026-01-01'
+       AND DATA_VENDITA <  DATE '2026-02-01'"
+  )
+  totale_r <- aggregate(
+    IMPORTO ~ PRODOTTO_ID,
+    data = vendite,
+    FUN = sum
+  )
+})
+
+tempo_pushdown <- system.time({
+  totale_db <- DBI::dbGetQuery(
+    con,
+    "SELECT PRODOTTO_ID, SUM(IMPORTO) AS IMPORTO_TOTALE
+     FROM VENDITE_TEST
+     WHERE DATA_VENDITA >= DATE '2026-01-01'
+       AND DATA_VENDITA <  DATE '2026-02-01'
+     GROUP BY PRODOTTO_ID"
+  )
+})
+
+stopifnot(nrow(totale_r) == nrow(totale_db))
+list(
+  tempo_completo = tempo_completo,
+  righe_trasferite_completo = nrow(vendite),
+  tempo_pushdown = tempo_pushdown,
+  righe_trasferite_pushdown = nrow(totale_db)
+)
+```
+
+Il confronto delle sole durate non basta: registrare anche righe e byte trasferiti e confrontare i valori aggregati con una tolleranza numerica appropriata. Le date sono di esempio e vanno sostituite con un intervallo noto, identico nelle due query.
+
 
 ## Approfondimento — Vectorization
 
@@ -420,9 +508,7 @@ La conclusione utile per IT è più semplice:
 Questo è anche il motivo per cui il confronto tra implementazioni va inserito nel ciclo **misura → ipotesi → test → nuova baseline**, non usato come classifica permanente dei package.
 ## Diagnostica — Scaling
 
-```text
-speed-up(n) = tempo(1 worker) / tempo(n worker)
-```
+Lo speedup con `n` worker è `S(n) = T1 / Tn`; l'efficienza è `E(n) = S(n) / n`. `T1` e `Tn` devono provenire da misure comparabili dello stesso workload e ambiente.
 
 Lo scaling reale è limitato da parti seriali, serializzazione, sincronizzazione, memoria, I/O, database e thread nativi.
 
