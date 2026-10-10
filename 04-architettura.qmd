@@ -104,7 +104,7 @@ logging / monitoraggio
       ↓
 sicurezza
       ↓
-test + baseline
+test + situazione di riferimento
       ↓
 distribuzione + recovery
 ```
