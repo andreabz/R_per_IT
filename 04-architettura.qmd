@@ -19,8 +19,8 @@ Prima della tabella delle soluzioni, definiamo i termini che identificano i prin
 | **Shiny** | framework R per costruire applicazioni web interattive in cui il codice R risponde alle interazioni degli utenti |
 | **API** | interfaccia attraverso cui un altro software può invocare funzionalità di una soluzione secondo un contratto definito |
 | **plumber2** | framework/package R per esporre codice R come servizio HTTP/API; introduce quindi un modello di esecuzione orientato a richieste concorrenti |
-| **entrypoint** | punto di avvio concreto della soluzione: script, comando, processo o altra istruzione che avvia il workload |
-| **scheduler** | componente che decide quando avviare un job e, secondo la piattaforma, ne gestisce stato, retry e calendario |
+| **entrypoint** | punto di avvio concreto della soluzione: script, comando, processo o altra istruzione che avvia il carico di lavoro |
+| **scheduler** | componente che decide quando avviare un job e, secondo la piattaforma, ne gestisce stato, nuovo tentativo automatico e calendario |
 | **reverse proxy** | componente che riceve richieste HTTP e le inoltra al servizio applicativo, spesso gestendo anche TLS, routing o autenticazione secondo l'architettura adottata |
 
 Questi termini descrivono **come viene eseguito e consumato il lavoro**, non soltanto quale codice R contiene la soluzione.
@@ -30,15 +30,15 @@ Alcuni termini della sezione successiva descrivono componenti o comportamenti ch
 
 | Termine | Significato operativo |
 |---|---|
-| **idempotenza** | proprietà per cui ripetere una stessa operazione nelle condizioni previste non produce effetti applicativi indesiderati aggiuntivi; è importante per retry e pipeline |
+| **idempotenza** | proprietà per cui ripetere una stessa operazione nelle condizioni previste non produce effetti applicativi indesiderati aggiuntivi; è importante per nuovo tentativo automatico e pipeline |
 | **embedded** | componente eseguito all'interno dello stesso processo o distribuito come parte dell'applicazione, invece di essere necessariamente un servizio remoto separato |
 | **formato colonnare** | formato dati che memorizza insieme i valori di una colonna, utile per alcune scansioni e operazioni analitiche |
-| **Parquet** | formato di file colonnare usato per memorizzare dati strutturati in modo efficiente per molti workload analitici |
+| **Parquet** | formato di file colonnare usato per memorizzare dati strutturati in modo efficiente per molti carico di lavoro analitici |
 | **Arrow** | ecosistema e formato per rappresentare e trasferire dati tabellari in memoria in modo interoperabile tra linguaggi e strumenti |
 | **DuckDB** | motore SQL analitico eseguibile localmente, utilizzabile come componente embedded anziché come database server separato |
 | **APEX** | piattaforma Oracle per costruire applicazioni web sopra database Oracle; qui è un esempio di componente applicativo esterno a R |
 
-## Definire il workload
+## Definire il carico di lavoro
 
 Servono almeno: interattivo o batch, utenti e concorrenza, frequenza, tempo di risposta, dimensione e crescita dei dati, disponibilità e sistemi esterni.
 
@@ -71,13 +71,13 @@ Prima di parlare di server, container o CPU, bisogna identificare **che tipo di 
 | Forma della soluzione | Come viene eseguita | Requisiti IT principali |
 |---|---|---|
 | **Script personale** | avvio manuale da un utente | R e dipendenze installate, accesso ai dati, permessi, ambiente utente; normalmente non richiede servizio sempre attivo |
-| **Script batch** | scheduler → processo R → output | entrypoint, frequenza, durata, CPU/RAM, directory temporanee, log, exit code, retry, alert, gestione output |
+| **Script batch** | scheduler → processo R → output | entrypoint, frequenza, durata, CPU/RAM, directory temporanee, log, exit code, nuovo tentativo automatico, alert, gestione output |
 | **Report Quarto** | render manuale o schedulato → documento | R + package + sorgenti, dati di input, dipendenze del render, destinazione dell'output, log del render e gestione degli artefatti |
-| **Applicazione Shiny** | utente → web/proxy → sessione/processo R | modello di deployment, autenticazione/autorizzazione, concorrenza, latenza, CPU/RAM per sessione, timeout, log, monitoring e scaling |
-| **API con plumber2** | client → HTTP/API → processo R | endpoint e contratto API, autenticazione, rete/TLS, timeout, concorrenza, limiti, logging, monitoring, versioning e gestione degli errori |
-| **Consumo di API HTTP con httr2** | processo R → client HTTP → servizio esterno | URL e contratto remoto, autenticazione, timeout, codici HTTP, parsing, retry e gestione dei limiti del servizio |
+| **Applicazione Shiny** | utente → web/proxy → sessione/processo R | modello di distribuzione, autenticazione/autorizzazione, concorrenza, latenza, CPU/RAM per sessione, timeout, log, monitoraggio e variazione delle risorse |
+| **API con plumber2** | client → HTTP/API → processo R | endpoint e contratto API, autenticazione, rete/TLS, timeout, concorrenza, limiti, logging, monitoraggio, versioning e gestione degli errori |
+| **Consumo di API HTTP con httr2** | processo R → client HTTP → servizio esterno | URL e contratto remoto, autenticazione, timeout, codici HTTP, parsing, nuovo tentativo automatico e gestione dei limiti del servizio |
 | **Libreria/package R** | altro software importa il package | versione R/package, API del componente, dipendenze, test, compatibilità e processo di release |
-| **Job R integrato in una pipeline** | orchestratore → uno o più step R | contratto input/output, dipendenze tra step, scheduling, retry, idempotenza, log, stato del job e gestione degli errori |
+| **Job R integrato in una pipeline** | orchestratore → uno o più step R | contratto input/output, dipendenze tra step, scheduling, nuovo tentativo automatico, idempotenza, log, stato del job e gestione degli errori |
 
 Queste categorie possono anche combinarsi. Per esempio, un report Quarto può essere prodotto da uno script batch schedulato; una Shiny può chiamare un database e un'API; un package può essere usato da più job.
 
@@ -100,27 +100,27 @@ risorse e concorrenza
       ↓
 configurazione
       ↓
-logging / monitoring
+logging / monitoraggio
       ↓
 sicurezza
       ↓
-test + baseline
+test + situazione di riferimento
       ↓
-deployment + recovery
+distribuzione + recovery
 ```
 
 Il livello di dettaglio cambia con la soluzione. Per evitare checklist parallele, usare la scheda nell'appendice **Kit operativo per IT** come raccolta unica delle informazioni e integrare qui soltanto i dettagli specifici della forma applicativa.
 
 | Forma | Campi della scheda da considerare prioritari | Campi condizionali o specifici |
 |---|---|---|
-| Script personale / batch | entrypoint, ambiente, input/output, frequenza, durata, exit code, log e owner | concorrenza, retry, alert e recovery secondo il rischio |
-| Quarto | sorgenti, dipendenze, dati, destinazione, durata del render e artefatto | scheduler, pubblicazione automatica e rollback dell'artefatto |
+| Script personale / batch | entrypoint, ambiente, input/output, frequenza, durata, exit code, log e owner | concorrenza, nuovo tentativo automatico, alert e recovery secondo il rischio |
+| Quarto | sorgenti, dipendenze, dati, destinazione, durata del render e artefatto | scheduler, pubblicazione automatica e ripristino della versione precedente dell'artefatto |
 | Package | API del componente, dipendenze, test, compatibilità e release | repository interno, firma o processo di approvazione se richiesti |
-| Pipeline | contratti tra step, stato, exit code, retry, idempotenza e artefatti | parallelismo, recovery per step e orchestrazione distribuita |
-| Shiny | entrypoint, sessioni, concorrenza, latenza, dati condivisi, autenticazione e restart | proxy, cache condivisa, scaling e test di carico secondo l'architettura |
-| API plumber2 / client httr2 | contratto HTTP, timeout, errori, autenticazione, log e dipendenze esterne | rate limit, paginazione, retry e versionamento secondo il contratto |
+| Pipeline | contratti tra step, stato, exit code, nuovo tentativo automatico, idempotenza e artefatti | parallelismo, recovery per step e orchestrazione distribuita |
+| Shiny | entrypoint, sessioni, concorrenza, latenza, dati condivisi, autenticazione e restart | proxy, cache condivisa, variazione delle risorse e test di carico secondo l'architettura |
+| API plumber2 / client httr2 | contratto HTTP, timeout, errori, autenticazione, log e dipendenze esterne | rate limit, paginazione, nuovo tentativo automatico e versionamento secondo il contratto |
 
-Per ogni campo, la scheda distingue **necessario**, **condizionale** e **buona pratica**: non trasformare una voce non applicabile in un requisito artificiale; annotare invece il motivo. Se un dato manca, registrarlo come informazione da ottenere e indicare il test o il responsabile. Le sezioni 1–14 dell'appendice coprono identificazione, esecuzione, ambiente, dati, risorse, sicurezza, test, errori, deployment, monitoring, baseline e ownership.
+Per ogni campo, la scheda distingue **necessario**, **condizionale** e **buona pratica**: non trasformare una voce non applicabile in un requisito artificiale; annotare invece il motivo. Se un dato manca, registrarlo come informazione da ottenere e indicare il test o il responsabile. Le sezioni 1–14 dell'appendice coprono identificazione, esecuzione, ambiente, dati, risorse, sicurezza, test, errori, distribuzione, monitoraggio, riferimento di confronto e responsabilità.
 
 Per esempio, per uno **script personale** la concorrenza e l'alta disponibilità possono non essere requisiti. Per una **API** diventano invece requisiti centrali: il servizio deve definire chi può chiamarlo, come vengono gestite richieste contemporanee, quali timeout sono ammessi e cosa accade quando una dipendenza esterna non risponde.
 
@@ -142,14 +142,14 @@ La stessa base di codice R può essere utilizzata in modelli operativi molto div
 | Forma | Esecuzione | Utenti/concorrenza | Domanda IT principale |
 |---|---|---:|---|
 | Script personale | manuale | normalmente 1 | ambiente e accessi dell'utente |
-| Batch | schedulata | normalmente 1 per run | calendario, risorse, exit code, retry |
+| Batch | schedulata | normalmente 1 per run | calendario, risorse, exit code, nuovo tentativo automatico |
 | Quarto | render schedulato o manuale | normalmente nessuna sessione | ambiente, dati, artefatto e pubblicazione |
 | Shiny | servizio interattivo | più sessioni | autenticazione, concorrenza, risorse e disponibilità |
-| API plumber2 | servizio HTTP | richieste concorrenti | contratto, autenticazione, timeout, limiti e monitoring |
+| API plumber2 | servizio HTTP | richieste concorrenti | contratto, autenticazione, timeout, limiti e monitoraggio |
 | Package | componente riusabile | dipende dal chiamante | versionamento, dipendenze e test |
-| Pipeline | step orchestrato | dipende dalla pipeline | input/output, stato, retry e ownership |
+| Pipeline | step orchestrato | dipende dalla pipeline | input/output, stato, nuovo tentativo automatico e responsabilità |
 
-La classificazione è importante perché **non si fa il deployment di R in astratto**: si porta in esercizio uno specifico modello di esecuzione.
+La classificazione è importante perché **non si fa la distribuzione di R in astratto**: si porta in esercizio uno specifico modello di esecuzione.
 
 ## R rispetto ai componenti IT già presenti
 
@@ -159,7 +159,7 @@ La domanda è **quale parte del problema R deve risolvere**.
 
 | Componente | Ruolo tipico | Confine con R |
 |---|---|---|
-| Oracle | dati, integrità, query, aggregazioni | R riceve dati già ridotti quando il pushdown è appropriato |
+| Oracle | dati, integrità, query, aggregazioni | R riceve dati già ridotti quando il esecuzione di filtri e aggregazioni lato database è appropriato |
 | APEX | interfaccia e workflow applicativo vicino a Oracle | R può fornire analisi o calcoli specialistici |
 | Scheduler/orchestratore | quando e con quale sequenza eseguire i job | R esegue lo step analitico |
 | Reverse proxy | ingresso HTTP, routing, TLS secondo l'architettura | inoltra verso Shiny/API |
@@ -187,7 +187,7 @@ elaborazione R
 output
 ~~~
 
-IT deve conoscere almeno entrypoint, calendario, account, dipendenze R, query/oggetti Oracle coinvolti, risorse, output, log, retry e ownership.
+IT deve conoscere almeno entrypoint, calendario, account, dipendenze R, query/oggetti Oracle coinvolti, risorse, output, log, nuovo tentativo automatico e responsabilità.
 
 #### Report Quarto
 
@@ -218,7 +218,7 @@ Shiny
 
 Qui diventano centrali autenticazione, sessioni, concorrenza, latenza, timeout, CPU/RAM e comportamento al riavvio.
 
-### Strutture Shiny: come riconoscere l'entry point
+### Strutture Shiny: come riconoscere l'punto di ingresso
 
 Le strutture più comuni sono convenzioni di organizzazione del codice; non definiscono da sole un diverso modello di scalabilità.
 
@@ -227,7 +227,7 @@ Le strutture più comuni sono convenzioni di organizzazione del codice; non defi
 | `app.R` | un file che costruisce UI e server e chiama `shinyApp()` | avvio semplice; distinguere inizializzazione e codice eseguito per sessione |
 | `ui.R` + `server.R` | interfaccia e funzione server in file separati | controllare anche `global.R`, file caricati e working directory |
 | `global.R` | inizializzazione condivisa prima delle sessioni | dati e oggetti allocati qui possono essere condivisi tra sessioni nello stesso processo |
-| **golem** | progetto organizzato come package, entry point e cartella `dev/` | individuare funzioni di avvio/build, moduli, dipendenze e artefatto di deploy |
+| **golem** | progetto organizzato come package, punto di ingresso e cartella `dev/` | individuare funzioni di avvio/build, moduli, dipendenze e artefatto di deploy |
 | **Rhino** | `app.R` minimale e codice applicativo sotto `app/`, incluso `app/main.R` | seguire il loader e la convenzione dei moduli; non trattare `app.R` come un `global.R` tradizionale |
 
 La struttura effettiva va verificata nel repository e nella documentazione della versione usata. Riferimenti ufficiali: [Shiny](https://shiny.posit.co/), [golem](https://thinkr-open.github.io/golem/) e [Rhino — struttura dell'applicazione](https://appsilon.github.io/rhino/dev/articles/explanation/application-structure.html).
@@ -252,6 +252,10 @@ Esempio minimo di distinzione: il dataset globale è caricato una volta per proc
 ```{r}
 #| label: esempio-shiny-stato-condiviso
 #| eval: false
+
+
+
+
 
 # global.R: caricamento all'avvio del processo, non per ogni sessione.
 dati_condivisi <- readRDS(Sys.getenv("DATASET_PATH"))
@@ -305,20 +309,20 @@ Dopo una prima preparazione, la consegna può invece contenere:
 | Prestazione osservata | latenza mediana 7,2 s sul caso di test |
 | Misure disponibili | Oracle 5,5 s; trasferimento 0,8 s; R 0,6 s; rendering 0,3 s |
 | Sicurezza | autenticazione e HTTPS secondo gli standard aziendali |
-| Deployment | ambiente di test separato dalla produzione |
-| Incognite | comportamento sotto carico e modello di scaling da verificare |
+| distribuzione | ambiente di test separato dalla produzione |
+| Incognite | comportamento sotto carico e modello di variazione delle risorse da verificare |
 
-Questo cambia la conversazione. IT non deve più ricostruire da zero che cosa sia l'applicazione; può concentrarsi su piattaforma, autenticazione, reverse proxy, certificati, deployment, monitoring e capacità.
+Questo cambia la conversazione. IT non deve più ricostruire da zero che cosa sia l'applicazione; può concentrarsi su piattaforma, autenticazione, reverse proxy, certificati, distribuzione, monitoraggio e capacità.
 
 Lo sviluppatore **non deve sapere configurare il reverse proxy**. Deve sapere che è un confine architetturale e poter fornire ciò che serve a definirlo: URL o percorso atteso, protocollo, requisiti di autenticazione, eventuali websocket o timeout, dipendenze esterne e comportamento atteso al riavvio.
 
 #### E se lo sviluppatore non sa profilare?
 
-Non bisogna trasformare il profiling in un prerequisito burocratico per chiedere supporto.
+Non bisogna trasformare l'analisi dei tempi di esecuzione in un prerequisito burocratico per chiedere supporto.
 
 Sono sufficienti tre livelli di maturità:
 
-1. **Sintomo documentato** — scenario, dataset, utenti, concorrenza, tempi osservati e baseline.
+1. **Sintomo documentato** — scenario, dataset, utenti, concorrenza, tempi osservati e riferimento di confronto.
 2. **Misure raccolte** — per esempio tempo Oracle, CPU, RAM, rete o durata delle singole fasi.
 3. **Ipotesi verificata** — un test che distingue tra più possibili colli di bottiglia.
 
@@ -347,14 +351,14 @@ Dire «non so ancora se il problema è R, Oracle o la rete» è un'informazione 
 | Soluzione | Consegna utile dello sviluppatore | Focus IT |
 |---|---|---|
 | Script personale | entrypoint, ambiente, dati e permessi | ambiente utente e accessi |
-| Batch | calendario, durata, input/output, exit code, retry | scheduler, account, log, alert e recovery |
+| Batch | calendario, durata, input/output, exit code, nuovo tentativo automatico | scheduler, account, log, alert e recovery |
 | Quarto | sorgenti, \`renv.lock\`, dati, destinazione e durata del render | ambiente di build, artefatto e pubblicazione |
-| Shiny | entrypoint, utenti, sessioni, latenza, dipendenze e requisiti web | proxy, autenticazione, deployment, monitoring e capacità |
+| Shiny | entrypoint, utenti, sessioni, latenza, dipendenze e requisiti web | proxy, autenticazione, distribuzione, monitoraggio e capacità |
 | API plumber2 | endpoint, contratto, timeout, errori, concorrenza e versioning | gateway/proxy, TLS, autenticazione, limiti e osservabilità |
 | Package | API del componente, dipendenze, test e compatibilità | repository, release e compatibilità |
-| Pipeline | input/output, exit code, retry, idempotenza e dipendenze | orchestrazione, stato, log e recovery |
+| Pipeline | input/output, exit code, nuovo tentativo automatico, idempotenza e dipendenze | orchestrazione, stato, log e recovery |
 
-Il principio è lo stesso per tutte le forme: **lo sviluppatore descrive il workload e fornisce le evidenze disponibili; IT trasforma queste informazioni in un esercizio verificabile**.
+Il principio è lo stesso per tutte le forme: **lo sviluppatore descrive il carico di lavoro e fornisce le evidenze disponibili; IT trasforma queste informazioni in un esercizio verificabile**.
 
 #### API con plumber2
 
@@ -392,7 +396,7 @@ api <- plumber2::api() |>
 api |> plumber2::api_run(host = "127.0.0.1", port = 8080)
 ```
 
-L'endpoint `/health` è soltanto un esempio di liveness del processo. Non certifica che Oracle o altre dipendenze siano disponibili. Il binding a `127.0.0.1` limita l'ascolto al loopback: per un deployment dietro proxy va configurato l'host di ascolto in base alla rete del container/host e alle regole di sicurezza. Non esporre direttamente il servizio a reti non fidate senza autenticazione, autorizzazione, TLS e limiti adeguati.
+L'endpoint `/health` è soltanto un esempio di liveness del processo. Non certifica che Oracle o altre dipendenze siano disponibili. Il binding a `127.0.0.1` limita l'ascolto al loopback: per una distribuzione dietro proxy va configurato l'host di ascolto in base alla rete del container/host e alle regole di sicurezza. Non esporre direttamente il servizio a reti non fidate senza autenticazione, autorizzazione, TLS e limiti adeguati.
 
 ### Esempio di consumo HTTP con httr2
 
@@ -466,7 +470,7 @@ repeat {
 record <- unlist(pagine, recursive = FALSE)
 ```
 
-Il ciclo non impone un numero massimo di pagine: per servizi non completamente fidati, aggiungere un limite esplicito e una gestione del cursore ripetuto. Non aggiungere retry indiscriminati; applicare una politica limitata solo se il servizio e l'operazione lo consentono.
+Il ciclo non impone un numero massimo di pagine: per servizi non completamente fidati, aggiungere un limite esplicito e una gestione del cursore ripetuto. Non aggiungere nuovo tentativo automatico indiscriminati; applicare una politica limitata solo se il servizio e l'operazione lo consentono.
 
 Per una richiesta POST, costruire il body esplicitamente e verificare il contratto:
 
@@ -488,7 +492,7 @@ risultato <- httr2::resp_body_json(risposta)
 
 Le credenziali vanno passate tramite il meccanismo aziendale approvato (per esempio secret store o variabili d'ambiente protette), non nel sorgente. Non attivare log verbose in produzione se possono esporre header o body sensibili.
 
-I retry sono **condizionali**, non automatici per qualsiasi errore. Sono adatti soltanto a errori transitori e operazioni per cui la ripetizione è sicura; per POST con effetti collaterali serve un contratto di idempotenza o una chiave idempotente. Limitare numero di tentativi e tempo totale, rispettare `Retry-After` quando previsto e non ritentare indiscriminatamente errori 4xx. Riferimento: [httr2 — req_retry](https://httr2.r-lib.org/reference/req_retry.html).
+i nuovi tentativi automatici sono **condizionali**, non automatici per qualsiasi errore. Sono adatti soltanto a errori transitori e operazioni per cui la ripetizione è sicura; per POST con effetti collaterali serve un contratto di idempotenza o una chiave idempotente. Limitare numero di tentativi e tempo totale, rispettare `nuovo tentativo automatico-After` quando previsto e non ritentare indiscriminatamente errori 4xx. Riferimento: [httr2 — req_retry](https://httr2.r-lib.org/reference/req_retry.html).
 
 
 #### R dentro una pipeline
@@ -501,7 +505,7 @@ orchestratore
    └── pubblicazione
 ~~~
 
-Lo sviluppatore deve descrivere input/output dello step R, dipendenze, exit code, retry e idempotenza. IT deve poter osservare lo stato dello step senza dover interpretare il codice R.
+Lo sviluppatore deve descrivere input/output dello step R, dipendenze, exit code, nuovo tentativo automatico e idempotenza. IT deve poter osservare lo stato dello step senza dover interpretare il codice R.
 
 ## R come componente
 
@@ -515,7 +519,7 @@ Oracle   output
 
 R può essere il componente analitico senza diventare sistema di persistenza o intero stack applicativo.
 
-La domanda architetturale non è «dove installiamo R?», ma **quale parte del workload deve essere eseguita da R e quale da altri componenti**.
+La domanda architetturale non è «dove installiamo R?», ma **quale parte del carico di lavoro deve essere eseguita da R e quale da altri componenti**.
 
 ## DBI e database
 
@@ -570,7 +574,7 @@ R
 analisi
 ```
 
-Il principio è il pushdown: eseguire vicino ai dati ciò che il sistema sorgente può fare correttamente ed efficientemente.
+Il principio è il esecuzione di filtri e aggregazioni lato database: eseguire vicino ai dati ciò che il sistema sorgente può fare correttamente ed efficientemente.
 
 Per R questo può ridurre trasferimento, allocation e memoria occupata dal processo R.
 
@@ -626,7 +630,7 @@ dataset ridotto
        R
 ```
 
-Questi strumenti possono spostare parte del lavoro fuori dal processo R e ridurre il costo di trasferimento o materializzazione. La scelta va verificata sul workload e sugli standard dell'organizzazione.
+Questi strumenti possono spostare parte del lavoro fuori dal processo R e ridurre il costo di trasferimento o materializzazione. La scelta va verificata sul carico di lavoro e sugli standard dell'organizzazione.
 
 ## Oracle, APEX, Quarto, Shiny e API
 
@@ -635,12 +639,12 @@ Questa sezione non è un catalogo di prodotti: serve a mostrare come cambia il c
 - **Oracle**: persistenza, integrità, query e aggregazioni; R può occuparsi di analisi, modellistica e simulazione.
 - **APEX**: interfaccia e workflow vicino a Oracle, quando il caso d'uso lo richiede.
 - **Quarto**: produzione di report; R resta parte della pipeline di generazione.
-- **Shiny**: introduce sessioni e concorrenza; il dimensionamento dipende dal modello di deployment concreto.
-- **API R**: espone capacità analitiche a sistemi esterni; il contratto e i limiti operativi diventano parte del workload.
+- **Shiny**: introduce sessioni e concorrenza; il dimensionamento dipende dal modello di distribuzione concreto.
+- **API R**: espone capacità analitiche a sistemi esterni; il contratto e i limiti operativi diventano parte del carico di lavoro.
 
 - **APEX**: il workflow gestionale può invocare un servizio HTTP o leggere/scrivere dati secondo un contratto concordato. Definire chi autentica la chiamata, formato dei parametri e risultati, timeout, codici di errore e tracciamento della richiesta; evitare di duplicare in R logica di workflow già gestita adeguatamente da APEX.
 - **GIS**: specificare formato e schema dei dati spaziali, sistema di riferimento delle coordinate, unità, validità geometrica, volumi e confine di trasformazione. Stabilire se i dati arrivano da file, Oracle Spatial o un servizio e quale componente è responsabile della riproiezione e della validazione.
-- **Scheduler**: il job R deve avere working directory, account, ambiente, exit code, log, timeout e comportamento di retry espliciti. Lo scheduler gestisce calendario e stato; lo script deve fallire con un codice non-zero quando l'elaborazione non è riuscita.
+- **Scheduler**: il job R deve avere working directory, account, ambiente, exit code, log, timeout e comportamento di nuovo tentativo automatico espliciti. Lo scheduler gestisce calendario e stato; lo script deve fallire con un codice non-zero quando l'elaborazione non è riuscita.
 - **Proxy e gateway**: definire routing/path, TLS termination, identity forwarding, limiti di payload, timeout, rate limit e log correlabili. Il servizio R deve conoscere gli header affidabili che riceve e non deve fidarsi di header d'identità forniti direttamente da client non fidati.
 
 
@@ -674,7 +678,7 @@ container
          ├── segreti
          ├── identità
          ├── storage
-         └── monitoring
+         └── monitoraggio
 ~~~
 
 Quindi:
@@ -694,7 +698,7 @@ La soluzione R deve però dichiarare **quali identità e quali autorizzazioni ri
 
 ## Confini
 
-Per ogni componente devono essere chiari dati, calcolo, autenticazione, scheduling, output, monitoring e ownership.
+Per ogni componente devono essere chiari dati, calcolo, autenticazione, scheduling, output, monitoraggio e responsabilità.
 
 Una buona descrizione architetturale dovrebbe poter rispondere, per ogni passaggio, a quattro domande:
 
@@ -703,6 +707,6 @@ Una buona descrizione architetturale dovrebbe poter rispondere, per ogni passagg
 3. dove viene materializzato il risultato?
 4. quale componente è responsabile?
 
-Il risultato architetturale dovrebbe rendere esplicito **dove avviene ogni parte del workload R**.
+Il risultato architetturale dovrebbe rendere esplicito **dove avviene ogni parte del carico di lavoro R**.
 
 Il capitolo 5 traduce questi confini in una release: ciò che è stato deciso deve poter essere ricostruito, testato e portato in esercizio.

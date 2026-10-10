@@ -1,5 +1,5 @@
 ---
-title: "Deployment e gestione operativa"
+title: "Distribuzione e gestione operativa"
 subtitle: "Dal codice R alla release"
 ---
 
@@ -11,14 +11,14 @@ Un software che funziona sul computer dello sviluppatore non è ancora una relea
 
 Per R la difficoltà aggiuntiva è che una release deve rendere riproducibile non solo il codice, ma anche il runtime, i package e le dipendenze che attraversano il confine con il sistema operativo.
 
-## Lessico operativo del deployment
+## Lessico operativo della distribuzione
 
 | Termine | Significato operativo |
 |---|---|
 | **RSS (Resident Set Size)** | quantità di memoria fisica attualmente residente associata a un processo, secondo la metrica esposta dal sistema operativo; è una misura operativa e non coincide con la dimensione logica degli oggetti R |
-| **runbook** | procedura operativa documentata per eseguire o gestire un'attività, per esempio deployment, restart o rollback |
-| **retry** | ripetizione automatica di un'operazione dopo un errore, secondo una politica definita |
-| **rollback** | ritorno a una versione precedente conosciuta e verificata di codice e ambiente |
+| **runbook** | procedura operativa documentata per eseguire o gestire un'attività, per esempio distribuzione, restart o ripristino della versione precedente |
+| **nuovo tentativo automatico** | ripetizione automatica di un'operazione dopo un errore, secondo una politica definita |
+| **ripristino della versione precedente** | ritorno a una versione precedente conosciuta e verificata di codice e ambiente |
 
 ```{mermaid}
 %%| echo: false
@@ -28,8 +28,8 @@ flowchart LR
   C --> D[Ambiente riproducibile]
   D --> E[Artefatto]
   E --> F[Deploy]
-  F --> G[Smoke test]
-  G --> H[Monitoring]
+  F --> G[Verifica rapida di avvio]
+  G --> H[monitoraggio]
 ``` 
 
 ## Catena di rilascio
@@ -47,19 +47,19 @@ artefatto
  ↓
 deploy
  ↓
-smoke test
+verifica rapida di avvio
  ↓
-monitoring
+monitoraggio
 ```
 
 ## Codice sorgente, artefatto e ambiente
 
-Nel deployment vanno distinti tre oggetti:
+Nella distribuzione vanno distinti tre oggetti:
 
 | Oggetto | Che cosa identifica |
 |---|---|
 | **codice sorgente** | ciò che viene versionato e modificato dallo sviluppatore |
-| **artefatto di release** | ciò che viene effettivamente distribuito o utilizzato per il deployment |
+| **artefatto di release** | ciò che viene effettivamente consegnato all'ambiente di esecuzione |
 | **ambiente di esecuzione** | R, package, librerie native, configurazione e sistemi esterni necessari |
 
 Un commit non è necessariamente un artefatto eseguibile. Allo stesso modo, un artefatto non contiene necessariamente tutte le dipendenze esterne.
@@ -68,15 +68,15 @@ La domanda operativa è:
 
 > **Che cosa viene promosso da test a produzione e come si dimostra che l'ambiente che lo esegue è quello previsto?**
 
-## Git e baseline
+## Git e riferimento di confronto
 
 Una release R deve essere riconducibile a commit/tag, versione R, dipendenze, configurazione, componenti nativi, dati di test ed esiti.
 
 Git identifica il codice; non identifica da solo l'intero ambiente R.
 
-## renv nel deployment
+## renv nel distribuzione
 
-Il lockfile di `renv` registra versione di R, repository e record dei package, incluse versioni e sorgenti quando note. Non è però un inventario completo di OS, librerie native, driver, configurazione, credenziali o dati.
+Il file che registra le dipendenze di `renv` registra versione di R, repository e record dei package, incluse versioni e sorgenti quando note. Non è però un inventario completo di OS, librerie native, driver, configurazione, credenziali o dati.
 
 Per alcune installazioni `renv` può inoltre individuare i requisiti di sistema dei package; questi requisiti devono comunque essere soddisfatti dall'ambiente di destinazione.
 
@@ -111,9 +111,13 @@ Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 - l'immagine base R è approvata dall'organizzazione e contiene il sistema operativo e le librerie native richieste;
 - l'app ascolta sulla porta 3838 nel container;
 - il registro immagini, la rete, i certificati e il secret store sono gestiti dalla piattaforma;
-- i valori tra parentesi angolari sono segnaposto da sostituire. Non esiste una versione universale di R o dell'immagine base: usare una baseline supportata e aggiornarla secondo il processo di release.
+- i valori tra parentesi angolari sono segnaposto da sostituire. Non esiste una versione universale di R o dell'immagine base: usare una situazione di riferimento supportata e aggiornarla secondo il processo di release.
 
 ```dockerfile
+
+
+
+
 # Dockerfile illustrativo: sostituire con una base approvata e verificata.
 ARG R_BASE_IMAGE
 FROM ${R_BASE_IMAGE}
@@ -185,7 +189,7 @@ La configurazione non definisce da sola autenticazione, autorizzazione, TLS, lim
 
 ## Sviluppo, test e produzione
 
-Il deployment deve distinguere almeno tre ambienti o fasi logiche:
+la distribuzione deve distinguere almeno tre ambienti o fasi logiche:
 
 ~~~text
 sviluppo
@@ -197,7 +201,7 @@ produzione
 
 Il fatto che una soluzione funzioni sul PC dello sviluppatore non dimostra che sia pronta per la produzione. Tra gli ambienti possono cambiare R, package, librerie native, driver, configurazione, credenziali, rete e dati.
 
-Per IT è utile trattare la configurazione di produzione come una baseline esplicita, non come una copia implicita dell'ambiente di sviluppo.
+Per IT è utile trattare la configurazione di produzione come una situazione di riferimento esplicita, non come una copia implicita dell'ambiente di sviluppo.
 
 ## Test
 
@@ -208,16 +212,16 @@ Una soluzione R dovrebbe avere almeno una distinzione tra quattro livelli di ver
 | Funzionale | il risultato applicativo è corretto? |
 | Integrazione | R comunica correttamente con DB/API/filesystem? |
 | Compatibilità | R, package, driver e native libraries sono coerenti? |
-| Performance | tempo, CPU, RAM e I/O restano entro la baseline? |
+| Performance | tempo, CPU, RAM e I/O restano entro la situazione di riferimento? |
 
-I test di performance devono usare dati rappresentativi e una baseline comparabile. Un test funzionale che passa non dimostra che il workload abbia lo stesso costo operativo.
+I test di performance devono usare dati rappresentativi e una situazione di riferimento comparabile. Un test funzionale che passa non dimostra che il carico di lavoro abbia lo stesso costo operativo.
 
-Per un workload R è utile esplicitare anche il caso **“stesso codice, ambiente diverso”**: una modifica di R, package, driver o librerie native può cambiare il comportamento senza alcuna modifica allo script.
+Per un carico di lavoro R è utile esplicitare anche il caso **“stesso codice, ambiente diverso”**: una modifica di R, package, driver o librerie native può cambiare il comportamento senza alcuna modifica allo script.
 
 Una verifica minima può quindi confrontare:
 
 ```text
-baseline
+situazione di riferimento
    ↓
 stesso input
    ↓
@@ -255,7 +259,7 @@ Nel repository del corso la pipeline esistente è configurata per eseguire `quar
 Per un progetto R è utile trattare il render o il test come parte della verifica dell'ambiente: se cambiano R, package o dipendenze native, la pipeline deve rendere visibile la regressione.
 
 
-## Aggiornamenti e nuova baseline
+## Aggiornamenti e nuova riferimento di confronto
 
 Una modifica a R, package, driver, librerie native, OS o configurazione può cambiare risultato o performance anche senza modificare il codice applicativo.
 
@@ -266,20 +270,20 @@ modifica
    ↓
 test
    ↓
-confronto con baseline
+confronto con situazione di riferimento
    ↓
 release
    ↓
-nuova baseline
+nuova situazione di riferimento
 ~~~
 
-La baseline precedente deve rimanere disponibile per un eventuale rollback.
+la situazione di riferimento precedente deve rimanere disponibile per un eventuale ripristino della versione precedente.
 
-## Smoke test e rollback
+## prova rapida di avvio e ripristino della versione precedente
 
-Dopo il deployment verificare che processo, dipendenze, sistemi esterni e output minimo funzionino.
+Dopo la distribuzione verificare che processo, dipendenze, sistemi esterni e output minimo funzionino.
 
-Il rollback deve ricondurre codice e ambiente a una baseline precedente. Ripristinare soltanto il commit non è sufficiente se l'ambiente è stato modificato manualmente.
+Il ripristino della versione precedente deve ricondurre codice e ambiente a una situazione di riferimento precedente. Ripristinare soltanto il commit non è sufficiente se l'ambiente è stato modificato manualmente.
 
 
 ## Comportamento in caso di errore
@@ -291,14 +295,14 @@ Domande minime:
 - Oracle non risponde: il job fallisce, attende, ritenta?
 - un input non è valido: come viene rifiutato e registrato?
 - il processo R termina: chi lo rileva e chi lo riavvia?
-- un retry può duplicare scritture o output?
+- un nuovo tentativo automatico può duplicare scritture o output?
 - esiste un output parziale che deve essere rimosso o invalidato?
 
-Per i job che producono effetti persistenti, retry e **idempotenza** devono essere valutati insieme.
+Per i job che producono effetti persistenti, nuovo tentativo automatico e **idempotenza** devono essere valutati insieme.
 
-## Logging, monitoring e sicurezza
+## Logging, monitoraggio e sicurezza
 
-Questi aspetti appartengono al normale esercizio IT; per il corso interessa ciò che deve essere osservabile del workload R:
+Questi aspetti appartengono al normale esercizio IT; per il corso interessa ciò che deve essere osservabile del carico di lavoro R:
 
 - job: avvio, durata, esito, output ed errori;
 - servizio: disponibilità, latenza, errori, concorrenza;
@@ -308,7 +312,7 @@ Account tecnici, minimo privilegio, segreti, rete e TLS/HTTPS restano requisiti 
 
 ## Modalità di esecuzione
 
-Prima del deployment bisogna chiarire **come viene avviato il workload**. Lo stesso codice R può avere requisiti operativi molto diversi a seconda del modello di esecuzione.
+Prima della distribuzione bisogna chiarire **come viene avviato il carico di lavoro**. Lo stesso codice R può avere requisiti operativi molto diversi a seconda del modello di esecuzione.
 
 ### Job batch
 
@@ -322,7 +326,7 @@ input → elaborazione → output
 fine processo
 ```
 
-In un job batch interessano soprattutto durata, frequenza, dimensione dell'input, risorse di picco, timeout, exit code, log, retry e gestione dei file temporanei. Il processo normalmente ha un ciclo di vita delimitato: parte, esegue il lavoro e termina.
+In un job batch interessano soprattutto durata, frequenza, dimensione dell'input, risorse di picco, timeout, exit code, log, nuovo tentativo automatico e gestione dei file temporanei. Il processo normalmente ha un ciclo di vita delimitato: parte, esegue il lavoro e termina.
 
 ### Servizio o applicazione interattiva
 
@@ -338,7 +342,7 @@ processo/sessione R
 database / API / filesystem
 ```
 
-Qui diventano centrali concorrenza, latenza, numero di sessioni o worker, isolamento tra richieste, timeout, disponibilità e comportamento dopo il riavvio. Un benchmark eseguito con un solo utente non descrive automaticamente il comportamento del servizio sotto carico.
+Qui diventano centrali concorrenza, latenza, numero di sessioni o worker, isolamento tra richieste, timeout, disponibilità e comportamento dopo il riavvio. una prova comparativa eseguita con un solo utente non descrive automaticamente il comportamento del servizio sotto carico.
 
 La modalità di esecuzione deve quindi essere una voce esplicita della consegna a IT: **batch, servizio, applicazione interattiva o altro modello**, con relativo entrypoint e ciclo di vita.
 
@@ -357,7 +361,7 @@ Il placeholder `<percorso-progetto>` va sostituito. In produzione configurare wo
 
 ## Configurazione del runtime
 
-Una soluzione R non è definita soltanto da versione di R e package. Prima del deployment devono essere identificati anche i parametri che possono modificare il comportamento del processo.
+Una soluzione R non è definita soltanto da versione di R e package. Prima della distribuzione devono essere identificati anche i parametri che possono modificare il comportamento del processo.
 
 Un inventario minimo comprende:
 
@@ -390,20 +394,20 @@ validazione
    ↓
 release
    ↓
-deployment
+distribuzione
    ↓
-smoke test
+verifica rapida di avvio
    ↓
-monitoring
+monitoraggio
    ↓
 aggiornamento / rollback
 ```
 
 Ogni passaggio deve lasciare abbastanza evidenza da permettere a un altro tecnico di capire quale versione è in esercizio, con quale ambiente e con quale configurazione.
 
-## Handover: le informazioni che lo sviluppatore deve fornire a IT
+## passaggio di consegne: le informazioni che lo sviluppatore deve fornire a IT
 
-Il passaggio in produzione è più efficace se viene trattato come una **specifica verificabile del workload**, non come una richiesta generica di infrastruttura.
+Il passaggio in produzione è più efficace se viene trattato come una **specifica verificabile del carico di lavoro**, non come una richiesta generica di infrastruttura.
 
 Una consegna minima dovrebbe contenere:
 
@@ -412,20 +416,20 @@ Una consegna minima dovrebbe contenere:
 | Applicazione | nome, repository, commit/tag, entrypoint | commit/tag | sviluppatore |
 | Runtime | versione R, OS supportati | `R.version`, documentazione | sviluppatore |
 | Dipendenze | package, versioni, sorgenti, native dependencies | `renv.lock` + inventario | sviluppatore/IT |
-| Workload | batch/servizio, durata, frequenza, concorrenza | descrizione + misure | sviluppatore |
+| carico di lavoro | batch/servizio, durata, frequenza, concorrenza | descrizione + misure | sviluppatore |
 | Dati | input/output, dimensioni, crescita | dataset o statistiche | sviluppatore |
-| Risorse | CPU, RAM, I/O, rete, worker, thread | benchmark/profiling | sviluppatore + IT |
+| Risorse | CPU, RAM, I/O, rete, worker, thread | prova comparativa/analisi dei tempi di esecuzione | sviluppatore + IT |
 | Sistemi esterni | DB, API, filesystem, storage | elenco endpoint e flussi | sviluppatore + IT |
 | Configurazione | parametri, variabili d'ambiente, timeout | configurazione di riferimento | sviluppatore |
 | Sicurezza | account, permessi, segreti, TLS | requisiti e configurazione | IT + owner |
-| Test | funzionali, integrazione, performance | risultati e baseline | sviluppatore |
-| Deployment | artefatto, procedura, smoke test | pipeline/runbook | IT + sviluppatore |
-| Operatività | log, metriche, alert, retry, restart | configurazione operativa | IT |
-| Recovery | rollback e baseline precedente | procedura verificata | IT + sviluppatore |
-| Ownership | chi decide e chi interviene | matrice responsabilità | team |
+| Test | funzionali, integrazione, performance | risultati e riferimento di confronto | sviluppatore |
+| distribuzione | artefatto, procedura, prova rapida di avvio | pipeline/runbook | IT + sviluppatore |
+| Operatività | log, metriche, alert, nuovo tentativo automatico, restart | configurazione operativa | IT |
+| Recovery | ripristino della versione precedente e riferimento di confronto precedente | procedura verificata | IT + sviluppatore |
+| responsabilità | chi decide e chi interviene | matrice responsabilità | team |
 
 
-Per servizi e applicazioni interattive, la scheda deve inoltre indicare: modello di sessione/processo, concorrenza attesa, endpoint e timeout, dipendenze da verificare, health check, log correlabili, gestione dei segreti e criterio di rollback. Lo smoke test deve verificare il contratto visibile al chiamante, non soltanto che il processo sia partito.
+Per servizi e applicazioni interattive, la scheda deve inoltre indicare: modello di sessione/processo, concorrenza attesa, endpoint e timeout, dipendenze da verificare, health check, log correlabili, gestione dei segreti e criterio di ripristino della versione precedente. Lo prova rapida di avvio deve verificare il contratto visibile al chiamante, non soltanto che il processo sia partito.
 
 Questa tabella separa tre cose che spesso vengono confuse:
 
@@ -439,7 +443,7 @@ Una richiesta come:
 
 > «Lo script R necessita di 16 core e 64 GB di RAM.»
 
-non è ancora una specifica infrastrutturale sufficiente. Mancano almeno workload, ambiente, concorrenza, durata obiettivo e misura che giustifica quelle risorse.
+non è ancora una specifica infrastrutturale sufficiente. Mancano almeno carico di lavoro, ambiente, concorrenza, durata obiettivo e misura che giustifica quelle risorse.
 
 Una consegna più utile potrebbe descrivere, per esempio:
 
@@ -457,9 +461,9 @@ Database: Oracle
 Volume trasferito: 40 GB
 ```
 
-e allegare un benchmark controllato:
+e allegare una prova comparativa controllata:
 
-| Worker | Tempo | RAM di picco |
+| worker | Tempo | RAM di picco |
 |---:|---:|---:|
 | 1 | 192 min | 11 GB |
 | 2 | 104 min | 20 GB |
@@ -469,7 +473,7 @@ Queste evidenze consentono a IT di discutere una configurazione concreta e di id
 
 La regola operativa è:
 
-> **Lo sviluppatore deve fornire una descrizione riproducibile del workload e delle evidenze; IT deve poter trasformare queste informazioni in una configurazione, un deployment e un esercizio verificabili.**
+> **Lo sviluppatore deve fornire una descrizione riproducibile del carico di lavoro e delle evidenze; IT deve poter trasformare queste informazioni in una configurazione, una distribuzione e un esercizio verificabili.**
 
 ## Production readiness
 
@@ -480,10 +484,10 @@ La regola operativa è:
 | Configurazione | parametri |
 | Test | esiti |
 | Sicurezza | accessi e segreti |
-| Operatività | logging/monitoring |
-| Ripristino | procedura + baseline |
-| Ownership | responsabili |
+| Operatività | logging/monitoraggio |
+| Ripristino | procedura + riferimento di confronto |
+| responsabilità | responsabili |
 
-Prima del rilascio, la domanda utile non è «abbiamo installato R?», ma **«possiamo ricostruire, verificare e osservare questa specifica baseline R in produzione?»**
+Prima del rilascio, la domanda utile non è «abbiamo installato R?», ma **«possiamo ricostruire, verificare e osservare questa specifica riferimento di confronto R in produzione?»**
 
-Il capitolo 6 usa questa evidenza per trasformare le richieste in decisioni e assegnare ownership.
+Il capitolo 6 usa questa evidenza per trasformare le richieste in decisioni e assegnare responsabilità.

@@ -5,14 +5,14 @@ subtitle: "Misurare prima di dimensionare"
 
 ## Perché questo capitolo
 
-> **Dove viene speso il tempo e quale risorsa limita il workload R?**
+> **Dove viene speso il tempo e quale risorsa limita il carico di lavoro R?**
 
 Il capitolo usa una sequenza semplice: **ipotesi → misura → diagnosi → test → decisione**. Una metrica di sistema da sola non basta a stabilire il collo di bottiglia.
 
 ```{mermaid}
 %%| echo: false
 flowchart LR
-  A[Workload] --> B[Misura]
+  A[carico di lavoro] --> B[Misura]
   B --> C[CPU / RAM / I/O / rete]
   B --> D[Tempo]
   B --> E[Database]
@@ -32,12 +32,12 @@ Anche qui ci sono due livelli.
 - prima si misura, poi si dimensiona;
 - una metrica isolata non identifica automaticamente il collo di bottiglia;
 - `elapsed`, CPU, RAM, I/O e tempo database descrivono aspetti diversi;
-- benchmark e baseline devono essere confrontabili;
-- una richiesta infrastrutturale deve essere collegata a un workload misurato.
+- prova comparativa e situazione di riferimento devono essere confrontabili;
+- una richiesta infrastrutturale deve essere collegata a un carico di lavoro misurato.
 
 **Livello diagnostico — da usare quando serve**
 
-- profiling;
+- analisi dei tempi di esecuzione;
 - CPU-bound, memory-bound e I/O;
 - scaling e speed-up;
 - worker, thread e serializzazione;
@@ -93,11 +93,11 @@ non significa che R abbia usato 10 secondi di CPU. Sono trascorsi 10 secondi, me
 
 Con parallelismo o thread nativi, il tempo CPU cumulativo può anche superare l'elapsed.
 
-Per questo, davanti a un benchmark, IT deve sapere **quale dei tre tempi sta confrontando**.
+Per questo, davanti a una prova comparativa, IT deve sapere **quale dei tre tempi sta confrontando**.
 
 ### Perché una sola misura non basta?
 
-`system.time()` misura un'esecuzione. Un benchmark deve invece confrontare esecuzioni ripetute e controllate.
+`system.time()` misura un'esecuzione. una prova comparativa deve invece confrontare esecuzioni ripetute e controllate.
 
 ```text
 stesso input
@@ -113,14 +113,14 @@ confronto
 
 Quando vogliamo attribuire una differenza a una modifica, dobbiamo mantenere stabili le altre variabili.
 
-## Laboratorio operativo — benchmark e profiling di base
+## Laboratorio operativo — prova comparativa e analisi dei tempi di esecuzione di base
 
 L'obiettivo non è ottimizzare il codice, ma permettere a IT di produrre una misura ripetibile e una prima diagnosi.
 
 ### Misura ripetibile
 
 ```{r}
-#| label: benchmark-base-r
+#| label: prova comparativa-base-r
 
 misura <- function(n = 1000000) {
   x <- rnorm(n)
@@ -132,9 +132,9 @@ system.time({
 })
 ```
 
-Per una baseline reale vanno registrati anche versione di R, package rilevanti, ambiente, dimensione dell'input e condizioni del test.
+Per un confronto con una situazione di riferimento reale vanno registrati anche versione di R, package rilevanti, ambiente, dimensione dell'input e condizioni del test.
 
-### Profiling con gli strumenti base di R
+### Analisi dei tempi di esecuzione con gli strumenti base di R
 
 ```{r}
 #| label: profiling-base-r
@@ -148,14 +148,18 @@ summaryRprof("profilo.out")
 
 Il risultato è **evidenza diagnostica**, non una prescrizione automatica di ottimizzazione.
 
-### Profiling interattivo con `profvis`
+### Analisi interattiva dei tempi di esecuzione con `profvis`
 
-Quando è utile una lettura visuale del profiling, si può usare **`profvis`**. È un package R che presenta in forma interattiva il tempo speso nelle diverse chiamate e consente di esplorare più facilmente dove viene eseguito il lavoro.
+Quando serve vedere in modo interattivo dove viene speso il tempo, si può usare **`profvis`**. È un package R che presenta in forma interattiva il tempo speso nelle diverse chiamate e consente di esplorare più facilmente dove viene eseguito il lavoro.
 
 In un ambiente di prova:
 
 ```{r}
 #| label: profiling-interattivo-profvis
+
+
+
+
 
 # installazione da eseguire una sola volta nell'ambiente di prova:
 
@@ -166,7 +170,7 @@ profvis::profvis({
 })
 ```
 
-`profvis` non sostituisce la misura complessiva del workload e non identifica automaticamente il collo di bottiglia infrastrutturale. Serve a rispondere a una domanda più specifica:
+`profvis` non sostituisce la misura complessiva del carico di lavoro e non identifica automaticamente il collo di bottiglia infrastrutturale. Serve a rispondere a una domanda più specifica:
 
 > **Dove viene speso il tempo all'interno dell'esecuzione R?**
 
@@ -189,7 +193,7 @@ Per IT è sufficiente saper leggere il risultato a livello diagnostico:
 
 Il percorso didattico è quindi **misurare → localizzare → correlare → testare**, non «eseguire un profiler e applicare automaticamente una correzione».
 
-### Laboratorio specifico — profiling con input e baseline controllati
+### Laboratorio specifico — analisi dei tempi di esecuzione con input e situazione di riferimento controllati
 
 - **Input:** la funzione sintetica `misura()` definita sopra, eseguita con lo stesso valore di `n`.
 - **Ambiente:** registrare versione R, OS e condizioni di carico; eseguire una prova di riscaldamento e poi almeno tre misure comparabili.
@@ -198,7 +202,7 @@ Il percorso didattico è quindi **misurare → localizzare → correlare → tes
 - **Limiti:** `Rprof()` campiona lo stack R e non attribuisce da solo tempi di rete o query; i profiler introducono overhead. Un profilo CPU non è una misura completa della memoria.
 
 ```{r}
-#| label: laboratorio-profiling-ripetibile
+#| label: laboratorio-analisi dei tempi di esecuzione-ripetibile
 #| eval: false
 
 n <- 5000000L
@@ -221,17 +225,17 @@ list(
 )
 ```
 
-Il chunk riusa `misura()` definita nel laboratorio precedente ed è escluso dal rendering automatico per non duplicare il carico di profiling durante ogni build. Per una prova autonoma, eseguire i chunk nello stesso ambiente o includere la definizione della funzione nello script di laboratorio.
+Il chunk riusa `misura()` definita nel laboratorio precedente ed è escluso dal rendering automatico per non duplicare il carico di analisi dei tempi di esecuzione durante ogni build. Per una prova autonoma, eseguire i chunk nello stesso ambiente o includere la definizione della funzione nello script di laboratorio.
 
 
-### Correlare profiling e infrastruttura
+### Correlare analisi dei tempi di esecuzione e infrastruttura
 
 ```text
 scenario controllato
       ↓
 misura globale
       ↓
-profiling R + monitoraggio processo/macchina
+analisi dei tempi di esecuzione R + monitoraggio processo/macchina
 
       + misura database quando rilevante
 
@@ -240,30 +244,30 @@ ipotesi sul collo di bottiglia
       ↓
 test controllato
       ↓
-nuova baseline
+nuova situazione di riferimento
 ```
 
 IT dovrebbe arrivare a una delle tre conclusioni: problema infrastrutturale plausibile con evidenze; problema applicativo plausibile da restituire allo sviluppatore; evidenza insufficiente e quindi necessità di un test migliore.
 
-## Profiling
+## analisi dei tempi di esecuzione
 
-Il monitoraggio dice che la macchina è sotto carico; il profiling aiuta a capire **quale parte del codice R consuma il tempo**.
+Il monitoraggio dice che la macchina è sotto carico; l'analisi dei tempi di esecuzione aiuta a capire **quale parte del codice R consuma il tempo**.
 
 ```text
 misura globale
    ↓
 ipotesi
    ↓
-profiling R / osservazione infrastrutturale
+analisi dei tempi di esecuzione R / osservazione infrastrutturale
    ↓
 candidato collo di bottiglia
    ↓
 modifica
    ↓
-benchmark
+prova comparativa
 ```
 
-Il profiling non sostituisce il monitoraggio infrastrutturale: mette in relazione il comportamento del codice con quello della macchina.
+l'analisi dei tempi di esecuzione non sostituisce il monitoraggio infrastrutturale: mette in relazione il comportamento del codice con quello della macchina.
 
 ## Approfondimento — Lessico della diagnostica
 
@@ -271,8 +275,8 @@ Prima di interpretare le misure, definiamo alcuni termini usati nel ragionamento
 
 | Termine | Significato operativo |
 |---|---|
-| **CPU-bound** | workload il cui tempo è limitato principalmente dal calcolo CPU, dopo aver escluso altri colli di bottiglia rilevanti |
-| **memory-bound** | workload in cui il limite principale è legato all'accesso o alla capacità della memoria, non semplicemente alla quantità di RAM installata |
+| **CPU-bound** | carico di lavoro il cui tempo è limitato principalmente dal calcolo CPU, dopo aver escluso altri colli di bottiglia rilevanti |
+| **memory-bound** | carico di lavoro in cui il limite principale è legato all'accesso o alla capacità della memoria, non semplicemente alla quantità di RAM installata |
 | **I/O** | operazioni di ingresso/uscita verso storage, rete o altri dispositivi; possono introdurre attese mentre la CPU resta poco utilizzata |
 | **overhead** | costo aggiuntivo necessario per coordinare o eseguire il lavoro, oltre al calcolo utile; può derivare da processi, thread, serializzazione, sincronizzazione o trasferimenti |
 | **scaling** | variazione delle prestazioni al variare delle risorse o del grado di parallelismo |
@@ -290,7 +294,7 @@ Sono ipotesi diagnostiche, non conclusioni automatiche.
 
 Nel caso R, CPU elevata può derivare dal codice R, da `BLAS/LAPACK`, da thread nativi o da più worker. RAM elevata può derivare da oggetti, copie, garbage collection o memoria duplicata tra processi.
 
-### Laboratorio specifico — trasferimento completo contro pushdown Oracle
+### Laboratorio specifico — trasferimento completo contro esecuzione dei filtri e delle aggregazioni nel database Oracle
 
 **Prerequisiti:** ambiente di test autorizzato con Oracle, package `DBI`, driver aziendale e connessione `con` già configurata. Non inserire credenziali nel codice.
 
@@ -302,7 +306,7 @@ Nel caso R, CPU elevata può derivare dal codice R, da `BLAS/LAPACK`, da thread 
 - **Limiti:** piani di esecuzione, cache, indici e carico del database influenzano i risultati. Il codice è illustrativo e va adattato allo schema e alle policy aziendali.
 
 ```{r}
-#| label: laboratorio-pushdown-oracle
+#| label: laboratorio-esecuzione dei filtri e delle aggregazioni nel database-oracle
 #| eval: false
 
 tempo_completo <- system.time({
@@ -320,7 +324,7 @@ tempo_completo <- system.time({
   )
 })
 
-tempo_pushdown <- system.time({
+tempo_esecuzione dei filtri e delle aggregazioni nel database <- system.time({
   totale_db <- DBI::dbGetQuery(
     con,
     "SELECT PRODOTTO_ID, SUM(IMPORTO) AS IMPORTO_TOTALE
@@ -335,8 +339,8 @@ stopifnot(nrow(totale_r) == nrow(totale_db))
 list(
   tempo_completo = tempo_completo,
   righe_trasferite_completo = nrow(vendite),
-  tempo_pushdown = tempo_pushdown,
-  righe_trasferite_pushdown = nrow(totale_db)
+  tempo_esecuzione dei filtri e delle aggregazioni nel database = tempo_esecuzione dei filtri e delle aggregazioni nel database,
+  righe_trasferite_esecuzione dei filtri e delle aggregazioni nel database = nrow(totale_db)
 )
 ```
 
@@ -349,7 +353,7 @@ La vectorization permette a R di esprimere operazioni su insiemi di valori e pu�
 
 Per IT il punto è che **due implementazioni con lo stesso risultato possono avere costi molto diversi in CPU, allocation e memoria**.
 
-Questo è un buon esempio di confine tra competenza applicativa e infrastrutturale: IT può misurare il costo, mentre la scelta di cambiare algoritmo o implementazione resta in collaborazione con chi sviluppa il workload.
+Questo è un buon esempio di confine tra competenza applicativa e infrastrutturale: IT può misurare il costo, mentre la scelta di cambiare algoritmo o implementazione resta in collaborazione con chi sviluppa il carico di lavoro.
 
 ## Approfondimento — Base R, `dplyr` e `data.table`
 
@@ -365,7 +369,7 @@ Per IT la distinzione importante è quindi:
 
 > **linguaggio/funzionalità standard di R ≠ package aggiuntivo ≠ motore o backend esterno.**
 
-La scelta fra questi strumenti appartiene principalmente allo sviluppatore. IT deve però saper riconoscere quando una scelta implementativa può cambiare significativamente il profilo di CPU, RAM e tempo del workload.
+La scelta fra questi strumenti appartiene principalmente allo sviluppatore. IT deve però saper riconoscere quando una scelta implementativa può cambiare significativamente il profilo di CPU, RAM e tempo del carico di lavoro.
 
 ### Un esempio: aggiungere una colonna a una tabella
 
@@ -418,7 +422,7 @@ system.time({
 
 L'elemento importante dell'ultimo esempio è `:=`: in molti casi consente a `data.table` di modificare la tabella **in place**, evitando di creare una nuova copia completa della struttura per l'assegnazione. Questo può ridurre il picco di memoria e il lavoro di copia, soprattutto quando le tabelle sono grandi.
 
-Non significa che `data.table` sia sempre più veloce o che `:=` elimini ogni allocazione: l'espressione a destra deve comunque essere calcolata e possono essere necessarie nuove strutture temporanee. Il vantaggio va quindi **misurato sul workload reale**.
+Non significa che `data.table` sia sempre più veloce o che `:=` elimini ogni allocazione: l'espressione a destra deve comunque essere calcolata e possono essere necessarie nuove strutture temporanee. Il vantaggio va quindi **misurato sul carico di lavoro reale**.
 
 ### Rendere il confronto misurabile
 
@@ -455,19 +459,19 @@ system.time(df_dplyr <- `dplyr`::mutate(df_dplyr, totale = quantita * prezzo))
 system.time(DT[, totale := quantita * prezzo])
 ```
 
-I tempi prodotti da questo esempio **non sono valori di riferimento universali**: dipendono dall'ambiente di esecuzione. Per confrontare la memoria, è utile osservare il processo durante l'operazione oppure usare uno strumento di profiling della memoria; non basta guardare `object.size()` dopo che l'operazione è terminata.
+I tempi prodotti da questo esempio **non sono valori di riferimento universali**: dipendono dall'ambiente di esecuzione. Per confrontare la memoria, è utile osservare il processo durante l'operazione oppure usare uno strumento di analisi dei tempi di esecuzione della memoria; non basta guardare `object.size()` dopo che l'operazione è terminata.
 
 ### Che cosa deve osservare IT?
 
-Il punto del benchmark non è raccogliere una classifica. È verificare se l'implementazione modifica materialmente il workload.
+Il punto del prova comparativa non è raccogliere una classifica. È verificare se l'implementazione modifica materialmente il carico di lavoro.
 
 | Implementazione | Tempo | Picco RAM | Interpretazione |
 |---|---:|---:|---|
-| base R | misurato | misurato | baseline |
+| base R | misurato | misurato | situazione di riferimento |
 | `dplyr` | misurato | misurato | confronto |
 | `data.table` con `:=` | misurato | misurato | possibile riduzione di copie |
 
-Se `data.table` produce lo stesso risultato con un picco RAM significativamente inferiore, una possibile conseguenza operativa è **evitare di aumentare la RAM della macchina prima di verificare se l'implementazione può essere modificata**. Questa non è però una conclusione automatica: bisogna considerare leggibilità, manutenzione, compatibilità, altre fasi del workload e costo della modifica.
+Se `data.table` produce lo stesso risultato con un picco RAM significativamente inferiore, una possibile conseguenza operativa è **evitare di aumentare la RAM della macchina prima di verificare se l'implementazione può essere modificata**. Questa non è però una conclusione automatica: bisogna considerare leggibilità, manutenzione, compatibilità, altre fasi del carico di lavoro e costo della modifica.
 
 ### Un secondo esempio: copia esplicita contro modifica in place
 
@@ -499,16 +503,16 @@ Da questo confronto non segue che:
 - `:=` renda gratuita una trasformazione;
 - il tempo di una singola esecuzione sia sufficiente per scegliere un'architettura.
 
-Il risultato dipende dall'operazione. Un workload può essere dominato dal database, dall'I/O o dalla rete e rendere irrilevante la differenza fra due implementazioni R.
+Il risultato dipende dall'operazione. Un carico di lavoro può essere dominato dal database, dall'I/O o dalla rete e rendere irrilevante la differenza fra due implementazioni R.
 
 La conclusione utile per IT è più semplice:
 
 > **Prima di dimensionare l'infrastruttura, verificare se il costo osservato appartiene realmente alla macchina oppure a una scelta di implementazione che può essere modificata.**
 
-Questo è anche il motivo per cui il confronto tra implementazioni va inserito nel ciclo **misura → ipotesi → test → nuova baseline**, non usato come classifica permanente dei package.
+Questo è anche il motivo per cui il confronto tra implementazioni va inserito nel ciclo **misura → ipotesi → test → nuova situazione di riferimento**, non usato come classifica permanente dei package.
 ## Diagnostica — Scaling
 
-Lo speedup con `n` worker è `S(n) = T1 / Tn`; l'efficienza è `E(n) = S(n) / n`. `T1` e `Tn` devono provenire da misure comparabili dello stesso workload e ambiente.
+Lo speedup con `n` worker è `S(n) = T1 / Tn`; l'efficienza è `E(n) = S(n) / n`. `T1` e `Tn` devono provenire da misure comparabili dello stesso carico di lavoro e ambiente.
 
 Lo scaling reale è limitato da parti seriali, serializzazione, sincronizzazione, memoria, I/O, database e thread nativi.
 
@@ -518,7 +522,7 @@ Nel caso R bisogna inoltre distinguere lo scaling del codice da quello delle lib
 
 ### CPU alta
 
-Verificare core utilizzati, worker, thread nativi, profiling e parallelizzabilità.
+Verificare core utilizzati, worker, thread nativi, analisi dei tempi di esecuzione e parallelizzabilità.
 
 ### RAM alta
 
@@ -532,15 +536,15 @@ Verificare database, rete, storage, lock, serializzazione e attese.
 
 Un job passa da 1 a 4 worker e il tempo diminuisce. Passando a 8 worker il tempo quasi non cambia mentre la RAM cresce.
 
-La lettura corretta non è «la VM ha bisogno di più core». Il test successivo deve verificare se il limite è serializzazione, memoria, parte seriale del workload, database o thread nativi.
+La lettura corretta non è «la VM ha bisogno di più core». Il test successivo deve verificare se il limite è serializzazione, memoria, parte seriale del carico di lavoro, database o thread nativi.
 
-## Benchmark come esperimento
+## prova comparativa come esperimento
 
-Un benchmark deve controllare dataset, versione di R, package, configurazione, worker, thread e ripetizioni.
+una prova comparativa deve controllare dataset, versione di R, package, configurazione, worker, thread e ripetizioni.
 
-La baseline software è quindi parte della validità del confronto.
+La situazione di riferimento software è quindi parte della validità del confronto.
 
-Una variazione di R, package o librerie native può cambiare il risultato anche quando il codice applicativo non è cambiato. Il confronto va quindi riferito a una baseline esplicita.
+Una variazione di R, package o librerie native può cambiare il risultato anche quando il codice applicativo non è cambiato. Il confronto va quindi riferito a una situazione di riferimento esplicita.
 
 ## Tradurre la diagnosi in una richiesta IT
 
@@ -550,7 +554,7 @@ Debole:
 
 Informativa:
 
-> «Il workload R impiega 192 minuti con un worker; il profiling indica X; il test 1/2/4/8 worker produce A/B/C/D e RAM X/Y/Z/W; il database non è il collo di bottiglia.»
+> «Il carico di lavoro R impiega 192 minuti con un worker; l'analisi dei tempi di esecuzione indica X; il test 1/2/4/8 worker produce A/B/C/D e RAM X/Y/Z/W; il database non è il collo di bottiglia.»
 
 Una richiesta informativa permette a IT di valutare più alternative: modifica del codice, configurazione del parallelismo, aumento delle risorse o spostamento del calcolo.
 
@@ -560,7 +564,7 @@ Una richiesta informativa permette a IT di valutare più alternative: modifica d
 2. Quale risorsa risulta effettivamente limitante?
 3. Quale evidenza collega la risorsa al collo di bottiglia?
 4. Quale test controllato distingue le alternative?
-5. Qual è la baseline rispetto alla quale verrà verificato il cambiamento?
+5. Qual è la situazione di riferimento rispetto alla quale verrà verificato il cambiamento?
 
 > **Prima di aumentare le risorse, verificare il collo di bottiglia.**
 

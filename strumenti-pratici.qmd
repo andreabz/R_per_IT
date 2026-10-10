@@ -1,23 +1,23 @@
 ---
 title: "Strumenti pratici per IT"
-subtitle: "Dalla richiesta R all'handover"
+subtitle: "Dalla richiesta R al passaggio di consegne"
 ---
 
 ## 1. È arrivata una richiesta R: cosa devo chiedere?
 
 Usare questa lista come primo filtro. Se una risposta non è disponibile, va richiesta allo sviluppatore o al referente.
 
-Per la raccolta completa usare la [scheda unica del Kit operativo per IT](appendice-kit-operativo.qmd); questa pagina è una guida al colloquio e alla diagnosi, non una seconda scheda di handover.
+Per la raccolta completa usare la [scheda unica del Kit operativo per IT](appendice-kit-operativo.qmd); questa pagina è una guida al colloquio e alla diagnosi, non una seconda scheda di passaggio di consegne.
 
 - [ ] Classificare la soluzione: script, batch, Quarto, Shiny, API plumber2, package, pipeline.
-- [ ] Individuare entry point, repository, versione e owner.
+- [ ] Individuare punto di ingresso, repository, versione e owner.
 - [ ] Descrivere ambiente: versione R, sistema operativo, package, renv.lock, librerie native e driver.
 - [ ] Descrivere input, output, volumi e sistemi esterni.
 - [ ] Definire esecuzione: manuale/batch/servizio/interattiva, frequenza, finestra, durata e concorrenza.
-- [ ] Chiedere misure: durata, RAM, CPU, I/O, rete, database, worker/thread e dataset di test.
+- [ ] Chiedere misure: durata, RAM, CPU, I/O, rete, database, processi e fili di esecuzione e dataset di test.
 - [ ] Verificare account, permessi, autenticazione, configurazione e certificati.
-- [ ] Definire logging, errori, timeout, retry, restart e alert.
-- [ ] Definire test, baseline, deployment, rollback e responsabilità.
+- [ ] Definire logging, errori, timeout, nuovo tentativo automatico, restart e alert.
+- [ ] Definire test, riferimento di confronto, distribuzione, ripristino della versione precedente e responsabilità.
 
 > Se la richiesta si limita a «installare R», «serve più RAM» o «pubblicare una Shiny», non è ancora una specifica di esercizio.
 
@@ -69,7 +69,7 @@ find.package("data.table")
 
 Il comando di installazione non è sufficiente: occorre verificare **sorgente, versione e percorso effettivamente usati**. Se l'installazione richiede compilazione, verificare anche toolchain e librerie native.
 
-### Misura e profiling
+### Misura e analisi dei tempi di esecuzione
 
 Per uno script o una funzione:
 
@@ -84,7 +84,7 @@ system.time({
 Se serve capire dove il codice R spende il tempo:
 
 ```{r}
-#| label: procedura-profiling-it
+#| label: procedura-analisi dei tempi di esecuzione-it
 
 Rprof("profilo.out")
 risultato <- funzione_da_testare()
@@ -92,7 +92,7 @@ Rprof(NULL)
 summaryRprof("profilo.out")
 ```
 
-`funzione_da_testare()` è un segnaposto da sostituire con l'entry point o la funzione fornita dallo sviluppatore.
+`funzione_da_testare()` è un segnaposto da sostituire con l'punto di ingresso o la funzione fornita dallo sviluppatore.
 
 > **Regola:** IT deve saper produrre una diagnosi riproducibile, non necessariamente correggere il codice.
 
@@ -122,7 +122,7 @@ Raccogliere:
 - repository, commit/tag ed entrypoint;
 - versione di R;
 - package e repository;
-- presenza e contenuto del lockfile;
+- presenza e contenuto del file che registra le dipendenze;
 - library effettivamente utilizzate;
 - dipendenze native e driver Oracle.
 
@@ -145,7 +145,7 @@ Ricostruire l'ambiente in test, eseguire il job con un dataset rappresentativo e
 | Output prodotto | ... |
 | Esito | ... |
 
-**Output:** prima baseline riproducibile.
+**Output:** prima riferimento di confronto riproducibile.
 
 Se la soluzione non parte, il tecnico deve classificare il problema come dipendenza R, dipendenza nativa/driver, configurazione, accesso a sistema esterno o problema applicativo, raccogliendo l'evidenza corrispondente.
 
@@ -153,7 +153,7 @@ Se la soluzione non parte, il tecnico deve classificare il problema come dipende
 
 **Riferimento:** capitolo 3.
 
-Ripetere il workload in condizioni comparabili e distinguere:
+Ripetere il carico di lavoro in condizioni comparabili e distinguere:
 
 1. tempo totale;
 2. tempo CPU;
@@ -193,24 +193,24 @@ Chiedersi:
 - quale account e quali permessi servono;
 - quale componente aziendale gestisce scheduling, filesystem e autenticazione, se applicabile.
 
-**Output:** confini chiari tra workload R e componenti IT.
+**Output:** confini chiari tra carico di lavoro R e componenti IT.
 
-### Fase 5 — Deployment e operatività
+### Fase 5 — distribuzione e operatività
 
 **Riferimento:** capitolo 5.
 
 Definire:
 
 - ambiente di test e produzione;
-- procedura di deployment;
-- smoke test;
+- procedura di distribuzione;
+- prova rapida di avvio;
 - log ed exit code;
-- timeout e retry;
+- timeout e nuovo tentativo automatico;
 - comportamento in caso di Oracle indisponibile;
 - gestione dell'output parziale;
-- rollback;
-- monitoring e alert;
-- ownership.
+- ripristino della versione precedente;
+- monitoraggio e alert;
+- responsabilità.
 
 **Output:** una specifica di esercizio, non soltanto una richiesta di installazione.
 
@@ -228,10 +228,10 @@ La decisione deve essere accompagnata da:
 - test eseguiti;
 - alternative considerate;
 - configurazione proposta o modifica applicativa;
-- nuova baseline attesa;
+- nuova riferimento di confronto attesa;
 - responsabilità.
 
-**Output finale:** la richiesta iniziale viene trasformata in una decisione tecnica verificabile e in un handover utilizzabile da IT.
+**Output finale:** la richiesta iniziale viene trasformata in una decisione tecnica verificabile e in un passaggio di consegne utilizzabile da IT.
 
 ### Criterio di superamento
 
@@ -242,7 +242,7 @@ Il percorso è completato quando un tecnico che non conosce la soluzione sa prod
 3. **come eseguirla** in test;
 4. **come misurarla**;
 5. **come formulare una diagnosi prudente**;
-6. **quali informazioni servono per il deployment**;
+6. **quali informazioni servono per la distribuzione**;
 7. **come osservarla e ripristinarla**;
 8. **chi deve intervenire** quando l'evidenza rimanda al codice o al modello applicativo.
 
@@ -259,45 +259,45 @@ Per ogni fase non è necessario arrivare a una diagnosi definitiva. Il criterio 
 | 2. Ricostruzione | riprodurre l'ambiente in test e distinguere un errore di dipendenza, driver/configurazione, accesso esterno o applicazione; |
 | 3. Diagnosi | separare misure da ipotesi e proporre il test successivo quando l'evidenza non basta; |
 | 4. Architettura | rappresentare il flusso R/database/sistemi esterni e identificare i confini di responsabilità; |
-| 5. Operatività | descrivere deployment, smoke test, logging, errori, retry, rollback, monitoring e ownership; |
+| 5. Operatività | descrivere distribuzione, prova rapida di avvio, logging, errori, nuovo tentativo automatico, ripristino della versione precedente, monitoraggio e responsabilità; |
 | 6. Decisione | collegare requisito, evidenza, test e decisione senza trasformare una richiesta iniziale in una specifica hardware non dimostrata. |
 
-**Errore da evitare:** completare una fase assegnando valori plausibili a dati che non sono disponibili. In un handover reale, *dato non noto* è un risultato valido se viene accompagnato dalla richiesta o dal test necessario per ottenerlo.
+**Errore da evitare:** completare una fase assegnando valori plausibili a dati che non sono disponibili. In un passaggio di consegne reale, *dato non noto* è un risultato valido se viene accompagnato dalla richiesta o dal test necessario per ottenerlo.
 
 
-## Esempio: da uno script R a un handover gestibile
+## Esempio: da uno script R a un passaggio di consegne gestibile
 
 ### Situazione iniziale
 
 > «Ho uno script R che legge Oracle e produce un Excel. Deve partire ogni mattina.»
 
-### Handover minimo compilato
+### passaggio di consegne minimo compilato
 
 | Campo | Esempio |
 |---|---|
 | Soluzione | report_vendite_giornaliero |
 | Owner | Team Analisi |
 | Repository/versione | repository Git aziendale, tag v1.4.0 |
-| Tipo/entry point | batch, script/run_report.R |
+| Tipo/punto di ingresso | batch, script/run_report.R |
 | Frequenza/finestra | ogni giorno lavorativo, 06:00–07:00 |
-| Durata baseline | 8 min su dataset di riferimento |
+| Durata riferimento di confronto | 8 min su dataset di riferimento |
 | Input/output | Oracle → report_vendite_YYYYMMDD.xlsx |
-| Ambiente | R e dipendenze definiti dalla baseline e da renv.lock |
+| Ambiente | R e dipendenze definiti dalla situazione di riferimento e da renv.lock |
 | Account | account tecnico dedicato |
 | Accesso Oracle | sola lettura |
 | RAM di picco | 1,8 GB |
 | CPU | media 35%, picco 80% |
-| Retry | solo per errori transitori |
+| nuovo tentativo automatico | solo per errori transitori |
 | Idempotenza | verificata |
 | Logging | avvio, fine, durata, righe lette, file prodotto, errori |
 | Alert | notifica al fallimento |
-| Smoke test | esecuzione su dataset di test e verifica del file |
-| Rollback | release precedente + configurazione associata |
+| prova rapida di avvio | esecuzione su dataset di test e verifica del file |
+| ripristino della versione precedente | release precedente + configurazione associata |
 | Owner operativo | da assegnare |
 
 ### Prima del rilascio
 
-IT verifica che versione e ambiente corrispondano al test, che dipendenze e configurazione siano ricostruibili, che accessi e filesystem siano corretti, che la baseline rappresenti il carico previsto e che logging, alert, rollback e ownership siano definiti.
+IT verifica che versione e ambiente corrispondano al test, che dipendenze e configurazione siano ricostruibili, che accessi e filesystem siano corretti, che la situazione di riferimento rappresenti il carico previsto e che logging, alert, ripristino della versione precedente e responsabilità siano definiti.
 
 ### Trasformazione
 
@@ -306,13 +306,13 @@ richiesta informale
         ↓
 classificazione
         ↓
-entry point + versione + ambiente
+punto di ingresso + versione + ambiente
         ↓
 input/output + sistemi esterni
         ↓
-workload misurato
+carico di lavoro misurato
         ↓
-test + deployment + rollback
+test + distribuzione + rollback
         ↓
-ownership
+responsabilità operativa
 ~~~

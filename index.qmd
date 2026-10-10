@@ -14,7 +14,31 @@ Il problema ricorrente è trasformare una richiesta formulata in termini tecnici
 
 > **Prima di aumentare le risorse, capire perché servono.**
 
-Il principio vale per l'intero manuale. Una richiesta parte dal risultato che deve essere ottenuto; da lì si identificano workload e ambiente, si raccolgono evidenze, si valutano le alternative e solo alla fine si definiscono infrastruttura, rilascio e gestione.
+## Come procede il manuale
+
+Il percorso parte dalla richiesta iniziale e dalla forma della soluzione: script, elaborazione pianificata, report, applicazione o servizio. Passa poi a ciò che serve per eseguirla, cioè R, i pacchetti e le librerie esterne. Quando il comportamento è chiaro, si misurano tempi, memoria e accesso ai dati; solo dopo si valutano struttura, integrazioni, distribuzione e gestione nel tempo. L'ultimo capitolo usa questi elementi per confrontare le alternative e chiarire che cosa serve per prendere in carico una soluzione.
+
+Alcuni termini ricorrono nel manuale:
+
+- **Ambiente di esecuzione (runtime):** versione di R, pacchetti, librerie di sistema e configurazione necessari per avviare il programma.
+- **Punto di ingresso (entry point):** file o comando da cui parte l'esecuzione.
+- **Pacchetto (package) R:** insieme versionato di funzioni, dati e documentazione che può essere installato e riutilizzato.
+- **Processo:** programma in esecuzione con il proprio spazio di memoria.
+- **Worker:** processo o unità di lavoro incaricata di eseguire una parte del calcolo.
+- **Thread:** flusso di esecuzione all'interno di un processo.
+- **Profilazione (profiling):** raccolta di misure che mostra quali funzioni o fasi consumano più tempo.
+- **Contenitore (container):** ambiente isolato che raccoglie l'applicazione e parte delle dipendenze necessarie per avviarla.
+- **Interfaccia di programmazione (API, Application Programming Interface):** regole con cui un programma chiede dati o operazioni a un altro programma.
+- **HTTP (Hypertext Transfer Protocol, protocollo di trasferimento ipertestuale):** messaggio inviato a un servizio web; la risposta contiene un codice che indica l'esito e, quando previsto, dei dati.
+- **Memoria residente (RSS, Resident Set Size):** quantità di memoria fisica attribuita dal sistema operativo a un processo in un dato momento.
+- **Rilascio (release):** versione identificata e consegnata per l'uso o la distribuzione.
+- **Ripristino della versione precedente (rollback):** ritorno a una versione conosciuta, compresi gli elementi di configurazione necessari.
+
+Altre sigle usate nel manuale: **CPU** (Central Processing Unit, unità centrale di elaborazione); **RAM** (Random Access Memory, memoria ad accesso casuale); **TLS** (Transport Layer Security, protocollo che protegge le comunicazioni); **CI/CD** (Continuous Integration/Continuous Delivery, integrazione continua e consegna automatizzata delle modifiche); **IAM** (Identity and Access Management, gestione di identità e accessi); **BLAS** e **LAPACK** (librerie per il calcolo numerico); **JSON** (formato testuale per scambiare dati strutturati); **SQL** (linguaggio per interrogare e modificare dati nei database); **IDE** (ambiente integrato di sviluppo); **GIS** (sistema informativo geografico); **UI** (interfaccia utente); **OS** (sistema operativo); **I/O** (ingresso/uscita dei dati).
+
+Le definizioni sono introduttive. Nei capitoli tecnici i termini vengono precisati quando servono a interpretare una misura o una configurazione.
+
+Il principio vale per l'intero manuale. Una richiesta parte dal risultato che deve essere ottenuto; da lì si identificano carico di lavoro e ambiente, si raccolgono evidenze, si valutano le alternative e solo alla fine si definiscono infrastruttura, rilascio e gestione.
 
 Il percorso è intenzionale: ogni capitolo risponde a una domanda e prepara quella successiva.
 
@@ -23,7 +47,7 @@ Il percorso è:
 ```text
 requisito
    ↓
-ambiente R e workload
+ambiente R e carico di lavoro
    ↓
 modello di esecuzione
    ↓
@@ -31,11 +55,11 @@ misura e diagnosi
    ↓
 architettura
    ↓
-deployment
+distribuzione
    ↓
 decisione e responsabilità
    ↓
-nuova baseline quando cambia qualcosa
+nuova situazione di riferimento quando cambia qualcosa
 ```
 
 ## Obiettivi operativi a fine corso
@@ -46,12 +70,12 @@ In particolare deve saper:
 
 - riconoscere le principali forme di soluzione R: script, batch, report Quarto, Shiny, API, package e job di pipeline;
 - distinguere R dal suo ambiente di esecuzione e identificare package, dipendenze native, driver e sistemi esterni;
-- capire che cosa descrivono un repository, un commit/tag e un lockfile e che cosa invece resta fuori dalla loro portata;
-- leggere un workload in termini di input, output, frequenza, durata, utenti/concorrenza e risorse;
+- capire che cosa descrivono un repository, un commit/tag e un file che registra le dipendenze e che cosa invece resta fuori dalla loro portata;
+- leggere un carico di lavoro in termini di input, output, frequenza, durata, utenti/concorrenza e risorse;
 - distinguere una misura da un'ipotesi e chiedere le evidenze necessarie prima di trasformare una richiesta in una specifica infrastrutturale;
 - rappresentare i confini tra R, Oracle, filesystem, API, scheduler, proxy e altri componenti aziendali;
-- verificare che deployment, configurazione, sicurezza, logging, monitoring, rollback e ownership siano descritti;
-- restituire allo sviluppatore una richiesta di informazioni concreta quando l'handover è incompleto.
+- verificare che distribuzione, configurazione, sicurezza, logging, monitoraggio, rollback e responsabilità operativa siano descritti;
+- restituire allo sviluppatore una richiesta di informazioni concreta quando l'passaggio di consegne è incompleto.
 
 Il livello atteso è **di comprensione e presa in carico operativa**, non di sviluppo R né di ottimizzazione algoritmica. Il manuale contiene approfondimenti diagnostici per i casi in cui serva capire meglio un problema.
 
@@ -63,8 +87,8 @@ I sei capitoli seguono una progressione intenzionale. L'introduzione non è un c
 2. **Runtime, memoria e parallelismo** — come R esegue il lavoro, usa memoria, processi, worker e thread.
 3. **Performance e diagnostica** — come misurare il comportamento e distinguere un collo di bottiglia da un'ipotesi.
 4. **Architettura e integrazione** — dove collocare R e dove devono essere eseguiti dati e calcoli.
-5. **Deployment e gestione operativa** — come trasformare il software in una release riproducibile e gestibile.
-6. **Decisioni operative** — come collegare requisiti, evidenze, esperimenti, baseline e ownership.
+5. **distribuzione e gestione operativa** — come trasformare il software in una rilascio riproducibile e gestibile.
+6. **Decisioni operative** — come collegare requisiti, evidenze, esperimenti, situazione di riferimento e responsabilità operativa.
 
 La sequenza può essere letta anche come una serie di domande:
 
@@ -83,16 +107,16 @@ decisione
    ↓
 responsabilità
    ↓
-baseline
+situazione di riferimento
 ```
 
 Il modello viene applicato a cinque dimensioni ricorrenti:
 
 - **software** — versione di R, pacchetti, dipendenze e componenti nativi;
 - **runtime** — processi, memoria, worker, thread e parallelismo;
-- **workload** — CPU, RAM, I/O, rete e database;
+- **carico di lavoro** — CPU, RAM, I/O, rete e database;
 - **architettura** — confini tra R, database, servizi e piattaforme;
-- **operatività** — release, configurazione, sicurezza, monitoring e ownership.
+- **operatività** — rilascio, configurazione, sicurezza, monitoraggio e responsabilità operativa.
 
 ## Quattro domande da ricordare
 
@@ -132,7 +156,7 @@ Il corso non richiede di conoscere tutta la programmazione R. Richiede però di 
 Durante il percorso è utile distinguere tra:
 
 - **fatto misurato** — per esempio «CPU 98%»;
-- **interpretazione** — per esempio «il workload sembra CPU-bound»;
+- **interpretazione** — per esempio «il carico di lavoro sembra CPU-bound»;
 - **ipotesi** — per esempio «potrebbe essere parallelizzabile»;
 - **test** — per esempio «confrontiamo 1, 2, 4 e 8 worker»;
 - **decisione infrastrutturale** — per esempio «valutiamo una configurazione con più core».
@@ -171,27 +195,27 @@ Il manuale non serve soltanto a permettere a IT di comprendere R. Serve anche a 
 Lo sviluppatore non deve diventare amministratore di sistema. Deve però poter distinguere:
 
 - ciò che conosce da ciò che deve ancora essere verificato;
-- il comportamento del workload dalla risorsa infrastrutturale richiesta;
+- il comportamento del carico di lavoro dalla risorsa infrastrutturale richiesta;
 - il codice applicativo dai componenti aziendali che lo ospitano;
 - una misura da un'ipotesi sulla causa di un problema.
 
-Per esempio, una richiesta come «ho una Shiny, pubblicatela e se è lenta servono più CPU» lascia a IT gran parte della ricostruzione del problema. Una richiesta più utile identifica almeno repository e commit, entrypoint, ambiente e dipendenze, utenti e concorrenza, sistemi esterni, tempi osservati e baseline disponibile. Se il collo di bottiglia non è noto, può essere dichiarato esplicitamente: **non è un prerequisito per chiedere supporto a IT sapere già quale sia la causa**.
+Per esempio, una richiesta come «ho una Shiny, pubblicatela e se è lenta servono più CPU» lascia a IT gran parte della ricostruzione del problema. Una richiesta più utile identifica almeno repository e commit, punto di ingresso, ambiente e dipendenze, utenti e concorrenza, sistemi esterni, tempi osservati e situazione di riferimento disponibile. Se il collo di bottiglia non è noto, può essere dichiarato esplicitamente: **non è un prerequisito per chiedere supporto a IT sapere già quale sia la causa**.
 
 Il risultato atteso è quindi una collaborazione a due livelli:
 
 ~~~text
 sviluppatore
-  ├── descrive applicazione e workload
-  ├── fornisce ambiente, dati e baseline
+  ├── descrive applicazione e carico di lavoro
+  ├── fornisce ambiente, dati e situazione di riferimento
   └── formula o documenta le ipotesi applicative
                  ↓
                 IT
   ├── definisce piattaforma e confini infrastrutturali
-  ├── gestisce rete, identità, proxy, deployment e monitoring
+  ├── gestisce rete, identità, proxy, distribuzione e monitoraggio
   └── verifica capacità, sicurezza e operabilità
 ~~~
 
-Per le richieste reali, la scheda dell'appendice *Kit operativo per IT* può essere usata come traccia di handover.
+Per le richieste reali, la scheda dell'appendice *Kit operativo per IT* può essere usata come traccia di passaggio di consegne.
 
 ## Come usare il manuale
 
@@ -199,9 +223,9 @@ Il percorso si completa con il **laboratorio integrato** nell'appendice operativ
 
 Per una prima lettura non è necessario studiare tutto il funzionamento interno di R. È sufficiente concentrarsi su ciò che cambia una decisione IT.
 
-**Da ricordare:** forme applicative, dipendenze, ambiente riproducibile, workload, confini tra R e sistemi esterni, deployment, monitoring e ownership.
+**Da ricordare:** forme applicative, dipendenze, ambiente riproducibile, carico di lavoro, confini tra R e sistemi esterni, distribuzione, monitoraggio e responsabilità operativa.
 
-**Da approfondire quando serve:** memoria, processi, worker, thread, serializzazione, profiling e dettagli del runtime.
+**Da approfondire quando serve:** memoria, processi, worker, thread, serializzazione, analisi dei tempi di esecuzione e dettagli del runtime.
 
 Le sezioni più interne del runtime sono quindi deliberatamente più tecniche: servono soprattutto quando IT deve interpretare una misura, diagnosticare un problema o discutere un dimensionamento.
 
@@ -212,20 +236,20 @@ richiesta dello sviluppatore
           ↓
      classificazione
           ↓
-  workload + ambiente
+  carico di lavoro + ambiente
           ↓
       evidenze
           ↓
- architettura/deployment
+ architettura/distribuzione
           ↓
-    test + baseline
+    test + situazione di riferimento
           ↓
- produzione + monitoring
+ produzione + monitoraggio
           ↓
-       ownership
+       responsabilità operativa
 ~~~
 
-Per una richiesta reale, l'Appendice **Kit operativo per IT** fornisce una scheda che può essere utilizzata come traccia di handover e production readiness.
+Per una richiesta reale, l'Appendice **Kit operativo per IT** fornisce una scheda che può essere utilizzata come traccia di passaggio di consegne e verifica prima della messa in esercizio.
 
 ## Una distinzione fondamentale
 
@@ -241,6 +265,6 @@ IT deve poter verificare le prime due senza assumere la responsabilità della te
 
 ## Una frase guida
 
-> **Non serve che IT sappia programmare in R; serve che sappia riconoscere che cosa cambia quando il workload è R.**
+> **Non serve che IT sappia programmare in R; serve che sappia riconoscere che cosa cambia quando il carico di lavoro è R.**
 
-Questa è la chiave di lettura dei capitoli successivi. Quando il testo usa concetti IT già noti — database, container, Git, monitoring, CI/CD — li tratta come confini operativi e non come materie da re-insegnare.
+Questa è la chiave di lettura dei capitoli successivi. Quando il testo usa concetti IT già noti — database, container, Git, monitoraggio, CI/CD — li tratta come confini operativi e non come materie da re-insegnare.
