@@ -106,7 +106,7 @@ Questo evita di attribuire automaticamente a R tutto il tempo osservato dal job.
 | I/O | |
 | Rete | |
 | processo di lavoro | |
-| filo di esecuzione nativi | |
+| thread nativi | |
 | Concorrenza del test | |
 | Numero di ripetizioni | |
 | Versione R/package del test | |
