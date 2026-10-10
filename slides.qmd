@@ -19,835 +19,358 @@ execute:
 
 # R × IT
 
-## Soluzioni sviluppate in R: valutazione e gestione operativa
+## Valutazione e gestione operativa delle soluzioni R
 
 ---
 
-# Obiettivo
+# Obiettivo operativo
 
-- riconoscere la **forma applicativa**;
-- capire **come viene eseguita**;
-- individuare **dipendenze e sistemi esterni**;
-- valutare **risorse e prestazioni**;
-- definire **informazioni e responsabilità operative**.
-
----
-
-# R in una frase
-
-> **R è un linguaggio e un ambiente per analisi, statistica, modellistica e automazione.**
-
-In produzione R è normalmente **un componente dello stack**.
+- Identificare forma applicativa ed entry point.
+- Ricostruire runtime, dipendenze e sistemi esterni.
+- Descrivere workload, risorse e concorrenza.
+- Separare misure, ipotesi e decisioni.
+- Definire test, deployment, ownership e handover.
 
 ---
 
-# R e lo stack aziendale
+# R nello stack aziendale
 
-| Esigenza | Componente |
+| Responsabilità | Componente tipico |
 |---|---|
-| dati | Oracle |
-| applicazioni | APEX |
-| scheduling | piattaforma IT |
-| rete e autenticazione | infrastruttura |
-| analisi e modelli | **R** |
-| report | **Quarto + R** |
-| applicazioni web | **Shiny + R** |
+| Dati e query | Oracle |
+| Workflow gestionale | APEX |
+| Scheduling | Scheduler aziendale |
+| Analisi e calcolo | R |
+| Report | Quarto + R |
+| Applicazioni interattive | Shiny + R |
+| Routing e identità | Proxy, gateway, IAM |
+
+R integra lo stack; non sostituisce automaticamente i componenti esistenti.
 
 ---
 
-# Il workload
-
-Un workload è un'unità di lavoro eseguita dall'infrastruttura.
-
-Esempi:
-
-- uno script;
-- un job schedulato;
-- un report;
-- una sessione Shiny;
-- una richiesta API.
-
-**Il workload determina il problema operativo.**
-
----
-
-# Processo, worker, thread
+# Percorso: tre famiglie di scenari
 
 ```{mermaid}
-flowchart TB
- P[Processo] --> W1[Worker 1]
- P --> W2[Worker 2]
- W1 --> T1[Thread]
- W1 --> T2[Thread]
- W2 --> T3[Thread]
- W2 --> T4[Thread]
+%%| echo: false
+flowchart LR
+ A["Livello 1<br/>Esecuzione e artefatti"] --> B["Livello 2<br/>Software e pipeline"]
+ B --> C["Livello 3<br/>Servizi e applicazioni"]
 ```
 
-- **processo**: spazio di esecuzione isolato;
-- **worker**: unità di lavoro concorrente;
-- **thread**: flusso di esecuzione dentro un processo.
+- I livelli organizzano il confronto, non sono una scala obbligatoria di maturità.
+- Una soluzione reale può combinare più scenari.
 
 ---
 
-# Perché interessa a IT
+# Livello 1 — Esecuzione e artefatti
 
-| Modalità | Carico tipico |
+| Forma | Punto operativo |
 |---|---|
-| batch | pochi processi, durata lunga |
-| report | processo periodico |
-| Shiny | sessioni concorrenti |
-| API | richieste concorrenti |
+| Script personale/condiviso | Entry point, input e output |
+| `Rscript` / batch | Account, working directory, exit code |
+| Report Quarto | Dati, render, artefatto e pubblicazione |
 
-La concorrenza modifica il consumo di risorse.
-
----
-
-# CPU, RAM e concorrenza
-
-Un singolo job può usare:
-
-- CPU;
-- RAM;
-- I/O;
-- rete.
-
-Con più worker o sessioni:
-
-**carico totale ≈ carico per unità × concorrenza**
-
-La misura reale è più utile della sola configurazione hardware.
+Per ogni esecuzione: durata, frequenza, errori e destinazione dell'output.
 
 ---
 
-# Le quattro domande
+# Livello 2 — Software riproducibile
 
-1. **Che cosa fa?**
-2. **Come viene eseguito?**
-3. **Da cosa dipende?**
-4. **Come verifichiamo che funzioni?**
-
-Queste quattro domande guidano il resto della valutazione.
-
----
-
-# Le forme applicative
-
-```{mermaid}
-flowchart TB
- R[R] --> S[Script]
- R --> B[Batch]
- R --> Q[Quarto]
- R --> H[Shiny]
- R --> A[API plumber2]
- R --> P[Package / pipeline]
-```
-
-La forma applicativa determina modalità di esecuzione e gestione.
+- Package R: funzioni riusabili, dipendenze e test.
+- Pipeline: step, contratti e passaggio degli artefatti.
+- `renv.lock`: dipendenze R e sorgenti dichiarate.
+- OS, librerie native, driver e configurazione restano da documentare.
+- Release: sorgente identificato, artefatto e ambiente verificabili.
 
 ---
 
-# Script
+# Livello 3 — Servizi e applicazioni
 
-```{mermaid}
-flowchart LR
- U[Utente] --> R[R]
- R --> O[Output]
-```
-
-Caratteristiche da identificare:
-
-- entrypoint;
-- input;
-- output;
-- durata;
-- dipendenze.
-
----
-
-# Batch
-
-```{mermaid}
-flowchart LR
- S[Scheduler] --> R[R]
- R --> O[Output]
- R --> L[Log / exit code]
-```
-
-Da identificare:
-
-- frequenza;
-- account;
-- durata;
-- retry;
-- gestione degli errori.
-
----
-
-# Quarto
-
-```{mermaid}
-flowchart TB
- D[Dati] --> R[R + Quarto]
- R --> H[HTML / PDF]
- H --> P[Pubblicazione]
-```
-
-Un report può essere:
-
-- generato periodicamente;
-- prodotto on demand;
-- pubblicato come file;
-- integrato in una pipeline.
-
----
-
-# Shiny
-
-```{mermaid}
-flowchart LR
- U[Browser] --> P[Proxy]
- P --> H[Shiny]
- H --> R[R]
- R --> DB[(Oracle)]
-```
-
-Il workload è costituito dalle **sessioni degli utenti**.
-
----
-
-# API plumber2
-
-```{mermaid}
-flowchart LR
- C[Client] --> G[Gateway / Proxy]
- G --> A[API R]
- A --> DB[(Oracle)]
-```
-
-Il workload è costituito dalle **richieste HTTP**.
-
----
-
-# Prima della produzione
-
-Per valutare una soluzione servono almeno:
-
-- forma applicativa;
-- entrypoint;
-- input e output;
-- modalità di esecuzione;
-- utenti o scheduler;
-- sistemi esterni;
-- ambiente R;
-- comportamento atteso.
-
----
-
-# Un esempio: Shiny
-
-Scenario:
-
-> applicazione usata da 20 persone.
-
-Informazioni già disponibili:
-
-- tipo: Shiny;
-- utenti: 20.
-
-Informazioni ancora necessarie:
-
-- sessioni contemporanee;
-- autenticazione;
-- dati utilizzati;
-- durata delle operazioni.
-
----
-
-# Un esempio: batch
-
-Scenario:
-
-> script R eseguito ogni notte.
-
-Informazioni già disponibili:
-
-- tipo: batch;
-- frequenza: giornaliera.
-
-Informazioni ancora necessarie:
-
-- durata;
-- input;
-- output;
-- account;
-- gestione degli errori.
-
----
-
-# Dal codice all'esecuzione
-
-```{mermaid}
-flowchart TB
- C[Codice R] --> R[Runtime R]
- R --> P[Package]
- P --> N[Librerie native]
- N --> D[Driver / client]
- D --> O[Sistema operativo]
-```
-
-Il codice sorgente non coincide con l'ambiente di esecuzione.
-
----
-
-# RStudio ≠ R
-
-**R**
-
-- runtime;
-- esecuzione del codice;
-- disponibile senza interfaccia grafica.
-
-**RStudio**
-
-- ambiente di sviluppo;
-- editor;
-- console;
-- strumenti interattivi.
-
----
-
-# Dipendenze
-
-Una soluzione può dipendere da:
-
-- package R;
-- package da Git;
-- librerie native;
-- driver Oracle;
-- client esterni;
-- file di configurazione;
-- servizi di rete.
-
-Le dipendenze devono essere identificabili.
-
----
-
-# renv.lock
-
-renv.lock aiuta a descrivere:
-
-- versione di R;
-- package;
-- versioni dei package;
-- sorgenti.
-
-Non sostituisce la descrizione di:
-
-- OS;
-- librerie native;
-- driver;
-- rete;
-- configurazione aziendale.
-
----
-
-# Baseline
-
-```{mermaid}
-flowchart TB
- C[Commit / tag] --> R[Versione R]
- R --> P[Dipendenze]
- P --> O[OS / librerie / driver]
- O --> K[Configurazione]
- K --> T[Test + risultato atteso]
-```
-
-Una baseline deve essere **identificabile e verificabile**.
-
----
-
-# Artefatto e ambiente
-
-| Elemento | Descrizione |
+| Forma | Unità operativa |
 |---|---|
-| sorgente | codice sviluppato |
-| release | versione da distribuire |
-| artefatto | oggetto distribuito |
-| ambiente | condizioni necessarie all'esecuzione |
-
-Un commit identifica il sorgente, non necessariamente l'artefatto.
+| Shiny | Sessione utente |
+| API esposta da R | Richiesta HTTP |
+| API consumata da R | Chiamata verso un servizio remoto |
+| Servizi integrati | Contratti, identità e dipendenze |
 
 ---
 
-# Oracle: dove passa il tempo?
+# Dall'entry point al sistema operativo
 
 ```{mermaid}
-flowchart LR
- R1[R] --> Q[Query]
- Q --> O[(Oracle)]
- O --> X[Risultato]
- X --> R2[R]
- R2 --> A[Elaborazione]
-```
-
-La durata totale comprende più componenti.
-
----
-
-# Misurare la performance
-
-| Osservazione | Ipotesi |
-|---|---|
-| CPU alta | CPU insufficiente? |
-| RAM alta | memoria insufficiente? |
-| query lenta | problema Oracle? |
-| job lento | elaborazione R? |
-
-**Misura → ipotesi → test → decisione**
-
----
-
-# Un workload ha un costo
-
-Misurare almeno:
-
-- durata;
-- CPU;
-- RAM;
-- I/O;
-- rete;
-- dimensione dei dati;
-- concorrenza;
-- numero di worker.
-
-Il requisito hardware deriva dal comportamento osservato.
-
----
-
-# Concorrenza
-
-```{mermaid}
-flowchart LR
- U1[Utente 1] --> W1[Worker]
- U2[Utente 2] --> W2[Worker]
- U3[Utente 3] --> W3[Worker]
- W1 --> R[R]
- W2 --> R
- W3 --> R
-```
-
-La domanda non è solo:
-
-> «Quanto usa un'esecuzione?»
-
-Ma anche:
-
-> «Quante esecuzioni possono coesistere?»
-
----
-
-# R dentro l'architettura
-
-```{mermaid}
+%%| echo: false
 flowchart TB
- U[Utenti / sistemi] --> I[Infrastruttura aziendale]
- I --> R[R workload]
- R --> DB[(Oracle)]
- R --> API[Altri servizi]
- R --> FS[Filesystem / storage]
- I --> S[Scheduler]
+ A["Codice e entry point"] --> B["Runtime R"]
+ B --> C["Package R"]
+ C --> D["Librerie native e driver"]
+ D --> E["OS, rete e sistemi esterni"]
 ```
 
-R si integra con componenti e servizi esistenti.
+Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 
 ---
 
-# Autenticazione e autorizzazione
+# Processo, worker e thread
 
-**Autenticazione**
-
-> Chi è l'utente o il servizio?
-
-**Autorizzazione**
-
-> Quali risorse può utilizzare?
-
-Da definire:
-
-- identità;
-- permessi;
-- punto di controllo.
+- **Processo:** spazio di esecuzione con memoria propria.
+- **Worker:** unità concorrente usata dal workload o dal framework.
+- **Thread nativo:** flusso d'esecuzione dentro un processo.
+- Un processo R non diventa parallelo solo perché sono disponibili più core.
+- Worker e thread possono sommarsi e aumentare RAM e contesa.
 
 ---
 
-# Gestione dei segreti
+# Diagnosi: misurare prima di dimensionare
 
-Credenziali e token non devono stare:
-
-- nel repository;
-- nel codice;
-- nel lockfile;
-- negli artefatti pubblicati.
-
-Devono essere gestiti tramite il meccanismo aziendale previsto.
-
----
-
-# Dal PC alla produzione
-
-```{mermaid}
-flowchart LR
- D[Sviluppo] --> T[Test]
- T --> V[Validazione]
- V --> R[Release]
- R --> P[Produzione]
- P --> M[Monitoring]
- M --> U[Aggiornamento / rollback]
-```
-
-La produzione comprende anche esercizio e aggiornamento.
-
----
-
-# Quando è pronto?
-
-Una soluzione è pronta quando sono identificati:
-
-- versione;
-- ambiente;
-- dipendenze;
-- configurazione;
-- test;
-- comportamento operativo;
-- ownership.
-
-«Funziona sul PC» è un'osservazione, non una baseline operativa.
-
----
-
-# Handover
-
-L'handover deve permettere a IT di rispondere a:
-
-1. cosa devo eseguire?
-2. con quale ambiente?
-3. con quali dipendenze?
-4. con quali dati e permessi?
-5. come verifico il risultato?
-6. cosa faccio in caso di errore?
-
----
-
-# Scheda di handover
-
-```{mermaid}
-mindmap
- root((Soluzione R))
-  Identità
-  Esecuzione
-  Ambiente
-  Dati
-  Risorse
-  Sicurezza
-  Test
-  Errori
-  Deployment
-  Monitoring
-  Ownership
-```
-
-La scheda raccoglie le informazioni necessarie all'esercizio.
-
----
-
-# Identità ed esecuzione
-
-**Identità**
-
-- nome;
-- owner;
-- repository;
-- versione;
-- tipo;
-- entrypoint.
-
-**Esecuzione**
-
-- modalità;
-- frequenza;
-- durata;
-- utenti;
-- concorrenza;
-- timeout.
-
----
-
-# Ambiente e dati
-
-**Ambiente**
-
-- R;
-- OS;
-- package;
-- lockfile;
-- librerie;
-- driver.
-
-**Dati**
-
-- input/output;
-- Oracle;
-- API;
-- filesystem;
-- dimensioni;
-- volumi.
-
----
-
-# Risorse
-
-> **16 core + 64 GB RAM**
-
-non descrive da solo il requisito.
-
-Servono anche:
-
-- dataset di riferimento;
-- durata;
-- RAM di picco;
-- CPU;
-- concorrenza;
-- baseline.
-
----
-
-# Sicurezza e test
-
-**Sicurezza**
-
-- account;
-- permessi;
-- autenticazione;
-- segreti;
-- TLS.
-
-**Test**
-
-- funzionale;
-- integrazione;
-- compatibilità;
-- performance;
-- smoke test.
-
----
-
-# Errori e retry
-
-```{mermaid}
-flowchart TB
- E[Errore] --> R{Retry?}
- R -->|sì| T[Retry controllato]
- R -->|no| A[Alert]
- T --> A
- A --> I[Intervento]
-```
-
-Da definire:
-
-- retry;
-- fallback;
-- idempotenza;
-- output parziali;
-- alert.
-
----
-
-# Monitoring
-
-**Batch**
-
-- avvio/fine;
-- exit code;
-- durata;
-- errori;
-- output.
-
-**Shiny / API**
-
-- disponibilità;
-- latenza;
-- errori;
-- concorrenza;
-- CPU/RAM;
-- dipendenze.
-
----
-
-# Ownership
-
-| Area | Owner |
+| Segnale | Verifiche da separare |
 |---|---|
-| correttezza applicativa | sviluppatore / owner |
-| codice | sviluppatore |
-| runtime | IT |
-| infrastruttura | IT |
-| database | DBA |
-| deployment | IT |
-| monitoring | IT |
-| incident response | da definire |
+| CPU alta | Profilo, worker, thread e scaling |
+| RAM alta | Picco RSS, copie e processi figli |
+| Job lento | CPU, I/O, rete e attese esterne |
+| Query lenta | Tempi DB, righe trasferite e lavoro R |
 
-Le responsabilità devono essere esplicite.
+**Misura → ipotesi → test controllato → decisione**
 
 ---
 
-# Caso: batch
+# Laboratori: evidenze confrontabili
 
-> «Ogni notte uno script R legge Oracle e produce un CSV.»
-
-Da verificare:
-
-- input e output;
-- frequenza;
-- durata;
-- account;
-- query;
-- gestione errori;
-- controllo del risultato.
+- Profiling: `system.time()`, `Rprof()`, `profvis` e metriche OS.
+- Memoria: calcolo completo contro blocchi; misurare il picco RSS.
+- Parallelismo: confrontare 1, 2, 4 e, se sensato, 8 worker.
+- Database: trasferimento completo contro filtro/aggregazione in Oracle.
+- Dichiarare input, ambiente, metodo, metrica e limiti.
+- Non generalizzare risultati ottenuti su un solo host o dataset.
 
 ---
 
-# Caso: Quarto
+# Memoria e parallelismo
 
-> «Ogni mattina deve essere prodotto un report.»
-
-Da verificare:
-
-- dati;
-- ambiente;
-- durata;
-- formato;
-- destinazione;
-- pubblicazione;
-- errori;
-- notifica.
+- `object.size()` stima la dimensione di un oggetto R; non è il picco RSS.
+- Misurare il processo e, con worker separati, anche i processi figli.
+- Registrare elapsed, speedup, efficienza, RAM e overhead.
+- Tenere distinti numero di worker e thread nativi.
+- Più concorrenza può peggiorare memoria, serializzazione e contesa.
 
 ---
 
-# Caso: Shiny
-
-> «20 persone devono usare questa applicazione.»
-
-Da verificare:
-
-- autenticazione;
-- autorizzazione;
-- sessioni concorrenti;
-- CPU/RAM;
-- Oracle;
-- timeout;
-- logging;
-- restart.
-
----
-
-# Caso: API
-
-> «Un altro sistema deve chiamare R via HTTP.»
-
-Da verificare:
-
-- endpoint;
-- input/output;
-- autenticazione;
-- autorizzazione;
-- timeout;
-- errori;
-- concorrenza;
-- versioning.
-
----
-
-# Richiesta operativa
-
-### Poco utile
-
-> «Ho una Shiny R. Potete metterla sul server?»
-
-### Utile
-
-> Shiny, repository X, release Y, R 4.x, Oracle, autenticazione aziendale, 20 utenti, 5 sessioni concorrenti, baseline 7 s, test disponibili.
-
-La seconda richiesta contiene elementi verificabili.
-
----
-
-# Checklist
-
-- [ ] cosa fa?
-- [ ] quale forma ha?
-- [ ] qual è l'entrypoint?
-- [ ] quale ambiente serve?
-- [ ] quali dipendenze ha?
-- [ ] quali sistemi esterni usa?
-- [ ] chi la utilizza?
-- [ ] quale baseline abbiamo?
-
----
-
-# Checklist operativa
-
-- [ ] configurazione definita;
-- [ ] account e permessi definiti;
-- [ ] test disponibili;
-- [ ] comportamento in errore definito;
-- [ ] monitoring definito;
-- [ ] deployment definito;
-- [ ] rollback definito;
-- [ ] owner identificato.
-
----
-
-# Informazione mancante
-
-Non si presume.
-
-Si identifica il tipo di intervento:
+# Database: dove elaborare i dati?
 
 ```{mermaid}
+%%| echo: false
 flowchart LR
- M[Informazione mancante] --> R[Responsabile]
- M --> T[Test necessario]
- M --> D[Decisione]
+ A["Oracle"] --> B["Filtro e aggregazione"]
+ B --> C["Risultato ridotto"]
+ C --> D["R: analisi residua"]
 ```
 
----
-
-# Quattro concetti
-
-1. **R è un componente dello stack.**
-2. **Il workload determina l'esercizio.**
-3. **Codice e ambiente sono oggetti diversi.**
-4. **L'handover deve rendere verificabile l'esecuzione.**
+Confrontare con il trasferimento completo: righe, colonne, volume, tempi DB e tempi R. La decisione si basa sul tempo totale e sui vincoli del sistema.
 
 ---
 
-# Domande per la discussione
+# Scelta architetturale: chi fa che cosa?
 
-A questo punto, per una soluzione R reale:
-
-1. che cosa vorreste sapere per primi?
-2. quali informazioni potete verificare direttamente?
-3. quali devono essere fornite dallo sviluppatore?
-4. quali richiedono un test?
+- R: analisi o calcolo per cui è stato scelto.
+- Oracle: dati, query e aggregazioni appropriate al database.
+- APEX: workflow gestionale, se già previsto dallo stack.
+- Scheduler: calendario, esito del job e gestione delle esecuzioni.
+- Proxy/gateway: routing e controlli di rete previsti.
+- IT: runtime gestito, accessi, piattaforma e osservabilità concordata.
 
 ---
 
-# R × IT
+# Shiny: struttura e avvio
 
-## Una soluzione R è pronta quando
+- `app.R`: può contenere UI, server e chiamata a `shinyApp()`.
+- `ui.R` + `server.R`: interfaccia e funzione server separate.
+- `global.R`: inizializzazione prima delle sessioni.
+- golem: applicazione organizzata come package.
+- Rhino: entry point e codice applicativo secondo la propria struttura.
+- Verificare loader, moduli e procedura di build della versione usata.
 
-**versione, ambiente, dipendenze, dati, risorse, test e gestione operativa sono identificati.**
+---
 
-::: {.notes}
-Discussione finale: quali informazioni mancano oggi nelle richieste reali che arrivano a IT?
-:::
+# Shiny: sessione e memoria
+
+```{mermaid}
+%%| echo: false
+flowchart TD
+ A["Avvio processo"] --> B["Inizializzazione globale"]
+ B --> C["Dati condivisi nel processo"]
+ B --> D["Sessione utente"]
+ D --> E["Stato reattivo di sessione"]
+ C --> E
+```
+
+- Oggetti globali possono essere condivisi fra sessioni dello stesso processo.
+- Lo stato creato nella funzione server è normalmente specifico della sessione.
+- Cache e oggetti globali non sono automaticamente condivisi tra processi o container.
+
+---
+
+# Shiny: cosa verificare in esercizio
+
+- Sessioni simultanee, latenza e operazioni bloccanti.
+- RAM per processo e crescita con il numero di sessioni.
+- Dati condivisi: isolamento, mutabilità e aggiornamento.
+- Cache: scadenza, invalidazione e consistenza.
+- Dipendenze esterne, log, restart e comportamento dopo un errore.
+- Il caricamento globale riduce letture ripetute ma mantiene dati in memoria.
+
+---
+
+# API esposte e consumate
+
+| Ruolo | Tecnologia | Direzione |
+|---|---|---|
+| Esporre endpoint HTTP da R | plumber2 | Client → R |
+| Chiamare endpoint HTTP da R | httr2 | R → servizio |
+
+Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API non è un client remoto.
+
+---
+
+# API esposte: contratto e responsabilità
+
+- Metodi, percorsi, parametri, body, header e formati.
+- Codici HTTP e struttura degli errori.
+- Validazione input, autenticazione e autorizzazione.
+- Timeout, limiti, concorrenza e operazioni bloccanti.
+- Log correlabili, versionamento e dipendenze esterne.
+- Liveness del processo non dimostra la disponibilità di Oracle o altri servizi.
+
+---
+
+# API consumate con httr2
+
+- Costruire URL, query, header e body in base al contratto remoto.
+- Interpretare status code e parsare JSON.
+- Impostare timeout e gestione esplicita degli errori.
+- Gestire autenticazione senza inserire segreti nel sorgente o nei log.
+- Retry limitati solo per errori transitori e operazioni sicure da ripetere.
+- Per POST con effetti collaterali, definire idempotenza prima dei retry.
+
+---
+
+# Integrazioni: definire i confini
+
+| Integrazione | Contratto da esplicitare |
+|---|---|
+| Oracle | Driver, query, transazioni, volumi e timeout |
+| APEX | Parametri, risultati, errori e identità |
+| GIS | Formati, coordinate, geometrie e volumi |
+| Scheduler | Account, ambiente, exit code e retry |
+| Proxy/gateway | Routing, TLS, identità, limiti e timeout |
+
+---
+
+# Dal sorgente alla release
+
+```{mermaid}
+%%| echo: false
+flowchart LR
+ A["Sviluppo"] --> B["Test"]
+ B --> C["Release identificata"]
+ C --> D["Artefatto e configurazione"]
+ D --> E["Deployment"]
+ E --> F["Smoke test"]
+ F --> G["Monitoraggio / rollback"]
+```
+
+Una modifica rilevante a codice, runtime, package o librerie native richiede una nuova verifica della baseline.
+
+---
+
+# Deployment: prerequisiti e confini
+
+- Dichiarare entry point, working directory, runtime e dipendenze.
+- Separare configurazione non segreta e segreti gestiti dalla piattaforma.
+- Container: immagine, porta, utente, risorse e requisiti di sistema.
+- ShinyProxy: immagine e porta devono combaciare con l'applicazione.
+- Kubernetes/Operator: verificare risorse e configurazione della modalità adottata.
+- I frammenti del manuale sono esempi da adattare e verificare, non baseline universali.
+
+---
+
+# Batch, Shiny e API: esercizio diverso
+
+| Aspetto | Batch | Shiny / API |
+|---|---|---|
+| Esito | Exit code e output | Codici HTTP e risposta |
+| Carico | Durata e frequenza | Latenza e concorrenza |
+| Errore | Retry, idempotenza, output parziale | Timeout, limiti, errori per richiesta |
+| Osservabilità | Avvio/fine, log, durata | Disponibilità, latenza, errori, risorse |
+
+---
+
+# Sicurezza, test e osservabilità
+
+- Identità e privilegi minimi per utenti e servizi.
+- Segreti fuori da repository, immagini e log.
+- TLS, autorizzazione e flussi di rete espliciti.
+- Test funzionali, integrazione, compatibilità e performance pertinenti.
+- Log correlabili, metriche, alert e health check adeguati al workload.
+- Testare il contratto esterno, non soltanto l'avvio del processo.
+
+---
+
+# Handover: informazioni minime
+
+- Repository, commit/tag, owner ed entry point.
+- Ambiente R, package, lockfile, OS e dipendenze native.
+- Input/output, volumi, frequenza, durata e concorrenza.
+- Sistemi esterni, account, permessi e configurazione.
+- Evidenze di test, baseline e limiti noti.
+- Runbook, log/metriche, timeout, recovery e contatti operativi.
+
+---
+
+# Gate di rilascio e rollback
+
+```{mermaid}
+%%| echo: false
+flowchart TD
+ A["Requisiti verificabili"] --> B["Test ed evidenze"]
+ B --> C["Sicurezza e osservabilità"]
+ C --> D["Handover e ownership"]
+ D --> E["Rilascio"]
+ E --> F["Smoke test"]
+ F -->|OK| G["Esercizio"]
+ F -->|KO| H["Rollback verificato"]
+```
+
+Rollback deve considerare codice, ambiente, configurazione e possibili output parziali.
+
+---
+
+# Dalla richiesta alla decisione
+
+- **Requisito:** quale risultato e in quale tempo?
+- **Misura:** che cosa osserviamo nel workload?
+- **Ipotesi:** quale componente limita il risultato?
+- **Test:** quale confronto distingue le alternative?
+- **Decisione:** quale opzione soddisfa i vincoli?
+- **Baseline e ownership:** come riprodurre e gestire la soluzione?
+
+---
+
+# Quattro domande per IT
+
+1. Che cosa deve fare e quale forma applicativa ha?
+2. Dove viene eseguito il lavoro e da cosa dipende?
+3. Quali misure giustificano risorse e architettura?
+4. Chi verifica, distribuisce, monitora e interviene?
+
+---
+
+# Criterio di presa in carico
+
+Una soluzione è gestibile quando sono identificati:
+
+- codice e artefatto distribuito;
+- ambiente e configurazione ricostruibili;
+- workload, test ed evidenze;
+- sicurezza e dipendenze esterne;
+- monitoraggio, rollback e runbook;
+- responsabilità operative esplicite.
