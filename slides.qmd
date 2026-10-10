@@ -146,9 +146,9 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 # Memoria e parallelismo
 
 - `object.size()` stima la dimensione di un oggetto R; non è il picco RSS.
-- Misurare il processo e, con processo di lavoro separati, anche i processi figli.
+- Misurare il processo e, con processi separati, anche i processi figli.
 - Registrare elapsed, speedup, efficienza, RAM e overhead.
-- Tenere distinti numero di processo di lavoro e filo di esecuzione nativi.
+- Tenere distinti numero di processo di lavoro e thread nativi.
 - Più concorrenza può peggiorare memoria, serializzazione e contesa.
 
 ---
