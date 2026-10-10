@@ -5,7 +5,7 @@ subtitle: "Dalle evidenze alle scelte tecniche"
 
 ## Perché questo capitolo
 
-Nei capitoli precedenti abbiamo visto come R usa ambiente, memoria, CPU, processi, filo di esecuzione, database e infrastruttura. Ora utilizziamo queste informazioni per trasformare una richiesta in una decisione tecnica verificabile.
+Nei capitoli precedenti abbiamo visto come R usa ambiente, memoria, CPU, processi, thread, database e infrastruttura. Ora utilizziamo queste informazioni per trasformare una richiesta in una decisione tecnica verificabile.
 
 Il punto non è aggiungere altra teoria: è collegare **evidenza, decisione e responsabilità**.
 
@@ -47,21 +47,21 @@ responsabilità
 
 > «Servono 64 GB di RAM.»
 
-Non è ancora una specifica verificata. Servono almeno carico di lavoro, durata obiettivo, consumo attuale, picco, processo di lavoro, concorrenza e alternative considerate.
+Non è ancora una specifica verificata. Servono almeno carico di lavoro, durata obiettivo, consumo attuale, picco, worker, concorrenza e alternative considerate.
 
 Il ruolo di IT non è decidere la correttezza del codice R, ma verificare che la richiesta tecnica sia sostenuta da evidenze riproducibili.
 
 ## riferimento di confronto
 
-Una riferimento di confronto di una soluzione R può comprendere:
+una situazione di riferimento di una soluzione R può comprendere:
 
 ```
 commit + R + package + native libraries + configuration + test data + test results
 ```
 
-Una modifica rilevante produce una nuova riferimento di confronto dopo la verifica.
+Una modifica rilevante produce una nuova situazione di riferimento dopo la verifica.
 
-Per una soluzione R, una modifica apparentemente piccola a R, package o librerie native può cambiare performance o comportamento. La riferimento di confronto deve quindi rendere visibile anche l'ambiente.
+Per una soluzione R, una modifica apparentemente piccola a R, package o librerie native può cambiare performance o comportamento. la situazione di riferimento deve quindi rendere visibile anche l'ambiente.
 
 ## Chi è responsabile di cosa
 
@@ -117,7 +117,7 @@ Per ciascuno bisogna distinguere:
 3. **test**: l'esperimento che separa ipotesi alternative;
 4. **decisione**: la modifica che si può giustificare con i risultati.
 
-Per esempio, «CPU 100%» è un fatto. «Il carico di lavoro è CPU-bound» è un'ipotesi. «Profilo il codice e confronto 1/2/4 processo di lavoro» è un test. «Aumento i processo di lavoro a 4» è una decisione solo se i risultati mostrano che soddisfa il requisito.
+Per esempio, «CPU 100%» è un fatto. «Il carico di lavoro è CPU-bound» è un'ipotesi. «Profilo il codice e confronto 1/2/4 worker» è un test. «Aumento i worker a 4» è una decisione solo se i risultati mostrano che soddisfa il requisito.
 
 ## Caso 1 — RAM
 
@@ -125,26 +125,26 @@ Per esempio, «CPU 100%» è un fatto. «Il carico di lavoro è CPU-bound» è u
 
 > «Lo script va in errore per memoria. Servono 64 GB.»
 
-Chiedere dimensione dei dati, RAM di picco, swap, processo di lavoro, memoria per worker, copie, oggetti intermedi, garbage collection, possibilità di filtrare e concorrenza.
+Chiedere dimensione dei dati, RAM di picco, swap, worker, memoria per worker, copie, oggetti intermedi, garbage collection, possibilità di filtrare e concorrenza.
 
-La decisione non parte dalla dimensione del dataset ma dal comportamento osservato del runtime R. Se 4 processo di lavoro portano il tempo sotto l'obiettivo ma la RAM a 38 GB, il dato utile per IT è la combinazione tempo/RAM, non il solo numero di core o GB richiesti.
+La decisione non parte dalla dimensione del dataset ma dal comportamento osservato del runtime R. Se 4 worker portano il tempo sotto l'obiettivo ma la RAM a 38 GB, il dato utile per IT è la combinazione tempo/RAM, non il solo numero di core o GB richiesti.
 
 ## Caso 2 — CPU
 
-**Collegamenti:** processo di lavoro e thread nativi (`02`) → analisi dei tempi di esecuzione e variazione delle risorse (`03`) → eventuale modifica dell'architettura (`04`) → verifica della release (`05`).
+**Collegamenti:** worker e thread nativi (`02`) → analisi dei tempi di esecuzione e variazione delle risorse (`03`) → eventuale modifica dell'architettura (`04`) → verifica della release (`05`).
 
 > «R usa il 100% della CPU. Servono più core.»
 
-Chiedere numero di core utilizzati, processo di lavoro, thread nativi, analisi dei tempi di esecuzione, parallelizzabilità, variazione delle risorse, crescita della RAM e coinvolgimento del database.
+Chiedere numero di core utilizzati, worker, thread nativi, analisi dei tempi di esecuzione, parallelizzabilità, variazione delle risorse, crescita della RAM e coinvolgimento del database.
 
-| processo di lavoro | Tempo | RAM | CPU |
+| worker | Tempo | RAM | CPU |
 |---:|---:|---:|---:|
 | 1 | … | … | … |
 | 2 | … | … | … |
 | 4 | … | … | … |
 | 8 | … | … | … |
 
-La domanda non è soltanto quanti core vede R, ma **quali processi e filo di esecuzione li stanno usando e con quale beneficio sul tempo di esecuzione**. Se l'aumento dei processo di lavoro porta 100% di CPU ma quasi nessun miglioramento del tempo, abbiamo un segnale da spiegare, non una giustificazione automatica per altra CPU.
+La domanda non è soltanto quanti core vede R, ma **quali processi e thread li stanno usando e con quale beneficio sul tempo di esecuzione**. Se l'aumento dei worker porta 100% di CPU ma quasi nessun miglioramento del tempo, abbiamo un segnale da spiegare, non una giustificazione automatica per altra CPU.
 
 ## Caso 3 — Shiny lenta
 
@@ -178,11 +178,11 @@ La domanda è anche quanta memoria, rete e serializzazione si evita spostando il
 
 ## Caso 5 — 20 package
 
-**Collegamenti:** ambiente e dipendenze (`01`) → costo del runtime (`02`) → riferimento di confronto del prova comparativa (`03`) → riproducibilità del distribuzione (`05`).
+**Collegamenti:** ambiente e dipendenze (`01`) → costo del runtime (`02`) → riferimento di confronto del prova comparativa (`03`) → riproducibilità della distribuzione (`05`).
 
 Chiedere dipendenze effettive, versioni, file che registra le dipendenze, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
 
-L'obiettivo è una riferimento di confronto ricostruibile, non un numero di package installati. Il test minimo è provare la ricostruzione in un ambiente pulito e verificare che il carico di lavoro produca lo stesso risultato atteso.
+L'obiettivo è una situazione di riferimento ricostruibile, non un numero di package installati. Il test minimo è provare la ricostruzione in un ambiente pulito e verificare che il carico di lavoro produca lo stesso risultato atteso.
 
 ## Caso 6 — Container
 
@@ -210,7 +210,7 @@ I/O: normale
 
 Test:
 
-| processo di lavoro | Tempo | RAM |
+| worker | Tempo | RAM |
 |---:|---:|---:|
 | 1 | 192 min | 11 GB |
 | 2 | 104 min | 20 GB |
@@ -241,7 +241,7 @@ La richiesta dello sviluppatore dovrebbe poter essere tradotta in una scheda ope
 | Forma | batch, Quarto, Shiny, API, package, pipeline |
 | Ambiente | R, OS, package, file che registra le dipendenze, native dependencies |
 | carico di lavoro | dati, frequenza, durata, utenti/concorrenza |
-| Risorse | CPU, RAM, I/O, rete, processo di lavoro, filo di esecuzione |
+| Risorse | CPU, RAM, I/O, rete, worker, thread |
 | Sistemi esterni | Oracle, API, filesystem, storage |
 | Sicurezza | account, permessi, autenticazione, segreti, TLS |
 | Test | funzionali, integrazione, compatibilità, performance |
@@ -303,9 +303,9 @@ diagnosi
    ↓
 architettura
    ↓
-deployment
+distribuzione
    ↓
-ownership
+responsabilità operativa
    ↓
 baseline
 ```
