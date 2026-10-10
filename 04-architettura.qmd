@@ -253,6 +253,8 @@ Esempio minimo di distinzione: il dataset globale è caricato una volta per proc
 #| label: esempio-shiny-stato-condiviso
 #| eval: false
 
+Chiariti esecuzione e prestazioni, si può decidere come organizzare la soluzione e collegarla agli altri sistemi. La domanda è dove si trova la logica e quale componente deve svolgere ciascuna funzione.
+
 # global.R: caricamento all'avvio del processo, non per ogni sessione.
 dati_condivisi <- readRDS(Sys.getenv("DATASET_PATH"))
 
