@@ -1,5 +1,5 @@
 ---
-title: "distribuzione e gestione operativa"
+title: "Distribuzione e gestione operativa"
 subtitle: "Dal codice R alla release"
 ---
 
@@ -11,7 +11,7 @@ Un software che funziona sul computer dello sviluppatore non è ancora una relea
 
 Per R la difficoltà aggiuntiva è che una release deve rendere riproducibile non solo il codice, ma anche il runtime, i package e le dipendenze che attraversano il confine con il sistema operativo.
 
-## Lessico operativo del distribuzione
+## Lessico operativo della distribuzione
 
 | Termine | Significato operativo |
 |---|---|
@@ -372,7 +372,7 @@ Un inventario minimo comprende:
 | Librerie | posizione e ordine dei library path, se rilevanti |
 | Native | BLAS/LAPACK, librerie di sistema, driver e client |
 | Esecuzione | entrypoint, working directory, directory temporanea |
-| Parallelismo | processo di lavoro, processi e filo di esecuzione nativi |
+| Parallelismo | processo di lavoro, processi e thread nativi |
 | Configurazione | variabili d'ambiente, file di configurazione, parametri modificabili |
 | Dati | input, output, formati, dimensioni e crescita attesa |
 | Sistemi esterni | database, API, filesystem, storage, proxy e certificati |
