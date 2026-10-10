@@ -21,28 +21,14 @@ Il percorso parte dalla richiesta iniziale e dalla forma della soluzione: script
 Alcuni termini ricorrono nel manuale:
 
 - **Ambiente di esecuzione (runtime):** versione di R, pacchetti, librerie di sistema e configurazione necessari per avviare il programma.
-- **Punto di ingresso (punto di ingresso):** file o comando da cui parte l'esecuzione.
+- **Punto di ingresso (entry point):** file o comando da cui parte l'esecuzione.
 - **Interfaccia di programmazione (API, Application Programming Interface):** regole con cui un programma chiede dati o operazioni a un altro programma.
-- **Richiesta HTTP (Hypertext Transfer Protocol):** messaggio inviato a un servizio web; la risposta contiene un codice che indica l'esito e, quando previsto, dei dati.
+- **HTTP (Hypertext Transfer Protocol, protocollo di trasferimento ipertestuale):** messaggio inviato a un servizio web; la risposta contiene un codice che indica l'esito e, quando previsto, dei dati.
 - **Memoria residente (RSS, Resident Set Size):** quantità di memoria fisica attribuita dal sistema operativo a un processo in un dato momento.
-- **Rilascio (rilascio):** versione identificata e consegnata per l'uso o la distribuzione.
+- **Rilascio (release):** versione identificata e consegnata per l'uso o la distribuzione.
 - **Ripristino della versione precedente (rollback):** ritorno a una versione conosciuta, compresi gli elementi di configurazione necessari.
 
-Le definizioni sono introduttive. Nei capitoli tecnici i termini vengono precisati quando servono a interpretare una misura o una configurazione.
-
-## Come procede il manuale
-
-Il percorso parte dalla richiesta iniziale e dalla forma della soluzione: script, elaborazione pianificata, report, applicazione o servizio. Passa poi a ciò che serve per eseguirla, cioè R, i pacchetti e le librerie esterne. Quando il comportamento è chiaro, si misurano tempi, memoria e accesso ai dati; solo dopo si valutano struttura, integrazioni, distribuzione e gestione nel tempo. L'ultimo capitolo usa questi elementi per confrontare le alternative e chiarire che cosa serve per prendere in carico una soluzione.
-
-Alcuni termini ricorrono nel manuale:
-
-- **Ambiente di esecuzione (runtime):** versione di R, pacchetti, librerie di sistema e configurazione necessari per avviare il programma.
-- **Punto di ingresso (punto di ingresso):** file o comando da cui parte l'esecuzione.
-- **Interfaccia di programmazione (API, Application Programming Interface):** regole con cui un programma chiede dati o operazioni a un altro programma.
-- **Richiesta HTTP (Hypertext Transfer Protocol):** messaggio inviato a un servizio web; la risposta contiene un codice che indica l'esito e, quando previsto, dei dati.
-- **Memoria residente (RSS, Resident Set Size):** quantità di memoria fisica attribuita dal sistema operativo a un processo in un dato momento.
-- **Rilascio (rilascio):** versione identificata e consegnata per l'uso o la distribuzione.
-- **Ripristino della versione precedente (rollback):** ritorno a una versione conosciuta, compresi gli elementi di configurazione necessari.
+Altre sigle usate nel manuale: **CPU** (Central Processing Unit, unità centrale di elaborazione); **RAM** (Random Access Memory, memoria ad accesso casuale); **TLS** (Transport Layer Security, protocollo che protegge le comunicazioni); **CI/CD** (integrazione e distribuzione continue); **IAM** (Identity and Access Management, gestione di identità e accessi); **BLAS** e **LAPACK** (librerie per il calcolo numerico); **JSON** (formato testuale per scambiare dati strutturati); **SQL** (linguaggio per interrogare e modificare dati nei database); **IDE** (ambiente integrato di sviluppo); **GIS** (sistema informativo geografico); **UI** (interfaccia utente); **OS** (sistema operativo); **I/O** (ingresso/uscita dei dati).
 
 Le definizioni sono introduttive. Nei capitoli tecnici i termini vengono precisati quando servono a interpretare una misura o una configurazione.
 
