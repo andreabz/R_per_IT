@@ -23,7 +23,7 @@ flowchart LR
   A[Requisito] --> B[Misura]
   B --> C[Evidenza]
   C --> D[Decisione]
-  D --> E[Baseline]
+  D --> E[situazione di riferimento]
   E --> F[Responsabilità]
 ``` 
 
@@ -40,7 +40,7 @@ evidenza
    ↓
 decisione
    ↓
-baseline
+situazione di riferimento
    ↓
 responsabilità
 ```
@@ -307,7 +307,7 @@ distribuzione
    ↓
 responsabilità operativa
    ↓
-baseline
+situazione di riferimento
 ```
 
 Una soluzione R diventa gestibile quando il suo comportamento può essere osservato, il suo ambiente può essere ricostruito e le decisioni possono essere motivate dalle evidenze.
