@@ -31,13 +31,13 @@ Il capitolo ha due livelli.
 - R è il runtime; RStudio è uno strumento di sviluppo;
 - una soluzione R comprende codice, runtime, package, dipendenze native, configurazione e sistemi esterni;
 - «package installato» non significa necessariamente «ambiente riproducibile»;
-- un lockfile descrive una parte dell'ambiente, non il server completo;
+- un file che registra le dipendenze descrive una parte dell'ambiente, non il server completo;
 - la baseline deve comprendere anche ciò che sta fuori da R.
 
 **Livello diagnostico — da usare quando serve**
 
 - library path e ordine di ricerca;
-- lockfile e gestione delle dipendenze;
+- file che registra le dipendenze e gestione delle dipendenze;
 - ABI, driver e librerie native;
 - ALTREP e differenza tra dimensione logica e memoria del processo.
 
@@ -55,11 +55,11 @@ Per seguire il corso bastano pochi termini aggiuntivi rispetto al lessico IT abi
 | **worker** | unità incaricata di eseguire una parte del lavoro parallelo |
 | **thread** | flusso di esecuzione all'interno di un processo |
 | **serializzazione** | trasformazione di un oggetto in una rappresentazione trasferibile o memorizzabile, per esempio tra processi |
-| **profiling** | misura dettagliata di dove il programma spende tempo o risorse |
-| **benchmark** | confronto controllato tra esecuzioni dello stesso workload o di varianti del workload |
+| **analisi dei tempi di esecuzione** | misura dettagliata di dove il programma spende tempo o risorse |
+| **prova comparativa** | confronto controllato tra esecuzioni dello stesso carico di lavoro o di varianti del carico di lavoro |
 | **baseline** | stato di riferimento, descritto e misurato, contro cui confrontare una modifica |
-| **artefatto** | risultato prodotto dalla build e destinato al deployment, per esempio un'immagine container o un pacchetto di release |
-| **smoke test** | verifica breve eseguita dopo il deployment per accertare che il servizio o job sia avviabile e svolga il percorso minimo atteso |
+| **artefatto** | risultato prodotto dalla build e destinato al distribuzione, per esempio un'immagine container o un pacchetto di release |
+| **verifica rapida di avvio** | verifica breve eseguita dopo la distribuzione per accertare che il servizio o job sia avviabile e svolga il percorso minimo atteso |
 
 Il resto del manuale introduce i termini R-specifici nel punto in cui diventano necessari.
 
@@ -89,7 +89,7 @@ infrastruttura
 
 Una dipendenza può attraversare più livelli. Un package può utilizzare C/C++ o Fortran compilato e dipendere da librerie di sistema. Installare un package e rendere disponibile l'ambiente necessario all'esecuzione non sono la stessa operazione.
 
-**Per R questo confine è particolarmente importante:** il lockfile descrive l'ecosistema dei package, ma non rende automaticamente identiche le librerie native, i driver e il sistema operativo.
+**Per R questo confine è particolarmente importante:** il file che registra le dipendenze descrive l'ecosistema dei package, ma non rende automaticamente identiche le librerie native, i driver e il sistema operativo.
 
 Un esempio tipico è un package che si installa correttamente in sviluppo ma in produzione richiede una libreria di sistema o un client database assente. Il problema non è necessariamente nel codice R: la catena di dipendenze attraversa un confine gestito da IT.
 
@@ -181,7 +181,7 @@ La domanda operativa è:
 
 ### Informazioni da consegnare a IT
 
-Per una soluzione destinata alla produzione, lo sviluppatore dovrebbe indicare almeno package, versioni o lockfile, repository previsti ed eventuali package installati da Git, sorgenti locali o repository interni.
+Per una soluzione destinata alla produzione, lo sviluppatore dovrebbe indicare almeno package, versioni o file che registra le dipendenze, repository previsti ed eventuali package installati da Git, sorgenti locali o repository interni.
 
 In un contesto aziendale è utile aggiungere una domanda di **supply chain**:
 
@@ -233,9 +233,9 @@ lapply(.libPaths(), list.files)
 
 Non serve eseguire questo comando in produzione: serve capire che «il package è installato» non risponde alla domanda «quale package viene usato?».
 
-## Che cos'è un lockfile?
+## Che cos'è un file che registra le dipendenze?
 
-Un **lockfile** è un file che registra lo stato delle dipendenze di un progetto in un determinato momento, in modo che quell'ambiente possa essere ricostruito.
+Un **file che registra le dipendenze** è un file che registra lo stato delle dipendenze di un progetto in un determinato momento, in modo che quell'ambiente possa essere ricostruito.
 
 Nel caso di renv, il file si chiama normalmente renv.lock e viene **gestito da renv**, non dal runtime R in modo automatico.
 
@@ -257,7 +257,7 @@ renv::restore()
 project library ricostruita
 ~~~
 
-snapshot() registra lo stato della library di progetto nel lockfile; restore() usa il lockfile per installare nella library di progetto le versioni registrate. Il lockfile contiene anche la versione di R e i repository associati al progetto.
+snapshot() registra lo stato della library di progetto nel file che registra le dipendenze; restore() usa il file che registra le dipendenze per installare nella library di progetto le versioni registrate. Il file che registra le dipendenze contiene anche la versione di R e i repository associati al progetto.
 
 ### Laboratorio operativo — verificare e ricostruire un ambiente
 
@@ -288,7 +288,7 @@ packageVersion("data.table")
 find.package("data.table")
 ```
 
-`renv::restore()` non va inteso come un comando da eseguire alla cieca su una macchina di produzione: può modificare la library del progetto installando o aggiornando dipendenze. La ricostruzione va quindi eseguita in un ambiente controllato e verificata prima del deployment.
+`renv::restore()` non va inteso come un comando da eseguire alla cieca su una macchina di produzione: può modificare la library del progetto installando o aggiornando dipendenze. La ricostruzione va quindi eseguita in un ambiente controllato e verificata prima della distribuzione.
 
 ### Diagnosi di un package mancante o incompatibile
 
@@ -314,23 +314,23 @@ Questi comandi non risolvono da soli l'incompatibilità. Servono a raccogliere e
 
 Se l'errore riguarda compilazione, librerie condivise, driver o altri componenti esterni a R, la diagnosi passa dal runtime R al sistema operativo o al componente esterno. In quel caso IT deve registrare **quale dipendenza manca e in quale fase**, invece di concludere semplicemente che «R non funziona».
 
-### È obbligatorio usare un lockfile?
+### È obbligatorio usare un file che registra le dipendenze?
 
 **No.**
 
-R può funzionare perfettamente senza renv e senza lockfile.
+R può funzionare perfettamente senza renv e senza file che registra le dipendenze.
 
-Il lockfile diventa utile quando la riproducibilità dell'ambiente è un requisito: sviluppo collaborativo, CI/CD, deployment, manutenzione nel tempo, rollback o audit.
+Il file che registra le dipendenze diventa utile quando la riproducibilità dell'ambiente è un requisito: sviluppo collaborativo, CI/CD, distribuzione, manutenzione nel tempo, rollback o audit.
 
-Quindi IT non dovrebbe chiedere «R richiede un lockfile?». La domanda corretta è:
+Quindi IT non dovrebbe chiedere «R richiede un file che registra le dipendenze?». La domanda corretta è:
 
-> **Per questo workload abbiamo bisogno di poter ricostruire la stessa combinazione di R e package?**
+> **Per questo carico di lavoro abbiamo bisogno di poter ricostruire la stessa combinazione di R e package?**
 
 Se la risposta è sì, renv è una possibile soluzione; non è però l'unica forma teorica di gestione delle dipendenze.
 
-### Che cosa NON congela il lockfile?
+### Che cosa NON congela il file che registra le dipendenze?
 
-Un lockfile renv non è una fotografia dell'intero server.
+Un file che registra le dipendenze renv non è una fotografia dell'intero server.
 
 Non congela automaticamente:
 
@@ -352,7 +352,7 @@ renv.lock
 immagine completa del server
 ~~~
 
-Il lockfile controlla una parte importante dell'ambiente R, non l'intera infrastruttura.
+Il file che registra le dipendenze controlla una parte importante dell'ambiente R, non l'intera infrastruttura.
 
 ## Approfondimento — Due termini infrastrutturali
 
@@ -365,7 +365,7 @@ Due termini che possono comparire quando una dipendenza attraversa il confine tr
 
 ## Dipendenze e riproducibilità
 
-Un progetto dovrebbe dichiarare le proprie dipendenze R e poter ricostruire un ambiente coerente. Il lockfile di progetto descrive le dipendenze R da ricostruire, ma non congela automaticamente OS, librerie native, driver, configurazione, credenziali o dati.
+Un progetto dovrebbe dichiarare le proprie dipendenze R e poter ricostruire un ambiente coerente. Il file che registra le dipendenze di progetto descrive le dipendenze R da ricostruire, ma non congela automaticamente OS, librerie native, driver, configurazione, credenziali o dati.
 
 Una baseline completa può essere:
 
@@ -374,7 +374,7 @@ Una baseline completa può essere:
 | Codice | commit/tag |
 | R | versione |
 | Package | versioni e repository |
-| Dipendenze R | lockfile |
+| Dipendenze R | file che registra le dipendenze |
 | Native | librerie e driver |
 | OS | distribuzione/versione |
 | Configurazione | parametri |
@@ -419,7 +419,7 @@ ALTREP è quindi un esempio, non una spiegazione completa della memoria. Nel cap
 2. Quale versione di R?
 3. Quali package e versioni?
 4. Quale library viene usata?
-5. Quale lockfile descrive l'ambiente?
+5. Quale file che registra le dipendenze descrive l'ambiente?
 6. Esistono dipendenze native?
 7. Quali driver/client sono necessari?
 8. Quali sistemi esterni sono coinvolti?
