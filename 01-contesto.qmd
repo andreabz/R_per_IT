@@ -189,10 +189,6 @@ In un contesto aziendale è utile aggiungere una domanda di **supply chain**:
 
 Questo include non soltanto i package R, ma anche librerie native, driver e client esterni. La riproducibilità tecnica e la sicurezza della catena di fornitura sono quindi collegate, ma non coincidono.
 
-### Informazioni da consegnare a IT
-
-Per una soluzione destinata alla produzione, lo sviluppatore dovrebbe indicare almeno package, versioni o lockfile, repository previsti ed eventuali package installati da Git, sorgenti locali o repository interni.
-
 ## Approfondimento — Le library di R
 
 R può avere più library contemporaneamente. .libPaths() restituisce il percorso delle library che R considera nella sessione corrente, nell'ordine in cui vengono cercate.

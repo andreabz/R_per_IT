@@ -132,7 +132,50 @@ Per diagnosticare la memoria conviene distinguere almeno tre livelli:
 
 ALTREP, copie, allocazioni temporanee e più processi fanno sì che questi valori non coincidano.
 
-Una misura utile deve quindi riportare almeno il punto temporale, il processo o worker osservato e il contesto di concorrenza.\n\n> **Per una richiesta RAM, il dato utile è il picco osservato nel workload reale, non la somma delle dimensioni nominali dei dataset.**
+Una misura utile deve quindi riportare almeno il punto temporale, il processo o worker osservato e il contesto di concorrenza.
+
+### Laboratorio specifico — copie, blocchi e picco RSS
+
+**Obiettivo:** verificare se una trasformazione completa crea un picco di memoria maggiore dell'elaborazione per blocchi. Il risultato dipende dalla rappresentazione dei dati e dall'operazione; non va generalizzato senza misura.
+
+- **Input:** tabella sintetica con 5 milioni di righe e due colonne numeriche.
+- **Ambiente:** stessa versione di R, stesso host e stessa library; nessun altro workload significativo durante la misura.
+- **Confronto:** calcolo completo in un passaggio contro calcolo per blocchi da 500.000 righe.
+- **Metriche:** durata, picco RSS del processo e correttezza del risultato.
+- **Limiti:** RSS è una metrica del sistema operativo; `object.size()` stima la dimensione di un oggetto R e non misura il picco residente. L'esempio è escluso dal rendering automatico perché alloca dati di grandi dimensioni.
+
+```{r}
+#| label: laboratorio-memoria-blocchi
+#| eval: false
+
+n <- 5000000L
+blocco <- 500000L
+DT <- data.table::data.table(
+  quantita = runif(n),
+  prezzo = runif(n)
+)
+
+# Strategia A: risultato completo.
+tempo_completo <- system.time({
+  DT[, totale := quantita * prezzo]
+})
+
+# Strategia B: ricreare DT senza la colonna totale e lavorare per blocchi.
+DT[, totale := NULL]
+tempo_blocchi <- system.time({
+  for (inizio in seq.int(1L, n, by = blocco)) {
+    fine <- min(inizio + blocco - 1L, n)
+    DT[inizio:fine, totale := quantita * prezzo]
+  }
+})
+
+stopifnot(nrow(DT) == n, all(is.finite(DT$totale)))
+tempo_completo
+tempo_blocchi
+```
+
+Su Linux, eseguire ogni strategia in un processo separato e registrare il massimo RSS con `/usr/bin/time -v Rscript laboratorio-memoria.R`; verificare la disponibilità del comando e usare lo stesso metodo per entrambe. Per un confronto valido, usare lo stesso input e più ripetizioni. Il metodo per blocchi non garantisce un RSS inferiore: l'oggetto finale resta in memoria.
+\n\n> **Per una richiesta RAM, il dato utile è il picco osservato nel workload reale, non la somma delle dimensioni nominali dei dataset.**
 
 ## Approfondimento — Environment e lexical scoping
 
@@ -376,13 +419,54 @@ La domanda infrastrutturale diventa:
 
 ## Benchmark del runtime
 
-| Worker | Thread | Tempo | RAM picco | CPU |
-|---:|---:|---:|---:|---:|
-| 1 | 1 | … | … | … |
-| 2 | 1 | … | … | … |
-| 4 | 1 | … | … | … |
-| 4 | 2 | … | … | … |
-| 4 | 4 | … | … | … |
+| Worker | Thread nativi | Tempo | Speedup | Efficienza | Picco RSS | CPU |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 1 | `T1` | 1 | 1 | misurato | misurata |
+| 2 | 1 | `T2` | `T1/T2` | `T1/(2*T2)` | misurato | misurata |
+| 4 | 1 | `T4` | `T1/T4` | `T1/(4*T4)` | misurato | misurata |
+| 8, se sensato | 1 | `T8` | `T1/T8` | `T1/(8*T8)` | misurato | misurata |
+
+**Laboratorio specifico — confronto del parallelismo**
+
+- **Input:** workload indipendente per elemento, con input e output deterministici; escludere inizialmente le chiamate a database.
+- **Ambiente:** registrare versione R, OS, backend, core disponibili e impostazioni delle librerie native.
+- **Metodo:** confrontare 1, 2, 4 e, se le risorse lo consentono, 8 worker. Tenere inizialmente fissi i thread nativi a 1; in una seconda prova variare i thread mantenendo fisso il numero di worker.
+- **Metriche:** tempo elapsed, speedup `T1/Tn`, efficienza `T1/(n*Tn)`, picco RSS complessivo, CPU, avvio e trasferimento/serializzazione.
+- **Limiti:** usare almeno tre ripetizioni comparabili e riportare mediana e dispersione. Se il workload è troppo breve, aumentare il lavoro utile senza cambiare algoritmo. Non attribuire a una sola variabile risultati ottenuti cambiando insieme backend e trasferimenti.
+
+Esempio portabile con PSOCK; è escluso dal rendering automatico perché crea processi e i tempi dipendono dall'ambiente:
+
+```{r}
+#| label: laboratorio-parallelismo-psock
+#| eval: false
+
+calcola <- function(i, n = 2000000L) {
+  x <- seq_len(n) + i
+  sum(sqrt(x))
+}
+
+misura <- function(worker) {
+  if (worker == 1L) {
+    system.time(ris <- lapply(1:8, calcola))["elapsed"]
+  } else {
+    cl <- parallel::makeCluster(worker)
+    on.exit(parallel::stopCluster(cl), add = TRUE)
+    system.time(
+      ris <- parallel::parLapply(cl, 1:8, calcola)
+    )["elapsed"]
+  }
+}
+
+tempi <- vapply(c(1L, 2L, 4L, 8L), misura, numeric(1))
+data.frame(
+  worker = c(1L, 2L, 4L, 8L),
+  elapsed = unname(tempi),
+  speedup = unname(tempi[1] / tempi),
+  efficienza = unname(tempi[1] / tempi / c(1, 2, 4, 8))
+)
+```
+
+La prova include il costo di avvio dei worker e di trasferimento. Per misurare il picco RSS complessivo, osservare master e processi figli dal sistema operativo: la sola memoria del master sottostima il costo totale.
 
 Il test deve permettere di separare l'effetto dei worker da quello dei thread nativi.
 
