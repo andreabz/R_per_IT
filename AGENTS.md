@@ -4,7 +4,7 @@
 
 R_per_IT è un manuale tecnico rivolto a sistemisti, architetti, DevOps, team di piattaforma e responsabili tecnici che devono comprendere, valutare, integrare, distribuire e gestire soluzioni sviluppate in R.
 
-L'obiettivo **non** è formare sviluppatori R né sostituire la formazione generale su sistemi operativi, reti, database o piattaforme. Il corso deve aiutare IT a capire che cosa cambia quando il workload è R e a trasformare una richiesta tecnica in requisiti verificabili, evidenze, decisioni, responsabilità e baseline.
+L'obiettivo **non** è formare sviluppatori R né sostituire la formazione generale su sistemi operativi, reti, database o piattaforme. Il corso deve aiutare IT a capire che cosa cambia quando il carico di lavoro è R e a trasformare una richiesta tecnica in requisiti verificabili, evidenze, decisioni, responsabilità e baseline.
 
 Principio guida:
 
@@ -18,10 +18,10 @@ Il destinatario deve poter:
 
 - riconoscere la forma applicativa e il suo punto di ingresso;
 - identificare runtime R, package, dipendenze native, driver e sistemi esterni;
-- descrivere workload, input/output, frequenza, durata, concorrenza e risorse;
+- descrivere carico di lavoro, input/output, frequenza, durata, concorrenza e risorse;
 - distinguere misure ed evidenze da ipotesi;
-- valutare requisiti di deployment, sicurezza, osservabilità, rollback e ownership;
-- individuare le informazioni mancanti nell'handover e chiederle in modo concreto;
+- valutare requisiti di distribuzione, sicurezza, osservabilità, rollback e responsabilità operativa;
+- individuare le informazioni mancanti nell'passaggio di consegne e chiederle in modo concreto;
 - confrontare alternative architetturali senza assumere che una soluzione sia sempre migliore delle altre.
 
 Il livello tecnico è **approfondito sul piano operativo e architetturale**. Il codice va incluso quando rende verificabile un comportamento, chiarisce una configurazione o consente un esperimento riproducibile; non va usato per trasformare il corso in un tutorial di programmazione.
@@ -68,7 +68,7 @@ Organizzare il materiale intorno a scenari operativi crescenti, non intorno a un
 ### Livello 3 — Servizi e applicazioni
 
 - applicazioni Shiny, sessioni e reattività;
-- deployment Shiny, ShinyProxy e, quando pertinente, ShinyProxy Operator su Kubernetes;
+- distribuzione Shiny, ShinyProxy e, quando pertinente, ShinyProxy Operator su Kubernetes;
 - API HTTP esposte con plumber2;
 - consumo di API HTTP da R, incluso httr2;
 - integrazione con Oracle, APEX, GIS e altri sistemi;
@@ -81,16 +81,16 @@ Una singola soluzione può combinare più scenari: per esempio un job batch che 
 Quando pertinente, descrivere ogni scenario con una struttura uniforme. Non forzare sezioni irrilevanti: dichiarare invece perché un requisito non si applica.
 
 1. **Prodotto e scopo:** che cosa fa e quale responsabilità ricade su R.
-2. **Struttura ed entry point:** file principali, punto di avvio e artefatto distribuito.
+2. **Struttura e il punto di ingresso:** file principali, punto di avvio e artefatto distribuito.
 3. **Esecuzione:** IDE, console, Rscript, scheduler, server, processo persistente o orchestratore.
-4. **Ambiente:** versione R di riferimento quando nota, package, repository, dipendenze native, driver e lockfile.
+4. **Ambiente:** versione R di riferimento quando nota, package, repository, dipendenze native, driver e file che registra le dipendenze.
 5. **Input, output e dati:** formati, volumi, provenienza, persistenza, sensibilità e confini di responsabilità.
-6. **Workload e risorse:** durata, frequenza, CPU, RAM, I/O, rete, concorrenza e variabilità.
+6. **carico di lavoro e risorse:** durata, frequenza, CPU, RAM, I/O, rete, concorrenza e variabilità.
 7. **Verifiche:** test funzionali, d'integrazione, compatibilità e performance.
 8. **Distribuzione:** build, artefatto, configurazione, promozione, rollback e dipendenze esterne.
 9. **Sicurezza:** account, privilegi minimi, autenticazione, autorizzazione, segreti, TLS e dati esposti.
-10. **Esercizio:** log, errori, exit code o codici HTTP, timeout, retry, health check, monitoraggio e allarmi.
-11. **Handover e ownership:** informazioni da consegnare, responsabilità dello sviluppatore e di IT, runbook e baseline.
+10. **Esercizio:** log, errori, exit code o codici HTTP, timeout, nuovo tentativo automatico, health check, monitoraggio e allarmi.
+11. **passaggio di consegne e responsabilità operativa:** informazioni da consegnare, responsabilità dello sviluppatore e di IT, runbook e baseline.
 
 Distinguere sempre:
 - **necessario:** requisito senza il quale lo scenario non è gestibile o non soddisfa il contratto;
@@ -107,26 +107,26 @@ Spiegare il comportamento rilevante per IT senza promettere risultati universali
 
 Preparare **sia un caso integrato sia laboratori specifici**:
 
-- **Caso integrato:** un workload sintetico ma plausibile, con input e output definiti, usato per confrontare strategie di esecuzione e interpretare compromessi.
-- **Profiling:** usare, dove appropriato, system.time(), Rprof(), profvis e metriche del sistema operativo; distinguere tempo CPU, tempo trascorso, I/O e attese esterne.
+- **Caso integrato:** un carico di lavoro sintetico ma plausibile, con input e output definiti, usato per confrontare strategie di esecuzione e interpretare compromessi.
+- **analisi dei tempi di esecuzione:** usare, dove appropriato, system.time(), Rprof(), profvis e metriche del sistema operativo; distinguere tempo CPU, tempo trascorso, I/O e attese esterne.
 - **Memoria:** analizzare copie e oggetti intermedi, selezione di colonne, elaborazione per blocchi e picco di RSS; non dedurre il consumo di RAM dalla sola dimensione logica degli oggetti R.
 - **Parallelismo:** confrontare esecuzione sequenziale e numero ragionevole di worker (per esempio 2, 4 e 8 quando sensato); misurare durata, speedup, efficienza, RAM, serializzazione e saturazione. Distinguere processi R e thread di librerie native/BLAS.
 - **Database:** confrontare, su dati equivalenti, trasferimento completo e filtraggio/aggregazione lato database; registrare righe, colonne, volume trasferito e tempi lato database e lato R.
 
-Ogni benchmark deve dichiarare ambiente, versione quando rilevante, input, metodo, metrica, strategie confrontate e limiti di generalizzazione. Evitare confronti non riproducibili o numeri presentati come universali.
+Ogni prova comparativa deve dichiarare ambiente, versione quando rilevante, input, metodo, metrica, strategie confrontate e limiti di generalizzazione. Evitare confronti non riproducibili o numeri presentati come universali.
 
 Non assumere che parallelizzare migliori le prestazioni: può aumentare RAM, overhead, serializzazione e carico sui database, oppure peggiorare la contesa per le risorse.
 
 ## 7. Shiny: riconoscimento, ciclo di vita e gestione
 
-Trattare Shiny come prodotto applicativo e workload concorrente, non soltanto come codice R.
+Trattare Shiny come prodotto applicativo e carico di lavoro concorrente, non soltanto come codice R.
 
 ### Strutture da riconoscere
 
 - **app.R:** file singolo che può contenere interfaccia, logica server e inizializzazione.
 - **ui.R e server.R:** struttura separata; individuare anche eventuale global.R e gli altri file richiamati.
 - **global.R:** viene eseguito all'avvio dell'applicazione prima delle sessioni; oggetti e dati creati qui possono restare in memoria ed essere condivisi tra le sessioni servite dallo stesso processo.
-- **Struttura di package o framework:** per esempio golem, Rhino o convenzioni personalizzate; individuare entry point, moduli, risorse, configurazione, dipendenze e procedura di avvio/build.
+- **Struttura di package o framework:** per esempio golem, Rhino o convenzioni personalizzate; individuare punto di ingresso, moduli, risorse, configurazione, dipendenze e procedura di avvio/build.
 
 Non presentare queste strutture come modelli di esecuzione necessariamente diversi. Il comportamento va dedotto dal codice e dal modo in cui l'applicazione viene avviata.
 
@@ -138,7 +138,7 @@ Prevedere un esempio che confronti il caricamento di un dataset nell'ambito glob
 
 Approfondire input/output/reactive expressions, invalidazione, caching, sessioni simultanee, diagnosi con uno e più utenti, operazioni bloccanti e comportamento al riavvio.
 
-### Deployment
+### distribuzione
 
 Confrontare, quando pertinente, esecuzione diretta su host, container e ShinyProxy; citare ShinyProxy Operator in Kubernetes se utile allo scenario. Fornire configurazioni e comandi **quasi eseguibili**, sufficientemente completi da mostrare i confini tra componenti e il percorso di avvio, ma adattabili all'infrastruttura aziendale.
 
@@ -167,9 +167,9 @@ Distinguere una verifica di liveness dalla verifica della disponibilità delle d
 
 ### API consumate con httr2
 
-Includere almeno un esempio riproducibile di richiesta e gestione della risposta. Coprire GET/POST, URL, query parameters, header, body, parsing JSON, codici HTTP, timeout, errori, autenticazione, retry limitati e paginazione quando pertinente.
+Includere almeno un esempio riproducibile di richiesta e gestione della risposta. Coprire GET/POST, URL, query parameters, header, body, parsing JSON, codici HTTP, timeout, errori, autenticazione, nuovo tentativo automatico limitati e paginazione quando pertinente.
 
-Evidenziare che i retry devono essere compatibili con l'operazione e con i codici di errore: non ripetere indiscriminatamente operazioni non idempotenti. Non inserire token o credenziali nel codice sorgente o nei log.
+Evidenziare che i nuovo tentativo automatico devono essere compatibili con l'operazione e con i codici di errore: non ripetere indiscriminatamente operazioni non idempotenti. Non inserire token o credenziali nel codice sorgente o nei log.
 
 Collegare chiamante e servizio con un esempio HTTP/JSON che chiarisca il contratto tra componenti, la responsabilità degli errori e i confini di sicurezza.
 
@@ -177,10 +177,10 @@ Collegare chiamante e servizio con un esempio HTTP/JSON che chiarisca il contrat
 
 Trattare le integrazioni dal punto di vista dei confini e dei contratti, non come corsi completi sui sistemi esterni.
 
-- **Oracle:** driver, autenticazione, query, transazioni, pool quando pertinente, volumi, pushdown di filtri e aggregazioni, timeout e gestione delle connessioni.
+- **Oracle:** driver, autenticazione, query, transazioni, pool quando pertinente, volumi, esecuzione dei filtri e delle aggregazioni nel database di filtri e aggregazioni, timeout e gestione delle connessioni.
 - **APEX:** confine tra workflow gestionale e calcolo analitico; invocazione di servizi, scambio di parametri e risultati, gestione degli errori.
 - **GIS:** dati spaziali, formati, database geografici, sistemi di coordinate e trasferimento dei dati.
-- **Scheduler e orchestratori:** account, ambiente, working directory, exit code, log, timeout, retry, dipendenze e idempotenza.
+- **Scheduler e orchestratori:** account, ambiente, working directory, exit code, log, timeout, nuovo tentativo automatico, dipendenze e idempotenza.
 - **Proxy e gateway:** routing, TLS, autenticazione, limiti, timeout e logging.
 - **CI/CD e container:** test, build, artefatto, configurazione, promozione e rollback.
 
@@ -188,7 +188,7 @@ Non duplicare automaticamente in R funzioni già svolte in modo adeguato da data
 
 ## 10. Versioni e documentazione tecnica
 
-Il manuale descrive le tecnologie in termini generali e **non impone una baseline fissa di versioni**.
+Il manuale descrive le tecnologie in termini generali e **non impone una versione di riferimento fissa**.
 
 Quando una procedura, una configurazione o un comportamento dipende dalla versione:
 - indicare esplicitamente la dipendenza;
@@ -197,16 +197,16 @@ Quando una procedura, una configurazione o un comportamento dipende dalla versio
 - evitare di inventare opzioni, direttive, nomi di immagini, API o compatibilità;
 - non dichiarare una configurazione compatibile con una versione non verificata.
 
-Gli esempi di deployment devono essere quasi eseguibili, con comandi e configurazioni concreti, ma devono indicare prerequisiti, variabili da sostituire e punti da verificare sull'ambiente target. La concretezza non equivale a una garanzia di produzione.
+Gli esempi di distribuzione devono essere quasi eseguibili, con comandi e configurazioni concreti, ma devono indicare prerequisiti, variabili da sostituire e punti da verificare sull'ambiente target. La concretezza non equivale a una garanzia di produzione.
 
 ## 11. Stile, linguaggio e filo narrativo
 
 - Scrivere come un tecnico che spiega un problema a colleghi: tono sobrio, concreto e diretto. Il testo deve sembrare scritto da una persona che conosce il lavoro quotidiano, non da un consulente che vende un metodo.
 - Preferire parole italiane comuni quando sono altrettanto precise. Evitare gergo manageriale, slogan, enfasi, formule da presentazione commerciale e frasi che non aggiungono informazioni.
-- Evitare espressioni come «best-in-class», «game changer», «scalare» in senso generico, «abilitare», «mettere a terra», «value proposition» e «quick win». Se un termine tecnico è necessario, spiegare che cosa significa nel caso specifico.
+- Evitare espressioni come «best-in-class», «game changer», «scalare» in senso generico, «abilitare», «mettere a terra», «vantaggio atteso» e «intervento rapido». Se un termine tecnico è necessario, spiegare che cosa significa nel caso specifico.
 - Quando un termine tecnico o un acronimo compare per la prima volta nel manuale, definirlo in italiano e, se utile, riportare la forma estesa originale. Esempio: «memoria residente (RSS, Resident Set Size): la memoria fisica attribuita dal sistema operativo al processo in quel momento».
 - Non dare per scontato che una sigla comune in un settore sia nota a tutti. Definire al primo uso le sigle rilevanti, per esempio HTTP, API, RAM, CPU, TLS, CI/CD, IAM, RSS e BLAS. Le sigle che fanno parte del nome ufficiale di una tecnologia vanno spiegate quando la tecnologia viene introdotta.
-- Preferire verbi concreti a sostantivi astratti: «misurare il tempo» invece di «effettuare una misurazione delle prestazioni»; «chi esegue il rilascio» invece di «ownership del deployment».
+- Preferire verbi concreti a sostantivi astratti: «misurare il tempo» invece di «effettuare una misurazione delle prestazioni»; «chi esegue il rilascio» invece di «responsabilità operativa della distribuzione».
 - Ogni paragrafo deve rispondere a una domanda riconoscibile: che cosa è, perché serve, che cosa verificare o quale decisione consente di prendere. Tagliare le frasi che ripetono il titolo o introducono il tema senza aggiungere informazioni.
 - Mantenere una progressione esplicita: contesto e forme delle soluzioni; ambiente di esecuzione; misure di tempo e memoria; struttura e integrazioni; distribuzione ed esercizio; criteri di decisione. Ogni capitolo deve riprendere quanto stabilito prima e preparare il successivo.
 - All'inizio di ogni capitolo spiegare in poche righe da quale problema si parte e perché il tema viene dopo quello precedente. Alla fine, indicare il passaggio successivo solo quando è utile; evitare riassunti rituali e transizioni vuote.
@@ -229,7 +229,7 @@ Gli esempi di deployment devono essere quasi eseguibili, con comandi e configura
 ## 13. Standard Quarto e codice
 
 - Per i chunk eseguibili Quarto usare fence con **tre backtick** e opzioni nel formato Quarto corretto.
-- Ogni chunk deve avere una label esplicita e univoca, ad esempio `#| label: benchmark-rss`.
+- Ogni chunk deve avere una label esplicita e univoca, ad esempio `#| label: prova comparativa-rss`.
 - Le label devono essere stabili, descrittive e non duplicate nell'intero progetto.
 - Per i diagrammi Mermaid usare il fence Quarto corretto, usando un fence composto da tre backtick seguito da `{mermaid}`, e `%%| echo: false` quando il codice sorgente del diagramma non deve apparire nel documento renderizzato.
 - Non racchiudere codice destinato a essere eseguito da Quarto in fence alternativi che ne impediscano l'esecuzione. I fence Markdown per codice mostrato come testo sono ammessi quando intenzionali.
