@@ -100,13 +100,13 @@ risorse e concorrenza
       ↓
 configurazione
       ↓
-logging / monitoring
+logging / monitoraggio
       ↓
 sicurezza
       ↓
 test + baseline
       ↓
-deployment + recovery
+distribuzione + recovery
 ```
 
 Il livello di dettaglio cambia con la soluzione. Per evitare checklist parallele, usare la scheda nell'appendice **Kit operativo per IT** come raccolta unica delle informazioni e integrare qui soltanto i dettagli specifici della forma applicativa.
@@ -149,7 +149,7 @@ La stessa base di codice R può essere utilizzata in modelli operativi molto div
 | Package | componente riusabile | dipende dal chiamante | versionamento, dipendenze e test |
 | Pipeline | step orchestrato | dipende dalla pipeline | input/output, stato, nuovo tentativo automatico e responsabilità |
 
-La classificazione è importante perché **non si fa il distribuzione di R in astratto**: si porta in esercizio uno specifico modello di esecuzione.
+La classificazione è importante perché **non si fa la distribuzione di R in astratto**: si porta in esercizio uno specifico modello di esecuzione.
 
 ## R rispetto ai componenti IT già presenti
 
@@ -318,7 +318,7 @@ Lo sviluppatore **non deve sapere configurare il reverse proxy**. Deve sapere ch
 
 #### E se lo sviluppatore non sa profilare?
 
-Non bisogna trasformare il analisi dei tempi di esecuzione in un prerequisito burocratico per chiedere supporto.
+Non bisogna trasformare l'analisi dei tempi di esecuzione in un prerequisito burocratico per chiedere supporto.
 
 Sono sufficienti tre livelli di maturità:
 
@@ -396,7 +396,7 @@ api <- plumber2::api() |>
 api |> plumber2::api_run(host = "127.0.0.1", port = 8080)
 ```
 
-L'endpoint `/health` è soltanto un esempio di liveness del processo. Non certifica che Oracle o altre dipendenze siano disponibili. Il binding a `127.0.0.1` limita l'ascolto al loopback: per un distribuzione dietro proxy va configurato l'host di ascolto in base alla rete del container/host e alle regole di sicurezza. Non esporre direttamente il servizio a reti non fidate senza autenticazione, autorizzazione, TLS e limiti adeguati.
+L'endpoint `/health` è soltanto un esempio di liveness del processo. Non certifica che Oracle o altre dipendenze siano disponibili. Il binding a `127.0.0.1` limita l'ascolto al loopback: per una distribuzione dietro proxy va configurato l'host di ascolto in base alla rete del container/host e alle regole di sicurezza. Non esporre direttamente il servizio a reti non fidate senza autenticazione, autorizzazione, TLS e limiti adeguati.
 
 ### Esempio di consumo HTTP con httr2
 
@@ -492,7 +492,7 @@ risultato <- httr2::resp_body_json(risposta)
 
 Le credenziali vanno passate tramite il meccanismo aziendale approvato (per esempio secret store o variabili d'ambiente protette), non nel sorgente. Non attivare log verbose in produzione se possono esporre header o body sensibili.
 
-I nuovo tentativo automatico sono **condizionali**, non automatici per qualsiasi errore. Sono adatti soltanto a errori transitori e operazioni per cui la ripetizione è sicura; per POST con effetti collaterali serve un contratto di idempotenza o una chiave idempotente. Limitare numero di tentativi e tempo totale, rispettare `Retry-After` quando previsto e non ritentare indiscriminatamente errori 4xx. Riferimento: [httr2 — req_retry](https://httr2.r-lib.org/reference/req_retry.html).
+i nuovi tentativi automatici sono **condizionali**, non automatici per qualsiasi errore. Sono adatti soltanto a errori transitori e operazioni per cui la ripetizione è sicura; per POST con effetti collaterali serve un contratto di idempotenza o una chiave idempotente. Limitare numero di tentativi e tempo totale, rispettare `nuovo tentativo automatico-After` quando previsto e non ritentare indiscriminatamente errori 4xx. Riferimento: [httr2 — req_retry](https://httr2.r-lib.org/reference/req_retry.html).
 
 
 #### R dentro una pipeline
@@ -678,7 +678,7 @@ container
          ├── segreti
          ├── identità
          ├── storage
-         └── monitoring
+         └── monitoraggio
 ~~~
 
 Quindi:
