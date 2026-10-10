@@ -9,9 +9,9 @@ Usare questa lista come primo filtro. Se una risposta non è disponibile, va ric
 
 Per la raccolta completa usare la [scheda unica del Kit operativo per IT](appendice-kit-operativo.qmd); questa pagina è una guida al colloquio e alla diagnosi, non una seconda scheda di passaggio di consegne.
 
-- [ ] Classificare la soluzione: script, batch, Quarto, Shiny, API plumber2, package, pipeline.
+- [ ] Classificare la soluzione: script, batch, Quarto, `Shiny`, API `plumber2`, package, pipeline.
 - [ ] Individuare punto di ingresso, repository, versione e owner.
-- [ ] Descrivere ambiente: versione R, sistema operativo, package, renv.lock, librerie native e driver.
+- [ ] Descrivere ambiente: versione R, sistema operativo, package, `renv`.lock, librerie native e driver.
 - [ ] Descrivere input, output, volumi e sistemi esterni.
 - [ ] Definire esecuzione: manuale/batch/servizio/interattiva, frequenza, finestra, durata e concorrenza.
 - [ ] Chiedere misure: durata, RAM, CPU, I/O, rete, database, processi e fili di esecuzione e dataset di test.
@@ -19,7 +19,7 @@ Per la raccolta completa usare la [scheda unica del Kit operativo per IT](append
 - [ ] Definire logging, errori, timeout, nuovo tentativo automatico, restart e alert.
 - [ ] Definire test, riferimento di confronto, distribuzione, ripristino della versione precedente e responsabilità.
 
-> Se la richiesta si limita a «installare R», «serve più RAM» o «pubblicare una Shiny», non è ancora una specifica di esercizio.
+> Se la richiesta si limita a «installare R», «serve più RAM» o «pubblicare una `Shiny`», non è ancora una specifica di esercizio.
 
 ## 2. Procedura rapida: installare, eseguire, misurare, diagnosticare
 
@@ -282,7 +282,7 @@ Per ogni fase non è necessario arrivare a una diagnosi definitiva. Il criterio 
 | Frequenza/finestra | ogni giorno lavorativo, 06:00–07:00 |
 | Durata riferimento di confronto | 8 min su dataset di riferimento |
 | Input/output | Oracle → report_vendite_YYYYMMDD.xlsx |
-| Ambiente | R e dipendenze definiti dalla situazione di riferimento e da renv.lock |
+| Ambiente | R e dipendenze definiti dalla situazione di riferimento e da `renv`.lock |
 | Account | account tecnico dedicato |
 | Accesso Oracle | sola lettura |
 | RAM di picco | 1,8 GB |
