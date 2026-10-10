@@ -279,6 +279,8 @@ renv::status()
 
 Questo capitolo parte dalla richiesta che arriva a IT e chiarisce quale forma ha la soluzione. Prima di parlare di server o risorse, occorre capire che cosa viene eseguito e da chi.
 
+Questo capitolo parte dalla richiesta che arriva a IT e chiarisce quale forma ha la soluzione. Prima di parlare di server o risorse, occorre capire che cosa viene eseguito e da chi.
+
 # In un ambiente di test:
 # renv::restore()
 
