@@ -257,9 +257,9 @@ S3, S4 e R6 sono sistemi diversi per rappresentare oggetti e comportamento. S3 �
 
 Non serve insegnarne la programmazione. Serve sapere che una libreria R può introdurre oggetti con stato e che questo può influire su memoria, serializzazione e comportamento tra worker.
 
-## Parallel e future
+## `Parallel` e `future`
 
-Parallel espone meccanismi espliciti di parallelizzazione. Future introduce un'astrazione che separa la descrizione del lavoro dalla strategia di esecuzione.
+`Parallel` espone meccanismi espliciti di parallelizzazione. `Future` introduce un'astrazione che separa la descrizione del lavoro dalla strategia di esecuzione.
 
 Questa astrazione può nascondere dettagli che IT deve comunque conoscere:
 
@@ -269,7 +269,7 @@ Questa astrazione può nascondere dettagli che IT deve comunque conoscere:
 - risorse disponibili;
 - concorrenza.
 
-La domanda non è quindi soltanto «usa future?», ma **quale backend viene realmente utilizzato e che cosa viene trasferito ai worker?**
+La domanda non è quindi soltanto «usa `future`?», ma **quale backend viene realmente utilizzato e che cosa viene trasferito ai worker?**
 
 ## Fork e PSOCK
 
