@@ -25,11 +25,11 @@ execute:
 
 # Obiettivo operativo
 
-- Identificare forma applicativa ed entry point.
+- Identificare forma applicativa ed punto di ingresso.
 - Ricostruire runtime, dipendenze e sistemi esterni.
-- Descrivere workload, risorse e concorrenza.
+- Descrivere carico di lavoro, risorse e concorrenza.
 - Separare misure, ipotesi e decisioni.
-- Definire test, deployment, ownership e handover.
+- Definire test, distribuzione, responsabilità e passaggio di consegne.
 
 ---
 
@@ -65,7 +65,7 @@ flowchart LR
 
 | Forma | Punto operativo |
 |---|---|
-| Script personale/condiviso | Entry point, input e output |
+| Script personale/condiviso | punto di ingresso, input e output |
 | `Rscript` / batch | Account, working directory, exit code |
 | Report Quarto | Dati, render, artefatto e pubblicazione |
 
@@ -94,7 +94,7 @@ Per ogni esecuzione: durata, frequenza, errori e destinazione dell'output.
 
 ---
 
-# Dall'entry point al sistema operativo
+# Dall'punto di ingresso al sistema operativo
 
 ```{mermaid}
 %%| echo: false
@@ -109,13 +109,13 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 
 ---
 
-# Processo, worker e thread
+# Processo, processo di lavoro e filo di esecuzione
 
 - **Processo:** spazio di esecuzione con memoria propria.
-- **Worker:** unità concorrente usata dal workload o dal framework.
-- **Thread nativo:** flusso d'esecuzione dentro un processo.
+- **processo di lavoro:** unità concorrente usata dal carico di lavoro o dal framework.
+- **filo di esecuzione nativo:** flusso d'esecuzione dentro un processo.
 - Un processo R non diventa parallelo solo perché sono disponibili più core.
-- Worker e thread possono sommarsi e aumentare RAM e contesa.
+- processo di lavoro e filo di esecuzione possono sommarsi e aumentare RAM e contesa.
 
 ---
 
@@ -123,7 +123,7 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 
 | Segnale | Verifiche da separare |
 |---|---|
-| CPU alta | Profilo, worker, thread e scaling |
+| CPU alta | Profilo, processo di lavoro, filo di esecuzione e variazione delle risorse |
 | RAM alta | Picco RSS, copie e processi figli |
 | Job lento | CPU, I/O, rete e attese esterne |
 | Query lenta | Tempi DB, righe trasferite e lavoro R |
@@ -134,9 +134,9 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 
 # Laboratori: evidenze confrontabili
 
-- Profiling: `system.time()`, `Rprof()`, `profvis` e metriche OS.
+- analisi dei tempi di esecuzione: `system.time()`, `Rprof()`, `profvis` e metriche OS.
 - Memoria: calcolo completo contro blocchi; misurare il picco RSS.
-- Parallelismo: confrontare 1, 2, 4 e, se sensato, 8 worker.
+- Parallelismo: confrontare 1, 2, 4 e, se sensato, 8 processo di lavoro.
 - Database: trasferimento completo contro filtro/aggregazione in Oracle.
 - Dichiarare input, ambiente, metodo, metrica e limiti.
 - Non generalizzare risultati ottenuti su un solo host o dataset.
@@ -146,9 +146,9 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 # Memoria e parallelismo
 
 - `object.size()` stima la dimensione di un oggetto R; non è il picco RSS.
-- Misurare il processo e, con worker separati, anche i processi figli.
+- Misurare il processo e, con processo di lavoro separati, anche i processi figli.
 - Registrare elapsed, speedup, efficienza, RAM e overhead.
-- Tenere distinti numero di worker e thread nativi.
+- Tenere distinti numero di processo di lavoro e filo di esecuzione nativi.
 - Più concorrenza può peggiorare memoria, serializzazione e contesa.
 
 ---
@@ -184,7 +184,7 @@ Confrontare con il trasferimento completo: righe, colonne, volume, tempi DB e te
 - `ui.R` + `server.R`: interfaccia e funzione server separate.
 - `global.R`: inizializzazione prima delle sessioni.
 - golem: applicazione organizzata come package.
-- Rhino: entry point e codice applicativo secondo la propria struttura.
+- Rhino: punto di ingresso e codice applicativo secondo la propria struttura.
 - Verificare loader, moduli e procedura di build della versione usata.
 
 ---
@@ -247,8 +247,8 @@ Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API
 - Impostare timeout e gestire esplicitamente gli errori.
 - Gestire autenticazione senza segreti nel sorgente o nei log.
 - Paginazione: seguire cursore o link previsti dal servizio.
-- Retry limitati a errori transitori e operazioni sicure da ripetere.
-- Per POST con effetti collaterali, definire idempotenza prima dei retry.
+- nuovo tentativo automatico limitati a errori transitori e operazioni sicure da ripetere.
+- Per POST con effetti collaterali, definire idempotenza prima dei nuovo tentativo automatico.
 
 ---
 
@@ -259,7 +259,7 @@ Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API
 | Oracle | Driver, query, transazioni, volumi e timeout |
 | APEX | Parametri, risultati, errori e identità |
 | GIS | Formati, coordinate, geometrie e volumi |
-| Scheduler | Account, ambiente, exit code e retry |
+| Scheduler | Account, ambiente, exit code e nuovo tentativo automatico |
 | Proxy/gateway | Routing, TLS, identità, limiti e timeout |
 
 ---
@@ -277,19 +277,19 @@ flowchart LR
  F --> G["Monitoraggio / rollback"]
 ```
 
-Una modifica rilevante a codice, runtime, package o librerie native richiede una nuova verifica della baseline.
+Una modifica rilevante a codice, runtime, package o librerie native richiede una nuova verifica della riferimento di confronto.
 
 ---
 
-# Deployment: prerequisiti e confini
+# distribuzione: prerequisiti e confini
 
-- Dichiarare entry point, working directory, runtime e dipendenze.
+- Dichiarare punto di ingresso, working directory, runtime e dipendenze.
 - Separare configurazione non segreta e segreti gestiti dalla piattaforma.
 - Container: immagine, porta, utente, risorse e requisiti di sistema.
 - Verificare build, avvio, risposta HTTP e log prima del proxy.
 - ShinyProxy: immagine e porta devono combaciare con l'applicazione.
 - Kubernetes/Operator: usare la configurazione della modalità adottata.
-- Gli esempi vanno adattati e verificati, non sono baseline universali.
+- Gli esempi vanno adattati e verificati, non sono riferimento di confronto universali.
 
 ---
 
@@ -299,7 +299,7 @@ Una modifica rilevante a codice, runtime, package o librerie native richiede una
 |---|---|---|
 | Esito | Exit code e output | Codici HTTP e risposta |
 | Carico | Durata e frequenza | Latenza e concorrenza |
-| Errore | Retry, idempotenza, output parziale | Timeout, limiti, errori per richiesta |
+| Errore | nuovo tentativo automatico, idempotenza, output parziale | Timeout, limiti, errori per richiesta |
 | Osservabilità | Avvio/fine, log, durata | Disponibilità, latenza, errori, risorse |
 
 ---
@@ -310,23 +310,23 @@ Una modifica rilevante a codice, runtime, package o librerie native richiede una
 - Segreti fuori da repository, immagini e log.
 - TLS, autorizzazione e flussi di rete espliciti.
 - Test funzionali, integrazione, compatibilità e performance pertinenti.
-- Log correlabili, metriche, alert e health check adeguati al workload.
+- Log correlabili, metriche, alert e health check adeguati al carico di lavoro.
 - Testare il contratto esterno, non soltanto l'avvio del processo.
 
 ---
 
-# Handover: informazioni minime
+# passaggio di consegne: informazioni minime
 
-- Repository, commit/tag, owner ed entry point.
-- Ambiente R, package, lockfile, OS e dipendenze native.
+- Repository, commit/tag, owner ed punto di ingresso.
+- Ambiente R, package, file che registra le dipendenze, OS e dipendenze native.
 - Input/output, volumi, frequenza, durata e concorrenza.
 - Sistemi esterni, account, permessi e configurazione.
-- Evidenze di test, baseline e limiti noti.
+- Evidenze di test, riferimento di confronto e limiti noti.
 - Runbook, log/metriche, timeout, recovery e contatti operativi.
 
 ---
 
-# Gate di rilascio e rollback
+# Gate di rilascio e ripristino della versione precedente
 
 ```{mermaid}
 %%| echo: false
@@ -340,18 +340,18 @@ flowchart TD
  F -->|KO| H["Rollback verificato"]
 ```
 
-Rollback deve considerare codice, ambiente, configurazione e possibili output parziali.
+ripristino della versione precedente deve considerare codice, ambiente, configurazione e possibili output parziali.
 
 ---
 
 # Dalla richiesta alla decisione
 
 - **Requisito:** quale risultato e in quale tempo?
-- **Misura:** che cosa osserviamo nel workload?
+- **Misura:** che cosa osserviamo nel carico di lavoro?
 - **Ipotesi:** quale componente limita il risultato?
 - **Test:** quale confronto distingue le alternative?
 - **Decisione:** quale opzione soddisfa i vincoli?
-- **Baseline e ownership:** come riprodurre e gestire la soluzione?
+- **riferimento di confronto e responsabilità:** come riprodurre e gestire la soluzione?
 
 ---
 
@@ -370,7 +370,7 @@ Una soluzione è gestibile quando sono identificati:
 
 - codice e artefatto distribuito;
 - ambiente e configurazione ricostruibili;
-- workload, test ed evidenze;
+- carico di lavoro, test ed evidenze;
 - sicurezza e dipendenze esterne;
-- monitoraggio, rollback e runbook;
+- monitoraggio, ripristino della versione precedente e runbook;
 - responsabilità operative esplicite.
