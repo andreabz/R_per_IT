@@ -244,9 +244,10 @@ Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API
 
 - Costruire URL, query, header e body in base al contratto remoto.
 - Interpretare status code e parsare JSON.
-- Impostare timeout e gestione esplicita degli errori.
-- Gestire autenticazione senza inserire segreti nel sorgente o nei log.
-- Retry limitati solo per errori transitori e operazioni sicure da ripetere.
+- Impostare timeout e gestire esplicitamente gli errori.
+- Gestire autenticazione senza segreti nel sorgente o nei log.
+- Paginazione: seguire cursore o link previsti dal servizio.
+- Retry limitati a errori transitori e operazioni sicure da ripetere.
 - Per POST con effetti collaterali, definire idempotenza prima dei retry.
 
 ---
@@ -285,9 +286,10 @@ Una modifica rilevante a codice, runtime, package o librerie native richiede una
 - Dichiarare entry point, working directory, runtime e dipendenze.
 - Separare configurazione non segreta e segreti gestiti dalla piattaforma.
 - Container: immagine, porta, utente, risorse e requisiti di sistema.
+- Verificare build, avvio, risposta HTTP e log prima del proxy.
 - ShinyProxy: immagine e porta devono combaciare con l'applicazione.
-- Kubernetes/Operator: verificare risorse e configurazione della modalità adottata.
-- I frammenti del manuale sono esempi da adattare e verificare, non baseline universali.
+- Kubernetes/Operator: usare la configurazione della modalità adottata.
+- Gli esempi vanno adattati e verificati, non sono baseline universali.
 
 ---
 
