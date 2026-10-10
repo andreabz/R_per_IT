@@ -221,7 +221,7 @@ Per un carico di lavoro R è utile esplicitare anche il caso **“stesso codice,
 Una verifica minima può quindi confrontare:
 
 ```text
-baseline
+situazione di riferimento
    ↓
 stesso input
    ↓
@@ -270,11 +270,11 @@ modifica
    ↓
 test
    ↓
-confronto con baseline
+confronto con situazione di riferimento
    ↓
 release
    ↓
-nuova baseline
+nuova situazione di riferimento
 ~~~
 
 la situazione di riferimento precedente deve rimanere disponibile per un eventuale ripristino della versione precedente.
@@ -342,7 +342,7 @@ processo/sessione R
 database / API / filesystem
 ```
 
-Qui diventano centrali concorrenza, latenza, numero di sessioni o worker, isolamento tra richieste, timeout, disponibilità e comportamento dopo il riavvio. una prova comparativa eseguito con un solo utente non descrive automaticamente il comportamento del servizio sotto carico.
+Qui diventano centrali concorrenza, latenza, numero di sessioni o worker, isolamento tra richieste, timeout, disponibilità e comportamento dopo il riavvio. una prova comparativa eseguita con un solo utente non descrive automaticamente il comportamento del servizio sotto carico.
 
 La modalità di esecuzione deve quindi essere una voce esplicita della consegna a IT: **batch, servizio, applicazione interattiva o altro modello**, con relativo entrypoint e ciclo di vita.
 
