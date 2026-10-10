@@ -32,7 +32,7 @@ Anche qui ci sono due livelli.
 - prima si misura, poi si dimensiona;
 - una metrica isolata non identifica automaticamente il collo di bottiglia;
 - `elapsed`, CPU, RAM, I/O e tempo database descrivono aspetti diversi;
-- prova comparativa e baseline devono essere confrontabili;
+- prova comparativa e situazione di riferimento devono essere confrontabili;
 - una richiesta infrastrutturale deve essere collegata a un carico di lavoro misurato.
 
 **Livello diagnostico — da usare quando serve**
@@ -93,11 +93,11 @@ non significa che R abbia usato 10 secondi di CPU. Sono trascorsi 10 secondi, me
 
 Con parallelismo o thread nativi, il tempo CPU cumulativo può anche superare l'elapsed.
 
-Per questo, davanti a un prova comparativa, IT deve sapere **quale dei tre tempi sta confrontando**.
+Per questo, davanti a una prova comparativa, IT deve sapere **quale dei tre tempi sta confrontando**.
 
 ### Perché una sola misura non basta?
 
-`system.time()` misura un'esecuzione. Un prova comparativa deve invece confrontare esecuzioni ripetute e controllate.
+`system.time()` misura un'esecuzione. una prova comparativa deve invece confrontare esecuzioni ripetute e controllate.
 
 ```text
 stesso input
@@ -132,7 +132,7 @@ system.time({
 })
 ```
 
-Per una baseline reale vanno registrati anche versione di R, package rilevanti, ambiente, dimensione dell'input e condizioni del test.
+Per una situazione di riferimento reale vanno registrati anche versione di R, package rilevanti, ambiente, dimensione dell'input e condizioni del test.
 
 ### analisi dei tempi di esecuzione con gli strumenti base di R
 
@@ -150,7 +150,7 @@ Il risultato è **evidenza diagnostica**, non una prescrizione automatica di ott
 
 ### analisi dei tempi di esecuzione interattivo con `profvis`
 
-Quando è utile una lettura visuale del analisi dei tempi di esecuzione, si può usare **`profvis`**. È un package R che presenta in forma interattiva il tempo speso nelle diverse chiamate e consente di esplorare più facilmente dove viene eseguito il lavoro.
+Quando è utile una lettura visuale dell'analisi dei tempi di esecuzione, si può usare **`profvis`**. È un package R che presenta in forma interattiva il tempo speso nelle diverse chiamate e consente di esplorare più facilmente dove viene eseguito il lavoro.
 
 In un ambiente di prova:
 
@@ -193,7 +193,7 @@ Per IT è sufficiente saper leggere il risultato a livello diagnostico:
 
 Il percorso didattico è quindi **misurare → localizzare → correlare → testare**, non «eseguire un profiler e applicare automaticamente una correzione».
 
-### Laboratorio specifico — analisi dei tempi di esecuzione con input e baseline controllati
+### Laboratorio specifico — analisi dei tempi di esecuzione con input e situazione di riferimento controllati
 
 - **Input:** la funzione sintetica `misura()` definita sopra, eseguita con lo stesso valore di `n`.
 - **Ambiente:** registrare versione R, OS e condizioni di carico; eseguire una prova di riscaldamento e poi almeno tre misure comparabili.
@@ -244,14 +244,14 @@ ipotesi sul collo di bottiglia
       ↓
 test controllato
       ↓
-nuova baseline
+nuova situazione di riferimento
 ```
 
 IT dovrebbe arrivare a una delle tre conclusioni: problema infrastrutturale plausibile con evidenze; problema applicativo plausibile da restituire allo sviluppatore; evidenza insufficiente e quindi necessità di un test migliore.
 
 ## analisi dei tempi di esecuzione
 
-Il monitoraggio dice che la macchina è sotto carico; il analisi dei tempi di esecuzione aiuta a capire **quale parte del codice R consuma il tempo**.
+Il monitoraggio dice che la macchina è sotto carico; l'analisi dei tempi di esecuzione aiuta a capire **quale parte del codice R consuma il tempo**.
 
 ```text
 misura globale
@@ -267,7 +267,7 @@ modifica
 prova comparativa
 ```
 
-Il analisi dei tempi di esecuzione non sostituisce il monitoraggio infrastrutturale: mette in relazione il comportamento del codice con quello della macchina.
+l'analisi dei tempi di esecuzione non sostituisce il monitoraggio infrastrutturale: mette in relazione il comportamento del codice con quello della macchina.
 
 ## Approfondimento — Lessico della diagnostica
 
@@ -324,7 +324,7 @@ tempo_completo <- system.time({
   )
 })
 
-tempo_pushdown <- system.time({
+tempo_esecuzione dei filtri e delle aggregazioni nel database <- system.time({
   totale_db <- DBI::dbGetQuery(
     con,
     "SELECT PRODOTTO_ID, SUM(IMPORTO) AS IMPORTO_TOTALE
@@ -339,8 +339,8 @@ stopifnot(nrow(totale_r) == nrow(totale_db))
 list(
   tempo_completo = tempo_completo,
   righe_trasferite_completo = nrow(vendite),
-  tempo_pushdown = tempo_pushdown,
-  righe_trasferite_pushdown = nrow(totale_db)
+  tempo_esecuzione dei filtri e delle aggregazioni nel database = tempo_esecuzione dei filtri e delle aggregazioni nel database,
+  righe_trasferite_esecuzione dei filtri e delle aggregazioni nel database = nrow(totale_db)
 )
 ```
 
@@ -467,7 +467,7 @@ Il punto del prova comparativa non è raccogliere una classifica. È verificare 
 
 | Implementazione | Tempo | Picco RAM | Interpretazione |
 |---|---:|---:|---|
-| base R | misurato | misurato | baseline |
+| base R | misurato | misurato | situazione di riferimento |
 | `dplyr` | misurato | misurato | confronto |
 | `data.table` con `:=` | misurato | misurato | possibile riduzione di copie |
 
@@ -509,7 +509,7 @@ La conclusione utile per IT è più semplice:
 
 > **Prima di dimensionare l'infrastruttura, verificare se il costo osservato appartiene realmente alla macchina oppure a una scelta di implementazione che può essere modificata.**
 
-Questo è anche il motivo per cui il confronto tra implementazioni va inserito nel ciclo **misura → ipotesi → test → nuova baseline**, non usato come classifica permanente dei package.
+Questo è anche il motivo per cui il confronto tra implementazioni va inserito nel ciclo **misura → ipotesi → test → nuova situazione di riferimento**, non usato come classifica permanente dei package.
 ## Diagnostica — Scaling
 
 Lo speedup con `n` worker è `S(n) = T1 / Tn`; l'efficienza è `E(n) = S(n) / n`. `T1` e `Tn` devono provenire da misure comparabili dello stesso carico di lavoro e ambiente.
@@ -540,11 +540,11 @@ La lettura corretta non è «la VM ha bisogno di più core». Il test successivo
 
 ## prova comparativa come esperimento
 
-Un prova comparativa deve controllare dataset, versione di R, package, configurazione, worker, thread e ripetizioni.
+una prova comparativa deve controllare dataset, versione di R, package, configurazione, worker, thread e ripetizioni.
 
-La baseline software è quindi parte della validità del confronto.
+La situazione di riferimento software è quindi parte della validità del confronto.
 
-Una variazione di R, package o librerie native può cambiare il risultato anche quando il codice applicativo non è cambiato. Il confronto va quindi riferito a una baseline esplicita.
+Una variazione di R, package o librerie native può cambiare il risultato anche quando il codice applicativo non è cambiato. Il confronto va quindi riferito a una situazione di riferimento esplicita.
 
 ## Tradurre la diagnosi in una richiesta IT
 
@@ -554,7 +554,7 @@ Debole:
 
 Informativa:
 
-> «Il carico di lavoro R impiega 192 minuti con un worker; il analisi dei tempi di esecuzione indica X; il test 1/2/4/8 worker produce A/B/C/D e RAM X/Y/Z/W; il database non è il collo di bottiglia.»
+> «Il carico di lavoro R impiega 192 minuti con un worker; l'analisi dei tempi di esecuzione indica X; il test 1/2/4/8 worker produce A/B/C/D e RAM X/Y/Z/W; il database non è il collo di bottiglia.»
 
 Una richiesta informativa permette a IT di valutare più alternative: modifica del codice, configurazione del parallelismo, aumento delle risorse o spostamento del calcolo.
 
@@ -564,7 +564,7 @@ Una richiesta informativa permette a IT di valutare più alternative: modifica d
 2. Quale risorsa risulta effettivamente limitante?
 3. Quale evidenza collega la risorsa al collo di bottiglia?
 4. Quale test controllato distingue le alternative?
-5. Qual è la baseline rispetto alla quale verrà verificato il cambiamento?
+5. Qual è la situazione di riferimento rispetto alla quale verrà verificato il cambiamento?
 
 > **Prima di aumentare le risorse, verificare il collo di bottiglia.**
 
