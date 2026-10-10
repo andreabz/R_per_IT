@@ -1,6 +1,6 @@
 ---
 title: "Strumenti pratici per IT"
-subtitle: "Dalla richiesta R all'passaggio di consegne"
+subtitle: "Dalla richiesta R al passaggio di consegne"
 ---
 
 ## 1. È arrivata una richiesta R: cosa devo chiedere?
@@ -14,7 +14,7 @@ Per la raccolta completa usare la [scheda unica del Kit operativo per IT](append
 - [ ] Descrivere ambiente: versione R, sistema operativo, package, renv.lock, librerie native e driver.
 - [ ] Descrivere input, output, volumi e sistemi esterni.
 - [ ] Definire esecuzione: manuale/batch/servizio/interattiva, frequenza, finestra, durata e concorrenza.
-- [ ] Chiedere misure: durata, RAM, CPU, I/O, rete, database, processo di lavoro/filo di esecuzione e dataset di test.
+- [ ] Chiedere misure: durata, RAM, CPU, I/O, rete, database, processi e fili di esecuzione e dataset di test.
 - [ ] Verificare account, permessi, autenticazione, configurazione e certificati.
 - [ ] Definire logging, errori, timeout, nuovo tentativo automatico, restart e alert.
 - [ ] Definire test, riferimento di confronto, distribuzione, ripristino della versione precedente e responsabilità.
