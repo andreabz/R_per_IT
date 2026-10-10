@@ -11,7 +11,7 @@ La prima cosa da capire è fondamentale:
 
 > **R normalmente esegue il codice in un processo e in modo sequenziale. Il parallelismo non compare automaticamente perché la macchina ha più core.**
 
-Un workload R diventa parallelo quando il codice, un framework, una libreria nativa o il modello di servizio introduce effettivamente più unità di esecuzione.
+Un carico di lavoro R diventa parallelo quando il codice, un framework, una libreria nativa o il modello di servizio introduce effettivamente più unità di esecuzione.
 
 Quindi:
 
@@ -45,7 +45,7 @@ Non tutte le sezioni hanno lo stesso peso per IT.
 - più worker possono significare più memoria e trasferimento di dati;
 - un singolo processo può usare thread nativi;
 - il numero di core disponibili non determina da solo il numero di core utilizzati;
-- CPU e RAM vanno dimensionate a partire da misure del workload.
+- CPU e RAM vanno dimensionate a partire da misure del carico di lavoro.
 
 **Livello diagnostico — da usare quando serve**
 
@@ -54,7 +54,7 @@ Non tutte le sezioni hanno lo stesso peso per IT.
 - serializzazione;
 - fork e PSOCK;
 - BLAS/LAPACK e thread nativi;
-- benchmark separando worker e thread.
+- prova comparativa separando worker e thread.
 
 **Approfondimento del linguaggio — non necessario alla prima lettura**
 
@@ -106,7 +106,7 @@ La memoria necessaria non coincide necessariamente con la dimensione del dataset
 
 R usa semantiche che evitano copie non necessarie quando possibile, ma un'operazione che modifica un oggetto può richiedere una nuova allocazione. Il dettaglio dipende anche dalla rappresentazione dell'oggetto e dall'implementazione interna.
 
-> **La memoria di un workload va misurata durante l'esecuzione, non dedotta soltanto dalla dimensione dei dati.**
+> **La memoria di un carico di lavoro va misurata durante l'esecuzione, non dedotta soltanto dalla dimensione dei dati.**
 
 Questo è uno dei comportamenti R che modifica direttamente il modo in cui IT deve interpretare un requisito RAM.
 
@@ -120,7 +120,7 @@ R recupera memoria dagli oggetti non più raggiungibili. La garbage collection u
 gc()
 ```
 
-Un picco di RAM non dimostra quindi da solo una perdita di memoria. In un workload reale interessa osservare **quando** il picco avviene e quali oggetti, copie o worker lo spiegano.
+Un picco di RAM non dimostra quindi da solo una perdita di memoria. In un carico di lavoro reale interessa osservare **quando** il picco avviene e quali oggetti, copie o worker lo spiegano.
 
 ## Memoria logica, memoria del processo e memoria fisica
 
@@ -139,7 +139,7 @@ Una misura utile deve quindi riportare almeno il punto temporale, il processo o 
 **Obiettivo:** verificare se una trasformazione completa crea un picco di memoria maggiore dell'elaborazione per blocchi. Il risultato dipende dalla rappresentazione dei dati e dall'operazione; non va generalizzato senza misura.
 
 - **Input:** tabella sintetica con 5 milioni di righe e due colonne numeriche.
-- **Ambiente:** stessa versione di R, stesso host e stessa library; nessun altro workload significativo durante la misura.
+- **Ambiente:** stessa versione di R, stesso host e stessa library; nessun altro carico di lavoro significativo durante la misura.
 - **Confronto:** calcolo completo in un passaggio contro calcolo per blocchi da 500.000 righe.
 - **Metriche:** durata, picco RSS del processo e correttezza del risultato.
 - **Limiti:** RSS è una metrica del sistema operativo; `object.size()` stima la dimensione di un oggetto R e non misura il picco residente. L'esempio è escluso dal rendering automatico perché alloca dati di grandi dimensioni.
@@ -179,7 +179,7 @@ tempo_blocchi
 ```
 
 Su Linux, eseguire ogni strategia in un processo separato e registrare il massimo RSS con `/usr/bin/time -v Rscript laboratorio-memoria.R`; verificare la disponibilità del comando e usare lo stesso metodo per entrambe. Per un confronto valido, usare lo stesso input e più ripetizioni. Il metodo per blocchi non garantisce un RSS inferiore: l'oggetto finale resta in memoria.
-\n\n> **Per una richiesta RAM, il dato utile è il picco osservato nel workload reale, non la somma delle dimensioni nominali dei dataset.**
+\n\n> **Per una richiesta RAM, il dato utile è il picco osservato nel carico di lavoro reale, non la somma delle dimensioni nominali dei dataset.**
 
 ## Approfondimento — Environment e lexical scoping
 
@@ -415,13 +415,13 @@ Separiamo le variabili:
 3. misurare tempo;
 4. misurare CPU;
 5. misurare RAM;
-6. verificare la concorrenza con altri workload.
+6. verificare la concorrenza con altri carico di lavoro.
 
 La domanda infrastrutturale diventa:
 
 > **quale combinazione di worker e thread nativi produce il tempo richiesto senza introdurre un costo eccessivo di RAM o contesa CPU?**
 
-## Benchmark del runtime
+## prova comparativa del runtime
 
 | Worker | Thread nativi | Tempo | Speedup | Efficienza | Picco RSS | CPU |
 |---:|---:|---:|---:|---:|---:|---:|
@@ -432,11 +432,11 @@ La domanda infrastrutturale diventa:
 
 **Laboratorio specifico — confronto del parallelismo**
 
-- **Input:** workload indipendente per elemento, con input e output deterministici; escludere inizialmente le chiamate a database.
+- **Input:** carico di lavoro indipendente per elemento, con input e output deterministici; escludere inizialmente le chiamate a database.
 - **Ambiente:** registrare versione R, OS, backend, core disponibili e impostazioni delle librerie native.
 - **Metodo:** confrontare 1, 2, 4 e, se le risorse lo consentono, 8 worker. Tenere inizialmente fissi i thread nativi a 1; in una seconda prova variare i thread mantenendo fisso il numero di worker.
 - **Metriche:** tempo elapsed, speedup `T1/Tn`, efficienza `T1/(n*Tn)`, picco RSS complessivo, CPU, avvio e trasferimento/serializzazione.
-- **Limiti:** usare almeno tre ripetizioni comparabili e riportare mediana e dispersione. Se il workload è troppo breve, aumentare il lavoro utile senza cambiare algoritmo. Non attribuire a una sola variabile risultati ottenuti cambiando insieme backend e trasferimenti.
+- **Limiti:** usare almeno tre ripetizioni comparabili e riportare mediana e dispersione. Se il carico di lavoro è troppo breve, aumentare il lavoro utile senza cambiare algoritmo. Non attribuire a una sola variabile risultati ottenuti cambiando insieme backend e trasferimenti.
 
 Esempio portabile con PSOCK; è escluso dal rendering automatico perché crea processi e i tempi dipendono dall'ambiente:
 
@@ -474,6 +474,6 @@ La prova include il costo di avvio dei worker e di trasferimento. Per misurare i
 
 Il test deve permettere di separare l'effetto dei worker da quello dei thread nativi.
 
-> **Non dimensionare CPU e RAM dal numero di worker: misurare il comportamento del workload.**
+> **Non dimensionare CPU e RAM dal numero di worker: misurare il comportamento del carico di lavoro.**
 
 Il capitolo 3 usa queste misure per distinguere un collo di bottiglia osservato da una semplice ipotesi.
