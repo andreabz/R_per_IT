@@ -277,7 +277,7 @@ flowchart LR
  F --> G["Monitoraggio / ripristino della versione precedente"]
 ```
 
-Una modifica rilevante a codice, runtime, package o librerie native richiede una nuova verifica della riferimento di confronto.
+Una modifica rilevante a codice, runtime, package o librerie native richiede una nuova verifica della situazione di riferimento.
 
 ---
 
