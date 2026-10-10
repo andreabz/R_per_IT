@@ -199,7 +199,22 @@ Quando una procedura, una configurazione o un comportamento dipende dalla versio
 
 Gli esempi di deployment devono essere quasi eseguibili, con comandi e configurazioni concreti, ma devono indicare prerequisiti, variabili da sostituire e punti da verificare sull'ambiente target. La concretezza non equivale a una garanzia di produzione.
 
-## 11. Standard editoriali
+## 11. Stile, linguaggio e filo narrativo
+
+- Scrivere come un tecnico che spiega un problema a colleghi: tono sobrio, concreto e diretto. Il testo deve sembrare scritto da una persona che conosce il lavoro quotidiano, non da un consulente che vende un metodo.
+- Preferire parole italiane comuni quando sono altrettanto precise. Evitare gergo manageriale, slogan, enfasi, formule da presentazione commerciale e frasi che non aggiungono informazioni.
+- Evitare espressioni come «best-in-class», «game changer», «scalare» in senso generico, «abilitare», «mettere a terra», «value proposition» e «quick win». Se un termine tecnico è necessario, spiegare che cosa significa nel caso specifico.
+- Quando un termine tecnico o un acronimo compare per la prima volta nel manuale, definirlo in italiano e, se utile, riportare la forma estesa originale. Esempio: «memoria residente (RSS, Resident Set Size): la memoria fisica attribuita dal sistema operativo al processo in quel momento».
+- Non dare per scontato che una sigla comune in un settore sia nota a tutti. Definire al primo uso le sigle rilevanti, per esempio HTTP, API, RAM, CPU, TLS, CI/CD, IAM, RSS e BLAS. Le sigle che fanno parte del nome ufficiale di una tecnologia vanno spiegate quando la tecnologia viene introdotta.
+- Preferire verbi concreti a sostantivi astratti: «misurare il tempo» invece di «effettuare una misurazione delle prestazioni»; «chi esegue il rilascio» invece di «ownership del deployment».
+- Ogni paragrafo deve rispondere a una domanda riconoscibile: che cosa è, perché serve, che cosa verificare o quale decisione consente di prendere. Tagliare le frasi che ripetono il titolo o introducono il tema senza aggiungere informazioni.
+- Mantenere una progressione esplicita: contesto e forme delle soluzioni; ambiente di esecuzione; misure di tempo e memoria; struttura e integrazioni; distribuzione ed esercizio; criteri di decisione. Ogni capitolo deve riprendere quanto stabilito prima e preparare il successivo.
+- All'inizio di ogni capitolo spiegare in poche righe da quale problema si parte e perché il tema viene dopo quello precedente. Alla fine, indicare il passaggio successivo solo quando è utile; evitare riassunti rituali e transizioni vuote.
+- Usare esempi realistici, con soggetti e azioni chiari. Distinguere dati noti, ipotesi, valori di esempio e aspetti da verificare nell'ambiente aziendale.
+- Le slide devono seguire lo stesso linguaggio del manuale: termini definiti, frasi brevi e nessuna formula motivazionale o manageriale. Se una definizione non entra nella slide, definirla nel manuale e usare in slide una formulazione comprensibile.
+- Dopo una revisione editoriale, cercare gergo residuo, sigle non definite, ripetizioni, frasi generiche e termini tradotti in modi diversi. Non cambiare i nomi ufficiali di funzioni, package, file, opzioni o tecnologie.
+
+## 12. Standard editoriali
 
 - Scrivere in italiano tecnico, preciso e diretto.
 - Preferire spiegazioni concrete, tabelle comparative e diagrammi utili a decidere.
@@ -211,7 +226,7 @@ Gli esempi di deployment devono essere quasi eseguibili, con comandi e configura
 - Mantenere nomenclatura e significato dei termini coerenti tra capitoli e slide.
 - Usare Mermaid solo quando migliora la comprensione di flussi, confini o decisioni; i diagrammi devono essere validi e leggibili.
 
-## 12. Standard Quarto e codice
+## 13. Standard Quarto e codice
 
 - Per i chunk eseguibili Quarto usare fence con **tre backtick** e opzioni nel formato Quarto corretto.
 - Ogni chunk deve avere una label esplicita e univoca, ad esempio `#| label: benchmark-rss`.
@@ -222,7 +237,7 @@ Gli esempi di deployment devono essere quasi eseguibili, con comandi e configura
 - Rendere gli esempi riproducibili quando ragionevole; documentare input, dipendenze e limiti quando non possono esserlo integralmente.
 - Evitare di aggiungere dipendenze R non necessarie agli esempi.
 
-## 13. Standard per le slide
+## 14. Standard per le slide
 
 Il manuale è la fonte autorevole per spiegazioni, esempi, comandi, configurazioni, confronti e caveat. Le slide sintetizzano lo stesso percorso decisionale: non sono un documento indipendente né una copia integrale del manuale.
 
@@ -241,7 +256,7 @@ Vincoli editoriali:
 
 Se una modifica non è adatta alle slide, non forzarne la riproduzione: sintetizzare la conseguenza operativa o il criterio decisionale.
 
-## 14. Verifiche prima di concludere
+## 15. Verifiche prima di concludere
 
 Le verifiche devono essere proporzionate all'intervento e dichiarate con precisione.
 
@@ -263,6 +278,6 @@ Le verifiche devono essere proporzionate all'intervento e dichiarate con precisi
 
 Prima di concludere, fornire un riepilogo conciso di file modificati, decisioni rilevanti, verifiche eseguite e problemi residui. Non affermare che la pubblicazione sia avvenuta se è stato verificato soltanto il sorgente o il rendering locale.
 
-## 15. Criterio di completamento
+## 16. Criterio di completamento
 
 Un intervento è completo quando il contenuto è tecnicamente corretto, utile per una decisione o una presa in carico IT, coerente con il resto del corso, formattato correttamente e verificato al livello appropriato. Le modifiche strutturali restano soggette alla proposta motivata descritta nella sezione 3.
