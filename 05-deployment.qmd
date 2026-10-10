@@ -115,7 +115,7 @@ Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 
 ```dockerfile
 # Dockerfile illustrativo: sostituire con una base approvata e verificata.
-ARG R_BASE_IMAGE=<immagine-R-approvata>
+ARG R_BASE_IMAGE
 FROM ${R_BASE_IMAGE}
 
 WORKDIR /srv/app
@@ -130,7 +130,7 @@ EXPOSE 3838
 CMD ["R", "-e", "shiny::runApp('/srv/app', host = '0.0.0.0', port = 3838)"]
 ```
 
-La riga `ARG R_BASE_IMAGE=<...>` è un segnaposto, non un Dockerfile pronto da compilare senza modifica: fornire un valore valido prima del build. In produzione aggiungere un `.dockerignore` che escluda credenziali, file locali e artefatti non necessari; eseguire il processo con utente non privilegiato e scansione dell'immagine secondo gli standard aziendali.
+`R_BASE_IMAGE` deve essere valorizzata con il nome completo di un'immagine approvata prima del build; il Dockerfile fallisce se la variabile è vuota o non valida. In produzione aggiungere un `.dockerignore` che escluda credenziali, file locali e artefatti non necessari; eseguire il processo con utente non privilegiato e scansione dell'immagine secondo gli standard aziendali.
 
 Comandi di esempio dalla radice del progetto:
 
