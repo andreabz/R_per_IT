@@ -159,6 +159,8 @@ In un ambiente di prova:
 
 Una volta identificato l'ambiente di esecuzione, si può misurare il comportamento del programma. Si parte dai tempi e dalla memoria osservati, poi si confrontano le possibili cause prima di chiedere più risorse o più processi.
 
+Una volta identificato l'ambiente di esecuzione, si può misurare il comportamento del programma. Si parte dai tempi e dalla memoria osservati, poi si confrontano le possibili cause prima di chiedere più risorse o più processi.
+
 # installazione da eseguire una sola volta nell'ambiente di prova:
 
 # install.packages("profvis")
