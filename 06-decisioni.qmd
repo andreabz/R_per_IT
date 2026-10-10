@@ -79,6 +79,15 @@ Per una soluzione R, una modifica apparentemente piccola a R, package o librerie
 
 Il confine non significa che le responsabilità siano isolate: significa che la responsabilità tecnica e quella scientifica devono essere distinguibili.
 
+Per evitare aree senza owner, la presa in carico dovrebbe nominare separatamente:
+- **owner applicativo:** requisiti, correttezza funzionale, significato dei dati e accettazione dei risultati;
+- **sviluppatore/maintainer:** codice, test applicativi, dipendenze dichiarate, documentazione tecnica e supporto alla diagnosi;
+- **IT/piattaforma:** runtime e infrastruttura gestiti, deployment, accessi tecnici, logging/monitoring di piattaforma e recovery concordato;
+- **owner del sistema esterno:** disponibilità, schema, privilegi e comportamento di Oracle, API, storage o altri servizi.
+
+La ripartizione concreta segue l'organizzazione aziendale; non va presunta dal linguaggio o dal framework scelto.
+
+
 ## Esperimenti prima delle decisioni costose
 
 Una richiesta infrastrutturale può essere formulata come un esperimento:
@@ -241,6 +250,23 @@ La richiesta dello sviluppatore dovrebbe poter essere tradotta in una scheda ope
 | Ownership | chi decide, chi deploya, chi monitora, chi interviene |
 
 La **scheda completa e compilabile** è nell'appendice *Kit operativo per IT*. Il capitolo fornisce il metodo; l'appendice fornisce lo strumento da usare con una richiesta reale.
+
+### Gate di rilascio: requisito, test e operatività
+
+Una decisione di produzione dovrebbe passare questi controlli; un elemento non applicabile va motivato, non lasciato implicitamente vuoto.
+
+| Gate | Evidenza minima | Responsabilità principale |
+|---|---|---|
+| Requisiti | forma applicativa, input/output, target, concorrenza, dipendenze | owner applicativo + sviluppatore |
+| Test | esiti funzionali, integrazione, compatibilità e performance pertinenti | sviluppatore; IT per ambiente e integrazioni |
+| Sicurezza | identità, privilegi minimi, autorizzazioni, segreti, TLS e flussi di rete | IT/security + owner |
+| Osservabilità | log correlabili, metriche, alert e criteri di errore | IT/piattaforma + maintainer |
+| Recovery | rollback di codice **e ambiente**, gestione output parziali, prova di ripristino | IT + sviluppatore |
+| Handover | runbook, owner, reperibilità/escalation, baseline e dipendenze | owner operativo nominato |
+
+Per una Shiny o un'API aggiungere test con concorrenza rappresentativa, latenza e gestione delle dipendenze. Per un batch aggiungere exit code, timeout, retry, idempotenza e verifica dell'output. Per Quarto aggiungere render completo e controllo dell'artefatto. Per package/pipeline verificare compatibilità, contratti tra step e tracciabilità della release.
+
+
 
 ## Scheda decisionale
 
