@@ -41,8 +41,7 @@ execute:
 | Workflow gestionale | APEX |
 | Scheduling | Scheduler aziendale |
 | Analisi e calcolo | R |
-| Report | Quarto + R |
-| Applicazioni interattive | Shiny + R |
+| Report e applicazioni | Quarto, Shiny + R |
 | Routing e identità | Proxy, gateway, IAM |
 
 R integra lo stack; non sostituisce automaticamente i componenti esistenti.
