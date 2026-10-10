@@ -54,12 +54,12 @@ monitoraggio
 
 ## Codice sorgente, artefatto e ambiente
 
-Nel distribuzione vanno distinti tre oggetti:
+Nella distribuzione vanno distinti tre oggetti:
 
 | Oggetto | Che cosa identifica |
 |---|---|
 | **codice sorgente** | ciò che viene versionato e modificato dallo sviluppatore |
-| **artefatto di release** | ciò che viene effettivamente distribuito o utilizzato per la distribuzione |
+| **artefatto di release** | ciò che viene effettivamente consegnato all'ambiente di esecuzione |
 | **ambiente di esecuzione** | R, package, librerie native, configurazione e sistemi esterni necessari |
 
 Un commit non è necessariamente un artefatto eseguibile. Allo stesso modo, un artefatto non contiene necessariamente tutte le dipendenze esterne.
