@@ -8,7 +8,7 @@ subtitle: "Capire, valutare e gestire soluzioni sviluppate in R"
 
 Questo manuale è pensato per chi, in IT, deve **capire, valutare e gestire soluzioni sviluppate in R**. Non è un corso di programmazione R: il codice compare solo quando aiuta a capire una decisione tecnica o un comportamento del runtime.
 
-Il problema ricorrente è trasformare una richiesta formulata in termini tecnici — «installare R», «servono più RAM», «serve un server», «pubblichiamo una Shiny» — in una descrizione del problema che possa essere valutata, verificata e gestita nel tempo.
+Il problema ricorrente è trasformare una richiesta formulata in termini tecnici — «installare R», «servono più RAM», «serve un server», «pubblichiamo una `Shiny`» — in una descrizione del problema che possa essere valutata, verificata e gestita nel tempo.
 
 ## Il principio guida
 
@@ -68,7 +68,7 @@ Al termine del percorso, un membro IT non deve diventare sviluppatore R. Deve pe
 
 In particolare deve saper:
 
-- riconoscere le principali forme di soluzione R: script, batch, report Quarto, Shiny, API, package e job di pipeline;
+- riconoscere le principali forme di soluzione R: script, batch, report Quarto, `Shiny`, API, package e job di pipeline;
 - distinguere R dal suo ambiente di esecuzione e identificare package, dipendenze native, driver e sistemi esterni;
 - capire che cosa descrivono un repository, un commit/tag e un file che registra le dipendenze e che cosa invece resta fuori dalla loro portata;
 - leggere un carico di lavoro in termini di input, output, frequenza, durata, utenti/concorrenza e risorse;
@@ -177,7 +177,7 @@ Un modo semplice per orientarsi è questo:
 | Autenticazione, rete e TLS | infrastruttura aziendale |
 | Analisi statistica, modellistica e simulazione | R |
 | Report analitici riproducibili | Quarto + R |
-| Interfacce analitiche interattive | Shiny + R |
+| Interfacce analitiche interattive | `Shiny` + R |
 | Servizi che espongono capacità analitiche | API + R |
 
 Non è una classifica. Serve a chiarire **quale responsabilità viene aggiunta da R e quali componenti aziendali possono rimanere in carico allo stack esistente**.
@@ -199,7 +199,7 @@ Lo sviluppatore non deve diventare amministratore di sistema. Deve però poter d
 - il codice applicativo dai componenti aziendali che lo ospitano;
 - una misura da un'ipotesi sulla causa di un problema.
 
-Per esempio, una richiesta come «ho una Shiny, pubblicatela e se è lenta servono più CPU» lascia a IT gran parte della ricostruzione del problema. Una richiesta più utile identifica almeno repository e commit, punto di ingresso, ambiente e dipendenze, utenti e concorrenza, sistemi esterni, tempi osservati e situazione di riferimento disponibile. Se il collo di bottiglia non è noto, può essere dichiarato esplicitamente: **non è un prerequisito per chiedere supporto a IT sapere già quale sia la causa**.
+Per esempio, una richiesta come «ho una `Shiny`, pubblicatela e se è lenta servono più CPU» lascia a IT gran parte della ricostruzione del problema. Una richiesta più utile identifica almeno repository e commit, punto di ingresso, ambiente e dipendenze, utenti e concorrenza, sistemi esterni, tempi osservati e situazione di riferimento disponibile. Se il collo di bottiglia non è noto, può essere dichiarato esplicitamente: **non è un prerequisito per chiedere supporto a IT sapere già quale sia la causa**.
 
 Il risultato atteso è quindi una collaborazione a due livelli:
 

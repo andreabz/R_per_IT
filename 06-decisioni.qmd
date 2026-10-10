@@ -146,7 +146,7 @@ Chiedere numero di core utilizzati, worker, thread nativi, analisi dei tempi di 
 
 La domanda non è soltanto quanti core vede R, ma **quali processi e thread li stanno usando e con quale beneficio sul tempo di esecuzione**. Se l'aumento dei worker porta 100% di CPU ma quasi nessun miglioramento del tempo, abbiamo un segnale da spiegare, non una giustificazione automatica per altra CPU.
 
-## Caso 3 — Shiny lenta
+## Caso 3 — `Shiny` lenta
 
 **Collegamenti:** processi e concorrenza (`02`) → misure di latenza e risorse (`03`) → modello di distribuzione e confini (`04`) → monitoraggio (`05`).
 
@@ -154,7 +154,7 @@ Misurare utenti contemporanei, latenza per richiesta, CPU, RAM per sessione, dat
 
 «Funziona per un utente» non dimostra la capacità di sostenere più utenti. Il test deve aumentare il numero di sessioni e osservare come cambiano latenza, CPU, RAM e dipendenze esterne.
 
-Per una soluzione Shiny va inoltre identificato il modello di distribuzione: processi, sessioni, reverse proxy e modalità di variazione delle risorse cambiano il significato di CPU e RAM osservate.
+Per una soluzione `Shiny` va inoltre identificato il modello di distribuzione: processi, sessioni, reverse proxy e modalità di variazione delle risorse cambiano il significato di CPU e RAM osservate.
 
 ## Caso 4 — Calcolo tutto in R
 
@@ -238,7 +238,7 @@ La richiesta dello sviluppatore dovrebbe poter essere tradotta in una scheda ope
 | Area | Informazione minima |
 |---|---|
 | Identità | repository, commit/tag, owner, entrypoint |
-| Forma | batch, Quarto, Shiny, API, package, pipeline |
+| Forma | batch, Quarto, `Shiny`, API, package, pipeline |
 | Ambiente | R, OS, package, file che registra le dipendenze, native dependencies |
 | carico di lavoro | dati, frequenza, durata, utenti/concorrenza |
 | Risorse | CPU, RAM, I/O, rete, worker, thread |
@@ -264,7 +264,7 @@ Una decisione di produzione dovrebbe passare questi controlli; un elemento non a
 | Recovery | ripristino della versione precedente di codice **e ambiente**, gestione output parziali, prova di ripristino | IT + sviluppatore |
 | passaggio di consegne | runbook, owner, reperibilità/escalation, riferimento di confronto e dipendenze | owner operativo nominato |
 
-Per una Shiny o un'API aggiungere test con concorrenza rappresentativa, latenza e gestione delle dipendenze. Per un batch aggiungere exit code, timeout, nuovo tentativo automatico, idempotenza e verifica dell'output. Per Quarto aggiungere render completo e controllo dell'artefatto. Per package/pipeline verificare compatibilità, contratti tra step e tracciabilità della release.
+Per una `Shiny` o un'API aggiungere test con concorrenza rappresentativa, latenza e gestione delle dipendenze. Per un batch aggiungere exit code, timeout, nuovo tentativo automatico, idempotenza e verifica dell'output. Per Quarto aggiungere render completo e controllo dell'artefatto. Per package/pipeline verificare compatibilità, contratti tra step e tracciabilità della release.
 
 
 

@@ -74,7 +74,7 @@ Una release R deve essere riconducibile a commit/tag, versione R, dipendenze, co
 
 Git identifica il codice; non identifica da solo l'intero ambiente R.
 
-## renv nel distribuzione
+## `renv` nel distribuzione
 
 Il file che registra le dipendenze di `renv` registra versione di R, repository e record dei package, incluse versioni e sorgenti quando note. Non è però un inventario completo di OS, librerie native, driver, configurazione, credenziali o dati.
 
@@ -104,10 +104,10 @@ Per una soluzione R il container è particolarmente utile quando serve rendere e
 
 Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 
-### Esempio quasi eseguibile — container per una Shiny
+### Esempio quasi eseguibile — container per una `Shiny`
 
 **Assunzioni da verificare prima dell'uso:**
-- la directory di build contiene `app.R` (o la struttura Shiny prevista), `renv.lock` e i file di progetto necessari;
+- la directory di build contiene `app.R` (o la struttura `Shiny` prevista), `renv.lock` e i file di progetto necessari;
 - l'immagine base R è approvata dall'organizzazione e contiene il sistema operativo e le librerie native richieste;
 - l'app ascolta sulla porta 3838 nel container;
 - il registro immagini, la rete, i certificati e il secret store sono gestiti dalla piattaforma;
@@ -181,7 +181,7 @@ proxy:
       port: 3838
 ```
 
-Questo frammento segue la struttura di proxy.specs documentata da ShinyProxy: container-image identifica l'immagine, container-cmd avvia Shiny e port deve corrispondere alla porta di ascolto nel container. Prima di applicarlo, verificare le proprietà supportate dalla versione effettivamente installata nella [documentazione di configurazione](https://www.shinyproxy.io/documentation/configuration/) e dalla pagina [Deploying Apps](https://www.shinyproxy.io/documentation/deploying-apps/).
+Questo frammento segue la struttura di proxy.specs documentata da ShinyProxy: container-image identifica l'immagine, container-cmd avvia `Shiny` e port deve corrispondere alla porta di ascolto nel container. Prima di applicarlo, verificare le proprietà supportate dalla versione effettivamente installata nella [documentazione di configurazione](https://www.shinyproxy.io/documentation/configuration/) e dalla pagina [Deploying Apps](https://www.shinyproxy.io/documentation/deploying-apps/).
 
 La configurazione non definisce da sola autenticazione, autorizzazione, TLS, limiti di risorse, rete o segreti. Se si usa access-groups, configurare anche il backend di autenticazione e i gruppi corrispondenti. Non usare credenziali di esempio o backend dimostrativi in produzione. Il Docker daemon non deve essere esposto su una porta TCP non protetta. Su Kubernetes, ShinyProxy Operator gestisce risorse con un modello e configurazioni specifiche: non riutilizzare questa configurazione Docker senza adattarla alla modalità Operator.
 

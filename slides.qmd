@@ -41,7 +41,7 @@ execute:
 | Workflow gestionale | APEX |
 | Scheduling | Scheduler aziendale |
 | Analisi e calcolo | R |
-| Report e applicazioni | Quarto, Shiny + R |
+| Report e applicazioni | Quarto, `Shiny` + R |
 | Routing e identità | Proxy, gateway, IAM |
 
 
@@ -87,7 +87,7 @@ Per ogni esecuzione: durata, frequenza, errori e destinazione dell'output.
 
 | Forma | Unità operativa |
 |---|---|
-| Shiny | Sessione utente |
+| `Shiny` | Sessione utente |
 | API esposta da R | Richiesta HTTP |
 | API consumata da R | Chiamata verso un servizio remoto |
 | Servizi integrati | Contratti, identità e dipendenze |
@@ -178,18 +178,18 @@ Confrontare con il trasferimento completo: righe, colonne, volume, tempi DB e te
 
 ---
 
-# Shiny: struttura e avvio
+# `Shiny`: struttura e avvio
 
 - `app.R`: può contenere UI, server e chiamata a `shinyApp()`.
 - `ui.R` + `server.R`: interfaccia e funzione server separate.
 - `global.R`: inizializzazione prima delle sessioni.
-- golem: applicazione organizzata come package.
-- Rhino: punto di ingresso e codice applicativo secondo la propria struttura.
+- `golem`: applicazione organizzata come package.
+- `Rhino`: punto di ingresso e codice applicativo secondo la propria struttura.
 - Verificare loader, moduli e procedura di build della versione usata.
 
 ---
 
-# Shiny: sessione e memoria
+# `Shiny`: sessione e memoria
 
 ```{mermaid}
 %%| echo: false
@@ -207,7 +207,7 @@ flowchart TD
 
 ---
 
-# Shiny: cosa verificare in esercizio
+# `Shiny`: cosa verificare in esercizio
 
 - Sessioni simultanee, latenza e operazioni bloccanti.
 - RAM per processo e crescita con il numero di sessioni.
@@ -222,8 +222,8 @@ flowchart TD
 
 | Ruolo | Tecnologia | Direzione |
 |---|---|---|
-| Esporre endpoint HTTP da R | plumber2 | Client → R |
-| Chiamare endpoint HTTP da R | httr2 | R → servizio |
+| Esporre endpoint HTTP da R | `plumber2` | Client → R |
+| Chiamare endpoint HTTP da R | `httr2` | R → servizio |
 
 Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API non è un client remoto.
 
@@ -240,7 +240,7 @@ Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API
 
 ---
 
-# API consumate con httr2
+# API consumate con `httr2`
 
 - Costruire URL, query, header e body in base al contratto remoto.
 - Interpretare status code e parsare JSON.
@@ -293,9 +293,9 @@ Una modifica rilevante a codice, runtime, package o librerie native richiede una
 
 ---
 
-# Batch, Shiny e API: esercizio diverso
+# Batch, `Shiny` e API: esercizio diverso
 
-| Aspetto | Batch | Shiny / API |
+| Aspetto | Batch | `Shiny` / API |
 |---|---|---|
 | Esito | Exit code e output | Codici HTTP e risposta |
 | Carico | Durata e frequenza | Latenza e concorrenza |

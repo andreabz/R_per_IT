@@ -67,14 +67,14 @@ Organizzare il materiale intorno a scenari operativi crescenti, non intorno a un
 
 ### Livello 3 — Servizi e applicazioni
 
-- applicazioni Shiny, sessioni e reattività;
-- distribuzione Shiny, ShinyProxy e, quando pertinente, ShinyProxy Operator su Kubernetes;
-- API HTTP esposte con plumber2;
-- consumo di API HTTP da R, incluso httr2;
+- applicazioni `Shiny`, sessioni e reattività;
+- distribuzione `Shiny`, ShinyProxy e, quando pertinente, ShinyProxy Operator su Kubernetes;
+- API HTTP esposte con `plumber2`;
+- consumo di API HTTP da R, incluso `httr2`;
 - integrazione con Oracle, APEX, GIS e altri sistemi;
 - concorrenza, autenticazione, autorizzazione, sicurezza e osservabilità.
 
-Una singola soluzione può combinare più scenari: per esempio un job batch che genera un report Quarto, una Shiny che interroga Oracle o un'API R invocata da un sistema gestionale.
+Una singola soluzione può combinare più scenari: per esempio un job batch che genera un report Quarto, una `Shiny` che interroga Oracle o un'API R invocata da un sistema gestionale.
 
 ## 5. Scheda operativa per ogni scenario
 
@@ -108,7 +108,7 @@ Spiegare il comportamento rilevante per IT senza promettere risultati universali
 Preparare **sia un caso integrato sia laboratori specifici**:
 
 - **Caso integrato:** un carico di lavoro sintetico ma plausibile, con input e output definiti, usato per confrontare strategie di esecuzione e interpretare compromessi.
-- **analisi dei tempi di esecuzione:** usare, dove appropriato, system.time(), Rprof(), profvis e metriche del sistema operativo; distinguere tempo CPU, tempo trascorso, I/O e attese esterne.
+- **analisi dei tempi di esecuzione:** usare, dove appropriato, `system.time()`, `Rprof()`, `profvis` e metriche del sistema operativo; distinguere tempo CPU, tempo trascorso, I/O e attese esterne.
 - **Memoria:** analizzare copie e oggetti intermedi, selezione di colonne, elaborazione per blocchi e picco di RSS; non dedurre il consumo di RAM dalla sola dimensione logica degli oggetti R.
 - **Parallelismo:** confrontare esecuzione sequenziale e numero ragionevole di worker (per esempio 2, 4 e 8 quando sensato); misurare durata, speedup, efficienza, RAM, serializzazione e saturazione. Distinguere processi R e thread di librerie native/BLAS.
 - **Database:** confrontare, su dati equivalenti, trasferimento completo e filtraggio/aggregazione lato database; registrare righe, colonne, volume trasferito e tempi lato database e lato R.
@@ -117,16 +117,16 @@ Ogni prova comparativa deve dichiarare ambiente, versione quando rilevante, inpu
 
 Non assumere che parallelizzare migliori le prestazioni: può aumentare RAM, overhead, serializzazione e carico sui database, oppure peggiorare la contesa per le risorse.
 
-## 7. Shiny: riconoscimento, ciclo di vita e gestione
+## 7. `Shiny`: riconoscimento, ciclo di vita e gestione
 
-Trattare Shiny come prodotto applicativo e carico di lavoro concorrente, non soltanto come codice R.
+Trattare `Shiny` come prodotto applicativo e carico di lavoro concorrente, non soltanto come codice R.
 
 ### Strutture da riconoscere
 
 - **app.R:** file singolo che può contenere interfaccia, logica server e inizializzazione.
 - **ui.R e server.R:** struttura separata; individuare anche eventuale global.R e gli altri file richiamati.
 - **global.R:** viene eseguito all'avvio dell'applicazione prima delle sessioni; oggetti e dati creati qui possono restare in memoria ed essere condivisi tra le sessioni servite dallo stesso processo.
-- **Struttura di package o framework:** per esempio golem, Rhino o convenzioni personalizzate; individuare punto di ingresso, moduli, risorse, configurazione, dipendenze e procedura di avvio/build.
+- **Struttura di package o framework:** per esempio `golem`, `Rhino` o convenzioni personalizzate; individuare punto di ingresso, moduli, risorse, configurazione, dipendenze e procedura di avvio/build.
 
 Non presentare queste strutture come modelli di esecuzione necessariamente diversi. Il comportamento va dedotto dal codice e dal modo in cui l'applicazione viene avviata.
 
@@ -149,9 +149,9 @@ Per ogni esempio:
 - distinguere TLS termination, autenticazione, autorizzazione, isolamento, gestione dei segreti e osservabilità;
 - non presentare configurazioni illustrative come approvate o pronte per la produzione senza aver verificato compatibilità e requisiti.
 
-## 8. API: plumber2 e consumo HTTP con httr2
+## 8. API: `plumber2` e consumo HTTP con `httr2`
 
-Distinguere esplicitamente i due ruoli: **plumber2 espone servizi HTTP da R; httr2 consuma servizi HTTP da R**.
+Distinguere esplicitamente i due ruoli: **`plumber2` espone servizi HTTP da R; `httr2` consuma servizi HTTP da R**.
 
 ### API esposte
 
@@ -165,7 +165,7 @@ Descrivere il contratto HTTP: metodi, percorsi, parametri, body, header, formati
 
 Distinguere una verifica di liveness dalla verifica della disponibilità delle dipendenze necessarie. Non assumere che un'API sia automaticamente asincrona, scalabile o sicura.
 
-### API consumate con httr2
+### API consumate con `httr2`
 
 Includere almeno un esempio riproducibile di richiesta e gestione della risposta. Coprire GET/POST, URL, query parameters, header, body, parsing JSON, codici HTTP, timeout, errori, autenticazione, nuovo tentativo automatico limitati e paginazione quando pertinente.
 
@@ -177,7 +177,7 @@ Collegare chiamante e servizio con un esempio HTTP/JSON che chiarisca il contrat
 
 Trattare le integrazioni dal punto di vista dei confini e dei contratti, non come corsi completi sui sistemi esterni.
 
-- **Oracle:** driver, autenticazione, query, transazioni, pool quando pertinente, volumi, esecuzione dei filtri e delle aggregazioni nel database di filtri e aggregazioni, timeout e gestione delle connessioni.
+- **Oracle:** driver, autenticazione, query, transazioni, `pool` quando pertinente, volumi, esecuzione dei filtri e delle aggregazioni nel database di filtri e aggregazioni, timeout e gestione delle connessioni.
 - **APEX:** confine tra workflow gestionale e calcolo analitico; invocazione di servizi, scambio di parametri e risultati, gestione degli errori.
 - **GIS:** dati spaziali, formati, database geografici, sistemi di coordinate e trasferimento dei dati.
 - **Scheduler e orchestratori:** account, ambiente, working directory, exit code, log, timeout, nuovo tentativo automatico, dipendenze e idempotenza.
@@ -213,6 +213,7 @@ Gli esempi di distribuzione devono essere quasi eseguibili, con comandi e config
 - Usare esempi realistici, con soggetti e azioni chiari. Distinguere dati noti, ipotesi, valori di esempio e aspetti da verificare nell'ambiente aziendale.
 - Le slide devono seguire lo stesso linguaggio del manuale: termini definiti, frasi brevi e nessuna formula motivazionale o manageriale. Se una definizione non entra nella slide, definirla nel manuale e usare in slide una formulazione comprensibile.
 - Dopo una revisione editoriale, cercare gergo residuo, sigle non definite, ripetizioni, frasi generiche e termini tradotti in modi diversi. Non cambiare i nomi ufficiali di funzioni, package, file, opzioni o tecnologie.
+- Nel testo discorsivo, racchiudere tra singoli backtick Markdown ogni nome di funzione R e ogni nome di package R citato, anche in frasi, tabelle e titoli. Esempi: `system.time()`, `renv::restore()` e `data.table`. Non applicare la regola al codice nei chunk o nei blocchi di codice; mantenere invariati i nomi ufficiali e il codice eseguibile.
 
 ## 12. Standard editoriali
 
