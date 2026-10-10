@@ -25,7 +25,7 @@ execute:
 
 # Obiettivo operativo
 
-- Identificare forma applicativa ed punto di ingresso.
+- Identificare forma applicativa e il punto di ingresso.
 - Ricostruire runtime, dipendenze e sistemi esterni.
 - Descrivere carico di lavoro, risorse e concorrenza.
 - Separare misure, ipotesi e decisioni.
@@ -99,7 +99,7 @@ Per ogni esecuzione: durata, frequenza, errori e destinazione dell'output.
 ```{mermaid}
 %%| echo: false
 flowchart TB
- A["Codice e entry point"] --> B["Runtime R"]
+ A["Codice e punto di ingresso"] --> B["Runtime R"]
  B --> C["Package R"]
  C --> D["Librerie native e driver"]
  D --> E["OS, rete e sistemi esterni"]
@@ -148,7 +148,7 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 - `object.size()` stima la dimensione di un oggetto R; non è il picco RSS.
 - Misurare il processo e, con processi separati, anche i processi figli.
 - Registrare elapsed, speedup, efficienza, RAM e overhead.
-- Tenere distinti numero di processo di lavoro e thread nativi.
+- Tenere distinti numero di processi di lavoro e thread nativi.
 - Più concorrenza può peggiorare memoria, serializzazione e contesa.
 
 ---
@@ -248,7 +248,7 @@ Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API
 - Gestire autenticazione senza segreti nel sorgente o nei log.
 - Paginazione: seguire cursore o link previsti dal servizio.
 - nuovo tentativo automatico limitati a errori transitori e operazioni sicure da ripetere.
-- Per POST con effetti collaterali, definire idempotenza prima dei nuovo tentativo automatico.
+- Per POST con effetti collaterali, definire idempotenza prima di un nuovo tentativo automatico.
 
 ---
 
@@ -272,9 +272,9 @@ flowchart LR
  A["Sviluppo"] --> B["Test"]
  B --> C["Release identificata"]
  C --> D["Artefatto e configurazione"]
- D --> E["Deployment"]
- E --> F["Smoke test"]
- F --> G["Monitoraggio / rollback"]
+ D --> E["distribuzione"]
+ E --> F["verifica rapida di avvio"]
+ F --> G["Monitoraggio / ripristino della versione precedente"]
 ```
 
 Una modifica rilevante a codice, runtime, package o librerie native richiede una nuova verifica della riferimento di confronto.
@@ -317,7 +317,7 @@ Una modifica rilevante a codice, runtime, package o librerie native richiede una
 
 # passaggio di consegne: informazioni minime
 
-- Repository, commit/tag, owner ed punto di ingresso.
+- Repository, commit/tag, owner e il punto di ingresso.
 - Ambiente R, package, file che registra le dipendenze, OS e dipendenze native.
 - Input/output, volumi, frequenza, durata e concorrenza.
 - Sistemi esterni, account, permessi e configurazione.
@@ -333,11 +333,11 @@ Una modifica rilevante a codice, runtime, package o librerie native richiede una
 flowchart TD
  A["Requisiti verificabili"] --> B["Test ed evidenze"]
  B --> C["Sicurezza e osservabilità"]
- C --> D["Handover e ownership"]
+ C --> D["passaggio di consegne e responsabilità"]
  D --> E["Rilascio"]
- E --> F["Smoke test"]
+ E --> F["verifica rapida di avvio"]
  F -->|OK| G["Esercizio"]
- F -->|KO| H["Rollback verificato"]
+ F -->|KO| H["ripristino della versione precedente verificato"]
 ```
 
 ripristino della versione precedente deve considerare codice, ambiente, configurazione e possibili output parziali.
