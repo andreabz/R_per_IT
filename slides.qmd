@@ -25,7 +25,7 @@ execute:
 
 # Obiettivo operativo
 
-- Identificare forma applicativa e il punto di ingresso.
+- Identificare la forma applicativa e il punto di ingresso.
 - Ricostruire runtime, dipendenze e sistemi esterni.
 - Descrivere carico di lavoro, risorse e concorrenza.
 - Separare misure, ipotesi e decisioni.
