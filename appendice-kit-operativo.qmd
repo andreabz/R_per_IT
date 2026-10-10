@@ -127,7 +127,7 @@ tempo + RAM + CPU
 confronto
 ~~~
 
-Non è necessario fare sempre un prova comparativa complesso. Il livello di misura deve essere proporzionato al rischio e al costo della decisione.
+Non è necessario fare sempre una prova comparativa complesso. Il livello di misura deve essere proporzionato al rischio e al costo della decisione.
 
 ## 6. Sicurezza e configurazione
 
@@ -155,8 +155,8 @@ Prima del rilascio devono essere distinti almeno:
 | Funzionale | produce il risultato atteso? |
 | Integrazione | raggiunge correttamente DB, API e storage? |
 | Compatibilità | l'ambiente R è coerente? |
-| Performance | rispetta la riferimento di confronto o il requisito? |
-| prova rapida di avvio | il distribuzione è avviabile e operativo? |
+| Performance | rispetta la situazione di riferimento o il requisito? |
+| prova rapida di avvio | la distribuzione è avviabile e operativo? |
 
 Per servizi e applicazioni interattive aggiungere un test di concorrenza proporzionato al numero atteso di utenti.
 
@@ -169,7 +169,7 @@ dipendenza non disponibile
         ↓
 errore osservabile
         ↓
-retry? ── sì/no
+nuovo tentativo automatico? ── sì/no
         ↓
 fallback? ── sì/no
         ↓
@@ -305,11 +305,11 @@ modifica
    ↓
 test
    ↓
-confronto con baseline
+confronto con situazione di riferimento
    ↓
 accettazione
    ↓
-nuova baseline
+nuova situazione di riferimento
 ~~~
 
 Questo è particolarmente importante per R perché l'ambiente software può influire sia sul risultato sia sulle performance.
@@ -355,11 +355,11 @@ Quando la soluzione è ancora in fase di definizione, non serve compilare subito
 
 - [ ] Che cosa deve fare la soluzione?
 - [ ] Qual è la forma operativa: batch, Quarto, Shiny, API, package o pipeline?
-- [ ] Qual è l'entrypoint e dove si trova il codice?
+- [ ] Qual è l'punto di ingresso e dove si trova il codice?
 - [ ] Quale versione di R e quali dipendenze servono?
 - [ ] Quali dati e sistemi esterni vengono utilizzati?
 - [ ] Chi la utilizza e con quale frequenza/concorrenza?
-- [ ] Qual è la riferimento di confronto osservata?
+- [ ] Qual è la situazione di riferimento osservata?
 - [ ] Come viene configurata senza inserire segreti nel codice?
 - [ ] Come viene testata, monitorata e ripristinata?
 - [ ] Chi è owner applicativo e chi è owner operativo?
