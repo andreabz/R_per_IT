@@ -1,5 +1,7 @@
 I capitoli precedenti hanno descritto forme applicative, ambiente, misure, integrazioni e distribuzione. Qui questi elementi diventano criteri per confrontare le alternative e stabilire quali verifiche servono prima di decidere.
 
+I capitoli precedenti hanno descritto forme applicative, ambiente, misure, integrazioni e distribuzione. Qui questi elementi diventano criteri per confrontare le alternative e stabilire quali verifiche servono prima di decidere.
+
 ---
 title: "Decisioni operative"
 subtitle: "Dalle evidenze alle scelte tecniche"
@@ -7,7 +9,7 @@ subtitle: "Dalle evidenze alle scelte tecniche"
 
 ## Perché questo capitolo
 
-Nei capitoli precedenti abbiamo visto come R usa ambiente, memoria, CPU, processi, thread, database e infrastruttura. Ora utilizziamo queste informazioni per trasformare una richiesta in una decisione tecnica verificabile.
+Nei capitoli precedenti abbiamo visto come R usa ambiente, memoria, CPU, processi, filo di esecuzione, database e infrastruttura. Ora utilizziamo queste informazioni per trasformare una richiesta in una decisione tecnica verificabile.
 
 Il punto non è aggiungere altra teoria: è collegare **evidenza, decisione e responsabilità**.
 
@@ -15,9 +17,9 @@ Il punto non è aggiungere altra teoria: è collegare **evidenza, decisione e re
 
 | Termine | Significato operativo |
 |---|---|
-| **collo di bottiglia** | componente o fase che limita significativamente la prestazione complessiva del workload |
-| **baseline** | configurazione di riferimento con cui confrontare una modifica; nel corso include codice, ambiente e risultati misurati |
-| **ownership** | assegnazione esplicita della responsabilità di una decisione, componente o attività operativa |
+| **collo di bottiglia** | componente o fase che limita significativamente la prestazione complessiva del carico di lavoro |
+| **riferimento di confronto** | configurazione di riferimento con cui confrontare una modifica; nel corso include codice, ambiente e risultati misurati |
+| **responsabilità** | assegnazione esplicita della responsabilità di una decisione, componente o attività operativa |
 
 ```{mermaid}
 %%| echo: false
@@ -49,21 +51,21 @@ responsabilità
 
 > «Servono 64 GB di RAM.»
 
-Non è ancora una specifica verificata. Servono almeno workload, durata obiettivo, consumo attuale, picco, worker, concorrenza e alternative considerate.
+Non è ancora una specifica verificata. Servono almeno carico di lavoro, durata obiettivo, consumo attuale, picco, processo di lavoro, concorrenza e alternative considerate.
 
 Il ruolo di IT non è decidere la correttezza del codice R, ma verificare che la richiesta tecnica sia sostenuta da evidenze riproducibili.
 
-## Baseline
+## riferimento di confronto
 
-Una baseline di una soluzione R può comprendere:
+Una riferimento di confronto di una soluzione R può comprendere:
 
 ```
 commit + R + package + native libraries + configuration + test data + test results
 ```
 
-Una modifica rilevante produce una nuova baseline dopo la verifica.
+Una modifica rilevante produce una nuova riferimento di confronto dopo la verifica.
 
-Per una soluzione R, una modifica apparentemente piccola a R, package o librerie native può cambiare performance o comportamento. La baseline deve quindi rendere visibile anche l'ambiente.
+Per una soluzione R, una modifica apparentemente piccola a R, package o librerie native può cambiare performance o comportamento. La riferimento di confronto deve quindi rendere visibile anche l'ambiente.
 
 ## Chi è responsabile di cosa
 
@@ -72,7 +74,7 @@ Per una soluzione R, una modifica apparentemente piccola a R, package o librerie
 | R runtime | ✓ | |
 | Package e dipendenze | ✓ | collaborativo |
 | OS, driver e infrastruttura | ✓ | |
-| Deployment | ✓ | collaborativo |
+| distribuzione | ✓ | collaborativo |
 | Performance infrastrutturale | ✓ | collaborativo |
 | Correttezza del metodo | | ✓ |
 | Interpretazione scientifica | | ✓ |
@@ -84,7 +86,7 @@ Il confine non significa che le responsabilità siano isolate: significa che la 
 Per evitare aree senza owner, la presa in carico dovrebbe nominare separatamente:
 - **owner applicativo:** requisiti, correttezza funzionale, significato dei dati e accettazione dei risultati;
 - **sviluppatore/maintainer:** codice, test applicativi, dipendenze dichiarate, documentazione tecnica e supporto alla diagnosi;
-- **IT/piattaforma:** runtime e infrastruttura gestiti, deployment, accessi tecnici, logging/monitoring di piattaforma e recovery concordato;
+- **IT/piattaforma:** runtime e infrastruttura gestiti, distribuzione, accessi tecnici, logging/monitoraggio di piattaforma e recovery concordato;
 - **owner del sistema esterno:** disponibilità, schema, privilegi e comportamento di Oracle, API, storage o altri servizi.
 
 La ripartizione concreta segue l'organizzazione aziendale; non va presunta dal linguaggio o dal framework scelto.
@@ -104,7 +106,7 @@ evidenza
 decisione
 ```
 
-Per R il test controllato deve includere, quando rilevanti, versione del runtime, package, backend di parallelismo, thread nativi e dati rappresentativi.
+Per R il test controllato deve includere, quando rilevanti, versione del runtime, package, backend di parallelismo, filo di esecuzione nativi e dati rappresentativi.
 
 Una variabile dovrebbe essere modificata alla volta, mantenendo stabile il resto dell'ambiente. Il risultato deve poter essere ripetuto.
 
@@ -119,48 +121,48 @@ Per ciascuno bisogna distinguere:
 3. **test**: l'esperimento che separa ipotesi alternative;
 4. **decisione**: la modifica che si può giustificare con i risultati.
 
-Per esempio, «CPU 100%» è un fatto. «Il workload è CPU-bound» è un'ipotesi. «Profilo il codice e confronto 1/2/4 worker» è un test. «Aumento i worker a 4» è una decisione solo se i risultati mostrano che soddisfa il requisito.
+Per esempio, «CPU 100%» è un fatto. «Il carico di lavoro è CPU-bound» è un'ipotesi. «Profilo il codice e confronto 1/2/4 processo di lavoro» è un test. «Aumento i processo di lavoro a 4» è una decisione solo se i risultati mostrano che soddisfa il requisito.
 
 ## Caso 1 — RAM
 
-**Collegamenti:** runtime e copy-on-modify (`02`) → diagnostica (`03`) → eventuale spostamento del calcolo (`04`) → baseline e test (`05`).
+**Collegamenti:** runtime e copy-on-modify (`02`) → diagnostica (`03`) → eventuale spostamento del calcolo (`04`) → riferimento di confronto e test (`05`).
 
 > «Lo script va in errore per memoria. Servono 64 GB.»
 
-Chiedere dimensione dei dati, RAM di picco, swap, worker, memoria per worker, copie, oggetti intermedi, garbage collection, possibilità di filtrare e concorrenza.
+Chiedere dimensione dei dati, RAM di picco, swap, processo di lavoro, memoria per processo di lavoro, copie, oggetti intermedi, garbage collection, possibilità di filtrare e concorrenza.
 
-La decisione non parte dalla dimensione del dataset ma dal comportamento osservato del runtime R. Se 4 worker portano il tempo sotto l'obiettivo ma la RAM a 38 GB, il dato utile per IT è la combinazione tempo/RAM, non il solo numero di core o GB richiesti.
+La decisione non parte dalla dimensione del dataset ma dal comportamento osservato del runtime R. Se 4 processo di lavoro portano il tempo sotto l'obiettivo ma la RAM a 38 GB, il dato utile per IT è la combinazione tempo/RAM, non il solo numero di core o GB richiesti.
 
 ## Caso 2 — CPU
 
-**Collegamenti:** worker e thread nativi (`02`) → profiling e scaling (`03`) → eventuale modifica dell'architettura (`04`) → verifica della release (`05`).
+**Collegamenti:** processo di lavoro e filo di esecuzione nativi (`02`) → analisi dei tempi di esecuzione e variazione delle risorse (`03`) → eventuale modifica dell'architettura (`04`) → verifica della release (`05`).
 
 > «R usa il 100% della CPU. Servono più core.»
 
-Chiedere numero di core utilizzati, worker, thread nativi, profiling, parallelizzabilità, scaling, crescita della RAM e coinvolgimento del database.
+Chiedere numero di core utilizzati, processo di lavoro, filo di esecuzione nativi, analisi dei tempi di esecuzione, parallelizzabilità, variazione delle risorse, crescita della RAM e coinvolgimento del database.
 
-| Worker | Tempo | RAM | CPU |
+| processo di lavoro | Tempo | RAM | CPU |
 |---:|---:|---:|---:|
 | 1 | … | … | … |
 | 2 | … | … | … |
 | 4 | … | … | … |
 | 8 | … | … | … |
 
-La domanda non è soltanto quanti core vede R, ma **quali processi e thread li stanno usando e con quale beneficio sul tempo di esecuzione**. Se l'aumento dei worker porta 100% di CPU ma quasi nessun miglioramento del tempo, abbiamo un segnale da spiegare, non una giustificazione automatica per altra CPU.
+La domanda non è soltanto quanti core vede R, ma **quali processi e filo di esecuzione li stanno usando e con quale beneficio sul tempo di esecuzione**. Se l'aumento dei processo di lavoro porta 100% di CPU ma quasi nessun miglioramento del tempo, abbiamo un segnale da spiegare, non una giustificazione automatica per altra CPU.
 
 ## Caso 3 — Shiny lenta
 
-**Collegamenti:** processi e concorrenza (`02`) → misure di latenza e risorse (`03`) → modello di deployment e confini (`04`) → monitoring (`05`).
+**Collegamenti:** processi e concorrenza (`02`) → misure di latenza e risorse (`03`) → modello di distribuzione e confini (`04`) → monitoraggio (`05`).
 
 Misurare utenti contemporanei, latenza per richiesta, CPU, RAM per sessione, database, rete, caching e operazioni lente.
 
 «Funziona per un utente» non dimostra la capacità di sostenere più utenti. Il test deve aumentare il numero di sessioni e osservare come cambiano latenza, CPU, RAM e dipendenze esterne.
 
-Per una soluzione Shiny va inoltre identificato il modello di deployment: processi, sessioni, reverse proxy e modalità di scaling cambiano il significato di CPU e RAM osservate.
+Per una soluzione Shiny va inoltre identificato il modello di distribuzione: processi, sessioni, reverse proxy e modalità di variazione delle risorse cambiano il significato di CPU e RAM osservate.
 
 ## Caso 4 — Calcolo tutto in R
 
-**Collegamenti:** materializzazione e memoria (`02`) → diagnosi del collo di bottiglia (`03`) → pushdown e confini di calcolo (`04`) → test di integrazione/performance (`05`).
+**Collegamenti:** materializzazione e memoria (`02`) → diagnosi del collo di bottiglia (`03`) → esecuzione di filtri e aggregazioni lato database e confini di calcolo (`04`) → test di integrazione/performance (`05`).
 
 Per grandi dataset in Oracle chiedere quali filtri e aggregazioni possono essere eseguiti nel database e quali operazioni richiedono davvero R.
 
@@ -176,23 +178,23 @@ R
 analisi
 ```
 
-La domanda è anche quanta memoria, rete e serializzazione si evita spostando il calcolo verso i dati. La decisione va presa sul tempo totale del workload, non sul tempo della sola query.
+La domanda è anche quanta memoria, rete e serializzazione si evita spostando il calcolo verso i dati. La decisione va presa sul tempo totale del carico di lavoro, non sul tempo della sola query.
 
 ## Caso 5 — 20 package
 
-**Collegamenti:** ambiente e dipendenze (`01`) → costo del runtime (`02`) → baseline del benchmark (`03`) → riproducibilità del deployment (`05`).
+**Collegamenti:** ambiente e dipendenze (`01`) → costo del runtime (`02`) → riferimento di confronto del prova comparativa (`03`) → riproducibilità del distribuzione (`05`).
 
-Chiedere dipendenze effettive, versioni, lockfile, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
+Chiedere dipendenze effettive, versioni, file che registra le dipendenze, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
 
-L'obiettivo è una baseline ricostruibile, non un numero di package installati. Il test minimo è provare la ricostruzione in un ambiente pulito e verificare che il workload produca lo stesso risultato atteso.
+L'obiettivo è una riferimento di confronto ricostruibile, non un numero di package installati. Il test minimo è provare la ricostruzione in un ambiente pulito e verificare che il carico di lavoro produca lo stesso risultato atteso.
 
 ## Caso 6 — Container
 
 **Collegamenti:** ambiente R (`01`) → runtime e native libraries (`02`) → misure riproducibili (`03`) → confini architetturali (`04`) → artefatto di release (`05`).
 
-Un container può rendere più controllabili R, package e librerie native. Non risolve automaticamente database, segreti, storage, rete, identità, scheduler e monitoring.
+Un container può rendere più controllabili R, package e librerie native. Non risolve automaticamente database, segreti, storage, rete, identità, scheduler e monitoraggio.
 
-La domanda da verificare è quali parti dell'ambiente R devono essere incluse nell'artefatto e quali restano dipendenze esterne. Il container va quindi valutato contro il requisito specifico: riproducibilità dell'ambiente, isolamento, deployment o altro.
+La domanda da verificare è quali parti dell'ambiente R devono essere incluse nell'artefatto e quali restano dipendenze esterne. Il container va quindi valutato contro il requisito specifico: riproducibilità dell'ambiente, isolamento, distribuzione o altro.
 
 ## Esercizio di decisione quantitativa
 
@@ -212,7 +214,7 @@ I/O: normale
 
 Test:
 
-| Worker | Tempo | RAM |
+| processo di lavoro | Tempo | RAM |
 |---:|---:|---:|
 | 1 | 192 min | 11 GB |
 | 2 | 104 min | 20 GB |
@@ -230,10 +232,10 @@ Test:
 7. Quali alternative applicative devono essere considerate?
 8. Quali informazioni entrano nella richiesta IT?
 
-Il benchmark mostra che il parallelismo riduce il tempo ma aumenta rapidamente la memoria e non scala linearmente. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
+Il prova comparativa mostra che il parallelismo riduce il tempo ma aumenta rapidamente la memoria e non scala linearmente. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
 
 
-## Scheda di handover e production readiness
+## Scheda di passaggio di consegne e production readiness
 
 La richiesta dello sviluppatore dovrebbe poter essere tradotta in una scheda operativa con almeno queste sezioni:
 
@@ -241,15 +243,15 @@ La richiesta dello sviluppatore dovrebbe poter essere tradotta in una scheda ope
 |---|---|
 | Identità | repository, commit/tag, owner, entrypoint |
 | Forma | batch, Quarto, Shiny, API, package, pipeline |
-| Ambiente | R, OS, package, lockfile, native dependencies |
-| Workload | dati, frequenza, durata, utenti/concorrenza |
-| Risorse | CPU, RAM, I/O, rete, worker, thread |
+| Ambiente | R, OS, package, file che registra le dipendenze, native dependencies |
+| carico di lavoro | dati, frequenza, durata, utenti/concorrenza |
+| Risorse | CPU, RAM, I/O, rete, processo di lavoro, filo di esecuzione |
 | Sistemi esterni | Oracle, API, filesystem, storage |
 | Sicurezza | account, permessi, autenticazione, segreti, TLS |
 | Test | funzionali, integrazione, compatibilità, performance |
-| Operatività | log, metriche, alert, restart, retry |
-| Recovery | rollback, baseline precedente, runbook |
-| Ownership | chi decide, chi deploya, chi monitora, chi interviene |
+| Operatività | log, metriche, alert, restart, nuovo tentativo automatico |
+| Recovery | ripristino della versione precedente, riferimento di confronto precedente, runbook |
+| responsabilità | chi decide, chi deploya, chi monitora, chi interviene |
 
 La **scheda completa e compilabile** è nell'appendice *Kit operativo per IT*. Il capitolo fornisce il metodo; l'appendice fornisce lo strumento da usare con una richiesta reale.
 
@@ -263,10 +265,10 @@ Una decisione di produzione dovrebbe passare questi controlli; un elemento non a
 | Test | esiti funzionali, integrazione, compatibilità e performance pertinenti | sviluppatore; IT per ambiente e integrazioni |
 | Sicurezza | identità, privilegi minimi, autorizzazioni, segreti, TLS e flussi di rete | IT/security + owner |
 | Osservabilità | log correlabili, metriche, alert e criteri di errore | IT/piattaforma + maintainer |
-| Recovery | rollback di codice **e ambiente**, gestione output parziali, prova di ripristino | IT + sviluppatore |
-| Handover | runbook, owner, reperibilità/escalation, baseline e dipendenze | owner operativo nominato |
+| Recovery | ripristino della versione precedente di codice **e ambiente**, gestione output parziali, prova di ripristino | IT + sviluppatore |
+| passaggio di consegne | runbook, owner, reperibilità/escalation, riferimento di confronto e dipendenze | owner operativo nominato |
 
-Per una Shiny o un'API aggiungere test con concorrenza rappresentativa, latenza e gestione delle dipendenze. Per un batch aggiungere exit code, timeout, retry, idempotenza e verifica dell'output. Per Quarto aggiungere render completo e controllo dell'artefatto. Per package/pipeline verificare compatibilità, contratti tra step e tracciabilità della release.
+Per una Shiny o un'API aggiungere test con concorrenza rappresentativa, latenza e gestione delle dipendenze. Per un batch aggiungere exit code, timeout, nuovo tentativo automatico, idempotenza e verifica dell'output. Per Quarto aggiungere render completo e controllo dell'artefatto. Per package/pipeline verificare compatibilità, contratti tra step e tracciabilità della release.
 
 
 
@@ -275,15 +277,15 @@ Per una Shiny o un'API aggiungere test con concorrenza rappresentativa, latenza 
 | Campo | Informazione |
 |---|---|
 | Requisito | cosa deve essere ottenuto |
-| Workload | dati, frequenza, durata, concorrenza |
+| carico di lavoro | dati, frequenza, durata, concorrenza |
 | Ambiente | R, package, native, OS |
 | Evidenze | misure |
 | Collo di bottiglia | ipotesi verificata |
 | Alternative | opzioni |
 | Test | esperimenti |
 | Decisione | soluzione |
-| Baseline | stato riproducibile |
-| Ownership | responsabilità |
+| riferimento di confronto | stato riproducibile |
+| responsabilità | responsabilità |
 
 ## Le quattro domande finali
 
