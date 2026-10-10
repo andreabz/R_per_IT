@@ -1,3 +1,5 @@
+I capitoli precedenti hanno descritto forme applicative, ambiente, misure, integrazioni e distribuzione. Qui questi elementi diventano criteri per confrontare le alternative e stabilire quali verifiche servono prima di decidere.
+
 ---
 title: "Decisioni operative"
 subtitle: "Dalle evidenze alle scelte tecniche"
