@@ -4,7 +4,7 @@
 
 R_per_IT è un manuale tecnico rivolto a sistemisti, architetti, DevOps, team di piattaforma e responsabili tecnici che devono comprendere, valutare, integrare, distribuire e gestire soluzioni sviluppate in R.
 
-L'obiettivo **non** è formare sviluppatori R né sostituire la formazione generale su sistemi operativi, reti, database o piattaforme. Il corso deve aiutare IT a capire che cosa cambia quando il carico di lavoro è R e a trasformare una richiesta tecnica in requisiti verificabili, evidenze, decisioni, responsabilità e baseline.
+L'obiettivo **non** è formare sviluppatori R né sostituire la formazione generale su sistemi operativi, reti, database o piattaforme. Il corso deve aiutare IT a capire che cosa cambia quando il carico di lavoro usa R e a trasformare una richiesta tecnica in requisiti verificabili, evidenze, decisioni e responsabilità.
 
 Principio guida:
 
@@ -20,7 +20,7 @@ Il destinatario deve poter:
 - identificare runtime R, package, dipendenze native, driver e sistemi esterni;
 - descrivere carico di lavoro, input/output, frequenza, durata, concorrenza e risorse;
 - distinguere misure ed evidenze da ipotesi;
-- valutare requisiti di distribuzione, sicurezza, osservabilità, rollback e responsabilità operativa;
+- valutare requisiti di distribuzione, sicurezza, osservabilità, ripristino della versione precedente e responsabilità operativa;
 - individuare le informazioni mancanti nell'passaggio di consegne e chiederle in modo concreto;
 - confrontare alternative architetturali senza assumere che una soluzione sia sempre migliore delle altre.
 
@@ -90,7 +90,7 @@ Quando pertinente, descrivere ogni scenario con una struttura uniforme. Non forz
 8. **Distribuzione:** build, artefatto, configurazione, promozione, rollback e dipendenze esterne.
 9. **Sicurezza:** account, privilegi minimi, autenticazione, autorizzazione, segreti, TLS e dati esposti.
 10. **Esercizio:** log, errori, exit code o codici HTTP, timeout, nuovo tentativo automatico, health check, monitoraggio e allarmi.
-11. **passaggio di consegne e responsabilità operativa:** informazioni da consegnare, responsabilità dello sviluppatore e di IT, runbook e baseline.
+11. **passaggio di consegne e responsabilità operativa:** informazioni da consegnare, responsabilità dello sviluppatore e di IT, runbook e situazione di riferimento.
 
 Distinguere sempre:
 - **necessario:** requisito senza il quale lo scenario non è gestibile o non soddisfa il contratto;
