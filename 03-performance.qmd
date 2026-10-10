@@ -134,10 +134,10 @@ system.time({
 
 Per una situazione di riferimento reale vanno registrati anche versione di R, package rilevanti, ambiente, dimensione dell'input e condizioni del test.
 
-### analisi dei tempi di esecuzione con gli strumenti base di R
+### Analisi dei tempi di esecuzione con gli strumenti base di R
 
 ```{r}
-#| label: analisi dei tempi di esecuzione-base-r
+#| label: profiling-base-r
 
 Rprof("profilo.out")
 risultato <- misura(5000000)
@@ -148,18 +148,18 @@ summaryRprof("profilo.out")
 
 Il risultato è **evidenza diagnostica**, non una prescrizione automatica di ottimizzazione.
 
-### analisi dei tempi di esecuzione interattivo con `profvis`
+### Analisi interattiva dei tempi di esecuzione con `profvis`
 
 Quando è utile una lettura visuale dell'analisi dei tempi di esecuzione, si può usare **`profvis`**. È un package R che presenta in forma interattiva il tempo speso nelle diverse chiamate e consente di esplorare più facilmente dove viene eseguito il lavoro.
 
 In un ambiente di prova:
 
 ```{r}
-#| label: analisi dei tempi di esecuzione-interattivo-profvis
+#| label: profiling-interattivo-profvis
 
-Una volta identificato l'ambiente di esecuzione, si può misurare il comportamento del programma. Si parte dai tempi e dalla memoria osservati, poi si confrontano le possibili cause prima di chiedere più risorse o più processi.
 
-Una volta identificato l'ambiente di esecuzione, si può misurare il comportamento del programma. Si parte dai tempi e dalla memoria osservati, poi si confrontano le possibili cause prima di chiedere più risorse o più processi.
+
+
 
 # installazione da eseguire una sola volta nell'ambiente di prova:
 
