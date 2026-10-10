@@ -113,7 +113,7 @@ sessione R
 codice
 ~~~
 
-Quando scriviamo library(data.table), data.table è il **package**; library() è la funzione che lo rende disponibile nella sessione. La **library** non è data.table: è la directory che contiene il package.
+Quando scriviamo `library(`data.table`)`, `data.table` è il **package**; `library()` è la funzione che lo rende disponibile nella sessione. La **library** non è `data.table`: è la directory che contiene il package.
 
 Questa distinzione diventa importante quando IT deve sapere **quale copia di un package viene caricata e chi può modificarla**.
 
@@ -142,7 +142,7 @@ La scelta della sorgente può coinvolgere proxy, firewall, approvazione delle di
 Quando viene eseguito:
 
 ~~~text
-install.packages("data.table")
+`install.packages("`data.table`")`
 ~~~
 
 R deve sapere da quale repository recuperare il package. La configurazione può essere esplicita oppure derivare dalle opzioni e dalla configurazione dell'ambiente.
@@ -191,7 +191,7 @@ Questo include non soltanto i package R, ma anche librerie native, driver e clie
 
 ## Approfondimento — Le library di R
 
-R può avere più library contemporaneamente. .libPaths() restituisce il percorso delle library che R considera nella sessione corrente, nell'ordine in cui vengono cercate.
+R può avere più library contemporaneamente. `.libPaths()` restituisce il percorso delle library che R considera nella sessione corrente, nell'ordine in cui vengono cercate.
 
 Una situazione concettuale può essere:
 
@@ -203,7 +203,7 @@ user library
 system library
 ~~~
 
-Non è però corretto assumere che questi tre livelli siano sempre presenti o abbiano sempre questi nomi: dipendono dall'installazione e da strumenti come renv.
+Non è però corretto assumere che questi tre livelli siano sempre presenti o abbiano sempre questi nomi: dipendono dall'installazione e da strumenti come `renv`.
 
 Possiamo distinguere:
 
@@ -211,9 +211,9 @@ Possiamo distinguere:
 - **user library**: package installati per un singolo utente;
 - **project library**: package associati a uno specifico progetto.
 
-Con renv, il progetto dispone di una library isolata logicamente dalle altre. La directory fisica può anche essere collocata fuori dalla directory del progetto: ciò che conta è che renv la associ a quel progetto e la attivi nella sessione. 
+Con `renv`, il progetto dispone di una library isolata logicamente dalle altre. La directory fisica può anche essere collocata fuori dalla directory del progetto: ciò che conta è che `renv` la associ a quel progetto e la attivi nella sessione. 
 
-### Che cosa ci dice davvero .libPaths()?
+### Che cosa ci dice davvero `.libPaths()`?
 
 ```{r}
 #| label: ispezione-library-r
@@ -237,22 +237,22 @@ Non serve eseguire questo comando in produzione: serve capire che «il package �
 
 Un **file che registra le dipendenze** è un file che registra lo stato delle dipendenze di un progetto in un determinato momento, in modo che quell'ambiente possa essere ricostruito.
 
-Nel caso di renv, il file si chiama normalmente renv.lock e viene **gestito da renv**, non dal runtime R in modo automatico.
+Nel caso di `renv`, il file si chiama normalmente `renv`.lock e viene **gestito da `renv`**, non dal runtime R in modo automatico.
 
 Il ciclo tipico è:
 
 ~~~text
-renv::init()
+`renv::init()`
      ↓
 project library
      ↓
-renv::snapshot()
+`renv::snapshot()`
      ↓
-renv.lock
+`renv`.lock
      ↓
 nuova macchina
      ↓
-renv::restore()
+`renv::restore()`
      ↓
 project library ricostruita
 ~~~
@@ -318,7 +318,7 @@ Se l'errore riguarda compilazione, librerie condivise, driver o altri componenti
 
 **No.**
 
-R può funzionare perfettamente senza renv e senza file che registra le dipendenze.
+R può funzionare perfettamente senza `renv` e senza file che registra le dipendenze.
 
 Il file che registra le dipendenze diventa utile quando la riproducibilità dell'ambiente è un requisito: sviluppo collaborativo, CI/CD, distribuzione, manutenzione nel tempo, rollback o audit.
 
@@ -326,11 +326,11 @@ Quindi IT non dovrebbe chiedere «R richiede un file che registra le dipendenze?
 
 > **Per questo carico di lavoro abbiamo bisogno di poter ricostruire la stessa combinazione di R e package?**
 
-Se la risposta è sì, renv è una possibile soluzione; non è però l'unica forma teorica di gestione delle dipendenze.
+Se la risposta è sì, `renv` è una possibile soluzione; non è però l'unica forma teorica di gestione delle dipendenze.
 
 ### Che cosa NON congela il file che registra le dipendenze?
 
-Un file che registra le dipendenze renv non è una fotografia dell'intero server.
+Un file che registra le dipendenze `renv` non è una fotografia dell'intero server.
 
 Non congela automaticamente:
 
@@ -347,7 +347,7 @@ Non congela automaticamente:
 Quindi:
 
 ~~~text
-renv.lock
+`renv`.lock
    ≠
 immagine completa del server
 ~~~
