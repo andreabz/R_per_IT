@@ -1,7 +1,3 @@
-I capitoli precedenti hanno descritto forme applicative, ambiente, misure, integrazioni e distribuzione. Qui questi elementi diventano criteri per confrontare le alternative e stabilire quali verifiche servono prima di decidere.
-
-I capitoli precedenti hanno descritto forme applicative, ambiente, misure, integrazioni e distribuzione. Qui questi elementi diventano criteri per confrontare le alternative e stabilire quali verifiche servono prima di decidere.
-
 ---
 title: "Decisioni operative"
 subtitle: "Dalle evidenze alle scelte tecniche"
@@ -106,7 +102,7 @@ evidenza
 decisione
 ```
 
-Per R il test controllato deve includere, quando rilevanti, versione del runtime, package, backend di parallelismo, filo di esecuzione nativi e dati rappresentativi.
+Per R il test controllato deve includere, quando rilevanti, versione del runtime, package, backend di parallelismo, thread nativi e dati rappresentativi.
 
 Una variabile dovrebbe essere modificata alla volta, mantenendo stabile il resto dell'ambiente. Il risultato deve poter essere ripetuto.
 
@@ -129,17 +125,17 @@ Per esempio, «CPU 100%» è un fatto. «Il carico di lavoro è CPU-bound» è u
 
 > «Lo script va in errore per memoria. Servono 64 GB.»
 
-Chiedere dimensione dei dati, RAM di picco, swap, processo di lavoro, memoria per processo di lavoro, copie, oggetti intermedi, garbage collection, possibilità di filtrare e concorrenza.
+Chiedere dimensione dei dati, RAM di picco, swap, processo di lavoro, memoria per worker, copie, oggetti intermedi, garbage collection, possibilità di filtrare e concorrenza.
 
 La decisione non parte dalla dimensione del dataset ma dal comportamento osservato del runtime R. Se 4 processo di lavoro portano il tempo sotto l'obiettivo ma la RAM a 38 GB, il dato utile per IT è la combinazione tempo/RAM, non il solo numero di core o GB richiesti.
 
 ## Caso 2 — CPU
 
-**Collegamenti:** processo di lavoro e filo di esecuzione nativi (`02`) → analisi dei tempi di esecuzione e variazione delle risorse (`03`) → eventuale modifica dell'architettura (`04`) → verifica della release (`05`).
+**Collegamenti:** processo di lavoro e thread nativi (`02`) → analisi dei tempi di esecuzione e variazione delle risorse (`03`) → eventuale modifica dell'architettura (`04`) → verifica della release (`05`).
 
 > «R usa il 100% della CPU. Servono più core.»
 
-Chiedere numero di core utilizzati, processo di lavoro, filo di esecuzione nativi, analisi dei tempi di esecuzione, parallelizzabilità, variazione delle risorse, crescita della RAM e coinvolgimento del database.
+Chiedere numero di core utilizzati, processo di lavoro, thread nativi, analisi dei tempi di esecuzione, parallelizzabilità, variazione delle risorse, crescita della RAM e coinvolgimento del database.
 
 | processo di lavoro | Tempo | RAM | CPU |
 |---:|---:|---:|---:|
