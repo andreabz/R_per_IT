@@ -216,7 +216,7 @@ Gli esempi di deployment devono essere quasi eseguibili, con comandi e configura
 - Per i chunk eseguibili Quarto usare fence con **tre backtick** e opzioni nel formato Quarto corretto.
 - Ogni chunk deve avere una label esplicita e univoca, ad esempio `#| label: benchmark-rss`.
 - Le label devono essere stabili, descrittive e non duplicate nell'intero progetto.
-- Per i diagrammi Mermaid usare il fence Quarto corretto, per esempio `\x60\x60\x60{mermaid}`, e `%%| echo: false` quando il codice sorgente del diagramma non deve apparire nel documento renderizzato.
+- Per i diagrammi Mermaid usare il fence Quarto corretto, usando un fence composto da tre backtick seguito da `{mermaid}`, e `%%| echo: false` quando il codice sorgente del diagramma non deve apparire nel documento renderizzato.
 - Non racchiudere codice destinato a essere eseguito da Quarto in fence alternativi che ne impediscano l'esecuzione. I fence Markdown per codice mostrato come testo sono ammessi quando intenzionali.
 - Non lasciare chunk incompleti, label provvisorie, link rotti, riferimenti a file inesistenti o output che contraddicono il testo.
 - Rendere gli esempi riproducibili quando ragionevole; documentare input, dipendenze e limiti quando non possono esserlo integralmente.
