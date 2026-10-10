@@ -104,6 +104,66 @@ Per una soluzione R il container è particolarmente utile quando serve rendere e
 
 Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 
+### Esempio quasi eseguibile — container per una Shiny
+
+**Assunzioni da verificare prima dell'uso:**
+- la directory di build contiene `app.R` (o la struttura Shiny prevista), `renv.lock` e i file di progetto necessari;
+- l'immagine base R è approvata dall'organizzazione e contiene il sistema operativo e le librerie native richieste;
+- l'app ascolta sulla porta 3838 nel container;
+- il registro immagini, la rete, i certificati e il secret store sono gestiti dalla piattaforma;
+- i valori tra parentesi angolari sono segnaposto da sostituire. Non esiste una versione universale di R o dell'immagine base: usare una baseline supportata e aggiornarla secondo il processo di release.
+
+```dockerfile
+# Dockerfile illustrativo: sostituire con una base approvata e verificata.
+ARG R_BASE_IMAGE
+FROM ${R_BASE_IMAGE}
+
+WORKDIR /srv/app
+COPY . .
+
+# Presuppone che il progetto abbia renv configurato e che la base
+# disponga dei requisiti di sistema necessari per i package.
+RUN R -e "install.packages('renv')" \
+ && R -e "renv::restore(prompt = FALSE)"
+
+EXPOSE 3838
+CMD ["R", "-e", "shiny::runApp('/srv/app', host = '0.0.0.0', port = 3838)"]
+```
+
+`R_BASE_IMAGE` deve essere valorizzata con il nome completo di un'immagine approvata prima del build; il Dockerfile fallisce se la variabile è vuota o non valida. In produzione aggiungere un `.dockerignore` che escluda credenziali, file locali e artefatti non necessari; eseguire il processo con utente non privilegiato e scansione dell'immagine secondo gli standard aziendali.
+
+Comandi di esempio dalla radice del progetto:
+
+```bash
+# Sostituire registro, namespace, nome e tag della release.
+docker build --build-arg R_BASE_IMAGE=<immagine-R-approvata> -t <registro>/<namespace>/<app>:<tag> .
+docker run --rm -p 3838:3838 --env-file <file-configurazione-non-segreta> <registro>/<namespace>/<app>:<tag>
+```
+
+Il comando `docker run` è adatto a una verifica locale; non è una configurazione di produzione. Non mettere segreti in `--env-file` versionati o in immagini. In produzione usare il secret store e la rete della piattaforma, impostare limiti CPU/RAM e health check e terminare il container tramite l'orchestratore.
+
+### Esempio di specifica ShinyProxy
+
+Per un'installazione ShinyProxy che utilizza il backend Docker, uno spec minimale può avere questa forma. Le proprietà effettivamente supportate dipendono dalla versione di ShinyProxy e dal backend; verificare la [documentazione ufficiale di configurazione](https://shinyproxy.io/documentation/configuration/) e [deploying apps](https://shinyproxy.io/documentation/deploying-apps/) prima di applicarlo.
+
+```yaml
+proxy:
+  title: "<titolo-istanza>"
+  container-backend: docker
+  specs:
+    - id: "<id-app>"
+      display-name: "<nome-app>"
+      container-image: "<registro>/<namespace>/<app>:<tag>"
+      container-cmd:
+        - "R"
+        - "-e"
+        - "shiny::runApp('/srv/app', host = '0.0.0.0', port = 3838)"
+      port: 3838
+```
+
+Questo frammento illustra il collegamento tra proxy e immagine; non configura da solo autenticazione, autorizzazione, TLS, limiti di risorse, rete o segreti. Non usare credenziali di esempio o backend di autenticazione dimostrativi in produzione. Il Docker daemon non deve essere esposto su una porta TCP non protetta. Su Kubernetes, ShinyProxy Operator gestisce le risorse tramite custom resource e ha requisiti specifici: non riutilizzare questa configurazione senza adattarla alla modalità Operator.
+
+
 
 ## Sviluppo, test e produzione
 
@@ -157,13 +217,16 @@ Se il risultato applicativo è corretto ma il tempo passa da 10 a 40 minuti o la
 Codice, configurazione e segreti devono essere separati.
 
 ```{r}
-#| label: esempio-segreto-nel-codice
+#| label: esempio-configurazione-senza-segreti
+#| eval: false
 
-username <- "utente"
-password <- "password"
+api_url <- Sys.getenv("API_BASE_URL")
+if (!nzchar(api_url)) {
+  stop("Variabile API_BASE_URL non configurata")
+}
 ```
 
-Il codice è un esempio di ciò che non deve essere usato in produzione. In esercizio, i valori devono provenire dai meccanismi di configurazione e secret management previsti dall'organizzazione.
+L'esempio legge una configurazione non segreta dall'ambiente e fallisce esplicitamente se manca. Token e password devono provenire da un secret store o da un meccanismo aziendale equivalente, con permessi e rotazione definiti; non devono essere scritti nel repository, nell'immagine container o nei log.
 
 ## GitHub Actions
 
@@ -261,6 +324,19 @@ Qui diventano centrali concorrenza, latenza, numero di sessioni o worker, isolam
 
 La modalità di esecuzione deve quindi essere una voce esplicita della consegna a IT: **batch, servizio, applicazione interattiva o altro modello**, con relativo entrypoint e ciclo di vita.
 
+### Esempio batch: exit code e log
+
+Per uno script schedulato, l'entrypoint deve restituire un esito non-zero in caso di errore e scrivere log in una destinazione gestita dalla piattaforma. Un esempio di comando di avvio è:
+
+```bash
+# Eseguire con l'account tecnico e l'ambiente R previsti dal job.
+Rscript --vanilla <percorso-progetto>/run_report.R
+echo $?  # registrare l'exit code nello scheduler, non soltanto in una shell interattiva
+```
+
+Il placeholder `<percorso-progetto>` va sostituito. In produzione configurare working directory, variabili d'ambiente, timeout, directory temporanea, log rotation e notifica di errore nello scheduler. Un job che intercetta un errore e termina comunque con exit code 0 può apparire riuscito pur avendo prodotto un output incompleto.
+
+
 ## Configurazione del runtime
 
 Una soluzione R non è definita soltanto da versione di R e package. Prima del deployment devono essere identificati anche i parametri che possono modificare il comportamento del processo.
@@ -329,6 +405,9 @@ Una consegna minima dovrebbe contenere:
 | Operatività | log, metriche, alert, retry, restart | configurazione operativa | IT |
 | Recovery | rollback e baseline precedente | procedura verificata | IT + sviluppatore |
 | Ownership | chi decide e chi interviene | matrice responsabilità | team |
+
+
+Per servizi e applicazioni interattive, la scheda deve inoltre indicare: modello di sessione/processo, concorrenza attesa, endpoint e timeout, dipendenze da verificare, health check, log correlabili, gestione dei segreti e criterio di rollback. Lo smoke test deve verificare il contratto visibile al chiamante, non soltanto che il processo sia partito.
 
 Questa tabella separa tre cose che spesso vengono confuse:
 
