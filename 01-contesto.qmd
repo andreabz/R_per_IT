@@ -32,7 +32,7 @@ Il capitolo ha due livelli.
 - una soluzione R comprende codice, runtime, package, dipendenze native, configurazione e sistemi esterni;
 - «package installato» non significa necessariamente «ambiente riproducibile»;
 - un file che registra le dipendenze descrive una parte dell'ambiente, non il server completo;
-- la baseline deve comprendere anche ciò che sta fuori da R.
+- la situazione di riferimento deve comprendere anche ciò che sta fuori da R.
 
 **Livello diagnostico — da usare quando serve**
 
@@ -57,8 +57,8 @@ Per seguire il corso bastano pochi termini aggiuntivi rispetto al lessico IT abi
 | **serializzazione** | trasformazione di un oggetto in una rappresentazione trasferibile o memorizzabile, per esempio tra processi |
 | **analisi dei tempi di esecuzione** | misura dettagliata di dove il programma spende tempo o risorse |
 | **prova comparativa** | confronto controllato tra esecuzioni dello stesso carico di lavoro o di varianti del carico di lavoro |
-| **baseline** | stato di riferimento, descritto e misurato, contro cui confrontare una modifica |
-| **artefatto** | risultato prodotto dalla build e destinato al distribuzione, per esempio un'immagine container o un pacchetto di release |
+| **situazione di riferimento** | stato di riferimento, descritto e misurato, contro cui confrontare una modifica |
+| **artefatto** | risultato prodotto dalla build e destinato alla distribuzione, per esempio un'immagine container o un pacchetto di rilascio |
 | **verifica rapida di avvio** | verifica breve eseguita dopo la distribuzione per accertare che il servizio o job sia avviabile e svolga il percorso minimo atteso |
 
 Il resto del manuale introduce i termini R-specifici nel punto in cui diventano necessari.
@@ -67,7 +67,7 @@ Il resto del manuale introduce i termini R-specifici nel punto in cui diventano 
 
 R è il runtime che esegue il codice. RStudio è un ambiente di sviluppo. In produzione può essere necessario R senza RStudio.
 
-La baseline deve quindi descrivere ciò che serve all'esecuzione, non tutto ciò che serve allo sviluppatore.
+La situazione di riferimento deve quindi descrivere ciò che serve all'esecuzione, non tutto ciò che serve allo sviluppatore.
 
 ## La composizione dell'ambiente
 
