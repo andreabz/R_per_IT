@@ -44,7 +44,6 @@ execute:
 | Report e applicazioni | Quarto, Shiny + R |
 | Routing e identità | Proxy, gateway, IAM |
 
-R integra lo stack; non sostituisce automaticamente i componenti esistenti.
 
 ---
 
