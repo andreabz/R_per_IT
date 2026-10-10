@@ -9,9 +9,9 @@ Questa appendice è pensata per essere usata **fuori dal corso**, durante una ri
 
 L'obiettivo non è chiedere allo sviluppatore una documentazione infinita. È raccogliere le informazioni minime che permettono a IT di capire che cosa deve eseguire, con quali dipendenze, con quali risorse e con quale responsabilità.
 
-Questa è la **scheda unica di handover**: il capitolo [Architettura e integrazione](04-architettura.qmd) indica quali campi privilegiare per ciascuna forma applicativa; gli [Strumenti pratici per IT](strumenti-pratici.qmd) guidano la raccolta delle evidenze e la diagnosi. Compilare qui i dati una sola volta, richiamando la scheda dagli altri documenti invece di crearne copie divergenti.
+Questa è la **scheda unica di passaggio di consegne**: il capitolo [Architettura e integrazione](04-architettura.qmd) indica quali campi privilegiare per ciascuna forma applicativa; gli [Strumenti pratici per IT](strumenti-pratici.qmd) guidano la raccolta delle evidenze e la diagnosi. Compilare qui i dati una sola volta, richiamando la scheda dagli altri documenti invece di crearne copie divergenti.
 
-> **Una soluzione R è pronta per essere presa in carico quando il workload, l'ambiente, le dipendenze, il comportamento operativo e le responsabilità sono descritti in modo verificabile.**
+> **Una soluzione R è pronta per essere presa in carico quando il carico di lavoro, l'ambiente, le dipendenze, il comportamento operativo e le responsabilità sono descritti in modo verificabile.**
 
 ## 1. Scheda di identificazione
 
@@ -22,7 +22,7 @@ Questa è la **scheda unica di handover**: il capitolo [Architettura e integrazi
 | Repository | |
 | Commit/tag/versione | |
 | Tipo di soluzione | script / batch / Quarto / Shiny / API / package / pipeline |
-| Entry point | |
+| punto di ingresso | |
 | Scopo | |
 | Ambiente previsto | sviluppo / test / produzione |
 
@@ -37,7 +37,7 @@ Questa è la **scheda unica di handover**: il capitolo [Architettura e integrazi
 | Utenti | |
 | Concorrenza | |
 | Timeout | |
-| Retry | |
+| nuovo tentativo automatico | |
 | Restart | |
 | Scheduler o orchestratore | |
 
@@ -95,25 +95,25 @@ R elabora
 
 Questo evita di attribuire automaticamente a R tutto il tempo osservato dal job.
 
-## 5. Risorse e benchmark
+## 5. Risorse e prova comparativa
 
 | Campo | Da compilare |
 |---|---|
 | Dataset usato per il test | |
-| Durata baseline | |
+| Durata riferimento di confronto | |
 | RAM di picco | |
 | CPU | |
 | I/O | |
 | Rete | |
-| Worker | |
-| Thread nativi | |
+| processo di lavoro | |
+| filo di esecuzione nativi | |
 | Concorrenza del test | |
 | Numero di ripetizioni | |
 | Versione R/package del test | |
 
 Un requisito come «16 core e 64 GB» dovrebbe essere accompagnato da evidenze che mostrino **quale requisito applicativo soddisfa quella configurazione**.
 
-### Minimo benchmark
+### Minimo prova comparativa
 
 ~~~text
 stesso input
@@ -127,7 +127,7 @@ tempo + RAM + CPU
 confronto
 ~~~
 
-Non è necessario fare sempre un benchmark complesso. Il livello di misura deve essere proporzionato al rischio e al costo della decisione.
+Non è necessario fare sempre un prova comparativa complesso. Il livello di misura deve essere proporzionato al rischio e al costo della decisione.
 
 ## 6. Sicurezza e configurazione
 
@@ -144,7 +144,7 @@ Non è necessario fare sempre un benchmark complesso. Il livello di misura deve 
 | File di configurazione | |
 | Certificati | |
 
-**I segreti non devono essere inclusi nel repository, nel codice o nel lockfile.**
+**I segreti non devono essere inclusi nel repository, nel codice o nel file che registra le dipendenze.**
 
 ## 7. Test di produzione
 
@@ -155,8 +155,8 @@ Prima del rilascio devono essere distinti almeno:
 | Funzionale | produce il risultato atteso? |
 | Integrazione | raggiunge correttamente DB, API e storage? |
 | Compatibilità | l'ambiente R è coerente? |
-| Performance | rispetta la baseline o il requisito? |
-| Smoke test | il deployment è avviabile e operativo? |
+| Performance | rispetta la riferimento di confronto o il requisito? |
+| prova rapida di avvio | il distribuzione è avviabile e operativo? |
 
 Per servizi e applicazioni interattive aggiungere un test di concorrenza proporzionato al numero atteso di utenti.
 
@@ -184,29 +184,29 @@ Domande minime:
 - cosa succede se il processo R termina?
 - cosa succede se l'input è invalido?
 - quali errori possono essere ritentati?
-- un retry può produrre effetti duplicati?
+- un nuovo tentativo automatico può produrre effetti duplicati?
 - quale output parziale può rimanere?
 - come viene segnalato il fallimento?
 
-Per i job con scrittura di dati, la **idempotenza** deve essere esplicitamente valutata prima di introdurre retry automatici.
+Per i job con scrittura di dati, la **idempotenza** deve essere esplicitamente valutata prima di introdurre nuovo tentativo automatico automatici.
 
-## 9. Deployment e rollback
+## 9. distribuzione e ripristino della versione precedente
 
 | Campo | Da compilare |
 |---|---|
 | Artefatto da distribuire | |
 | Procedura di deploy | |
-| Smoke test | |
+| prova rapida di avvio | |
 | Versione in produzione | |
 | Configurazione associata | |
-| Baseline precedente | |
-| Procedura di rollback | |
+| riferimento di confronto precedente | |
+| Procedura di ripristino della versione precedente | |
 | Tempo stimato di ripristino | |
-| Owner del rollback | |
+| Owner del ripristino della versione precedente | |
 
-Il rollback deve ripristinare una combinazione conosciuta di **codice e ambiente**. Ripristinare soltanto il commit può non essere sufficiente.
+Il ripristino della versione precedente deve ripristinare una combinazione conosciuta di **codice e ambiente**. Ripristinare soltanto il commit può non essere sufficiente.
 
-## 10. Logging e monitoring
+## 10. Logging e monitoraggio
 
 ### Batch
 
@@ -233,7 +233,7 @@ Osservare, secondo il caso:
 - dipendenze esterne;
 - restart.
 
-Il monitoring deve permettere di distinguere almeno:
+Il monitoraggio deve permettere di distinguere almeno:
 
 ~~~text
 problema applicativo
@@ -283,7 +283,7 @@ La domanda non è soltanto «funziona?», ma:
 
 ## 12. Cambiamenti e aggiornamenti
 
-Ogni modifica che può cambiare il comportamento della soluzione deve produrre una nuova baseline quando la modifica viene accettata.
+Ogni modifica che può cambiare il comportamento della soluzione deve produrre una nuova riferimento di confronto quando la modifica viene accettata.
 
 Sono potenzialmente rilevanti:
 
@@ -314,7 +314,7 @@ nuova baseline
 
 Questo è particolarmente importante per R perché l'ambiente software può influire sia sul risultato sia sulle performance.
 
-## 13. Ownership
+## 13. responsabilità
 
 | Responsabilità | Owner |
 |---|---|
@@ -324,10 +324,10 @@ Questo è particolarmente importante per R perché l'ambiente software può infl
 | Runtime R | |
 | Infrastruttura | |
 | Database | |
-| Deployment | |
-| Monitoring | |
+| distribuzione | |
+| monitoraggio | |
 | Incident response | |
-| Rollback | |
+| ripristino della versione precedente | |
 | Approvazione delle modifiche | |
 
 L'obiettivo non è assegnare tutto a IT. È rendere esplicito **chi deve decidere, chi deve fornire evidenze e chi deve intervenire**.
@@ -340,7 +340,7 @@ Una richiesta può essere considerata tecnicamente descritta quando IT può risp
 2. **come viene avviato;**
 3. **quale ambiente serve;**
 4. **quali dati e sistemi esterni utilizza;**
-5. **quanto costa il workload;**
+5. **quanto costa il carico di lavoro;**
 6. **come si verifica che funzioni;**
 7. **come si osserva in esercizio;**
 8. **come si aggiorna;**
@@ -359,7 +359,7 @@ Quando la soluzione è ancora in fase di definizione, non serve compilare subito
 - [ ] Quale versione di R e quali dipendenze servono?
 - [ ] Quali dati e sistemi esterni vengono utilizzati?
 - [ ] Chi la utilizza e con quale frequenza/concorrenza?
-- [ ] Qual è la baseline osservata?
+- [ ] Qual è la riferimento di confronto osservata?
 - [ ] Come viene configurata senza inserire segreti nel codice?
 - [ ] Come viene testata, monitorata e ripristinata?
 - [ ] Chi è owner applicativo e chi è owner operativo?
