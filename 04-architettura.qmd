@@ -75,6 +75,7 @@ Prima di parlare di server, container o CPU, bisogna identificare **che tipo di 
 | **Report Quarto** | render manuale o schedulato → documento | R + package + sorgenti, dati di input, dipendenze del render, destinazione dell'output, log del render e gestione degli artefatti |
 | **Applicazione Shiny** | utente → web/proxy → sessione/processo R | modello di deployment, autenticazione/autorizzazione, concorrenza, latenza, CPU/RAM per sessione, timeout, log, monitoring e scaling |
 | **API con plumber2** | client → HTTP/API → processo R | endpoint e contratto API, autenticazione, rete/TLS, timeout, concorrenza, limiti, logging, monitoring, versioning e gestione degli errori |
+| **Consumo di API HTTP con httr2** | processo R → client HTTP → servizio esterno | URL e contratto remoto, autenticazione, timeout, codici HTTP, parsing, retry e gestione dei limiti del servizio |
 | **Libreria/package R** | altro software importa il package | versione R/package, API del componente, dipendenze, test, compatibilità e processo di release |
 | **Job R integrato in una pipeline** | orchestratore → uno o più step R | contratto input/output, dipendenze tra step, scheduling, retry, idempotenza, log, stato del job e gestione degli errori |
 
@@ -206,6 +207,69 @@ Shiny
 
 Qui diventano centrali autenticazione, sessioni, concorrenza, latenza, timeout, CPU/RAM e comportamento al riavvio.
 
+### Strutture Shiny: come riconoscere l'entry point
+
+Le strutture più comuni sono convenzioni di organizzazione del codice; non definiscono da sole un diverso modello di scalabilità.
+
+| Struttura | Dove guardare | Implicazione operativa |
+|---|---|---|
+| `app.R` | un file che costruisce UI e server e chiama `shinyApp()` | avvio semplice; distinguere inizializzazione e codice eseguito per sessione |
+| `ui.R` + `server.R` | interfaccia e funzione server in file separati | controllare anche `global.R`, file caricati e working directory |
+| `global.R` | inizializzazione condivisa prima delle sessioni | dati e oggetti allocati qui possono essere condivisi tra sessioni nello stesso processo |
+| **golem** | progetto organizzato come package, entry point e cartella `dev/` | individuare funzioni di avvio/build, moduli, dipendenze e artefatto di deploy |
+| **Rhino** | `app.R` minimale e codice applicativo sotto `app/`, incluso `app/main.R` | seguire il loader e la convenzione dei moduli; non trattare `app.R` come un `global.R` tradizionale |
+
+La struttura effettiva va verificata nel repository e nella documentazione della versione usata. Riferimenti ufficiali: [Shiny](https://shiny.posit.co/), [golem](https://thinkr-open.github.io/golem/) e [Rhino — struttura dell'applicazione](https://appsilon.github.io/rhino/dev/articles/explanation/application-structure.html).
+
+### Ciclo di vita, sessioni e memoria condivisa
+
+In una singola istanza Shiny, l'inizializzazione del processo precede la creazione delle sessioni. La funzione `server(input, output, session)` viene invocata per ogni sessione; gli oggetti creati dentro tale funzione sono normalmente specifici di quella sessione. Gli oggetti inizializzati a livello globale possono invece essere letti da più sessioni servite dallo stesso processo.
+
+```{mermaid}
+%%| echo: false
+flowchart TD
+  A[Avvio processo Shiny] --> B[Inizializzazione globale]
+  B --> C[Dataset condiviso in sola lettura]
+  B --> D[Nuova sessione utente]
+  D --> E[Stato reattivo della sessione]
+  C --> E
+  E --> F[Output della sessione]
+```
+
+Esempio minimo di distinzione: il dataset globale è caricato una volta per processo; lo stato reattivo è creato separatamente per ogni sessione.
+
+```{r}
+#| label: esempio-shiny-stato-condiviso
+#| eval: false
+
+# global.R: caricamento all'avvio del processo, non per ogni sessione.
+dati_condivisi <- readRDS(Sys.getenv("DATASET_PATH"))
+
+# server.R: il valore reattivo è distinto per sessione.
+server <- function(input, output, session) {
+  filtro_sessione <- shiny::reactiveVal(NULL)
+
+  shiny::observeEvent(input$reset, {
+    filtro_sessione(NULL)
+  })
+
+  # usare dati_condivisi per letture; evitare di modificarlo in place.
+}
+```
+
+Il codice è uno schema di collocazione, non un'app completa: `input$reset` deve essere definito nella UI e il percorso del dataset configurato nell'ambiente. Il vantaggio del caricamento globale è ridurre letture ripetute e copie per sessione; il costo è la memoria residente per processo e la necessità di definire come aggiornare il dato.
+
+| Scelta | Vantaggio | Rischio/limite |
+|---|---|---|
+| Caricare dati globalmente | una lettura per processo; condivisione in sola lettura | RAM mantenuta per tutta la vita del processo; aggiornamento e invalidazione da progettare |
+| Caricare dati per sessione | isolamento dello stato e caricamento su richiesta | letture duplicate e RAM che può crescere con le sessioni |
+| Cache condivisa | riuso tra richieste/sessioni nel processo o in un servizio dedicato | scadenza, invalidazione, concorrenza e consistenza da definire |
+
+**Non assumere che un oggetto globale sia condiviso tra container o processi diversi.** Ogni replica può avere la propria copia. Un oggetto globale mutabile può inoltre causare interferenze tra utenti: i dati condivisi vanno trattati come immutabili, salvo sincronizzazione e regole esplicite.
+
+Per verificare il comportamento, testare con una sessione e poi con più sessioni simultanee, osservando latenza, RSS del processo, numero di processi/container, accessi al database e comportamento dopo restart. I dettagli di reload e ciclo di vita dipendono dal modo in cui Shiny viene avviata e dalla piattaforma di hosting.
+
+
 ### Cosa cambia per lo sviluppatore quando una soluzione entra in produzione
 
 Il passaggio in produzione non richiede allo sviluppatore di conoscere tutti i componenti della piattaforma. Richiede però che il confine tra applicazione e infrastruttura sia esplicito.
@@ -295,6 +359,75 @@ API R
 ~~~
 
 Il contratto dell'API, gli errori, i timeout, i limiti, l'autenticazione e la compatibilità tra versioni fanno parte della specifica operativa.
+
+### API esposte e API consumate sono ruoli distinti
+
+- **plumber2 espone** endpoint HTTP: il servizio R riceve richieste, valida input, esegue il lavoro e restituisce status code e body.
+- **httr2 consuma** un servizio HTTP: R costruisce una richiesta verso un endpoint remoto, applica timeout e autenticazione, interpreta status code e body e gestisce errori transitori.
+
+Il fatto che un'applicazione usi httr2 non significa che esponga un'API; usare plumber2 non significa che il servizio sappia consumare automaticamente API esterne. La documentazione ufficiale di [plumber2](https://plumber2.posit.co/reference/index.html) e [httr2](https://httr2.r-lib.org/reference/req_perform.html) descrive le rispettive API, che possono cambiare fra versioni: verificare le funzioni e gli argomenti sulla versione effettivamente adottata.
+
+Esempio minimo di API esposta con plumber2:
+
+```{r}
+#| label: esempio-plumber2-health
+#| eval: false
+
+api <- plumber2::api() |>
+  plumber2::api_get("/health", function() {
+    list(status = "ok")
+  })
+
+api |> plumber2::api_run(host = "127.0.0.1", port = 8080)
+```
+
+L'endpoint `/health` è soltanto un esempio di liveness del processo. Non certifica che Oracle o altre dipendenze siano disponibili. Il binding a `127.0.0.1` limita l'ascolto al loopback: per un deployment dietro proxy va configurato l'host di ascolto in base alla rete del container/host e alle regole di sicurezza. Non esporre direttamente il servizio a reti non fidate senza autenticazione, autorizzazione, TLS e limiti adeguati.
+
+### Esempio di consumo HTTP con httr2
+
+L'esempio usa un endpoint dimostrativo pubblico; sostituire URL, percorso, header e schema JSON con il contratto del servizio aziendale. Non inviare dati riservati a endpoint dimostrativi.
+
+```{r}
+#| label: esempio-httr2-get-json
+#| eval: false
+
+base_url <- Sys.getenv("API_BASE_URL")
+stopifnot(nzchar(base_url))
+
+richiesta <- httr2::request(base_url) |>
+  httr2::req_url_path_append("records") |>
+  httr2::req_url_query(limit = 100) |>
+  httr2::req_timeout(10)
+
+risposta <- richiesta |> httr2::req_perform()
+httr2::resp_check_status(risposta)
+contenuto <- httr2::resp_body_json(risposta)
+
+str(contenuto)
+```
+
+Per una richiesta POST, costruire il body esplicitamente e verificare il contratto:
+
+```{r}
+#| label: esempio-httr2-post-json
+#| eval: false
+
+payload <- list(codice = "ESEMPIO", periodo = "2026-01")
+
+risposta <- httr2::request(Sys.getenv("API_BASE_URL")) |>
+  httr2::req_url_path_append("calcoli") |>
+  httr2::req_body_json(payload) |>
+  httr2::req_timeout(15) |>
+  httr2::req_perform()
+
+httr2::resp_check_status(risposta)
+risultato <- httr2::resp_body_json(risposta)
+```
+
+Le credenziali vanno passate tramite il meccanismo aziendale approvato (per esempio secret store o variabili d'ambiente protette), non nel sorgente. Non attivare log verbose in produzione se possono esporre header o body sensibili.
+
+I retry sono **condizionali**, non automatici per qualsiasi errore. Sono adatti soltanto a errori transitori e operazioni per cui la ripetizione è sicura; per POST con effetti collaterali serve un contratto di idempotenza o una chiave idempotente. Limitare numero di tentativi e tempo totale, rispettare `Retry-After` quando previsto e non ritentare indiscriminatamente errori 4xx. Riferimento: [httr2 — req_retry](https://httr2.r-lib.org/reference/req_retry.html).
+
 
 #### R dentro una pipeline
 
@@ -442,6 +575,12 @@ Questa sezione non è un catalogo di prodotti: serve a mostrare come cambia il c
 - **Quarto**: produzione di report; R resta parte della pipeline di generazione.
 - **Shiny**: introduce sessioni e concorrenza; il dimensionamento dipende dal modello di deployment concreto.
 - **API R**: espone capacità analitiche a sistemi esterni; il contratto e i limiti operativi diventano parte del workload.
+
+- **APEX**: il workflow gestionale può invocare un servizio HTTP o leggere/scrivere dati secondo un contratto concordato. Definire chi autentica la chiamata, formato dei parametri e risultati, timeout, codici di errore e tracciamento della richiesta; evitare di duplicare in R logica di workflow già gestita adeguatamente da APEX.
+- **GIS**: specificare formato e schema dei dati spaziali, sistema di riferimento delle coordinate, unità, validità geometrica, volumi e confine di trasformazione. Stabilire se i dati arrivano da file, Oracle Spatial o un servizio e quale componente è responsabile della riproiezione e della validazione.
+- **Scheduler**: il job R deve avere working directory, account, ambiente, exit code, log, timeout e comportamento di retry espliciti. Lo scheduler gestisce calendario e stato; lo script deve fallire con un codice non-zero quando l'elaborazione non è riuscita.
+- **Proxy e gateway**: definire routing/path, TLS termination, identity forwarding, limiti di payload, timeout, rate limit e log correlabili. Il servizio R deve conoscere gli header affidabili che riceve e non deve fidarsi di header d'identità forniti direttamente da client non fidati.
+
 
 In tutti i casi la domanda IT è la stessa: **quale parte del lavoro avviene nel processo R e quale altrove?**
 
