@@ -157,6 +157,8 @@ DT <- data.table::data.table(
 
 Dopo aver riconosciuto la forma della soluzione, il passo successivo è capire che cosa serve per avviarla. La presenza di R da sola non garantisce che il programma funzioni: contano anche pacchetti, librerie di sistema e configurazione.
 
+Dopo aver riconosciuto la forma della soluzione, il passo successivo è capire che cosa serve per avviarla. La presenza di R da sola non garantisce che il programma funzioni: contano anche pacchetti, librerie di sistema e configurazione.
+
 # Strategia A: risultato completo.
 tempo_completo <- system.time({
   DT[, totale := quantita * prezzo]
