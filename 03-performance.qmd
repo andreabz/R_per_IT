@@ -132,7 +132,7 @@ system.time({
 })
 ```
 
-Per una situazione di riferimento reale vanno registrati anche versione di R, package rilevanti, ambiente, dimensione dell'input e condizioni del test.
+Per un confronto con una situazione di riferimento reale vanno registrati anche versione di R, package rilevanti, ambiente, dimensione dell'input e condizioni del test.
 
 ### Analisi dei tempi di esecuzione con gli strumenti base di R
 
@@ -150,7 +150,7 @@ Il risultato è **evidenza diagnostica**, non una prescrizione automatica di ott
 
 ### Analisi interattiva dei tempi di esecuzione con `profvis`
 
-Quando è utile una lettura visuale dell'analisi dei tempi di esecuzione, si può usare **`profvis`**. È un package R che presenta in forma interattiva il tempo speso nelle diverse chiamate e consente di esplorare più facilmente dove viene eseguito il lavoro.
+Quando serve vedere in modo interattivo dove viene speso il tempo, si può usare **`profvis`**. È un package R che presenta in forma interattiva il tempo speso nelle diverse chiamate e consente di esplorare più facilmente dove viene eseguito il lavoro.
 
 In un ambiente di prova:
 
