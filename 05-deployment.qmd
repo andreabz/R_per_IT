@@ -114,9 +114,9 @@ Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 - i valori tra parentesi angolari sono segnaposto da sostituire. Non esiste una versione universale di R o dell'immagine base: usare una situazione di riferimento supportata e aggiornarla secondo il processo di release.
 
 ```dockerfile
-Dopo aver scelto la forma della soluzione e i suoi confini, resta da stabilire come portarla nell'ambiente gestito da IT e come controllare che continui a funzionare. Gli esempi mostrano i passaggi e i punti da adattare, non configurazioni valide per ogni azienda.
 
-Dopo aver scelto la forma della soluzione e i suoi confini, resta da stabilire come portarla nell'ambiente gestito da IT e come controllare che continui a funzionare. Gli esempi mostrano i passaggi e i punti da adattare, non configurazioni valide per ogni azienda.
+
+
 
 # Dockerfile illustrativo: sostituire con una base approvata e verificata.
 ARG R_BASE_IMAGE
