@@ -7,6 +7,8 @@ subtitle: "Dalla richiesta R all'handover"
 
 Usare questa lista come primo filtro. Se una risposta non è disponibile, va richiesta allo sviluppatore o al referente.
 
+Per la raccolta completa usare la [scheda unica del Kit operativo per IT](appendice-kit-operativo.qmd); questa pagina è una guida al colloquio e alla diagnosi, non una seconda scheda di handover.
+
 - [ ] Classificare la soluzione: script, batch, Quarto, Shiny, API plumber2, package, pipeline.
 - [ ] Individuare entry point, repository, versione e owner.
 - [ ] Descrivere ambiente: versione R, sistema operativo, package, renv.lock, librerie native e driver.

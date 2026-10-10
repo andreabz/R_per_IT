@@ -9,6 +9,8 @@ Questa appendice è pensata per essere usata **fuori dal corso**, durante una ri
 
 L'obiettivo non è chiedere allo sviluppatore una documentazione infinita. È raccogliere le informazioni minime che permettono a IT di capire che cosa deve eseguire, con quali dipendenze, con quali risorse e con quale responsabilità.
 
+Questa è la **scheda unica di handover**: il capitolo [Architettura e integrazione](04-architettura.qmd) indica quali campi privilegiare per ciascuna forma applicativa; gli [Strumenti pratici per IT](strumenti-pratici.qmd) guidano la raccolta delle evidenze e la diagnosi. Compilare qui i dati una sola volta, richiamando la scheda dagli altri documenti invece di crearne copie divergenti.
+
 > **Una soluzione R è pronta per essere presa in carico quando il workload, l'ambiente, le dipendenze, il comportamento operativo e le responsabilità sono descritti in modo verificabile.**
 
 ## 1. Scheda di identificazione

@@ -109,7 +109,18 @@ test + baseline
 deployment + recovery
 ```
 
-Il livello di dettaglio cambia con la soluzione.
+Il livello di dettaglio cambia con la soluzione. Per evitare checklist parallele, usare la scheda nell'appendice **Kit operativo per IT** come raccolta unica delle informazioni e integrare qui soltanto i dettagli specifici della forma applicativa.
+
+| Forma | Campi della scheda da considerare prioritari | Campi condizionali o specifici |
+|---|---|---|
+| Script personale / batch | entrypoint, ambiente, input/output, frequenza, durata, exit code, log e owner | concorrenza, retry, alert e recovery secondo il rischio |
+| Quarto | sorgenti, dipendenze, dati, destinazione, durata del render e artefatto | scheduler, pubblicazione automatica e rollback dell'artefatto |
+| Package | API del componente, dipendenze, test, compatibilità e release | repository interno, firma o processo di approvazione se richiesti |
+| Pipeline | contratti tra step, stato, exit code, retry, idempotenza e artefatti | parallelismo, recovery per step e orchestrazione distribuita |
+| Shiny | entrypoint, sessioni, concorrenza, latenza, dati condivisi, autenticazione e restart | proxy, cache condivisa, scaling e test di carico secondo l'architettura |
+| API plumber2 / client httr2 | contratto HTTP, timeout, errori, autenticazione, log e dipendenze esterne | rate limit, paginazione, retry e versionamento secondo il contratto |
+
+Per ogni campo, la scheda distingue **necessario**, **condizionale** e **buona pratica**: non trasformare una voce non applicabile in un requisito artificiale; annotare invece il motivo. Se un dato manca, registrarlo come informazione da ottenere e indicare il test o il responsabile. Le sezioni 1–14 dell'appendice coprono identificazione, esecuzione, ambiente, dati, risorse, sicurezza, test, errori, deployment, monitoring, baseline e ownership.
 
 Per esempio, per uno **script personale** la concorrenza e l'alta disponibilità possono non essere requisiti. Per una **API** diventano invece requisiti centrali: il servizio deve definire chi può chiamarlo, come vengono gestite richieste contemporanee, quali timeout sono ammessi e cosa accade quando una dipendenza esterna non risponde.
 
@@ -397,7 +408,16 @@ stopifnot(nzchar(base_url))
 richiesta <- httr2::request(base_url) |>
   httr2::req_url_path_append("records") |>
   httr2::req_url_query(limit = 100) |>
+  httr2::req_headers(
+    Accept = "application/json",
+    `X-Request-ID` = Sys.getenv("REQUEST_ID", unset = "r-per-it-test")
+  ) |>
   httr2::req_timeout(10)
+
+token <- Sys.getenv("API_TOKEN")
+if (nzchar(token)) {
+  richiesta <- richiesta |> httr2::req_auth_bearer_token(token)
+}
 
 risposta <- richiesta |> httr2::req_perform()
 httr2::resp_check_status(risposta)
@@ -405,6 +425,48 @@ contenuto <- httr2::resp_body_json(risposta)
 
 str(contenuto)
 ```
+
+L'header Accept dichiara il formato atteso; X-Request-ID è un esempio di identificativo da correlare nei log, se il servizio lo supporta. L'autenticazione bearer è aggiunta solo se API_TOKEN è valorizzato: adeguare il meccanismo al contratto aziendale. Non registrare il token nei log.
+
+#### Paginazione con cursore
+
+La forma della paginazione non è standardizzata dal solo HTTP: l'esempio seguente presuppone che il servizio restituisca data e next_cursor nel JSON. Adattare questi nomi e la condizione di fine al contratto reale. Il cursore viene passato come query parameter e il ciclo termina quando il servizio non ne restituisce un altro.
+
+```{r}
+#| label: esempio-httr2-paginazione-cursore
+#| eval: false
+
+token <- Sys.getenv("API_TOKEN")
+cursore <- NULL
+pagine <- list()
+
+repeat {
+  richiesta <- httr2::request(base_url) |>
+    httr2::req_url_path_append("records") |>
+    httr2::req_url_query(limit = 100) |>
+    httr2::req_headers(Accept = "application/json") |>
+    httr2::req_timeout(10)
+
+  if (!is.null(cursore) && nzchar(cursore)) {
+    richiesta <- richiesta |> httr2::req_url_query(cursor = cursore)
+  }
+  if (nzchar(token)) {
+    richiesta <- richiesta |> httr2::req_auth_bearer_token(token)
+  }
+
+  risposta <- richiesta |> httr2::req_perform()
+  httr2::resp_check_status(risposta)
+  pagina <- httr2::resp_body_json(risposta)
+
+  pagine[[length(pagine) + 1L]] <- pagina$data
+  cursore <- pagina$next_cursor
+  if (is.null(cursore) || !nzchar(cursore)) break
+}
+
+record <- unlist(pagine, recursive = FALSE)
+```
+
+Il ciclo non impone un numero massimo di pagine: per servizi non completamente fidati, aggiungere un limite esplicito e una gestione del cursore ripetuto. Non aggiungere retry indiscriminati; applicare una politica limitata solo se il servizio e l'operazione lo consentono.
 
 Per una richiesta POST, costruire il body esplicitamente e verificare il contratto:
 
