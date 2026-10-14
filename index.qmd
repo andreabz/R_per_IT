@@ -94,29 +94,15 @@ La sequenza può essere letta anche come una serie di domande:
 
 > **Che cosa sto gestendo? → Come viene eseguito? → Come posso dimostrare cosa sta succedendo? → Dove deve avvenire il lavoro? → Come porto la soluzione in esercizio? → Come trasformo le evidenze in una decisione?**
 
-## Il modello operativo
+## Le dimensioni da valutare
 
-Il filo conduttore del manuale è:
+Il metodo ricorrente è **requisito → evidenza → decisione → responsabilità → situazione di riferimento**. Si applica a cinque dimensioni:
 
-```text
-requisito
-   ↓
-evidenza
-   ↓
-decisione
-   ↓
-responsabilità
-   ↓
-situazione di riferimento
-```
-
-Il modello viene applicato a cinque dimensioni ricorrenti:
-
-- **software** — versione di R, pacchetti, dipendenze e componenti nativi;
-- **runtime** — processi, memoria, worker, thread e parallelismo;
-- **carico di lavoro** — CPU, RAM, I/O, rete e database;
-- **architettura** — confini tra R, database, servizi e piattaforme;
-- **operatività** — rilascio, configurazione, sicurezza, monitoraggio e responsabilità operativa.
+- **Software:** versione di R, package, dipendenze e componenti nativi.
+- **Runtime:** processi, memoria, worker, thread e parallelismo.
+- **Carico di lavoro:** CPU, RAM, I/O, rete e database.
+- **Architettura:** confini tra R, database, servizi e piattaforme.
+- **Operatività:** rilascio, configurazione, sicurezza, monitoraggio e responsabilità.
 
 ## Quattro domande da ricordare
 
