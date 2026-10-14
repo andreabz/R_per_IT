@@ -84,7 +84,7 @@ system.time({
 Se serve capire dove il codice R spende il tempo:
 
 ```{r}
-#| label: procedura-analisi dei tempi di esecuzione-it
+#| label: procedura-analisi-tempi-esecuzione-it
 
 Rprof("profilo.out")
 risultato <- funzione_da_testare()
@@ -92,7 +92,7 @@ Rprof(NULL)
 summaryRprof("profilo.out")
 ```
 
-`funzione_da_testare()` è un segnaposto da sostituire con l'punto di ingresso o la funzione fornita dallo sviluppatore.
+`funzione_da_testare()` è un segnaposto da sostituire con il punto di ingresso o la funzione fornita dallo sviluppatore.
 
 > **Regola:** IT deve saper produrre una diagnosi riproducibile, non necessariamente correggere il codice.
 
@@ -145,7 +145,7 @@ Ricostruire l'ambiente in test, eseguire il job con un dataset rappresentativo e
 | Output prodotto | ... |
 | Esito | ... |
 
-**Output:** prima riferimento di confronto riproducibile.
+**Output:** una prima situazione di riferimento riproducibile.
 
 Se la soluzione non parte, il tecnico deve classificare il problema come dipendenza R, dipendenza nativa/driver, configurazione, accesso a sistema esterno o problema applicativo, raccogliendo l'evidenza corrispondente.
 
@@ -228,7 +228,7 @@ La decisione deve essere accompagnata da:
 - test eseguiti;
 - alternative considerate;
 - configurazione proposta o modifica applicativa;
-- nuova riferimento di confronto attesa;
+- nuova situazione di riferimento attesa;
 - responsabilità.
 
 **Output finale:** la richiesta iniziale viene trasformata in una decisione tecnica verificabile e in un passaggio di consegne utilizzabile da IT.
