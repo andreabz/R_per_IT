@@ -120,7 +120,7 @@ L'obiettivo non è ottimizzare il codice, ma permettere a IT di produrre una mis
 ### Misura ripetibile
 
 ```{r}
-#| label: prova comparativa-base-r
+#| label: prova-comparativa-base-r
 
 misura <- function(n = 1000000) {
   x <- rnorm(n)
@@ -202,7 +202,7 @@ Il percorso didattico è quindi **misurare → localizzare → correlare → tes
 - **Limiti:** `Rprof()` campiona lo stack R e non attribuisce da solo tempi di rete o query; i profiler introducono overhead. Un profilo CPU non è una misura completa della memoria.
 
 ```{r}
-#| label: laboratorio-analisi dei tempi di esecuzione-ripetibile
+#| label: laboratorio-analisi-tempi-esecuzione-ripetibile
 #| eval: false
 
 n <- 5000000L
@@ -306,7 +306,7 @@ Nel caso R, CPU elevata può derivare dal codice R, da `BLAS/LAPACK`, da thread 
 - **Limiti:** piani di esecuzione, cache, indici e carico del database influenzano i risultati. Il codice è illustrativo e va adattato allo schema e alle policy aziendali.
 
 ```{r}
-#| label: laboratorio-esecuzione dei filtri e delle aggregazioni nel database-oracle
+#| label: laboratorio-filtri-aggregazioni-database-oracle
 #| eval: false
 
 tempo_completo <- system.time({
@@ -324,7 +324,7 @@ tempo_completo <- system.time({
   )
 })
 
-tempo_esecuzione dei filtri e delle aggregazioni nel database <- system.time({
+tempo_db <- system.time({
   totale_db <- DBI::dbGetQuery(
     con,
     "SELECT PRODOTTO_ID, SUM(IMPORTO) AS IMPORTO_TOTALE
@@ -339,8 +339,8 @@ stopifnot(nrow(totale_r) == nrow(totale_db))
 list(
   tempo_completo = tempo_completo,
   righe_trasferite_completo = nrow(vendite),
-  tempo_esecuzione dei filtri e delle aggregazioni nel database = tempo_esecuzione dei filtri e delle aggregazioni nel database,
-  righe_trasferite_esecuzione dei filtri e delle aggregazioni nel database = nrow(totale_db)
+  tempo_db = tempo_db,
+  righe_trasferite_db = nrow(totale_db)
 )
 ```
 
