@@ -140,7 +140,7 @@ Approfondire input/output/reactive expressions, invalidazione, caching, sessioni
 
 ### distribuzione
 
-Confrontare, quando pertinente, esecuzione diretta su host, container e ShinyProxy; citare ShinyProxy Operator in Kubernetes se utile allo scenario. Fornire configurazioni e comandi **quasi eseguibili**, sufficientemente completi da mostrare i confini tra componenti e il percorso di avvio, ma adattabili all'infrastruttura aziendale.
+Confrontare, quando pertinente, esecuzione diretta su host, container e ShinyProxy; citare ShinyProxy Operator con orchestratori Docker, Docker Swarm o Kubernetes se utile allo scenario. Fornire configurazioni e comandi **quasi eseguibili**, sufficientemente completi da mostrare i confini tra componenti e il percorso di avvio, ma adattabili all'infrastruttura aziendale.
 
 Per ogni esempio:
 - indicare prerequisiti e assunzioni;
@@ -221,7 +221,7 @@ Gli esempi di distribuzione devono essere quasi eseguibili, con comandi e config
 - Preferire spiegazioni concrete, tabelle comparative e diagrammi utili a decidere.
 - Evitare slogan, frasi motivazionali, ripetizioni e affermazioni generiche non verificabili.
 - Non introdurre codice solo per decorazione; spiegare perché ogni esempio serve a una decisione IT.
-- Definire i termini tecnici al primo uso quando non sono ovvi per il destinatario.
+- Definire i termini tecnici al primo uso quando non sono ovvi per il destinatario, tenuto conto del pubblico a cui si rivolge il corso.
 - Separare fatti, assunzioni, esempi e raccomandazioni.
 - Evitare di presentare una buona pratica come obbligo universale.
 - Mantenere nomenclatura e significato dei termini coerenti tra capitoli e slide.
@@ -253,7 +253,10 @@ Vincoli editoriali:
 - evitare frasi motivazionali o formule retoriche: arrivare al punto;
 - limitare il codice alle righe necessarie a chiarire un comportamento o una decisione;
 - usare tabelle brevi e diagrammi leggibili;
-- usare fence Mermaid validi, senza sostituirli con tilde quando il renderer si aspetta il fence Quarto.
+- usare fence Mermaid validi, senza sostituirli con tilde quando il renderer si aspetta il fence Quarto;
+- evitare slide vuote tra gli argomenti o sezioni;
+- privilegiare diagrammi Mermaid orizzontali se con più di 5 elementi.
+
 
 Se una modifica non è adatta alle slide, non forzarne la riproduzione: sintetizzare la conseguenza operativa o il criterio decisionale.
 
