@@ -113,6 +113,34 @@ Lo sviluppatore consegna `report_vendite_giornaliero`, un job batch che:
 
 Il compito di IT è **non partire dalla macchina richiesta**, ma ricostruire progressivamente la soluzione.
 
+### Modalità di lavoro e consegna
+
+- **Durata consigliata:** 30–35 minuti in aula; 10 minuti per il confronto collettivo.
+- **Gruppi:** 2–4 persone, con un portavoce.
+- **Vincolo:** il caso non fornisce misure reali di performance. I partecipanti non devono inventare valori né concludere in anticipo che serva più RAM o CPU.
+- **Consegna unica:** una scheda di presa in carico di una pagina, accompagnata da una decisione provvisoria.
+
+La scheda deve riportare:
+
+1. fatti noti e informazioni mancanti;
+2. forma applicativa, entrypoint, ambiente e dipendenze;
+3. misure da raccogliere e condizioni per renderle confrontabili;
+4. almeno un'ipotesi sul rallentamento e il test che potrebbe confutarla;
+5. comportamento atteso in caso di errore Oracle e output parziale;
+6. criteri di accettazione, responsabilità e decisione provvisoria.
+
+### Griglia di valutazione
+
+| Criterio | Punti |
+|---|---:|
+| Distingue fatti, ipotesi e dati mancanti | 0–2 |
+| Propone misure ripetibili e pertinenti | 0–2 |
+| Considera database, runtime e codice senza assumere la causa | 0–2 |
+| Definisce gestione degli errori e validità dell'output | 0–2 |
+| Formula un passo successivo verificabile e assegna le responsabilità | 0–2 |
+
+**Soglia proposta:** almeno 7/10 e nessun errore critico, come inventare misure, suggerire un retry senza valutarne gli effetti o considerare valido un output parziale. La griglia misura la qualità del ragionamento operativo, non la capacità di indovinare la causa del rallentamento.
+
 ### Fase 1 — Identificazione e ambiente
 
 **Riferimento:** capitolo 1.
