@@ -287,7 +287,7 @@ flowchart LR
 |---|---|---|
 | Esito | Exit code e output | Codici HTTP e risposta |
 | Carico | Durata e frequenza | Latenza e concorrenza |
-| Errore | nuovo tentativo automatico, idempotenza, output parziale | Timeout, limiti, errori per richiesta |
+| Errore | Retry idempotente, output parziale | Timeout, limiti, errori per richiesta |
 | Osservabilità | Avvio/fine, log, durata | Disponibilità, latenza, errori, risorse |
 
 ---
