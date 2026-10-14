@@ -9,7 +9,15 @@ Questa appendice è pensata per essere usata **fuori dal corso**, durante una ri
 
 L'obiettivo non è chiedere allo sviluppatore una documentazione infinita. È raccogliere le informazioni minime che permettono a IT di capire che cosa deve eseguire, con quali dipendenze, con quali risorse e con quale responsabilità.
 
-Questa è la **scheda unica di passaggio di consegne**: il capitolo [Architettura e integrazione](04-architettura.qmd) indica quali campi privilegiare per ciascuna forma applicativa; gli [Strumenti pratici per IT](strumenti-pratici.qmd) guidano la raccolta delle evidenze e la diagnosi. Compilare qui i dati una sola volta, richiamando la scheda dagli altri documenti invece di crearne copie divergenti.
+Questa è la **scheda unica di passaggio di consegne**. Il capitolo [Architettura e integrazione](04-architettura.qmd) spiega quali campi contano per ciascuna forma applicativa; gli [Strumenti pratici per IT](strumenti-pratici.qmd) guidano la raccolta delle evidenze e la diagnosi. Compilare qui i dati una sola volta e richiamare questa scheda dagli altri documenti.
+
+### Come interpretare i campi
+
+- **Necessario:** informazione richiesta per valutare o gestire la soluzione.
+- **Condizionale:** richiesta solo se applicabile alla forma di esecuzione, ai rischi o ai vincoli del servizio; se non applicabile, annotare il motivo.
+- **Raccomandazione:** buona pratica utile, ma non requisito universale.
+
+Se un'informazione necessaria manca, indicare chi deve fornirla e prima di quale decisione o rilascio.
 
 > **Una soluzione R è pronta per essere presa in carico quando il carico di lavoro, l'ambiente, le dipendenze, il comportamento operativo e le responsabilità sono descritti in modo verificabile.**
 
@@ -127,7 +135,7 @@ tempo + RAM + CPU
 confronto
 ~~~
 
-Non è necessario fare sempre una prova comparativa complesso. Il livello di misura deve essere proporzionato al rischio e al costo della decisione.
+Non serve eseguire sempre una prova comparativa complessa. Il livello di misura deve essere proporzionato al rischio e al costo della decisione.
 
 ## 6. Sicurezza e configurazione
 
@@ -349,7 +357,7 @@ Una richiesta può essere considerata tecnicamente descritta quando IT può risp
 
 Questa scheda non sostituisce gli standard aziendali. È un modo per rendere una richiesta R traducibile in requisiti IT.
 
-## 15. Checklist breve per una prima riunione
+## 15. Checklist iniziale per la prima riunione
 
 Quando la soluzione è ancora in fase di definizione, non serve compilare subito tutta la scheda. Una prima riunione può partire da queste dieci domande:
 
