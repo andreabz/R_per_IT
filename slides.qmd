@@ -190,17 +190,13 @@ Confrontare con il trasferimento completo: righe, colonne, volume, tempi DB e te
 
 ```{mermaid}
 %%| echo: false
-flowchart TD
- A["Avvio processo"] --> B["Inizializzazione globale"]
- B --> C["Dati condivisi nel processo"]
- B --> D["Sessione utente"]
- D --> E["Stato reattivo di sessione"]
- C --> E
+flowchart LR
+ A["Avvio"] --> B["Dati globali condivisi"]
+ A --> C["Sessione utente"]
+ C --> D["Stato reattivo"]
 ```
 
-- Oggetti globali possono essere condivisi fra sessioni dello stesso processo.
-- Lo stato creato nella funzione server è normalmente specifico della sessione.
-- Cache e oggetti globali non sono automaticamente condivisi tra processi o container.
+Dati globali: condivisi nel processo. Stato reattivo: specifico della sessione. Cache non condivisa automaticamente fra processi.
 
 ---
 
@@ -217,12 +213,12 @@ flowchart TD
 
 # API esposte e consumate
 
-| Ruolo | Tecnologia | Direzione |
+| Ruolo | Tecnologia | Flusso |
 |---|---|---|
-| Esporre endpoint HTTP da R | `plumber2` | Client → R |
-| Chiamare endpoint HTTP da R | `httr2` | R → servizio |
+| Esporre un'API | `plumber2` | Client → R |
+| Chiamare un'API | `httr2` | R → servizio |
 
-Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API non è un client remoto.
+Sono ruoli distinti: server HTTP e client HTTP.
 
 ---
 
@@ -249,13 +245,13 @@ Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API
 
 # Integrazioni: definire i confini
 
-| Integrazione | Contratto da esplicitare |
+| Componente | Verifiche |
 |---|---|
-| Oracle | Driver, query, transazioni, volumi e timeout |
-| APEX | Parametri, risultati, errori e identità |
-| GIS | Formati, coordinate, geometrie e volumi |
-| Scheduler | Account, ambiente, exit code e nuovo tentativo automatico |
-| Proxy/gateway | Routing, TLS, identità, limiti e timeout |
+| Oracle | Driver, query, volumi, timeout |
+| APEX | Parametri, risultati, identità |
+| GIS | Formati, coordinate, volumi |
+| Scheduler | Account, ambiente, exit code |
+| Proxy/gateway | Routing, TLS, limiti |
 
 ---
 
@@ -274,7 +270,7 @@ flowchart LR
 
 ---
 
-# distribuzione: prerequisiti e confini
+# Distribuzione: prerequisiti e confini
 
 - Dichiarare entrypoint, directory, runtime e dipendenze.
 - Separare configurazione e segreti gestiti dalla piattaforma.
@@ -307,18 +303,18 @@ flowchart LR
 
 ---
 
-# passaggio di consegne: informazioni minime
+# Passaggio di consegne: dati minimi
 
-- Repository, commit/tag, owner e il punto di ingresso.
-- Ambiente R, package, file che registra le dipendenze, OS e dipendenze native.
-- Input/output, volumi, frequenza, durata e concorrenza.
-- Sistemi esterni, account, permessi e configurazione.
-- Evidenze di test, riferimento di confronto e limiti noti.
-- Runbook, log/metriche, timeout, recovery e contatti operativi.
+- Repository, versione e punto di ingresso.
+- Runtime, package, OS e dipendenze native.
+- Input/output, volumi, frequenza e concorrenza.
+- Sistemi esterni, accessi e configurazione.
+- Test, riferimento di confronto e limiti noti.
+- Runbook, log, timeout e contatti operativi.
 
 ---
 
-# Gate di rilascio e ripristino della versione precedente
+# Gate di rilascio e ripristino
 
 ```{mermaid}
 %%| echo: false
