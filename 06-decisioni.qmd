@@ -61,7 +61,7 @@ commit + R + package + native libraries + configuration + test data + test resul
 
 Una modifica rilevante produce una nuova situazione di riferimento dopo la verifica.
 
-Per una soluzione R, una modifica apparentemente piccola a R, package o librerie native può cambiare performance o comportamento. la situazione di riferimento deve quindi rendere visibile anche l'ambiente.
+Per una soluzione R, una modifica apparentemente piccola a R, ai package o alle librerie native può cambiare prestazioni o comportamento. La situazione di riferimento deve quindi descrivere anche l'ambiente.
 
 ## Chi è responsabile di cosa
 
