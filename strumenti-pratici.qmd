@@ -195,7 +195,7 @@ Chiedersi:
 
 **Output:** confini chiari tra carico di lavoro R e componenti IT.
 
-### Fase 5 — distribuzione e operatività
+### Fase 5 — Distribuzione e operatività
 
 **Riferimento:** capitolo 5.
 
@@ -271,7 +271,7 @@ Per ogni fase non è necessario arrivare a una diagnosi definitiva. Il criterio 
 
 > «Ho uno script R che legge Oracle e produce un Excel. Deve partire ogni mattina.»
 
-### passaggio di consegne minimo compilato
+### Passaggio di consegne minimo compilato
 
 | Campo | Esempio |
 |---|---|
