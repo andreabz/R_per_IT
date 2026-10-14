@@ -283,7 +283,7 @@ La domanda non è soltanto «funziona?», ma:
 
 ## 12. Cambiamenti e aggiornamenti
 
-Ogni modifica che può cambiare il comportamento della soluzione deve produrre una nuova riferimento di confronto quando la modifica viene accettata.
+Ogni modifica che può cambiare il comportamento della soluzione deve produrre una nuova situazione di riferimento quando la modifica viene accettata.
 
 Sono potenzialmente rilevanti:
 
@@ -355,7 +355,7 @@ Quando la soluzione è ancora in fase di definizione, non serve compilare subito
 
 - [ ] Che cosa deve fare la soluzione?
 - [ ] Qual è la forma operativa: batch, Quarto, `Shiny`, API, package o pipeline?
-- [ ] Qual è l'punto di ingresso e dove si trova il codice?
+- [ ] Qual è il punto di ingresso e dove si trova il codice?
 - [ ] Quale versione di R e quali dipendenze servono?
 - [ ] Quali dati e sistemi esterni vengono utilizzati?
 - [ ] Chi la utilizza e con quale frequenza/concorrenza?
