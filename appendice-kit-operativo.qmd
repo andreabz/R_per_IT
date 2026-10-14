@@ -196,7 +196,7 @@ Domande minime:
 - quale output parziale può rimanere?
 - come viene segnalato il fallimento?
 
-Per i job con scrittura di dati, la **idempotenza** deve essere esplicitamente valutata prima di introdurre nuovo tentativo automatico automatici.
+Per i job con scrittura di dati, la **idempotenza** deve essere esplicitamente valutata prima di introdurre nuovi tentativi automatici.
 
 ## 9. Distribuzione e ripristino della versione precedente
 
