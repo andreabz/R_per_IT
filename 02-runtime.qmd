@@ -421,7 +421,7 @@ La domanda infrastrutturale diventa:
 
 > **quale combinazione di worker e thread nativi produce il tempo richiesto senza introdurre un costo eccessivo di RAM o contesa CPU?**
 
-## prova comparativa del runtime
+## Prova comparativa del runtime
 
 | Worker | Thread nativi | Tempo | Speedup | Efficienza | Picco RSS | CPU |
 |---:|---:|---:|---:|---:|---:|---:|
