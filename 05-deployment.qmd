@@ -300,6 +300,28 @@ Domande minime:
 
 Per i job che producono effetti persistenti, nuovo tentativo automatico e **idempotenza** devono essere valutati insieme.
 
+### Caso guidato — Oracle non disponibile durante un batch
+
+Supponiamo che un job giornaliero legga Oracle, produca un file e lo pubblichi in una directory condivisa. La policy deve distinguere il fallimento del tentativo dalla validità dell'output.
+
+| Evento | Comportamento atteso | Evidenza da controllare |
+|---|---|---|
+| Oracle non risponde al primo tentativo | Timeout esplicito; il job termina con esito di errore | Log con identificativo del job, fase, durata e causa; exit code non-zero |
+| Errore classificato come transitorio | Scheduler riprova secondo una policy limitata e documentata | Numero dei tentativi, intervallo e motivo del retry |
+| Input non valido o errore logico | Nessun retry automatico indiscriminato | Errore classificato e notifica al referente applicativo |
+| Processo interrotto durante la scrittura | L'output incompleto non viene pubblicato come risultato valido | File temporaneo distinto dal file finale; esito di validazione |
+| Tentativi esauriti | Il job resta fallito e genera un alert | Stato finale, log completi e procedura di intervento |
+
+Una strategia comune per un file consiste nello scrivere prima in un percorso temporaneo univoco, validarlo e pubblicarlo solo al termine con un'operazione di rinomina supportata dal filesystem target. La semantica della rinomina va verificata nell'ambiente effettivo; non garantisce da sola l'atomicità di eventuali scritture su Oracle o altri sistemi.
+
+Prima di abilitare un retry, rispondere a tre domande:
+
+1. L'errore è davvero transitorio o richiede una correzione?
+2. Ripetere il job può duplicare scritture, notifiche o pubblicazioni?
+3. Come si riconosce e si scarta un output parziale o già prodotto da un tentativo precedente?
+
+**Prova di accettazione:** simulare un'indisponibilità di Oracle e un'interruzione durante la produzione dell'output. Verificare che il job segnali il fallimento, non pubblichi un risultato incompleto, rispetti il numero massimo di tentativi e renda identificabile l'esito finale. Non eseguire prove distruttive in produzione.
+
 ## Logging, monitoraggio e sicurezza
 
 Questi aspetti appartengono al normale esercizio IT; per il corso interessa ciò che deve essere osservabile del carico di lavoro R:

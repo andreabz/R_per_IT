@@ -137,7 +137,27 @@ ma prima:
 
 ## Le forme applicative cambiano il problema IT
 
-La tabella precedente riassume i modelli di esecuzione e i requisiti IT tipici. La distinzione da mantenere è questa: **non si distribuisce R in astratto, ma uno specifico modello di esecuzione**. Le sezioni seguenti approfondiscono le differenze architetturali senza ripetere l'elenco delle forme applicative.
+**Non si distribuisce R in astratto, ma uno specifico modello di esecuzione.** La matrice seguente serve a confrontare gli scenari prima di definire la piattaforma. Non sostituisce i requisiti aziendali né le verifiche di sicurezza: identifica il minimo che sviluppatore e IT devono rendere verificabile.
+
+| Scenario | Unità di esecuzione | Verifiche prioritarie | Criterio minimo di accettazione |
+|---|---|---|---|
+| Script personale | Avvio da parte dell'utente | Ambiente, accessi ai dati, percorsi, output | Un altro utente autorizzato riesce a ricostruire l'ambiente e a eseguire il caso previsto |
+| Batch non schedulato | Singolo processo R | Account, working directory, input/output, exit code, log | Esecuzione ripetibile in ambiente di test; esito ed errori sono riconoscibili |
+| Batch schedulato | Job avviato da scheduler | Calendario, sovrapposizioni, timeout, retry, output parziale | Esecuzione automatica verificata con successo e fallimento; il retry non duplica effetti |
+| Report Quarto | Processo di render e artefatto | Dati di ingresso, dipendenze, parametri, destinazione e versione del documento | Il render produce l'artefatto atteso in ambiente controllato; pubblicazione e render sono distinguibili |
+| Package o step di pipeline | API del package o singolo step | Versione, contratto input/output, dipendenze, test e passaggio degli artefatti | Versione identificata, test pertinenti superati e output dello step verificato |
+| API consumata da R | Singola chiamata remota | Contratto, autenticazione, timeout, status, paginazione, retry | Risposte valide e casi d'errore sono gestiti senza esporre credenziali o duplicare operazioni |
+| API esposta da R | Richiesta HTTP concorrente | Contratto, identità, limiti, timeout, log, disponibilità delle dipendenze | Client autorizzato riceve la risposta prevista; input non valido e dipendenza indisponibile hanno esiti definiti |
+| Applicazione `Shiny` | Processo e sessione utente | Sessioni concorrenti, memoria, isolamento, cache, restart e accessi | Sessioni simultanee e percorso d'errore provati entro limiti di latenza e risorse concordati |
+
+### Come usare la matrice
+
+1. **Classificare il workload**: una soluzione può combinare più righe, per esempio un job schedulato che genera un report Quarto.
+2. **Dichiarare ciò che manca**: un dato non disponibile va assegnato a un referente o a una prova, non sostituito con una stima non verificata.
+3. **Definire il test di accettazione** prima di scegliere risorse o piattaforma: deve coprire il percorso nominale e almeno il fallimento operativo più rilevante.
+4. **Assegnare le responsabilità**: lo sviluppatore descrive il comportamento applicativo; IT verifica ambiente, accessi, piattaforma e operabilità; le responsabilità condivise vanno esplicitate.
+
+Le sezioni seguenti approfondiscono le differenze architetturali senza ripetere l'elenco delle forme applicative.
 
 ## R rispetto ai componenti IT già presenti
 
@@ -386,6 +406,23 @@ api |> plumber2::api_run(host = "127.0.0.1", port = 8080)
 
 L'endpoint `/health` è soltanto un esempio di liveness del processo. Non certifica che Oracle o altre dipendenze siano disponibili. Il binding a `127.0.0.1` limita l'ascolto al loopback: per una distribuzione dietro proxy va configurato l'host di ascolto in base alla rete del container/host e alle regole di sicurezza. Non esporre direttamente il servizio a reti non fidate senza autenticazione, autorizzazione, TLS e limiti adeguati.
 
+### Caso guidato — distinguere errore della richiesta e indisponibilità del servizio
+
+Per un'API esposta, definire il contratto d'errore prima del rilascio. Lo status code va scelto in base al significato dell'errore e alle convenzioni del servizio, non usato come contenitore generico per ogni eccezione.
+
+| Caso | Comportamento da specificare | Verifica lato client/IT |
+|---|---|---|
+| Parametro mancante o non valido | Rifiutare la richiesta senza eseguire il calcolo | Status di richiesta non valida e body con codice/messaggio non sensibile |
+| Credenziali assenti o non valide | Rifiutare l'accesso secondo il contratto | Status coerente con autenticazione/autorizzazione; nessun dettaglio di segreto nei log |
+| Oracle non raggiungibile | Restituire errore controllato senza esporre stack trace | Timeout limitato, log correlabile e dipendenza identificata |
+| Elaborazione oltre il tempo concordato | Terminare o interrompere secondo una policy esplicita | Il client riceve un esito comprensibile; il processo non accumula richieste bloccate senza limite |
+| Eccezione inattesa | Risposta generica per il client e dettaglio tecnico protetto nei log | Identificativo di correlazione, stack trace accessibile solo a chi è autorizzato |
+| Processo vivo ma dipendenza essenziale indisponibile | Separare liveness e readiness, se la piattaforma lo supporta | La sonda di readiness riflette le dipendenze richieste per servire traffico |
+
+**Prova di accettazione:** eseguire richieste nominali e richieste con input invalido; simulare in ambiente di test una dipendenza indisponibile e un timeout. Verificare status, schema della risposta, durata, log correlabili e assenza di credenziali o stack trace sensibili nella risposta pubblica.
+
+Non considerare un endpoint `/health` che restituisce sempre `200` prova sufficiente di disponibilità applicativa. La semantica di liveness e readiness va concordata con la piattaforma di esercizio.
+
 ### Esempio di consumo HTTP con `httr2`
 
 L'esempio usa un endpoint dimostrativo pubblico; sostituire URL, percorso, header e schema JSON con il contratto del servizio aziendale. Non inviare dati riservati a endpoint dimostrativi.
@@ -458,7 +495,7 @@ repeat {
 record <- unlist(pagine, recursive = FALSE)
 ```
 
-Il ciclo non impone un numero massimo di pagine: per servizi non completamente fidati, aggiungere un limite esplicito e una gestione del cursore ripetuto. Non aggiungere nuovo tentativo automatico indiscriminati; applicare una politica limitata solo se il servizio e l'operazione lo consentono.
+Il ciclo non impone un numero massimo di pagine: per servizi non completamente fidati, aggiungere un limite esplicito e una gestione del cursore ripetuto. Non aggiungere nuovi tentativi automatici indiscriminati; applicare una politica limitata solo se il servizio e l'operazione lo consentono.
 
 Per una richiesta POST, costruire il body esplicitamente e verificare il contratto:
 

@@ -113,7 +113,7 @@ sessione R
 codice
 ~~~
 
-Quando scriviamo `library(`data.table`)`, `data.table` è il **package**; `library()` è la funzione che lo rende disponibile nella sessione. La **library** non è `data.table`: è la directory che contiene il package.
+Quando scriviamo `library(data.table)`, `data.table` è il **package**; `library()` è la funzione che lo rende disponibile nella sessione. La **library** non è `data.table`: è la directory che contiene il package.
 
 Questa distinzione diventa importante quando IT deve sapere **quale copia di un package viene caricata e chi può modificarla**.
 

@@ -45,6 +45,21 @@ execute:
 
 ---
 
+# Agenda — 4 ore
+
+- Obiettivo e scenari IT — 15 min
+- Runtime e ambiente — 35 min
+- Performance e laboratorio — 45 min
+- Pausa — 10 min
+- Architetture e integrazioni — 40 min
+- Rilascio, sicurezza e operatività — 35 min
+- Caso integrato in gruppi — 45 min
+- Sintesi, domande e transizioni — 15 min
+
+Il tempo include esercizi e confronto; non è una sequenza di 30 esposizioni frontali.
+
+---
+
 # Percorso: tre famiglie di scenari
 
 ```{mermaid}
@@ -311,6 +326,19 @@ flowchart LR
 - Sistemi esterni, accessi e configurazione.
 - Test, riferimento di confronto e limiti noti.
 - Runbook, log, timeout e contatti operativi.
+
+---
+
+# Caso integrato — consegna di gruppo
+
+- Caso: batch R giornaliero su Oracle, output Excel, lentezza intermittente.
+- Separare fatti noti, dati mancanti e ipotesi.
+- Proporre misure ripetibili e un test che distingua le cause.
+- Definire errore Oracle, retry e protezione dall'output parziale.
+- Consegnare una scheda operativa di una pagina.
+- Chiudere con decisione provvisoria, criteri di accettazione e responsabili.
+
+**Tempo:** 35 minuti di lavoro, 10 di confronto. Nessuna misura può essere inventata.
 
 ---
 
