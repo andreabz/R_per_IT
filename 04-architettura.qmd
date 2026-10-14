@@ -159,7 +159,7 @@ La domanda è **quale parte del problema R deve risolvere**.
 
 | Componente | Ruolo tipico | Confine con R |
 |---|---|---|
-| Oracle | dati, integrità, query, aggregazioni | R riceve dati già ridotti quando il esecuzione di filtri e aggregazioni lato database è appropriato |
+| Oracle | dati, integrità, query, aggregazioni | R riceve dati già ridotti quando filtrare e aggregare lato database è appropriato |
 | APEX | interfaccia e workflow applicativo vicino a Oracle | R può fornire analisi o calcoli specialistici |
 | Scheduler/orchestratore | quando e con quale sequenza eseguire i job | R esegue lo step analitico |
 | Reverse proxy | ingresso HTTP, routing, TLS secondo l'architettura | inoltra verso Shiny/API |
@@ -574,7 +574,7 @@ R
 analisi
 ```
 
-Il principio è il esecuzione di filtri e aggregazioni lato database: eseguire vicino ai dati ciò che il sistema sorgente può fare correttamente ed efficientemente.
+Il principio è eseguire filtri e aggregazioni vicino ai dati quando il database può svolgerli correttamente ed efficientemente.
 
 Per R questo può ridurre trasferimento, allocation e memoria occupata dal processo R.
 
