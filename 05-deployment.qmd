@@ -259,7 +259,7 @@ Nel repository del corso la pipeline esistente è configurata per eseguire `quar
 Per un progetto R è utile trattare il render o il test come parte della verifica dell'ambiente: se cambiano R, package o dipendenze native, la pipeline deve rendere visibile la regressione.
 
 
-## Aggiornamenti e nuova riferimento di confronto
+## Aggiornamenti e nuova situazione di riferimento
 
 Una modifica a R, package, driver, librerie native, OS o configurazione può cambiare risultato o performance anche senza modificare il codice applicativo.
 
@@ -488,6 +488,6 @@ La regola operativa è:
 | Ripristino | procedura + riferimento di confronto |
 | responsabilità | responsabili |
 
-Prima del rilascio, la domanda utile non è «abbiamo installato R?», ma **«possiamo ricostruire, verificare e osservare questa specifica riferimento di confronto R in produzione?»**
+Prima del rilascio, la domanda utile non è «abbiamo installato R?», ma **«possiamo ricostruire, verificare e osservare questa specifica configurazione R in produzione?»**
 
 Il capitolo 6 usa questa evidenza per trasformare le richieste in decisioni e assegnare responsabilità.

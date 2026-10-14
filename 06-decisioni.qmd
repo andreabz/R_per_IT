@@ -178,7 +178,7 @@ La domanda è anche quanta memoria, rete e serializzazione si evita spostando il
 
 ## Caso 5 — 20 package
 
-**Collegamenti:** ambiente e dipendenze (`01`) → costo del runtime (`02`) → riferimento di confronto del prova comparativa (`03`) → riproducibilità della distribuzione (`05`).
+**Collegamenti:** ambiente e dipendenze (`01`) → costo del runtime (`02`) → situazione di riferimento della prova comparativa (`03`) → riproducibilità della distribuzione (`05`).
 
 Chiedere dipendenze effettive, versioni, file che registra le dipendenze, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
 

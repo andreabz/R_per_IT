@@ -94,7 +94,7 @@ Per ogni esecuzione: durata, frequenza, errori e destinazione dell'output.
 
 ---
 
-# Dall'punto di ingresso al sistema operativo
+# Dal punto di ingresso al sistema operativo
 
 ```{mermaid}
 %%| echo: false
