@@ -74,7 +74,7 @@ Una release R deve essere riconducibile a commit/tag, versione R, dipendenze, co
 
 Git identifica il codice; non identifica da solo l'intero ambiente R.
 
-## `renv` nel distribuzione
+## `renv` nella distribuzione
 
 Il file che registra le dipendenze di `renv` registra versione di R, repository e record dei package, incluse versioni e sorgenti quando note. Non è però un inventario completo di OS, librerie native, driver, configurazione, credenziali o dati.
 
@@ -279,7 +279,7 @@ nuova situazione di riferimento
 
 la situazione di riferimento precedente deve rimanere disponibile per un eventuale ripristino della versione precedente.
 
-## prova rapida di avvio e ripristino della versione precedente
+## Prova rapida di avvio e ripristino della versione precedente
 
 Dopo la distribuzione verificare che processo, dipendenze, sistemi esterni e output minimo funzionino.
 
@@ -405,7 +405,7 @@ aggiornamento / rollback
 
 Ogni passaggio deve lasciare abbastanza evidenza da permettere a un altro tecnico di capire quale versione è in esercizio, con quale ambiente e con quale configurazione.
 
-## passaggio di consegne: le informazioni che lo sviluppatore deve fornire a IT
+## Passaggio di consegne: le informazioni che lo sviluppatore deve fornire a IT
 
 Il passaggio in produzione è più efficace se viene trattato come una **specifica verificabile del carico di lavoro**, non come una richiesta generica di infrastruttura.
 
@@ -429,7 +429,7 @@ Una consegna minima dovrebbe contenere:
 | responsabilità | chi decide e chi interviene | matrice responsabilità | team |
 
 
-Per servizi e applicazioni interattive, la scheda deve inoltre indicare: modello di sessione/processo, concorrenza attesa, endpoint e timeout, dipendenze da verificare, health check, log correlabili, gestione dei segreti e criterio di ripristino della versione precedente. Lo prova rapida di avvio deve verificare il contratto visibile al chiamante, non soltanto che il processo sia partito.
+Per servizi e applicazioni interattive, la scheda deve inoltre indicare: modello di sessione/processo, concorrenza attesa, endpoint e timeout, dipendenze da verificare, health check, log correlabili, gestione dei segreti e criterio di ripristino della versione precedente. La prova rapida di avvio deve verificare il contratto visibile al chiamante, non soltanto che il processo sia partito.
 
 Questa tabella separa tre cose che spesso vengono confuse:
 
@@ -475,7 +475,7 @@ La regola operativa è:
 
 > **Lo sviluppatore deve fornire una descrizione riproducibile del carico di lavoro e delle evidenze; IT deve poter trasformare queste informazioni in una configurazione, una distribuzione e un esercizio verificabili.**
 
-## Production readiness
+## Verifica della prontezza alla produzione
 
 | Aspetto | Evidenza |
 |---|---|

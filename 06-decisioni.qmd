@@ -51,7 +51,7 @@ Non è ancora una specifica verificata. Servono almeno carico di lavoro, durata 
 
 Il ruolo di IT non è decidere la correttezza del codice R, ma verificare che la richiesta tecnica sia sostenuta da evidenze riproducibili.
 
-## riferimento di confronto
+## Riferimento di confronto
 
 una situazione di riferimento di una soluzione R può comprendere:
 
@@ -61,7 +61,7 @@ commit + R + package + native libraries + configuration + test data + test resul
 
 Una modifica rilevante produce una nuova situazione di riferimento dopo la verifica.
 
-Per una soluzione R, una modifica apparentemente piccola a R, package o librerie native può cambiare performance o comportamento. la situazione di riferimento deve quindi rendere visibile anche l'ambiente.
+Per una soluzione R, una modifica apparentemente piccola a R, ai package o alle librerie native può cambiare prestazioni o comportamento. La situazione di riferimento deve quindi descrivere anche l'ambiente.
 
 ## Chi è responsabile di cosa
 
@@ -228,7 +228,7 @@ Test:
 7. Quali alternative applicative devono essere considerate?
 8. Quali informazioni entrano nella richiesta IT?
 
-Il prova comparativa mostra che il parallelismo riduce il tempo ma aumenta rapidamente la memoria e non scala linearmente. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
+La prova comparativa mostra che il parallelismo riduce il tempo, ma aumenta rapidamente il consumo di memoria e non garantisce uno scaling lineare. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
 
 
 ## Scheda di passaggio di consegne e production readiness

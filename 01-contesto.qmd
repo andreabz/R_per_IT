@@ -425,12 +425,4 @@ ALTREP è quindi un esempio, non una spiegazione completa della memoria. Nel cap
 8. Quali sistemi esterni sono coinvolti?
 9. Come viene ricostruita la baseline?
 
-### Domande che IT dovrebbe poter rispondere
-
-1. Qual è l'entrypoint della soluzione?
-2. Quale ambiente R deve essere disponibile?
-3. Quali dipendenze attraversano il confine tra R e sistema operativo?
-4. Quali sistemi esterni sono necessari?
-5. Quale baseline permette di ricostruire l'ambiente?
-
-Il capitolo successivo sposta la domanda dall'ambiente al modo in cui **il runtime R usa memoria, processi, worker e thread**.
+Le domande decisive sono già raccolte nella checklist: punto di ingresso, ambiente R, dipendenze native, sistemi esterni e riferimento riproducibile. Il capitolo successivo passa dalla composizione dell'ambiente al modo in cui **il runtime R usa memoria, processi, worker e thread**.

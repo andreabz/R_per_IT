@@ -75,7 +75,7 @@ In particolare deve saper:
 - distinguere una misura da un'ipotesi e chiedere le evidenze necessarie prima di trasformare una richiesta in una specifica infrastrutturale;
 - rappresentare i confini tra R, Oracle, filesystem, API, scheduler, proxy e altri componenti aziendali;
 - verificare che distribuzione, configurazione, sicurezza, logging, monitoraggio, rollback e responsabilità operativa siano descritti;
-- restituire allo sviluppatore una richiesta di informazioni concreta quando l'passaggio di consegne è incompleto.
+- restituire allo sviluppatore una richiesta di informazioni concreta quando il passaggio di consegne è incompleto.
 
 Il livello atteso è **di comprensione e presa in carico operativa**, non di sviluppo R né di ottimizzazione algoritmica. Il manuale contiene approfondimenti diagnostici per i casi in cui serva capire meglio un problema.
 
@@ -94,29 +94,15 @@ La sequenza può essere letta anche come una serie di domande:
 
 > **Che cosa sto gestendo? → Come viene eseguito? → Come posso dimostrare cosa sta succedendo? → Dove deve avvenire il lavoro? → Come porto la soluzione in esercizio? → Come trasformo le evidenze in una decisione?**
 
-## Il modello operativo
+## Le dimensioni da valutare
 
-Il filo conduttore del manuale è:
+Il metodo ricorrente è **requisito → evidenza → decisione → responsabilità → situazione di riferimento**. Si applica a cinque dimensioni:
 
-```text
-requisito
-   ↓
-evidenza
-   ↓
-decisione
-   ↓
-responsabilità
-   ↓
-situazione di riferimento
-```
-
-Il modello viene applicato a cinque dimensioni ricorrenti:
-
-- **software** — versione di R, pacchetti, dipendenze e componenti nativi;
-- **runtime** — processi, memoria, worker, thread e parallelismo;
-- **carico di lavoro** — CPU, RAM, I/O, rete e database;
-- **architettura** — confini tra R, database, servizi e piattaforme;
-- **operatività** — rilascio, configurazione, sicurezza, monitoraggio e responsabilità operativa.
+- **Software:** versione di R, package, dipendenze e componenti nativi.
+- **Runtime:** processi, memoria, worker, thread e parallelismo.
+- **Carico di lavoro:** CPU, RAM, I/O, rete e database.
+- **Architettura:** confini tra R, database, servizi e piattaforme.
+- **Operatività:** rilascio, configurazione, sicurezza, monitoraggio e responsabilità.
 
 ## Quattro domande da ricordare
 
@@ -229,27 +215,9 @@ Per una prima lettura non è necessario studiare tutto il funzionamento interno 
 
 Le sezioni più interne del runtime sono quindi deliberatamente più tecniche: servono soprattutto quando IT deve interpretare una misura, diagnosticare un problema o discutere un dimensionamento.
 
-## Il percorso operativo in una richiesta reale
+## Dalla lettura all'uso operativo
 
-~~~text
-richiesta dello sviluppatore
-          ↓
-     classificazione
-          ↓
-  carico di lavoro + ambiente
-          ↓
-      evidenze
-          ↓
- architettura/distribuzione
-          ↓
-    test + situazione di riferimento
-          ↓
- produzione + monitoraggio
-          ↓
-       responsabilità operativa
-~~~
-
-Per una richiesta reale, l'Appendice **Kit operativo per IT** fornisce una scheda che può essere utilizzata come traccia di passaggio di consegne e verifica prima della messa in esercizio.
+Il percorso sintetizzato sopra è applicato a una richiesta reale nel laboratorio integrato. Per raccogliere le informazioni di una consegna, usare la scheda unica dell'appendice **Kit operativo per IT**; gli *Strumenti pratici per IT* guidano invece la diagnosi e la raccolta delle evidenze.
 
 ## Una distinzione fondamentale
 
@@ -263,8 +231,6 @@ Il manuale tiene separate tre domande:
 
 IT deve poter verificare le prime due senza assumere la responsabilità della terza. La collaborazione tra IT e sviluppatore rimane necessaria quando una decisione tecnica dipende dalla logica applicativa o dal metodo scientifico.
 
-## Una frase guida
+## Criterio di lettura
 
-> **Non serve che IT sappia programmare in R; serve che sappia riconoscere che cosa cambia quando il carico di lavoro è R.**
-
-Questa è la chiave di lettura dei capitoli successivi. Quando il testo usa concetti IT già noti — database, container, Git, monitoraggio, CI/CD — li tratta come confini operativi e non come materie da re-insegnare.
+Il manuale non richiede a IT di sviluppare in R. Richiede di riconoscere come runtime, dipendenze, modello di esecuzione e integrazioni influenzino la gestione della soluzione. I concetti IT già noti — database, container, Git, monitoraggio e CI/CD — sono trattati come confini operativi, non reintrodotti da zero.
