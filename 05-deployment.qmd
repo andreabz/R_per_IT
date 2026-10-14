@@ -74,7 +74,7 @@ Una release R deve essere riconducibile a commit/tag, versione R, dipendenze, co
 
 Git identifica il codice; non identifica da solo l'intero ambiente R.
 
-## `renv` nel distribuzione
+## `renv` nella distribuzione
 
 Il file che registra le dipendenze di `renv` registra versione di R, repository e record dei package, incluse versioni e sorgenti quando note. Non è però un inventario completo di OS, librerie native, driver, configurazione, credenziali o dati.
 
