@@ -218,7 +218,7 @@ reverse proxy
 
 Qui diventano centrali autenticazione, sessioni, concorrenza, latenza, timeout, CPU/RAM e comportamento al riavvio.
 
-### Strutture `Shiny`: come riconoscere l'punto di ingresso
+### Strutture `Shiny`: come riconoscere il punto di ingresso
 
 Le strutture più comuni sono convenzioni di organizzazione del codice; non definiscono da sole un diverso modello di scalabilità.
 
@@ -492,7 +492,7 @@ risultato <- httr2::resp_body_json(risposta)
 
 Le credenziali vanno passate tramite il meccanismo aziendale approvato (per esempio secret store o variabili d'ambiente protette), non nel sorgente. Non attivare log verbose in produzione se possono esporre header o body sensibili.
 
-i nuovi tentativi automatici sono **condizionali**, non automatici per qualsiasi errore. Sono adatti soltanto a errori transitori e operazioni per cui la ripetizione è sicura; per POST con effetti collaterali serve un contratto di idempotenza o una chiave idempotente. Limitare numero di tentativi e tempo totale, rispettare `nuovo tentativo automatico-After` quando previsto e non ritentare indiscriminatamente errori 4xx. Riferimento: [`httr2` — req_retry](https://httr2.r-lib.org/reference/req_retry.html).
+i nuovi tentativi automatici sono **condizionali**, non automatici per qualsiasi errore. Sono adatti soltanto a errori transitori e operazioni per cui la ripetizione è sicura; per POST con effetti collaterali serve un contratto di idempotenza o una chiave idempotente. Limitare numero di tentativi e tempo totale, rispettare `Retry-After` quando previsto e non ritentare indiscriminatamente errori 4xx. Riferimento: [`httr2` — req_retry](https://httr2.r-lib.org/reference/req_retry.html).
 
 
 #### R dentro una pipeline
