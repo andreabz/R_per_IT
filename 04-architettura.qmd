@@ -406,6 +406,23 @@ api |> plumber2::api_run(host = "127.0.0.1", port = 8080)
 
 L'endpoint `/health` è soltanto un esempio di liveness del processo. Non certifica che Oracle o altre dipendenze siano disponibili. Il binding a `127.0.0.1` limita l'ascolto al loopback: per una distribuzione dietro proxy va configurato l'host di ascolto in base alla rete del container/host e alle regole di sicurezza. Non esporre direttamente il servizio a reti non fidate senza autenticazione, autorizzazione, TLS e limiti adeguati.
 
+### Caso guidato — distinguere errore della richiesta e indisponibilità del servizio
+
+Per un'API esposta, definire il contratto d'errore prima del rilascio. Lo status code va scelto in base al significato dell'errore e alle convenzioni del servizio, non usato come contenitore generico per ogni eccezione.
+
+| Caso | Comportamento da specificare | Verifica lato client/IT |
+|---|---|---|
+| Parametro mancante o non valido | Rifiutare la richiesta senza eseguire il calcolo | Status di richiesta non valida e body con codice/messaggio non sensibile |
+| Credenziali assenti o non valide | Rifiutare l'accesso secondo il contratto | Status coerente con autenticazione/autorizzazione; nessun dettaglio di segreto nei log |
+| Oracle non raggiungibile | Restituire errore controllato senza esporre stack trace | Timeout limitato, log correlabile e dipendenza identificata |
+| Elaborazione oltre il tempo concordato | Terminare o interrompere secondo una policy esplicita | Il client riceve un esito comprensibile; il processo non accumula richieste bloccate senza limite |
+| Eccezione inattesa | Risposta generica per il client e dettaglio tecnico protetto nei log | Identificativo di correlazione, stack trace accessibile solo a chi è autorizzato |
+| Processo vivo ma dipendenza essenziale indisponibile | Separare liveness e readiness, se la piattaforma lo supporta | La sonda di readiness riflette le dipendenze richieste per servire traffico |
+
+**Prova di accettazione:** eseguire richieste nominali e richieste con input invalido; simulare in ambiente di test una dipendenza indisponibile e un timeout. Verificare status, schema della risposta, durata, log correlabili e assenza di credenziali o stack trace sensibili nella risposta pubblica.
+
+Non considerare un endpoint `/health` che restituisce sempre `200` prova sufficiente di disponibilità applicativa. La semantica di liveness e readiness va concordata con la piattaforma di esercizio.
+
 ### Esempio di consumo HTTP con `httr2`
 
 L'esempio usa un endpoint dimostrativo pubblico; sostituire URL, percorso, header e schema JSON con il contratto del servizio aziendale. Non inviare dati riservati a endpoint dimostrativi.
