@@ -495,7 +495,7 @@ repeat {
 record <- unlist(pagine, recursive = FALSE)
 ```
 
-Il ciclo non impone un numero massimo di pagine: per servizi non completamente fidati, aggiungere un limite esplicito e una gestione del cursore ripetuto. Non aggiungere nuovo tentativo automatico indiscriminati; applicare una politica limitata solo se il servizio e l'operazione lo consentono.
+Il ciclo non impone un numero massimo di pagine: per servizi non completamente fidati, aggiungere un limite esplicito e una gestione del cursore ripetuto. Non aggiungere nuovi tentativi automatici indiscriminati; applicare una politica limitata solo se il servizio e l'operazione lo consentono.
 
 Per una richiesta POST, costruire il body esplicitamente e verificare il contratto:
 
