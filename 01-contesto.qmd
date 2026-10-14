@@ -142,7 +142,7 @@ La scelta della sorgente può coinvolgere proxy, firewall, approvazione delle di
 Quando viene eseguito:
 
 ~~~text
-`install.packages("`data.table`")`
+`install.packages("data.table")`
 ~~~
 
 R deve sapere da quale repository recuperare il package. La configurazione può essere esplicita oppure derivare dalle opzioni e dalla configurazione dell'ambiente.
