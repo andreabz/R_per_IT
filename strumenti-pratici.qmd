@@ -3,7 +3,7 @@ title: "Strumenti pratici per IT"
 subtitle: "Dalla richiesta R al passaggio di consegne"
 ---
 
-## 1. È arrivata una richiesta R: cosa devo chiedere?
+## 1. Prima raccolta: quali informazioni chiedere
 
 Usare questa lista come primo filtro. Se una risposta non è disponibile, va richiesta allo sviluppatore o al referente.
 
@@ -11,13 +11,13 @@ Per la raccolta completa usare la [scheda unica del Kit operativo per IT](append
 
 - [ ] Classificare la soluzione: script, batch, Quarto, `Shiny`, API `plumber2`, package, pipeline.
 - [ ] Individuare punto di ingresso, repository, versione e owner.
-- [ ] Descrivere ambiente: versione R, sistema operativo, package, `renv`.lock, librerie native e driver.
+- [ ] Descrivere l'ambiente: versione R, sistema operativo, package, `renv.lock`, librerie native e driver.
 - [ ] Descrivere input, output, volumi e sistemi esterni.
 - [ ] Definire esecuzione: manuale/batch/servizio/interattiva, frequenza, finestra, durata e concorrenza.
-- [ ] Chiedere misure: durata, RAM, CPU, I/O, rete, database, processi e fili di esecuzione e dataset di test.
+- [ ] Chiedere misure e condizioni di test: durata, RAM, CPU, I/O, rete, database, processi, thread e dataset.
 - [ ] Verificare account, permessi, autenticazione, configurazione e certificati.
 - [ ] Definire logging, errori, timeout, nuovo tentativo automatico, restart e alert.
-- [ ] Definire test, riferimento di confronto, distribuzione, ripristino della versione precedente e responsabilità.
+- [ ] Definire test, riferimento di confronto, distribuzione, ripristino e responsabilità.
 
 > Se la richiesta si limita a «installare R», «serve più RAM» o «pubblicare una `Shiny`», non è ancora una specifica di esercizio.
 
