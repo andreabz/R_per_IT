@@ -35,14 +35,12 @@ execute:
 
 # R nello stack aziendale
 
-| Responsabilità | Componente tipico |
+| Funzione | Componente |
 |---|---|
 | Dati e query | Oracle |
-| Workflow gestionale | APEX |
-| Scheduling | Scheduler aziendale |
-| Analisi e calcolo | R |
-| Report e applicazioni | Quarto, `Shiny` + R |
-| Routing e identità | Proxy, gateway, IAM |
+| Workflow | APEX; scheduler aziendale |
+| Calcolo e report | R, Quarto, `Shiny` |
+| Accesso e rete | Proxy, gateway, IAM |
 
 
 ---
@@ -63,13 +61,13 @@ flowchart LR
 
 # Livello 1 — Esecuzione e artefatti
 
-| Forma | Punto operativo |
+| Forma | Verifiche chiave |
 |---|---|
-| Script personale/condiviso | punto di ingresso, input e output |
-| `Rscript` / batch | Account, working directory, exit code |
-| Report Quarto | Dati, render, artefatto e pubblicazione |
+| Script | Punto di ingresso, input/output |
+| Batch (`Rscript`) | Account, directory, exit code |
+| Quarto | Dati, render, artefatto |
 
-Per ogni esecuzione: durata, frequenza, errori e destinazione dell'output.
+Per tutti: durata, frequenza, errori e destinazione dell'output.
 
 ---
 
@@ -111,45 +109,44 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 
 # Processo, processo di lavoro e filo di esecuzione
 
-- **Processo:** spazio di esecuzione con memoria propria.
-- **processo di lavoro:** unità concorrente usata dal carico di lavoro o dal framework.
-- **filo di esecuzione nativo:** flusso d'esecuzione dentro un processo.
-- Un processo R non diventa parallelo solo perché sono disponibili più core.
-- processo di lavoro e filo di esecuzione possono sommarsi e aumentare RAM e contesa.
+- **Processo:** memoria e risorse proprie.
+- **Worker:** unità di lavoro concorrente.
+- **Thread nativo:** flusso di esecuzione nel processo.
+- Più core disponibili non rendono automaticamente parallelo un processo R.
+- Worker e thread possono aumentare RAM e contesa.
 
 ---
 
 # Diagnosi: misurare prima di dimensionare
 
-| Segnale | Verifiche da separare |
+| Segnale | Controllare |
 |---|---|
-| CPU alta | Profilo, processo di lavoro, filo di esecuzione e variazione delle risorse |
-| RAM alta | Picco RSS, copie e processi figli |
-| Job lento | CPU, I/O, rete e attese esterne |
-| Query lenta | Tempi DB, righe trasferite e lavoro R |
+| CPU alta | Profilo e concorrenza |
+| RAM alta | Picco RSS, copie, processi figli |
+| Job lento | CPU, I/O, rete, attese |
+| Query lenta | Tempi DB, righe trasferite |
 
-**Misura → ipotesi → test controllato → decisione**
+**Misura → ipotesi → test → decisione**
 
 ---
 
 # Laboratori: evidenze confrontabili
 
-- analisi dei tempi di esecuzione: `system.time()`, `Rprof()`, `profvis` e metriche OS.
-- Memoria: calcolo completo contro blocchi; misurare il picco RSS.
-- Parallelismo: confrontare 1, 2, 4 e, se sensato, 8 processo di lavoro.
-- Database: trasferimento completo contro filtro/aggregazione in Oracle.
-- Dichiarare input, ambiente, metodo, metrica e limiti.
-- Non generalizzare risultati ottenuti su un solo host o dataset.
+- Tempi: `system.time()`, `Rprof()`, `profvis` e metriche OS.
+- Memoria: elaborazione completa contro blocchi; picco RSS.
+- Parallelismo: 1, 2, 4 worker (8 se utile).
+- Oracle: trasferimento completo contro aggregazione lato DB.
+- Registrare input, ambiente, metrica e limiti.
 
 ---
 
 # Memoria e parallelismo
 
-- `object.size()` stima la dimensione di un oggetto R; non è il picco RSS.
-- Misurare il processo e, con processi separati, anche i processi figli.
-- Registrare elapsed, speedup, efficienza, RAM e overhead.
-- Tenere distinti numero di processi di lavoro e thread nativi.
-- Più concorrenza può peggiorare memoria, serializzazione e contesa.
+- `object.size()` non misura il picco RSS.
+- Misurare processo e processi figli.
+- Registrare durata, speedup, RAM e overhead.
+- Distinguere worker e thread nativi.
+- Più concorrenza può aumentare copie e contesa.
 
 ---
 
@@ -169,12 +166,12 @@ Confrontare con il trasferimento completo: righe, colonne, volume, tempi DB e te
 
 # Scelta architetturale: chi fa che cosa?
 
-- R: analisi o calcolo per cui è stato scelto.
-- Oracle: dati, query e aggregazioni appropriate al database.
-- APEX: workflow gestionale, se già previsto dallo stack.
-- Scheduler: calendario, esito del job e gestione delle esecuzioni.
-- Proxy/gateway: routing e controlli di rete previsti.
-- IT: runtime gestito, accessi, piattaforma e osservabilità concordata.
+- R: analisi e calcolo.
+- Oracle: dati e aggregazioni adatte al DB.
+- APEX: workflow gestionale.
+- Scheduler: calendario ed esito dei job.
+- Proxy/gateway: rete e instradamento.
+- IT: runtime, accessi e osservabilità.
 
 ---
 
@@ -193,17 +190,13 @@ Confrontare con il trasferimento completo: righe, colonne, volume, tempi DB e te
 
 ```{mermaid}
 %%| echo: false
-flowchart TD
- A["Avvio processo"] --> B["Inizializzazione globale"]
- B --> C["Dati condivisi nel processo"]
- B --> D["Sessione utente"]
- D --> E["Stato reattivo di sessione"]
- C --> E
+flowchart LR
+ A["Avvio"] --> B["Dati globali condivisi"]
+ A --> C["Sessione utente"]
+ C --> D["Stato reattivo"]
 ```
 
-- Oggetti globali possono essere condivisi fra sessioni dello stesso processo.
-- Lo stato creato nella funzione server è normalmente specifico della sessione.
-- Cache e oggetti globali non sono automaticamente condivisi tra processi o container.
+Dati globali: condivisi nel processo. Stato reattivo: specifico della sessione. Cache non condivisa automaticamente fra processi.
 
 ---
 
@@ -220,12 +213,12 @@ flowchart TD
 
 # API esposte e consumate
 
-| Ruolo | Tecnologia | Direzione |
+| Ruolo | Tecnologia | Flusso |
 |---|---|---|
-| Esporre endpoint HTTP da R | `plumber2` | Client → R |
-| Chiamare endpoint HTTP da R | `httr2` | R → servizio |
+| Esporre un'API | `plumber2` | Client → R |
+| Chiamare un'API | `httr2` | R → servizio |
 
-Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API non è un client remoto.
+Sono ruoli distinti: server HTTP e client HTTP.
 
 ---
 
@@ -242,54 +235,49 @@ Non sono ruoli intercambiabili: un client HTTP non espone un'API e un router API
 
 # API consumate con `httr2`
 
-- Costruire URL, query, header e body in base al contratto remoto.
-- Interpretare status code e parsare JSON.
-- Impostare timeout e gestire esplicitamente gli errori.
-- Gestire autenticazione senza segreti nel sorgente o nei log.
-- Paginazione: seguire cursore o link previsti dal servizio.
-- nuovo tentativo automatico limitati a errori transitori e operazioni sicure da ripetere.
-- Per POST con effetti collaterali, definire idempotenza prima di un nuovo tentativo automatico.
+- Preparare URL, parametri, header e body secondo il contratto.
+- Gestire status code, JSON, timeout ed errori.
+- Proteggere credenziali: mai nel sorgente o nei log.
+- Seguire cursore o link per la paginazione.
+- Ripetere solo errori transitori e operazioni sicure/idempotenti.
 
 ---
 
 # Integrazioni: definire i confini
 
-| Integrazione | Contratto da esplicitare |
+| Componente | Verifiche |
 |---|---|
-| Oracle | Driver, query, transazioni, volumi e timeout |
-| APEX | Parametri, risultati, errori e identità |
-| GIS | Formati, coordinate, geometrie e volumi |
-| Scheduler | Account, ambiente, exit code e nuovo tentativo automatico |
-| Proxy/gateway | Routing, TLS, identità, limiti e timeout |
+| Oracle | Driver, query, volumi, timeout |
+| APEX | Parametri, risultati, identità |
+| GIS | Formati, coordinate, volumi |
+| Scheduler | Account, ambiente, exit code |
+| Proxy/gateway | Routing, TLS, limiti |
 
 ---
 
-# Dal sorgente alla release
+# Dal sorgente all'esercizio
 
 ```{mermaid}
 %%| echo: false
 flowchart LR
  A["Sviluppo"] --> B["Test"]
- B --> C["Release identificata"]
- C --> D["Artefatto e configurazione"]
- D --> E["distribuzione"]
- E --> F["verifica rapida di avvio"]
- F --> G["Monitoraggio / ripristino della versione precedente"]
+ B --> C["Release"]
+ C --> D["Artefatto + config"]
+ D --> E["Rilascio"]
+ E --> F["Verifica"]
+ F --> G["Monitoraggio"]
 ```
-
-Una modifica rilevante a codice, runtime, package o librerie native richiede una nuova verifica della situazione di riferimento.
 
 ---
 
-# distribuzione: prerequisiti e confini
+# Distribuzione: prerequisiti e confini
 
-- Dichiarare punto di ingresso, working directory, runtime e dipendenze.
-- Separare configurazione non segreta e segreti gestiti dalla piattaforma.
-- Container: immagine, porta, utente, risorse e requisiti di sistema.
-- Verificare build, avvio, risposta HTTP e log prima del proxy.
-- ShinyProxy: immagine e porta devono combaciare con l'applicazione.
-- Kubernetes/Operator: usare la configurazione della modalità adottata.
-- Gli esempi vanno adattati e verificati, non sono riferimento di confronto universali.
+- Dichiarare entrypoint, directory, runtime e dipendenze.
+- Separare configurazione e segreti gestiti dalla piattaforma.
+- Container: immagine, porta, utente e risorse.
+- Verificare build, avvio, risposta e log.
+- ShinyProxy/Kubernetes: verificare configurazione e compatibilità.
+- Gli esempi richiedono adattamento e test nell'ambiente target.
 
 ---
 
@@ -299,7 +287,7 @@ Una modifica rilevante a codice, runtime, package o librerie native richiede una
 |---|---|---|
 | Esito | Exit code e output | Codici HTTP e risposta |
 | Carico | Durata e frequenza | Latenza e concorrenza |
-| Errore | nuovo tentativo automatico, idempotenza, output parziale | Timeout, limiti, errori per richiesta |
+| Errore | Retry idempotente, output parziale | Timeout, limiti, errori per richiesta |
 | Osservabilità | Avvio/fine, log, durata | Disponibilità, latenza, errori, risorse |
 
 ---
@@ -315,18 +303,18 @@ Una modifica rilevante a codice, runtime, package o librerie native richiede una
 
 ---
 
-# passaggio di consegne: informazioni minime
+# Passaggio di consegne: dati minimi
 
-- Repository, commit/tag, owner e il punto di ingresso.
-- Ambiente R, package, file che registra le dipendenze, OS e dipendenze native.
-- Input/output, volumi, frequenza, durata e concorrenza.
-- Sistemi esterni, account, permessi e configurazione.
-- Evidenze di test, riferimento di confronto e limiti noti.
-- Runbook, log/metriche, timeout, recovery e contatti operativi.
+- Repository, versione e punto di ingresso.
+- Runtime, package, OS e dipendenze native.
+- Input/output, volumi, frequenza e concorrenza.
+- Sistemi esterni, accessi e configurazione.
+- Test, riferimento di confronto e limiti noti.
+- Runbook, log, timeout e contatti operativi.
 
 ---
 
-# Gate di rilascio e ripristino della versione precedente
+# Gate di rilascio e ripristino
 
 ```{mermaid}
 %%| echo: false
@@ -346,12 +334,12 @@ ripristino della versione precedente deve considerare codice, ambiente, configur
 
 # Dalla richiesta alla decisione
 
-- **Requisito:** quale risultato e in quale tempo?
-- **Misura:** che cosa osserviamo nel carico di lavoro?
-- **Ipotesi:** quale componente limita il risultato?
-- **Test:** quale confronto distingue le alternative?
-- **Decisione:** quale opzione soddisfa i vincoli?
-- **riferimento di confronto e responsabilità:** come riprodurre e gestire la soluzione?
+- **Requisito:** risultato atteso e tempi.
+- **Misura:** comportamento osservato.
+- **Ipotesi:** possibile collo di bottiglia.
+- **Test:** confronto tra alternative.
+- **Decisione:** opzione compatibile con i vincoli.
+- **Riferimento e owner:** come riprodurre e gestire.
 
 ---
 
