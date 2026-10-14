@@ -198,7 +198,7 @@ Domande minime:
 
 Per i job con scrittura di dati, la **idempotenza** deve essere esplicitamente valutata prima di introdurre nuovo tentativo automatico automatici.
 
-## 9. distribuzione e ripristino della versione precedente
+## 9. Distribuzione e ripristino della versione precedente
 
 | Campo | Da compilare |
 |---|---|
@@ -322,7 +322,7 @@ nuova situazione di riferimento
 
 Questo è particolarmente importante per R perché l'ambiente software può influire sia sul risultato sia sulle performance.
 
-## 13. responsabilità
+## 13. Responsabilità
 
 | Responsabilità | Owner |
 |---|---|
