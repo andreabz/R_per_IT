@@ -21,7 +21,7 @@ Il destinatario deve poter:
 - descrivere carico di lavoro, input/output, frequenza, durata, concorrenza e risorse;
 - distinguere misure ed evidenze da ipotesi;
 - valutare requisiti di distribuzione, sicurezza, osservabilità, ripristino della versione precedente e responsabilità operativa;
-- individuare le informazioni mancanti nell'passaggio di consegne e chiederle in modo concreto;
+- individuare le informazioni mancanti nel passaggio di consegne e chiederle in modo concreto;
 - confrontare alternative architetturali senza assumere che una soluzione sia sempre migliore delle altre.
 
 Il livello tecnico è **approfondito sul piano operativo e architetturale**. Il codice va incluso quando rende verificabile un comportamento, chiarisce una configurazione o consente un esperimento riproducibile; non va usato per trasformare il corso in un tutorial di programmazione.
@@ -169,7 +169,7 @@ Distinguere una verifica di liveness dalla verifica della disponibilità delle d
 
 Includere almeno un esempio riproducibile di richiesta e gestione della risposta. Coprire GET/POST, URL, query parameters, header, body, parsing JSON, codici HTTP, timeout, errori, autenticazione, nuovo tentativo automatico limitati e paginazione quando pertinente.
 
-Evidenziare che i nuovo tentativo automatico devono essere compatibili con l'operazione e con i codici di errore: non ripetere indiscriminatamente operazioni non idempotenti. Non inserire token o credenziali nel codice sorgente o nei log.
+Evidenziare che i nuovi tentativi automatici devono essere compatibili con l'operazione e con i codici di errore: non ripetere indiscriminatamente operazioni non idempotenti. Non inserire token o credenziali nel codice sorgente o nei log.
 
 Collegare chiamante e servizio con un esempio HTTP/JSON che chiarisca il contratto tra componenti, la responsabilità degli errori e i confini di sicurezza.
 
