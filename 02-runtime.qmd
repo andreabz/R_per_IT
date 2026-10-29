@@ -269,7 +269,7 @@ Questa astrazione può nascondere dettagli che IT deve comunque conoscere:
 - risorse disponibili;
 - concorrenza.
 
-La domanda non è quindi soltanto «usa `future`?», ma **quale backend viene realmente utilizzato e che cosa viene trasferito ai worker?**
+Per valutare il parallelismo, verificare **quale backend viene realmente utilizzato e che cosa viene trasferito ai worker**.
 
 ## Fork e PSOCK
 
