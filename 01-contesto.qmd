@@ -9,7 +9,7 @@ Per IT, una richiesta R non è normalmente una richiesta di installazione di un 
 
 > **Che cosa stiamo realmente gestendo?**
 
-Il primo obiettivo non è conoscere l'ecosistema R in dettaglio, ma poter ricostruire il perimetro tecnico della soluzione e capire quali parti sono già governate da IT.
+L'obiettivo è ricostruire il perimetro tecnico della soluzione e identificare le parti già governate da IT.
 
 ```{mermaid}
 %%| echo: false
