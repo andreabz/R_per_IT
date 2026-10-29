@@ -137,7 +137,7 @@ ma prima:
 
 ## Le forme applicative cambiano il problema IT
 
-**Non si distribuisce R in astratto, ma uno specifico modello di esecuzione.** La matrice seguente serve a confrontare gli scenari prima di definire la piattaforma. Non sostituisce i requisiti aziendali né le verifiche di sicurezza: identifica il minimo che sviluppatore e IT devono rendere verificabile.
+La distribuzione dipende dal modello di esecuzione. La matrice seguente serve a confrontare gli scenari prima di definire la piattaforma. Non sostituisce i requisiti aziendali né le verifiche di sicurezza: identifica il minimo che sviluppatore e IT devono rendere verificabile.
 
 | Scenario | Unità di esecuzione | Verifiche prioritarie | Criterio minimo di accettazione |
 |---|---|---|---|
@@ -544,7 +544,7 @@ Oracle   output
 
 R può essere il componente analitico senza diventare sistema di persistenza o intero stack applicativo.
 
-La domanda architetturale non è «dove installiamo R?», ma **quale parte del carico di lavoro deve essere eseguita da R e quale da altri componenti**.
+La decisione architetturale deve chiarire **quale parte del carico di lavoro viene eseguita da R e quale da altri componenti**.
 
 ## `DBI` e database
 
