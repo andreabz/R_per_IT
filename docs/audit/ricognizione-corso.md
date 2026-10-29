@@ -36,8 +36,8 @@ Sono inoltre da completare o verificare:
 |---|---:|---|
 | P0 | 0 | Non è emerso un blocco certo e immediato della pubblicazione. |
 | P1 | 1 | Lacuna rispetto a un obiettivo didattico esplicito: test automatici con `testthat`. |
-| P2 | 6 | Lacune di copertura, verificabilità, dipendenze dei laboratori, licenza e densità delle slide. |
-| P3 | 5 | Rifiniture editoriali, label Mermaid e gestione locale degli artefatti di audit. |
+| P2 | 8 | Lacune di copertura, verificabilità, dipendenze dei laboratori, licenza e densità delle slide. |
+| P3 | 6 | Rifiniture editoriali, label Mermaid e gestione locale degli artefatti di audit. |
 
 Le priorità riguardano il piano proposto, non modifiche già eseguite. La fase 0 non ha modificato il materiale didattico.
 
