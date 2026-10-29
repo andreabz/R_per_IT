@@ -274,3 +274,81 @@ Prima di concludere, fornire un riepilogo conciso di file modificati, decisioni 
 ## 16. Criterio di completamento
 
 Un intervento è completo quando il contenuto è tecnicamente corretto, utile per una decisione o una presa in carico IT, coerente con il resto del corso, formattato correttamente e verificato al livello appropriato. Le modifiche strutturali restano soggette alla proposta motivata descritta nella sezione 3.
+
+## 17. Processo di revisione complessiva del corso
+
+Quando viene richiesta una revisione complessiva del materiale, procedere per fasi distinte e verificabili. Non anticipare le modifiche di una fase successiva e non considerare conclusa una fase se i relativi criteri di accettazione non sono soddisfatti.
+
+### Fase 0 — Ricognizione e mappatura
+
+- Inventariare i file pertinenti al corso: sorgenti Quarto, indice, slide, appendici, configurazione, risorse, esempi, test e workflow di build/pubblicazione.
+- Ricostruire la struttura effettiva del corso e individuare capitoli, sezioni, esempi, diagrammi e dipendenze tra artefatti.
+- Mappare ogni contenuto rilevante agli obiettivi didattici della sezione 2 e alla copertura richiesta nelle sezioni 4–9.
+- Classificare i contenuti come adeguati, parziali, assenti, duplicati, fuori scopo, incoerenti o tecnicamente da verificare.
+- Registrare lacune, ripetizioni, problemi di progressione, affermazioni da verificare, link e riferimenti sospetti, dipendenze e impatti sulle slide o sulla pubblicazione.
+- Produrre una matrice dei contenuti con almeno: obiettivo didattico, posizione nel repository, contenuto esistente, valutazione, intervento proposto, priorità, dipendenze e criterio di accettazione.
+- Produrre un piano ordinato di intervento e indicare quali evidenze servono per risolvere le incertezze.
+
+**Vincoli:** questa fase è diagnostica. Non eliminare, riscrivere, spostare o aggiungere contenuti didattici. È consentito creare o aggiornare soltanto gli artefatti di audit espressamente richiesti. Non formulare conclusioni come certe quando derivano da un'ispezione parziale: indicare i limiti e le verifiche mancanti.
+
+**Criteri di accettazione:** inventario del perimetro verificato; mappa contenuti-obiettivi; lacune e duplicazioni documentate con riferimenti puntuali; priorità motivate; piano d'azione con criteri verificabili; incertezze esplicite.
+
+### Fase 1 — Rimozione del materiale fuori scopo
+
+- Applicare la mappa approvata per identificare contenuti da eliminare, ridurre o spostare.
+- Rimuovere retorica, slogan, motivazioni generiche, ripetizioni e approfondimenti che non aiutano il target a riconoscere prodotti R, valutare requisiti, confrontare architetture o interpretare evidenze.
+- Non eliminare un dettaglio tecnico solo perché specialistico: valutarne prima l'utilità per una decisione, una diagnosi o la gestione operativa.
+- Se un contenuto è fuori posto ma potenzialmente utile, proporre una destinazione coerente prima di eliminarlo.
+- Aggiornare indice, collegamenti e slide interessati.
+
+**Criteri di accettazione:** ogni rimozione è motivata e tracciabile; nessun obiettivo didattico perde contenuti necessari senza una sostituzione pianificata; riferimenti e navigazione restano coerenti.
+
+### Fase 2 — Scrittura dei contenuti mancanti
+
+- Colmare le lacune prioritarie individuate nella mappa, nei capitoli o nelle sezioni più appropriate.
+- Dare precedenza agli obiettivi fondamentali assenti o trattati solo superficialmente, senza creare capitoli isolati che duplicano materiale esistente.
+- Per ogni nuovo contenuto, definire scopo, livello di dettaglio, prerequisiti, legami con altri capitoli ed evidenze o esempi necessari.
+- Verificare le affermazioni dipendenti da versioni e documentazione tecnica secondo la sezione 10.
+- Aggiornare manuale, indice, slide e artefatti correlati quando necessario.
+
+**Criteri di accettazione:** ogni lacuna prioritaria affrontata; contenuti collocati nella progressione didattica; esempi e affermazioni verificabili; nessuna duplicazione evitabile; artefatti correlati coerenti.
+
+### Fase 3 — Riscrittura e riorganizzazione del materiale superstite
+
+- Integrare i contenuti validi preesistenti con quelli aggiunti nella fase 2.
+- Riordinare capitoli e sezioni per sostenere una progressione chiara: prodotti e criteri di scelta, runtime e ambiente, performance e diagnosi, architetture e integrazioni, distribuzione ed esercizio, riproducibilità e rilascio, caso integrato.
+- Riscrivere i passaggi ambigui, frammentari o ridondanti; preservare i dettagli utili e le evidenze tecniche valide.
+- Distinguere esplicitamente requisiti, opzioni condizionali, buone pratiche, assunzioni ed esempi.
+- Aggiornare navigazione, rimandi, slide e configurazione solo quando necessario e motivato.
+
+**Criteri di accettazione:** filo narrativo continuo; responsabilità e confini architetturali chiari; transizioni comprensibili; contenuti collocati una sola volta salvo richiami utili; coerenza con gli obiettivi del corso.
+
+### Fase 4 — Omogeneizzazione editoriale e didattica
+
+- Uniformare terminologia, stile, livello di dettaglio, struttura degli esempi, titoli, tabelle, diagrammi e convenzioni di formattazione.
+- Applicare la regola dei backtick ai nomi di funzioni e package R nel testo discorsivo.
+- Verificare che le slide sintetizzino il manuale, rispettino il limite indicato nella sezione 14 e non introducano affermazioni discordanti.
+- Controllare consistenza di definizioni, sigle, nomi di file, prodotti e convenzioni tra tutti gli artefatti.
+
+**Criteri di accettazione:** stile uniforme e conforme alle sezioni 11–14; terminologia coerente; slide allineate al manuale e leggibili; assenza di violazioni editoriali note.
+
+### Fase 5 — Revisione finale e valutazione dello scostamento
+
+- Eseguire controlli tecnici, editoriali, didattici e di navigazione sull'intero perimetro modificato e sui relativi artefatti dipendenti.
+- Verificare rendering Quarto, diagrammi, chunk, link, codice e configurazione di pubblicazione in misura proporzionata alle modifiche e agli strumenti disponibili.
+- Valutare separatamente, con punteggio motivato e riscontri puntuali: coerenza con lo scopo, utilità per il target, leggibilità e chiarezza, progressione narrativa, accuratezza tecnica e completezza della copertura.
+- Per ogni obiettivo didattico indicare copertura raggiunta, evidenze, scostamenti residui e gravità.
+- Separare difetti bloccanti, miglioramenti raccomandati e aspetti non verificati. Non dichiarare completata una verifica che non è stata eseguita.
+
+**Criteri di accettazione:** report finale esaustivo; valutazioni motivate da evidenze; problemi residui e limiti dichiarati; controlli realmente eseguiti elencati; nessun difetto bloccante noto lasciato senza motivazione o piano d'azione.
+
+### Regole trasversali per tutte le fasi
+
+- Leggere queste istruzioni e gli artefatti pertinenti prima di intervenire.
+- Usare la matrice di ricognizione come riferimento comune e aggiornarla quando emergono nuove evidenze.
+- Ordinare gli interventi per priorità: prima correttezza e lacune bloccanti, poi copertura degli obiettivi, struttura e chiarezza, infine uniformità e rifiniture.
+- Al termine di ogni fase, riesaminare gli artefatti interessati, individuare eventuali nuovi problemi introdotti e correggerli prima di passare oltre.
+- Mantenere una traccia di decisioni, file modificati, verifiche e problemi residui.
+- Non inventare esiti di test, rendering, build o deploy. Distinguere sempre fra eseguito, non eseguibile e non ancora verificato.
+- Se una modifica richiede una decisione non determinabile dalle istruzioni o dalle evidenze, documentare l'opzione consigliata e la motivazione invece di nascondere l'incertezza.
+
