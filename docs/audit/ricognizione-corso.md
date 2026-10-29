@@ -45,7 +45,7 @@ Le priorità riguardano il piano proposto, non modifiche già eseguite. La fase 
 
 ### 2.1 Artefatti individuati
 
-Il tree ricorsivo di GitHub per il commit di riferimento restituisce 20 file e le directory tecniche `.github/`, `.github/workflows/` e `renv/`. Non risultano directory sorgente R, cartelle dati, suite di test o progetti di esempio autonomi.
+Il tree ricorsivo di GitHub per il commit di riferimento restituisce 21 file e le directory tecniche `.github/`, `.github/workflows/` e `renv/`. Non risultano directory sorgente R, cartelle dati, suite di test o progetti di esempio autonomi.
 
 | Percorso | Funzione | Stato dell'ispezione |
 |---|---|---|
@@ -339,7 +339,7 @@ Prima di iniziare la fase 1 è opportuno conservare questa matrice come riferime
 
 | Controllo | Esito |
 |---|---|
-| Tree ricorsivo del repository | Eseguito; 20 file e directory tecniche individuati. |
+| Tree ricorsivo del repository | Eseguito; 21 file e directory tecniche individuati. |
 | Lettura dei sorgenti didattici | Eseguita per introduzione, sei capitoli, supporti operativi e slide. |
 | Lettura configurazione Quarto/workflow | Eseguita. |
 | Link relativi e riferimenti di navigazione | Controllo statico eseguito; nessun link relativo Markdown rotto rilevato tra quelli individuati. |
