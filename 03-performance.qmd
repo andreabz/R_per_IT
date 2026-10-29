@@ -505,9 +505,7 @@ Da questo confronto non segue che:
 
 Il risultato dipende dall'operazione. Un carico di lavoro può essere dominato dal database, dall'I/O o dalla rete e rendere irrilevante la differenza fra due implementazioni R.
 
-La conclusione utile per IT è più semplice:
-
-Questo è anche il motivo per cui il confronto tra implementazioni va inserito nel ciclo **misura → ipotesi → test → nuova situazione di riferimento**, non usato come classifica permanente dei package.
+Il confronto tra implementazioni va inserito nel ciclo **misura → ipotesi → test → nuova situazione di riferimento**, non usato come classifica permanente dei package.
 ## Diagnostica — Scaling
 
 Lo speedup con `n` worker è `S(n) = T1 / Tn`; l'efficienza è `E(n) = S(n) / n`. `T1` e `Tn` devono provenire da misure comparabili dello stesso carico di lavoro e ambiente.
