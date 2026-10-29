@@ -290,7 +290,7 @@ Per una `Shiny` o un'API aggiungere test con concorrenza rappresentativa, latenz
 3. **Dove deve essere eseguito il lavoro?**
 4. **Esiste già un componente aziendale adatto?**
 
-Il risultato atteso non è saper programmare R. È saper passare da:
+Il risultato atteso è saper passare da:
 
 ```
 richiesta
