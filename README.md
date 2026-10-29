@@ -55,7 +55,7 @@ Un modo semplice per orientarsi è questo:
 | Interfacce analitiche interattive | Shiny + R |
 | Servizi che espongono capacità analitiche | API + R |
 
-Non è una classifica. Serve a chiarire **quale responsabilità viene aggiunta da R e quali componenti aziendali possono rimanere in carico allo stack esistente**.
+La tabella distingue le responsabilità dei componenti; non rappresenta livelli di maturità. Serve a chiarire **quale responsabilità viene aggiunta da R e quali componenti aziendali possono rimanere in carico allo stack esistente**.
 
 Una domanda utile per IT è quindi:
 
