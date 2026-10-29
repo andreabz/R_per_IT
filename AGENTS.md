@@ -1,80 +1,72 @@
 # AGENTS.md — Istruzioni per gli agenti di R_per_IT
 
-## 1. Mandato del progetto
+## 1. Scopo del progetto
 
-R_per_IT è un manuale tecnico rivolto a sistemisti, architetti, DevOps, team di piattaforma e responsabili tecnici che devono comprendere, valutare, integrare, distribuire e gestire soluzioni sviluppate in R.
+R_per_IT è un corso per colleghi IT che devono comprendere le soluzioni realizzabili con R, valutarne i requisiti, confrontare architetture e collaborare con gli sviluppatori nelle scelte tecniche, nella diagnosi e nel rilascio.
 
-L'obiettivo **non** è formare sviluppatori R né sostituire la formazione generale su sistemi operativi, reti, database o piattaforme. Il corso deve aiutare IT a capire che cosa cambia quando il carico di lavoro usa R e a trasformare una richiesta tecnica in requisiti verificabili, evidenze, decisioni e responsabilità.
+Il corso non deve insegnare ai partecipanti a programmare in R. Il codice va mostrato quando serve a spiegare un comportamento, rendere concreto un esempio o produrre misure da interpretare. Gli esercizi devono concentrarsi su requisiti, architetture, evidenze, diagnosi e decisioni.
 
-Principio guida:
+Il principio guida è capire quali prodotti si possono realizzare, come funzionano e quali condizioni richiedono.
 
-> Prima di aumentare le risorse, capire perché servono.
-
-R è normalmente un componente dello stack aziendale, non un sostituto automatico di Oracle, APEX, scheduler, web server, identity management, storage, gateway o sistemi di orchestrazione. Il materiale deve chiarire i confini tra componenti e promuovere il riuso dello stack aziendale quando appropriato.
+R è un componente dello stack aziendale. Il materiale deve chiarire i confini tra R, database, scheduler, web server, sistemi di identità, storage, gateway e piattaforme di orchestrazione. Valutare il riuso dei componenti aziendali quando è appropriato.
 
 ## 2. Destinatari e risultato atteso
 
-Il destinatario deve poter:
+Al termine del corso i partecipanti devono saper:
 
-- riconoscere la forma applicativa e il suo punto di ingresso;
-- identificare runtime R, package, dipendenze native, driver e sistemi esterni;
-- descrivere carico di lavoro, input/output, frequenza, durata, concorrenza e risorse;
-- distinguere misure ed evidenze da ipotesi;
-- valutare requisiti di distribuzione, sicurezza, osservabilità, ripristino della versione precedente e responsabilità operativa;
-- individuare le informazioni mancanti nel passaggio di consegne e chiederle in modo concreto;
-- confrontare alternative architetturali senza assumere che una soluzione sia sempre migliore delle altre.
+- riconoscere i principali prodotti costruibili con R e i rispettivi modelli di esecuzione;
+- individuare requisiti, dipendenze, risorse, sistemi esterni e responsabilità;
+- comprendere a grandi linee il runtime R e l'uso di CPU e RAM;
+- leggere misure e risultati di profiling, distinguendo osservazioni, ipotesi e conclusioni;
+- orientare gli sviluppatori verso verifiche e alternative architetturali appropriate;
+- comprendere il ruolo e i limiti di Git, `renv`, `testthat`, Docker e CI/CD;
+- valutare le evidenze necessarie per test, rilascio, riproducibilità e gestione operativa.
 
-Il livello tecnico è **approfondito sul piano operativo e architetturale**. Il codice va incluso quando rende verificabile un comportamento, chiarisce una configurazione o consente un esperimento riproducibile; non va usato per trasformare il corso in un tutorial di programmazione.
+Il livello tecnico deve essere approfondito sul piano concettuale, architetturale e diagnostico. I partecipanti non devono imparare a scrivere codice. Possono leggere esempi brevi, configurazioni, log, grafici e report già prodotti per comprenderne il significato e formulare decisioni.
 
 ## 3. Metodo di lavoro sugli artefatti esistenti
 
 Prima di aggiungere contenuti:
 
-1. leggere la sezione e i file pertinenti già presenti;
-2. cercare sovrapposizioni, contraddizioni e contenuti che possono essere corretti o approfonditi;
-3. decidere se correggere, integrare, collegare o aggiungere materiale;
+1. leggere il file e i materiali collegati;
+2. cercare sovrapposizioni, contraddizioni e contenuti da correggere o approfondire;
+3. decidere se mantenere, riscrivere, spostare in appendice o eliminare;
 4. mantenere coerenti manuale, indice, slide, esempi e configurazione di pubblicazione.
 
-Non creare una seconda spiegazione dello stesso concetto se è sufficiente migliorare o richiamare quella esistente. Non introdurre nuovi capitoli o sezioni di primo livello senza una motivazione esplicita.
+Riutilizzare il materiale valido. Evitare spiegazioni duplicate, capitoli aggiunti soltanto per elencare tecnologie e dettagli che non aiutano a capire un prodotto, valutarne i requisiti o interpretare evidenze.
 
-### Autonomia e limiti delle modifiche
+La direzione didattica definita in questo file autorizza la riorganizzazione dei capitoli per allineare il corso agli obiettivi indicati. Le modifiche strutturali devono essere applicate con coerenza a indice, link, slide e pubblicazione.
 
-- **Correzioni locali:** gli agenti possono correggere direttamente errori tecnici, imprecisioni, esempi incompleti, problemi di formattazione, chunk Quarto, link e problemi di rendering.
-- **Revisioni sostanziali:** gli agenti possono riscrivere o integrare sezioni esistenti quando migliorano chiarezza, accuratezza e utilità operativa senza cambiare l'impianto del corso.
-- **Modifiche strutturali:** prima di spostare capitoli, cambiare la progressione degli scenari o ampliare significativamente il perimetro, presentare una proposta motivata. Non eseguire autonomamente queste modifiche.
-- **Manuale e slide:** le modifiche tecniche al manuale devono essere riflesse nelle slide quando pertinenti; le slide non devono diventare una copia ridotta del manuale.
-- **Configurazione di pubblicazione:** non modificare workflow GitHub Actions, destinazioni o impostazioni di pubblicazione per comodità. Se serve una modifica strutturale, motivarla prima.
+Le modifiche a workflow GitHub Actions, destinazioni o impostazioni di pubblicazione devono essere motivate e verificate. Non modificarle per comodità.
 
-## 4. Progressione didattica: scenari crescenti
+## 4. Prodotti e architetture da coprire
 
-Organizzare il materiale intorno a scenari operativi crescenti, non intorno a una lista astratta di tecnologie. Gli scenari sono una struttura narrativa e comparativa, **non** una scala obbligatoria di maturità aziendale.
+Organizzare il corso a partire dai prodotti realizzabili con R e dai criteri per scegliere tra essi. Gli scenari sono una struttura di confronto, non una scala obbligatoria di maturità.
 
-### Livello 1 — Esecuzione e artefatti
+Copertura minima:
 
-- esplorazione e sviluppo locale;
-- script personale o condiviso;
-- esecuzione fuori dall'IDE tramite Rscript;
-- job batch gestito da scheduler;
-- report Quarto generato manualmente o in modo automatizzato.
+- script R personale o condiviso ed esecuzione batch con `Rscript`;
+- package R per funzioni riusabili;
+- client API con `httr2`;
+- server API con `plumber2`;
+- Shiny locale in `app.R`;
+- Shiny separata in `ui.R`, `server.R` e, quando presente, `global.R`;
+- Shiny strutturata come package con `golem`;
+- Shiny distribuita in Docker e gestita da ShinyProxy;
+- architetture con Docker Swarm o Kubernetes quando giustificate dai requisiti;
+- architetture con proxy/web server, autenticazione, metriche, Grafana e servizi esterni come Redis quando utili allo scenario;
+- pipeline analitiche e integrazioni con database, storage, scheduler, APEX, GIS e altri sistemi aziendali.
 
-### Livello 2 — Software riproducibile e pipeline
+Per ogni prodotto descrivere scopo, punto di ingresso, modello di esecuzione, utenti o sistemi chiamanti, dipendenze, risorse, sicurezza, test, distribuzione, monitoraggio e limiti. Spiegare quando è appropriato e quali alternative valutare.
 
-- package R;
-- dipendenze, test, versionamento e release;
-- pipeline e passaggio di artefatti;
-- ambienti riproducibili e container;
-- promozione tra test e produzione.
+Distinguere esplicitamente:
+- package riusabile e applicazione che lo utilizza;
+- client API che invia richieste e server API che le riceve;
+- struttura del codice e architettura di distribuzione;
+- esecuzione locale, batch, servizio persistente e applicazione interattiva;
+- stato specifico di una sessione Shiny, oggetti condivisi nel processo e stato esterno condiviso.
 
-### Livello 3 — Servizi e applicazioni
-
-- applicazioni `Shiny`, sessioni e reattività;
-- distribuzione `Shiny`, ShinyProxy e, quando pertinente, ShinyProxy Operator su Kubernetes;
-- API HTTP esposte con `plumber2`;
-- consumo di API HTTP da R, incluso `httr2`;
-- integrazione con Oracle, APEX, GIS e altri sistemi;
-- concorrenza, autenticazione, autorizzazione, sicurezza e osservabilità.
-
-Una singola soluzione può combinare più scenari: per esempio un job batch che genera un report Quarto, una `Shiny` che interroga Oracle o un'API R invocata da un sistema gestionale.
+Non presentare `golem`, Docker, ShinyProxy, Kubernetes, Grafana o Redis come requisiti universali. Risolvono problemi diversi e vanno introdotti in base allo scenario.
 
 ## 5. Scheda operativa per ogni scenario
 
@@ -115,7 +107,7 @@ Preparare **sia un caso integrato sia laboratori specifici**:
 
 Ogni prova comparativa deve dichiarare ambiente, versione quando rilevante, input, metodo, metrica, strategie confrontate e limiti di generalizzazione. Evitare confronti non riproducibili o numeri presentati come universali.
 
-Non assumere che parallelizzare migliori le prestazioni: può aumentare RAM, overhead, serializzazione e carico sui database, oppure peggiorare la contesa per le risorse.
+Non assumere che parallelizzare migliori le prestazioni: può aumentare RAM, overhead, serializzazione e carico sui database, oppure peggiorare la contesa per le risorse. Gli esercizi devono chiedere ai partecipanti di interpretare i risultati e proporre la verifica successiva; non devono richiedere loro di modificare il codice.
 
 ## 7. `Shiny`: riconoscimento, ciclo di vita e gestione
 
@@ -201,31 +193,36 @@ Gli esempi di distribuzione devono essere quasi eseguibili, con comandi e config
 
 ## 11. Stile, linguaggio e filo narrativo
 
-- Scrivere come un tecnico che spiega un problema a colleghi: tono sobrio, concreto e diretto. Il testo deve sembrare scritto da una persona che conosce il lavoro quotidiano, non da un consulente che vende un metodo.
-- Preferire parole italiane comuni quando sono altrettanto precise. Evitare gergo manageriale, slogan, enfasi, formule da presentazione commerciale e frasi che non aggiungono informazioni.
-- Evitare espressioni come «best-in-class», «game changer», «scalare» in senso generico, «abilitare», «mettere a terra», «vantaggio atteso» e «intervento rapido». Se un termine tecnico è necessario, spiegare che cosa significa nel caso specifico.
-- Quando un termine tecnico o un acronimo compare per la prima volta nel manuale, definirlo in italiano e, se utile, riportare la forma estesa originale. Esempio: «memoria residente (RSS, Resident Set Size): la memoria fisica attribuita dal sistema operativo al processo in quel momento».
-- Non dare per scontato che una sigla comune in un settore sia nota a tutti. Definire al primo uso le sigle rilevanti, per esempio HTTP, API, RAM, CPU, TLS, CI/CD, IAM, RSS e BLAS. Le sigle che fanno parte del nome ufficiale di una tecnologia vanno spiegate quando la tecnologia viene introdotta.
-- Preferire verbi concreti a sostantivi astratti: «misurare il tempo» invece di «effettuare una misurazione delle prestazioni»; «chi esegue il rilascio» invece di «responsabilità operativa della distribuzione».
-- Ogni paragrafo deve rispondere a una domanda riconoscibile: che cosa è, perché serve, che cosa verificare o quale decisione consente di prendere. Tagliare le frasi che ripetono il titolo o introducono il tema senza aggiungere informazioni.
-- Mantenere una progressione esplicita: contesto e forme delle soluzioni; ambiente di esecuzione; misure di tempo e memoria; struttura e integrazioni; distribuzione ed esercizio; criteri di decisione. Ogni capitolo deve riprendere quanto stabilito prima e preparare il successivo.
-- All'inizio di ogni capitolo spiegare in poche righe da quale problema si parte e perché il tema viene dopo quello precedente. Alla fine, indicare il passaggio successivo solo quando è utile; evitare riassunti rituali e transizioni vuote.
-- Usare esempi realistici, con soggetti e azioni chiari. Distinguere dati noti, ipotesi, valori di esempio e aspetti da verificare nell'ambiente aziendale.
-- Le slide devono seguire lo stesso linguaggio del manuale: termini definiti, frasi brevi e nessuna formula motivazionale o manageriale. Se una definizione non entra nella slide, definirla nel manuale e usare in slide una formulazione comprensibile.
-- Dopo una revisione editoriale, cercare gergo residuo, sigle non definite, ripetizioni, frasi generiche e termini tradotti in modi diversi. Non cambiare i nomi ufficiali di funzioni, package, file, opzioni o tecnologie.
-- Nel testo discorsivo, racchiudere tra singoli backtick Markdown ogni nome di funzione R e ogni nome di package R citato, anche in frasi, tabelle e titoli. Esempi: `system.time()`, `renv::restore()` e `data.table`. Non applicare la regola al codice nei chunk o nei blocchi di codice; mantenere invariati i nomi ufficiali e il codice eseguibile.
+Scrivere in italiano tecnico, sobrio e diretto. Il testo deve essere preciso, comprensibile e piacevole da leggere, senza enfasi artificiale.
+
+- Preferire frasi brevi e verbi concreti.
+- Eliminare retorica, slogan, frasi motivazionali, tono promozionale e gergo manageriale.
+- Evitare formule antitetiche come «non è X, è Y», «non si tratta di X, ma di Y» e varianti usate per creare enfasi. Scrivere direttamente la definizione o la differenza rilevante.
+- Evitare aperture generiche, introduzioni che ripetono il titolo, conclusioni rituali e frasi che non aggiungono informazioni.
+- Non usare domande retoriche come espediente narrativo. Usare domande dirette quando introducono un controllo concreto.
+- Evitare superlativi, promesse non dimostrate, metafore decorative e formule da comunicazione social.
+- Preferire parole italiane comuni quando sono precise. Mantenere inalterati i nomi ufficiali di funzioni, package, file, opzioni e tecnologie.
+- Definire le sigle al primo uso quando non sono ovvie per il pubblico, per esempio API, HTTP, CPU, RAM, RSS, TLS, CI/CD e BLAS.
+- Distinguere fatti, ipotesi, esempi, raccomandazioni e requisiti obbligatori.
+- Non presentare una buona pratica come obbligo universale.
+- Evitare ripetizioni tra capitoli. Richiamare con un collegamento un concetto già spiegato.
+- Usare tabelle per confronti reali e liste quando migliorano la leggibilità.
+- Ogni paragrafo deve aggiungere una definizione, una spiegazione, un'evidenza, un esempio o una conseguenza operativa.
+
+### Nomi di funzioni e package R
+
+Nel testo discorsivo, racchiudere tra singoli backtick Markdown ogni nome di funzione R e ogni nome di package R citato, anche in frasi, tabelle e titoli. Esempi: `system.time()`, `renv::restore()`, `data.table` e `testthat`. Non applicare la regola al codice nei chunk o nei blocchi di codice; non modificare il codice eseguibile.
 
 ## 12. Standard editoriali
 
 - Scrivere in italiano tecnico, preciso e diretto.
-- Preferire spiegazioni concrete, tabelle comparative e diagrammi utili a decidere.
-- Evitare slogan, frasi motivazionali, ripetizioni e affermazioni generiche non verificabili.
-- Non introdurre codice solo per decorazione; spiegare perché ogni esempio serve a una decisione IT.
-- Definire i termini tecnici al primo uso quando non sono ovvi per il destinatario, tenuto conto del pubblico a cui si rivolge il corso.
+- Preferire esempi concreti, tabelle comparative e diagrammi utili a capire una scelta.
+- Evitare slogan, frasi motivazionali, retorica, ripetizioni e affermazioni generiche non verificabili.
+- Non introdurre codice solo per decorazione: spiegare quale comportamento chiarisce o quale evidenza produce.
+- Definire i termini tecnici al primo uso quando possono essere nuovi per il destinatario.
 - Separare fatti, assunzioni, esempi e raccomandazioni.
-- Evitare di presentare una buona pratica come obbligo universale.
 - Mantenere nomenclatura e significato dei termini coerenti tra capitoli e slide.
-- Usare Mermaid solo quando migliora la comprensione di flussi, confini o decisioni; i diagrammi devono essere validi e leggibili.
+- Usare Mermaid quando chiarisce flussi, confini o decisioni; i diagrammi devono essere validi e leggibili.
 
 ## 13. Standard Quarto e codice
 
@@ -240,25 +237,17 @@ Gli esempi di distribuzione devono essere quasi eseguibili, con comandi e config
 
 ## 14. Standard per le slide
 
-Il manuale è la fonte autorevole per spiegazioni, esempi, comandi, configurazioni, confronti e caveat. Le slide sintetizzano lo stesso percorso decisionale: non sono un documento indipendente né una copia integrale del manuale.
+Il manuale è la fonte autorevole per spiegazioni, esempi, configurazioni, confronti e caveat. Le slide sintetizzano lo stesso percorso decisionale senza copiare il manuale integralmente.
 
-Ogni modifica tecnica pertinente al manuale deve essere valutata anche per le slide, mantenendo coerenti:
-- scenari e loro progressione;
-- termini e definizioni;
-- decisioni, diagrammi e confini tra componenti;
-- conclusioni tecniche e avvertenze.
+Ogni modifica tecnica pertinente al manuale va valutata anche per le slide, mantenendo coerenti scenari, termini, definizioni, diagrammi e conclusioni.
 
-Vincoli editoriali:
-- massimo **otto righe di testo o elementi** per slide, salvo casi in cui una struttura visiva renda il contenuto chiaramente leggibile;
-- evitare frasi motivazionali o formule retoriche: arrivare al punto;
-- limitare il codice alle righe necessarie a chiarire un comportamento o una decisione;
-- usare tabelle brevi e diagrammi leggibili;
-- usare fence Mermaid validi, senza sostituirli con tilde quando il renderer si aspetta il fence Quarto;
-- evitare slide vuote tra gli argomenti o sezioni;
-- privilegiare diagrammi Mermaid orizzontali se con più di 5 elementi.
-
-
-Se una modifica non è adatta alle slide, non forzarne la riproduzione: sintetizzare la conseguenza operativa o il criterio decisionale.
+- Massimo otto righe di testo o elementi per slide, salvo strutture visive chiaramente leggibili.
+- Usare frasi brevi, tecniche e dirette. Evitare retorica, formule antitetiche e frasi motivazionali.
+- Limitare il codice alle righe necessarie a chiarire un comportamento.
+- Usare tabelle brevi e diagrammi leggibili.
+- Usare fence Mermaid validi e verificare che i diagrammi vengano renderizzati.
+- Se il contenuto è troppo denso, dividerlo in più slide o spostare i dettagli nel manuale.
+- Non forzare nelle slide dettagli che si comprendono meglio nel manuale; sintetizzare il criterio decisionale.
 
 ## 15. Verifiche prima di concludere
 
