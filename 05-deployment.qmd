@@ -510,6 +510,6 @@ La regola operativa è:
 | Ripristino | procedura + riferimento di confronto |
 | responsabilità | responsabili |
 
-Prima del rilascio, la domanda utile non è «abbiamo installato R?», ma **«possiamo ricostruire, verificare e osservare questa specifica configurazione R in produzione?»**
+Prima del rilascio, verificare che **questa specifica configurazione R possa essere ricostruita, verificata e osservata in produzione**.
 
 Il capitolo 6 usa questa evidenza per trasformare le richieste in decisioni e assegnare responsabilità.
