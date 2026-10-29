@@ -49,7 +49,7 @@ responsabilità
 
 Non è ancora una specifica verificata. Servono almeno carico di lavoro, durata obiettivo, consumo attuale, picco, worker, concorrenza e alternative considerate.
 
-Il ruolo di IT non è decidere la correttezza del codice R, ma verificare che la richiesta tecnica sia sostenuta da evidenze riproducibili.
+Il ruolo di IT è verificare che la richiesta tecnica sia sostenuta da evidenze riproducibili; la correttezza del metodo e della logica applicativa resta responsabilità dello sviluppatore e dei referenti competenti.
 
 ## Riferimento di confronto
 
