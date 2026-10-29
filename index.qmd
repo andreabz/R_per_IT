@@ -10,10 +10,6 @@ Questo manuale è pensato per chi, in IT, deve **capire, valutare e gestire solu
 
 Il problema ricorrente è trasformare una richiesta formulata in termini tecnici — «installare R», «servono più RAM», «serve un server», «pubblichiamo una `Shiny`» — in una descrizione del problema che possa essere valutata, verificata e gestita nel tempo.
 
-## Il principio guida
-
-> **Prima di aumentare le risorse, capire perché servono.**
-
 ## Come procede il manuale
 
 Il percorso parte dalla richiesta iniziale e dalla forma della soluzione: script, elaborazione pianificata, report, applicazione o servizio. Passa poi a ciò che serve per eseguirla, cioè R, i pacchetti e le librerie esterne. Quando il comportamento è chiaro, si misurano tempi, memoria e accesso ai dati; solo dopo si valutano struttura, integrazioni, distribuzione e gestione nel tempo. L'ultimo capitolo usa questi elementi per confrontare le alternative e chiarire che cosa serve per prendere in carico una soluzione.
@@ -233,4 +229,4 @@ IT deve poter verificare le prime due senza assumere la responsabilità della te
 
 ## Criterio di lettura
 
-Il manuale non richiede a IT di sviluppare in R. Richiede di riconoscere come runtime, dipendenze, modello di esecuzione e integrazioni influenzino la gestione della soluzione. I concetti IT già noti — database, container, Git, monitoraggio e CI/CD — sono trattati come confini operativi, non reintrodotti da zero.
+Il runtime, le dipendenze, il modello di esecuzione e le integrazioni sono trattati in funzione del loro impatto sulla gestione della soluzione. I concetti IT già noti — database, container, Git, monitoraggio e CI/CD — sono trattati come confini operativi, non reintrodotti da zero.
