@@ -255,7 +255,7 @@ Questo concetto è distinto dalla lazy execution di un database o di un framewor
 
 S3, S4 e R6 sono sistemi diversi per rappresentare oggetti e comportamento. S3 è basato sul dispatch per classe e relativamente leggero; S4 è più formale; R6 introduce oggetti a semantica di riferimento e stato mutabile.
 
-Non serve insegnarne la programmazione. Serve sapere che una libreria R può introdurre oggetti con stato e che questo può influire su memoria, serializzazione e comportamento tra worker.
+Per IT è sufficiente riconoscere che una libreria R può introdurre oggetti con stato, con effetti su memoria, serializzazione e comportamento tra worker.
 
 ## `Parallel` e `future`
 
@@ -346,7 +346,7 @@ Se il master contiene un data frame molto grande, non basta sapere il numero di 
 | costo da osservare | COW e RAM | serializzazione, trasferimento e RAM |
 | portabilità | dipende dall'OS | generalmente più portabile |
 
-Non è una classifica: indica **quali costi misurare**.
+La tabella identifica **i costi da misurare**.
 
 ## Serializzazione
 
