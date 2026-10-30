@@ -22,7 +22,7 @@ L'attenzione è rivolta soprattutto a:
 - processi, memoria, worker, thread, parallelismo e librerie native;
 - misura, profiling, benchmark e diagnosi delle performance;
 - architetture R e integrazione con database, filesystem, API e altri sistemi;
-- diverse forme di soluzione: script personale, batch, report Quarto, Shiny, API plumber2, package e job in pipeline;
+- diverse forme di soluzione: script personale, batch, report Quarto, `Shiny`, API `plumber2`, package e job in pipeline;
 - build, test, artefatti, release e deployment;
 - configurazione, sicurezza, logging, monitoring, rollback e continuità operativa;
 - handover tra sviluppatore e IT;
@@ -52,7 +52,7 @@ Un modo semplice per orientarsi è questo:
 | Autenticazione, rete e TLS | infrastruttura aziendale |
 | Analisi statistica, modellistica e simulazione | R |
 | Report analitici riproducibili | Quarto + R |
-| Interfacce analitiche interattive | Shiny + R |
+| Interfacce analitiche interattive | `Shiny` + R |
 | Servizi che espongono capacità analitiche | API + R |
 
 La tabella distingue le responsabilità dei componenti; non rappresenta livelli di maturità. Serve a chiarire **quale responsabilità viene aggiunta da R e quali componenti aziendali possono rimanere in carico allo stack esistente**.
@@ -73,12 +73,12 @@ Il corso considera esplicitamente diversi modelli operativi:
 | Script personale | quale ambiente deve avere l'utente e quali dati può utilizzare? |
 | Script batch | quando parte, quanto dura, quali risorse usa e come viene monitorato? |
 | Report Quarto | come viene generato, con quale ambiente e dove viene pubblicato l'artefatto? |
-| Applicazione Shiny | come vengono gestite sessioni, concorrenza, autenticazione e scaling? |
-| API plumber2 | quale contratto espone, chi può chiamarla e quali sono timeout, limiti e monitoring? |
+| Applicazione `Shiny` | come vengono gestite sessioni, concorrenza, autenticazione e scaling? |
+| API `plumber2` | quale contratto espone, chi può chiamarla e quali sono timeout, limiti e monitoring? |
 | Package R | quale API fornisce, quali dipendenze ha e come viene versionato e testato? |
 | Job R in pipeline | quali sono input/output, dipendenze, retry, stato e responsabilità dello step? |
 
-Una soluzione può combinare più modelli: per esempio un report Quarto generato da un job batch, oppure una Shiny che utilizza database e API.
+Una soluzione può combinare più modelli: per esempio un report Quarto generato da un job batch, oppure una `Shiny` che utilizza database e API.
 
 ## Principio guida
 
@@ -122,11 +122,11 @@ Il manuale è scritto in Quarto e pubblicato tramite GitHub Actions su GitHub Pa
 - Repository: https://github.com/andreabz/R_per_IT
 - Sito: https://andreabz.github.io/R_per_IT/
 
-Il workflow di pubblicazione esegue il restore dell'ambiente renv, il render Quarto e il deploy dell'artefatto `_site` su GitHub Pages.
+Il workflow di pubblicazione esegue il restore dell'ambiente `renv`, il render Quarto e il deploy dell'artefatto `_site` su GitHub Pages.
 
 ## Tecnologia
 
-Il progetto usa Quarto per il manuale, R per gli esempi e il rendering dei contenuti, renv per la gestione riproducibile delle dipendenze R, GitHub Actions per build e pubblicazione e GitHub Pages per il sito.
+Il progetto usa Quarto per il manuale, R per gli esempi e il rendering dei contenuti, `renv` per la gestione riproducibile delle dipendenze R, GitHub Actions per build e pubblicazione e GitHub Pages per il sito.
 
 ## Stato del materiale
 
