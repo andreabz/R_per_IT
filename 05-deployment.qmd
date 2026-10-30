@@ -138,7 +138,7 @@ docker logs shiny-test
 docker stop shiny-test
 ```
 
-Sostituire l'immagine base, il tag e il file di configurazione con valori reali; il nome registry.example.org è un segnaposto documentale. La verifica curl controlla la risposta HTTP iniziale, non autenticazione, autorizzazione, dipendenze applicative o comportamento sotto carico. Se il comando si interrompe prima di docker stop, rimuovere il container di test con docker rm -f shiny-test.
+Sostituire l'immagine base, il tag e il file di configurazione con valori reali; il nome registry.example.org è un segnaposto documentale. La verifica curl controlla la risposta HTTP iniziale, non autenticazione, autorizzazione, dipendenze applicative o comportamento sotto carico. Se il comando si interrompe prima di docker stop, rimuovere il container di test con docker rm -f `shiny`-test.
 
 Il comando docker run è adatto a una verifica locale; non è una configurazione di produzione. Non mettere segreti in file env versionati o in immagini. In produzione usare il secret store e la rete della piattaforma, impostare limiti CPU/RAM e health check e terminare il container tramite l'orchestratore.
 
