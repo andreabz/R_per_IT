@@ -710,6 +710,22 @@ Quindi:
 
 > **containerizzare R significa controllare una parte dell'ambiente, non eliminare i confini infrastrutturali.**
 
+### Esecuzione su host, container e orchestratore
+
+Sono tre livelli distinti:
+
+| Modello | Che cosa gestisce | Quando valutarlo |
+|---|---|---|
+| Processo su host | Avvio del processo R, account, runtime e dipendenze installate sull'host | Job o servizi con requisiti semplici e ambiente gestibile direttamente |
+| Container avviato dalla piattaforma | Immagine, processo isolato, risorse e configurazione associata | Quando serve distribuire un ambiente applicativo identificabile e ripetibile |
+| Orchestratore di container | Distribuzione e ciclo di vita di più container/repliche, scheduling, riavvio e, secondo la piattaforma, scalabilità e rete | Quando disponibilità, numero di istanze, gestione del carico o frequenza dei rilasci giustificano la complessità aggiuntiva |
+
+Docker Swarm e Kubernetes sono esempi di piattaforme di orchestrazione. La scelta tra essi dipende dagli standard aziendali, dalle competenze disponibili, dai requisiti di disponibilità e dalla complessità operativa; il corso non prescrive una piattaforma.
+
+L'orchestratore gestisce risorse e ciclo di vita dei container. La logica applicativa, i contratti con database e servizi, la gestione corretta degli errori e la sicurezza del codice restano responsabilità del prodotto e del suo team. La piattaforma deve inoltre essere configurata per rete, identità, segreti, storage, limiti di risorse, health check, log e metriche.
+
+L'orchestrazione introduce componenti e competenze da mantenere. Se un singolo host o un servizio container gestito dalla piattaforma soddisfa i requisiti di disponibilità, carico e ripristino, aggiungere un orchestratore può aumentare il costo senza un beneficio dimostrato. La decisione va motivata con requisiti misurabili e responsabilità di esercizio.
+
 ## Autenticazione, autorizzazione e responsabilità
 
 Per le soluzioni interattive è utile distinguere:
