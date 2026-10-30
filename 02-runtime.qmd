@@ -60,7 +60,7 @@ Non tutte le sezioni hanno lo stesso peso per IT.
 
 - environment e lexical scoping;
 - lazy evaluation;
-- S3, S4 e R6.
+- S3, S4 e `R6`.
 
 Questi ultimi concetti aiutano a capire alcuni comportamenti di R e delle sue librerie, ma non sono prerequisiti per la prima presa in carico di una normale soluzione R.
 
@@ -140,11 +140,14 @@ Una misura utile deve quindi riportare almeno il punto temporale, il processo o 
 
 **Obiettivo:** verificare se una trasformazione completa crea un picco di memoria maggiore dell'elaborazione per blocchi. Il risultato dipende dalla rappresentazione dei dati e dall'operazione; non va generalizzato senza misura.
 
+- **Prerequisiti:** package `data.table` disponibile nell'ambiente di prova.
 - **Input:** tabella sintetica con 5 milioni di righe e due colonne numeriche.
 - **Ambiente:** stessa versione di R, stesso host e stessa library; nessun altro carico di lavoro significativo durante la misura.
 - **Confronto:** calcolo completo in un passaggio contro calcolo per blocchi da 500.000 righe.
 - **Metriche:** durata, picco RSS del processo e correttezza del risultato.
 - **Limiti:** RSS è una metrica del sistema operativo; `object.size()` stima la dimensione di un oggetto R e non misura il picco residente. L'esempio è escluso dal rendering automatico perché alloca dati di grandi dimensioni.
+
+Salvare il codice seguente in `laboratorio-memoria.R`. Il parametro seleziona una sola strategia per processo, così il massimo RSS misurato non combina le due esecuzioni.
 
 ```{r}
 #| label: laboratorio-memoria-blocchi
@@ -152,35 +155,44 @@ Una misura utile deve quindi riportare almeno il punto temporale, il processo o 
 
 n <- 5000000L
 blocco <- 500000L
+strategia <- commandArgs(trailingOnly = TRUE)
+
+if (length(strategia) != 1L ||
+    !strategia %in% c("completo", "blocchi")) {
+  stop("Specificare: completo oppure blocchi")
+}
+
 DT <- data.table::data.table(
   quantita = runif(n),
   prezzo = runif(n)
 )
 
-
-
-
-
-# Strategia A: risultato completo.
-tempo_completo <- system.time({
-  DT[, totale := quantita * prezzo]
-})
-
-# Strategia B: ricreare DT senza la colonna totale e lavorare per blocchi.
-DT[, totale := NULL]
-tempo_blocchi <- system.time({
-  for (inizio in seq.int(1L, n, by = blocco)) {
-    fine <- min(inizio + blocco - 1L, n)
-    DT[inizio:fine, totale := quantita * prezzo]
-  }
-})
+if (strategia == "completo") {
+  tempo <- system.time({
+    DT[, totale := quantita * prezzo]
+  })
+} else {
+  tempo <- system.time({
+    DT[, totale := NA_real_]
+    for (inizio in seq.int(1L, n, by = blocco)) {
+      fine <- min(inizio + blocco - 1L, n)
+      DT[inizio:fine, totale := quantita * prezzo]
+    }
+  })
+}
 
 stopifnot(nrow(DT) == n, all(is.finite(DT$totale)))
-tempo_completo
-tempo_blocchi
+print(tempo)
 ```
 
-Su Linux, eseguire ogni strategia in un processo separato e registrare il massimo RSS con `/usr/bin/time -v Rscript laboratorio-memoria.R`; verificare la disponibilità del comando e usare lo stesso metodo per entrambe. Per un confronto valido, usare lo stesso input e più ripetizioni. Il metodo per blocchi non garantisce un RSS inferiore: l'oggetto finale resta in memoria.
+Su Linux, eseguire separatamente:
+
+```bash
+/usr/bin/time -v Rscript laboratorio-memoria.R completo
+/usr/bin/time -v Rscript laboratorio-memoria.R blocchi
+```
+
+Verificare la disponibilità di `/usr/bin/time` e usare lo stesso metodo per entrambe le prove. Per un confronto valido, ripetere le esecuzioni in condizioni comparabili e confrontare le mediane. Il metodo per blocchi non garantisce un RSS inferiore: l'oggetto finale resta in memoria.
 
 
 > **Per una richiesta RAM, il dato utile è il picco osservato nel carico di lavoro reale, non la somma delle dimensioni nominali dei dataset.**
@@ -255,9 +267,9 @@ Per IT interessa la conseguenza operativa: **il momento della valutazione di un 
 
 Questo concetto è distinto dalla lazy execution di un database o di un framework analitico, che verrà ripreso nel capitolo 4.
 
-## Approfondimento — S3, S4 e R6
+## Approfondimento — S3, S4 e `R6`
 
-S3, S4 e R6 sono sistemi diversi per rappresentare oggetti e comportamento. S3 è basato sul dispatch per classe e relativamente leggero; S4 è più formale; R6 introduce oggetti a semantica di riferimento e stato mutabile.
+S3, S4 e `R6` sono sistemi diversi per rappresentare oggetti e comportamento. S3 è basato sul dispatch per classe e relativamente leggero; S4 è più formale; `R6` introduce oggetti a semantica di riferimento e stato mutabile.
 
 Per IT è sufficiente riconoscere che una libreria R può introdurre oggetti con stato, con effetti su memoria, serializzazione e comportamento tra worker.
 
@@ -421,7 +433,7 @@ Separiamo le variabili:
 3. misurare tempo;
 4. misurare CPU;
 5. misurare RAM;
-6. verificare la concorrenza con altri carico di lavoro.
+6. verificare la concorrenza con altri carichi di lavoro.
 
 La domanda infrastrutturale diventa:
 
