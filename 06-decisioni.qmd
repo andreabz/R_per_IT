@@ -198,7 +198,7 @@ Richiesta:
 
 > «Il mio script R impiega tre ore. Mi serve una VM con 16 core e 64 GB di RAM.»
 
-Dati:
+Dati didattici ipotetici, introdotti per l'esercizio e non riferiti a una misurazione del repository o a un sistema reale:
 
 ```
 RAM di picco: 11 GB
@@ -231,25 +231,11 @@ Test:
 La prova comparativa mostra che il parallelismo riduce il tempo, ma aumenta rapidamente il consumo di memoria e non garantisce uno scaling lineare. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
 
 
-## Scheda di passaggio di consegne e production readiness
+## Passaggio di consegne e criteri di presa in carico
 
-La richiesta dello sviluppatore dovrebbe poter essere tradotta in una scheda operativa con almeno queste sezioni:
+La raccolta delle informazioni operative è centralizzata nella scheda compilabile dell'appendice [Kit operativo per IT](appendice-kit-operativo.qmd). Questo capitolo la integra con il metodo decisionale: collegare requisito, evidenza, test, alternativa e responsabilità.
 
-| Area | Informazione minima |
-|---|---|
-| Identità | repository, commit/tag, owner, entrypoint |
-| Forma | batch, Quarto, `Shiny`, API, package, pipeline |
-| Ambiente | R, OS, package, file che registra le dipendenze, native dependencies |
-| carico di lavoro | dati, frequenza, durata, utenti/concorrenza |
-| Risorse | CPU, RAM, I/O, rete, worker, thread |
-| Sistemi esterni | Oracle, API, filesystem, storage |
-| Sicurezza | account, permessi, autenticazione, segreti, TLS |
-| Test | funzionali, integrazione, compatibilità, performance |
-| Operatività | log, metriche, alert, restart, nuovo tentativo automatico |
-| Recovery | ripristino della versione precedente, riferimento di confronto precedente, runbook |
-| responsabilità | chi decide, chi deploya, chi monitora, chi interviene |
-
-La **scheda completa e compilabile** è nell'appendice *Kit operativo per IT*. Il capitolo fornisce il metodo; l'appendice fornisce lo strumento da usare con una richiesta reale.
+Prima di decidere, verificare che la scheda identifichi almeno versione, ambiente, carico di lavoro, sistemi esterni, test, modalità di distribuzione e owner. I campi non applicabili vanno motivati; quelli mancanti devono essere assegnati a un referente o a una prova.
 
 ### Gate di rilascio: requisito, test e operatività
 
