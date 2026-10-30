@@ -453,10 +453,6 @@ Un inventario minimo comprende:
 
 L'obiettivo non è documentare ogni dettaglio del sistema, ma rendere espliciti quelli che possono cambiare **risultato, performance, accesso ai dati o comportamento operativo**.
 
-## Ciclo di vita in esercizio
-
-Ogni passaggio tra sviluppo, test e produzione deve lasciare evidenza della versione in uso, dell'ambiente e della configurazione. La sequenza operativa è descritta nella catena di rilascio all'inizio del capitolo; questa sezione riguarda la tracciabilità durante l'esercizio e gli aggiornamenti.
-
 ## Passaggio di consegne
 
 La scheda completa per il passaggio di consegne è nell'appendice [Kit operativo per IT](appendice-kit-operativo.qmd). Raccoglie identificazione, ambiente, dipendenze, carico di lavoro, sicurezza, test, distribuzione, monitoraggio e responsabilità.
