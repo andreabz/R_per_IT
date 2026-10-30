@@ -457,89 +457,12 @@ L'obiettivo non è documentare ogni dettaglio del sistema, ma rendere espliciti 
 
 Ogni passaggio tra sviluppo, test e produzione deve lasciare evidenza della versione in uso, dell'ambiente e della configurazione. La sequenza operativa è descritta nella catena di rilascio all'inizio del capitolo; questa sezione riguarda la tracciabilità durante l'esercizio e gli aggiornamenti.
 
-## Passaggio di consegne: le informazioni che lo sviluppatore deve fornire a IT
+## Passaggio di consegne
 
-Il passaggio in produzione è più efficace se viene trattato come una **specifica verificabile del carico di lavoro**, non come una richiesta generica di infrastruttura.
+La scheda completa per il passaggio di consegne è nell'appendice [Kit operativo per IT](appendice-kit-operativo.qmd). Raccoglie identificazione, ambiente, dipendenze, carico di lavoro, sicurezza, test, distribuzione, monitoraggio e responsabilità.
 
-Una consegna minima dovrebbe contenere:
+Nel capitolo, i requisiti sono trattati nelle sezioni dedicate: test e gate di rilascio, configurazione e segreti, comportamento in caso di errore, logging e monitoraggio, modalità di esecuzione e configurazione del runtime. La scheda dell'appendice evita di duplicare queste informazioni in una seconda tabella compilabile.
 
-| Area | Informazione richiesta | Evidenza | Responsabile |
-|---|---|---|---|
-| Applicazione | nome, repository, commit/tag, entrypoint | commit/tag | sviluppatore |
-| Runtime | versione R, OS supportati | `R.version`, documentazione | sviluppatore |
-| Dipendenze | package, versioni, sorgenti, native dependencies | `renv.lock` + inventario | sviluppatore/IT |
-| carico di lavoro | batch/servizio, durata, frequenza, concorrenza | descrizione + misure | sviluppatore |
-| Dati | input/output, dimensioni, crescita | dataset o statistiche | sviluppatore |
-| Risorse | CPU, RAM, I/O, rete, worker, thread | prova comparativa/analisi dei tempi di esecuzione | sviluppatore + IT |
-| Sistemi esterni | DB, API, filesystem, storage | elenco endpoint e flussi | sviluppatore + IT |
-| Configurazione | parametri, variabili d'ambiente, timeout | configurazione di riferimento | sviluppatore |
-| Sicurezza | account, permessi, segreti, TLS | requisiti e configurazione | IT + owner |
-| Test | unitari, integrazione, compatibilità, performance; requisiti coperti; esiti e limitazioni | report della suite collegato a commit/tag e versione dell'artefatto | sviluppatore; IT verifica ambiente e tracciabilità |
-| distribuzione | artefatto, procedura, prova rapida di avvio | pipeline/runbook | IT + sviluppatore |
-| Operatività | log, metriche, alert, nuovo tentativo automatico, restart | configurazione operativa | IT |
-| Recovery | ripristino della versione precedente e riferimento di confronto precedente | procedura verificata | IT + sviluppatore |
-| responsabilità | chi decide e chi interviene | matrice responsabilità | team |
+Per una consegna incompleta, registrare ogni dato mancante, il referente che deve fornirlo e la decisione che dipende da quell'informazione. I valori di performance devono essere collegati a input, ambiente, metodo e versione verificabili.
 
-
-Per servizi e applicazioni interattive, la scheda deve inoltre indicare: modello di sessione/processo, concorrenza attesa, endpoint e timeout, dipendenze da verificare, health check, log correlabili, gestione dei segreti e criterio di ripristino della versione precedente. La prova rapida di avvio deve verificare il contratto visibile al chiamante, non soltanto che il processo sia partito.
-
-Questa tabella separa tre cose che spesso vengono confuse:
-
-1. **che cosa chiede lo sviluppatore**;
-2. **quale evidenza giustifica la richiesta**;
-3. **chi è responsabile della verifica e della gestione**.
-
-### Da una richiesta generica a una specifica verificabile
-
-Una richiesta come:
-
-> «Lo script R necessita di 16 core e 64 GB di RAM.»
-
-non è ancora una specifica infrastrutturale sufficiente. Mancano almeno carico di lavoro, ambiente, concorrenza, durata obiettivo e misura che giustifica quelle risorse.
-
-Una consegna più utile potrebbe descrivere, per esempio:
-
-```text
-R: versione dichiarata
-Ambiente: renv.lock + OS supportato
-Input: 30 GB
-Output: 2 GB
-Esecuzione: batch, 2 volte/giorno
-Target: < 60 minuti
-Worker: 1, BLAS threads: 1
-Picco RSS osservato: 11 GB
-CPU osservata: 98%
-Database: Oracle
-Volume trasferito: 40 GB
-```
-
-e allegare una prova comparativa controllata:
-
-| worker | Tempo | RAM di picco |
-|---:|---:|---:|
-| 1 | 192 min | 11 GB |
-| 2 | 104 min | 20 GB |
-| 4 | 59 min | 38 GB |
-
-Queste evidenze consentono a IT di discutere una configurazione concreta e di identificare ciò che resta da verificare. Non trasformano automaticamente i numeri osservati nella capacità definitiva: la configurazione deve considerare anche concorrenza, overhead, margine operativo, stabilità e vincoli della piattaforma.
-
-La regola operativa è:
-
-> **Lo sviluppatore deve fornire una descrizione riproducibile del carico di lavoro e delle evidenze; IT deve poter trasformare queste informazioni in una configurazione, una distribuzione e un esercizio verificabili.**
-
-## Verifica della prontezza alla produzione
-
-| Aspetto | Evidenza |
-|---|---|
-| Codice | commit/tag |
-| Ambiente R | R + package + native |
-| Configurazione | parametri |
-| Test | esiti |
-| Sicurezza | accessi e segreti |
-| Operatività | logging/monitoraggio |
-| Ripristino | procedura + riferimento di confronto |
-| responsabilità | responsabili |
-
-Prima del rilascio, verificare che **questa specifica configurazione R possa essere ricostruita, verificata e osservata in produzione**.
-
-Il capitolo 6 usa questa evidenza per trasformare le richieste in decisioni e assegnare responsabilità.
+Il capitolo 6 descrive come utilizzare queste evidenze per confrontare alternative e formulare una decisione tecnica.
