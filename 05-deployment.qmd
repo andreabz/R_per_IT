@@ -48,7 +48,7 @@ La domanda operativa è:
 
 > **Che cosa viene promosso da test a produzione e come si dimostra che l'ambiente che lo esegue è quello previsto?**
 
-## Git e riferimento di confronto
+## Git e situazione di riferimento
 
 Una release R deve essere riconducibile a commit/tag, versione R, dipendenze, configurazione, componenti nativi, dati di test ed esiti.
 
