@@ -162,6 +162,7 @@ if (length(strategia) != 1L ||
   stop("Specificare: completo oppure blocchi")
 }
 
+set.seed(20261030)
 DT <- data.table::data.table(
   quantita = runif(n),
   prezzo = runif(n)
