@@ -387,7 +387,7 @@ flowchart TD
 - **Ipotesi:** possibile collo di bottiglia.
 - **Test:** confronto tra alternative.
 - **Decisione:** opzione compatibile con i vincoli.
-- **Riferimento e owner:** come riprodurre e gestire.
+- **Situazione di riferimento e owner:** come riprodurre e gestire.
 
 ---
 
