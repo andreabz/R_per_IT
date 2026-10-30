@@ -153,7 +153,7 @@ Non serve eseguire sempre una prova comparativa complessa. Il livello di misura 
 | File di configurazione | |
 | Certificati | |
 
-**I segreti non devono essere inclusi nel repository, nel codice o nel file che registra le dipendenze.**
+**I segreti non devono essere inclusi nel repository, nel codice o nel lockfile.**
 
 ## 7. Test di produzione
 
