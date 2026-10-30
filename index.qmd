@@ -60,13 +60,13 @@ nuova situazione di riferimento quando cambia qualcosa
 
 ## Obiettivi operativi a fine corso
 
-Al termine del percorso, un membro IT non deve diventare sviluppatore R. Deve però poter **ricevere una soluzione R, farne emergere i requisiti operativi e capire quali informazioni mancano prima di portarla in esercizio**.
+Al termine del percorso, un membro IT deve poter **ricevere una soluzione R, farne emergere i requisiti operativi e identificare le informazioni mancanti prima della messa in esercizio**.
 
 In particolare deve saper:
 
 - riconoscere le principali forme di soluzione R: script, batch, report Quarto, `Shiny`, API, package e job di pipeline;
 - distinguere R dal suo ambiente di esecuzione e identificare package, dipendenze native, driver e sistemi esterni;
-- capire che cosa descrivono un repository, un commit/tag e un file che registra le dipendenze e che cosa invece resta fuori dalla loro portata;
+- capire che cosa descrivono un repository, un commit/tag e un lockfile e che cosa resta fuori dalla sua portata;
 - leggere un carico di lavoro in termini di input, output, frequenza, durata, utenti/concorrenza e risorse;
 - distinguere una misura da un'ipotesi e chiedere le evidenze necessarie prima di trasformare una richiesta in una specifica infrastrutturale;
 - rappresentare i confini tra R, Oracle, filesystem, API, scheduler, proxy e altri componenti aziendali;
@@ -131,7 +131,7 @@ Quali alternative esistono?
 Quale infrastruttura serve?
 ```
 
-Il corso non richiede di conoscere tutta la programmazione R. Richiede però di conoscere abbastanza del **modello computazionale di R** da interpretare correttamente le evidenze. Per esempio, un oggetto R può essere copiato, un worker può richiedere memoria aggiuntiva, una libreria nativa può creare propri thread e una query può essere eseguita dal database invece che da R. Questi dettagli cambiano il significato di una misura di CPU o RAM.
+Il corso introduce il **modello computazionale di R** necessario per interpretare correttamente le evidenze. Per esempio, un oggetto R può essere copiato, un worker può richiedere memoria aggiuntiva, una libreria nativa può creare propri thread e una query può essere eseguita dal database invece che da R. Questi dettagli cambiano il significato di una misura di CPU o RAM.
 
 ## Come leggere le evidenze
 
