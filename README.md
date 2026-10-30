@@ -88,7 +88,7 @@ Una richiesta come «servono più CPU», «serve più RAM» o «serve un server 
 
 L'approccio parte da requisito e workload, passa attraverso misure ed evidenze e arriva a una decisione architetturale, operativa e governata.
 
-## Handover sviluppatore → IT
+## Passaggio di consegne sviluppatore → IT
 
 Per portare una soluzione R in produzione devono essere espliciti almeno:
 
@@ -113,7 +113,7 @@ La checklist breve dell'appendice può essere usata già nella prima riunione: q
 
 ## Kit operativo
 
-Il manuale include un'appendice utilizzabile come traccia per l'handover sviluppatore → IT e per una prima verifica di production readiness. La scheda raccoglie identificazione, modello di esecuzione, ambiente R, dati, risorse, sicurezza, test, error handling, deployment, monitoring, aggiornamenti e ownership.
+Il manuale include un'appendice utilizzabile come traccia per l'handover sviluppatore → IT e per una prima verifica di prontezza per la produzione. La scheda raccoglie identificazione, modello di esecuzione, ambiente R, dati, risorse, sicurezza, test, error handling, deployment, monitoring, aggiornamenti e ownership.
 
 ## Pubblicazione
 
@@ -134,4 +134,6 @@ Il repository contiene la versione corrente del corso. Il materiale è organizza
 
 ## Licenza
 
-Verificare il file di licenza del repository prima di riutilizzare o redistribuire il materiale.
+I contenuti originali del repository sono distribuiti secondo la **GNU General Public License v3.0** (identificatore SPDX: `GPL-3.0-only`). Il testo integrale è disponibile nel file [LICENSE](LICENSE).
+
+Eventuali materiali di terzi restano soggetti alle rispettive licenze e ai relativi avvisi. La presenza di una dipendenza nel lockfile non implica che il relativo codice sia distribuito con la licenza di questo repository.
