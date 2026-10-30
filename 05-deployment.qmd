@@ -234,6 +234,66 @@ confronto
 
 Se il risultato applicativo è corretto ma il tempo passa da 10 a 40 minuti o la RAM da 4 a 20 GB, la release richiede una valutazione tecnica prima del passaggio in produzione.
 
+### Test automatici di un package R
+
+Per un package R, `testthat` è il package comunemente usato per definire ed eseguire test automatici. Un test esprime un comportamento atteso e lo confronta con il risultato ottenuto. I test sono normalmente organizzati in file nella directory `tests/testthat/`; ogni test può contenere più verifiche (expectations).
+
+La suite accompagna il codice durante le modifiche: viene eseguita in sviluppo e può essere richiamata dai controlli automatici della pipeline o da `R CMD check`. Il package sorgente, i test e il package installabile sono elementi distinti. La presenza di test nel repository non dimostra che siano stati eseguiti sulla versione candidata al rilascio.
+
+| Livello | Che cosa verifica | Esempio di problema intercettabile |
+|---|---|---|
+| Unitario | Una funzione o un comportamento circoscritto, con dipendenze controllate | Calcolo errato su un input limite |
+| Integrazione | La collaborazione tra più componenti o un sistema esterno | Formato inatteso restituito da un servizio |
+| Performance | Tempi e risorse su un carico rappresentativo | Aumento del tempo o della RAM rispetto al riferimento |
+
+La distinzione descrive lo scopo della prova, non una classificazione automatica assegnata da `testthat`. I test unitari sono adatti a controllare rapidamente comportamenti circoscritti. I test d'integrazione richiedono che siano disponibili o simulati i componenti coinvolti. Le prove di performance richiedono input, ambiente e metodo confrontabili; non sono sostituite da una suite di test funzionali.
+
+### Interpretare gli esiti
+
+I report possono essere presentati con formati diversi in base al reporter e alla pipeline. Per la valutazione IT occorre distinguere almeno questi casi:
+
+| Esito | Significato operativo | Azione |
+|---|---|---|
+| Superato (pass) | L'aspettativa verificata è rispettata | Registrare il controllo come superato |
+| Fallimento (fail) | Il risultato ottenuto non corrisponde a quello atteso | Esaminare requisito, valore ottenuto e atteso |
+| Errore (error) | Il test non è arrivato a completare normalmente la verifica, per esempio per un'eccezione inattesa | Esaminare stack trace, ambiente e dipendenze |
+| Saltato (skip) | Il test è stato deliberatamente escluso, spesso per una condizione non disponibile | Verificare motivo e impatto sul rilascio |
+| Non eseguito | Il test non è stato avviato o non compare tra i controlli eseguiti | Chiedere perché manca e se è obbligatorio |
+
+Fallimento ed errore non sono sinonimi. Un fallimento segnala un'aspettativa non rispettata; un errore segnala un'interruzione della verifica. Un test saltato non è superato. Un controllo non eseguito non può essere considerato coperto. Anche gli avvisi vanno letti e valutati secondo la policy del progetto: non equivalgono automaticamente a un esito positivo.
+
+Esempio **illustrativo**, non prodotto da un'esecuzione del repository:
+
+| Controllo | Esito | Requisito collegato |
+|---|---|---|
+| Gestione input valido | Superato | RQ-01 |
+| Gestione valore mancante | Fallimento | RQ-02 |
+| Connessione al servizio di prova | Errore | RQ-03 |
+| Compatibilità con database non disponibile | Saltato | RQ-04 |
+| Verifica del volume massimo | Non eseguito | RQ-05 |
+
+Da questo riepilogo si può concludere che RQ-01 è stato verificato con esito positivo. RQ-02 e RQ-03 richiedono analisi e correzione o una decisione motivata. RQ-04 non è stato verificato nell'ambiente previsto; RQ-05 resta scoperto. Il numero di test superati, da solo, non misura la copertura dei requisiti.
+
+### Evidenze da richiedere e gate di rilascio
+
+Per la versione candidata, chiedere allo sviluppatore una registrazione riconducibile al codice e all'artefatto effettivamente proposti:
+
+- repository e commit/tag del sorgente;
+- versione del package o identificativo dell'artefatto costruito;
+- versione R, dipendenze e ambiente in cui i test sono stati eseguiti;
+- elenco o identificativo della suite e data dell'esecuzione;
+- riepilogo di superati, fallimenti, errori, saltati e non eseguiti;
+- dettaglio dei test falliti o in errore e motivazione dei test esclusi;
+- requisiti coperti e non coperti, limitazioni note e verifiche manuali o d'integrazione ancora necessarie.
+
+Il gate deve essere definito dal progetto in funzione del rischio. Come base:
+
+- **Necessario:** identificare la versione candidata; eseguire i test dichiarati obbligatori; risolvere i fallimenti e gli errori bloccanti oppure documentare una deroga approvata; verificare che l'artefatto distribuito corrisponda a quello controllato.
+- **Condizionale:** eseguire test d'integrazione con sistemi reali, compatibilità su più ambienti, prove di carico o verifiche di sicurezza quando lo scenario e il rischio lo richiedono.
+- **Buona pratica:** conservare report, log e identificativi di build insieme alla release, collegando ogni test ai requisiti pertinenti.
+
+I test automatici non dimostrano la correttezza completa del prodotto, la copertura di ogni requisito, la sicurezza, la capacità sotto carico o la compatibilità con qualsiasi ambiente. Queste proprietà richiedono verifiche specifiche e responsabilità esplicite. Lo sviluppatore/maintainer risponde della logica applicativa, della qualità dei test e della spiegazione dei risultati; IT verifica la riproducibilità delle evidenze concordate, la coerenza tra versione testata e artefatto e i requisiti dell'ambiente. I referenti applicativi approvano i comportamenti attesi e le eventuali deroghe.
+
 ## Configurazione e segreti
 
 Codice, configurazione e segreti devono essere separati.
@@ -252,11 +312,29 @@ L'esempio legge una configurazione non segreta dall'ambiente e fallisce esplicit
 
 ## GitHub Actions
 
-Una pipeline può automatizzare checkout, configurazione di R, ripristino dell'ambiente, test, build/render e pubblicazione.
+Il workflow del repository di questo corso pubblica la documentazione. Il file `.github/workflows/quarto-pages.yml` definisce l'avvio su push al branch `main` o manualmente, configura R 4.6.0, ripristina l'ambiente `renv`, installa Quarto, esegue il rendering del libro e delle slide, carica l'artefatto Pages e lo distribuisce. Nel workflow esaminato non è presente un passaggio che esegua una suite `testthat`.
 
-Nel repository del corso la pipeline esistente è configurata per eseguire `quarto render`, produrre `_site` e pubblicarlo tramite GitHub Pages quando viene eseguita sul branch `main`. Questa proprietà è stata verificata sulla configurazione del workflow; la riuscita di una run reale resta una verifica separata.
+Il successo di questo workflow attesta il completamento dei passaggi di build e pubblicazione configurati. Non attesta la correttezza funzionale di un'applicazione R né la prontezza di un prodotto per la produzione. Inoltre, la configurazione del progetto disabilita l'esecuzione dei chunk durante il rendering: il rendering del manuale non equivale all'esecuzione e alla verifica degli esempi R.
 
-Per un progetto R è utile trattare il render o il test come parte della verifica dell'ambiente: se cambiano R, package o dipendenze native, la pipeline deve rendere visibile la regressione.
+Una pipeline applicativa ha uno scopo diverso: controlla una versione del software e prepara un artefatto destinato a un ambiente di esecuzione. In base al prodotto può ripristinare le dipendenze, eseguire test unitari e d'integrazione, effettuare controlli di sicurezza e compatibilità, costruire il package o l'immagine, verificare l'artefatto e renderlo disponibile per la promozione. Le fasi e i sistemi coinvolti dipendono dal rischio, dal prodotto e dall'infrastruttura.
+
+```text
+modifica
+   ↓
+test
+   ↓
+build
+   ↓
+verifica dell'artefatto
+   ↓
+promozione nell'ambiente previsto
+   ↓
+osservazione dopo il rilascio
+```
+
+Il flusso è concettuale, non la descrizione della pipeline presente in questo repository e non un modello obbligatorio per ogni prodotto. Configurazioni e segreti devono essere forniti dagli strumenti e dai sistemi autorizzati per ciascun ambiente; non devono essere incorporati nel sorgente o nell'artefatto.
+
+Un esito positivo della pipeline significa che i controlli configurati sono terminati secondo le rispettive regole. La correttezza funzionale dipende dai requisiti effettivamente coperti; la prontezza per la produzione richiede anche verifiche di compatibilità, sicurezza, capacità, configurazione, osservabilità, ripristino e responsabilità operative.
 
 
 ## Aggiornamenti e nuova situazione di riferimento
@@ -444,7 +522,7 @@ Una consegna minima dovrebbe contenere:
 | Sistemi esterni | DB, API, filesystem, storage | elenco endpoint e flussi | sviluppatore + IT |
 | Configurazione | parametri, variabili d'ambiente, timeout | configurazione di riferimento | sviluppatore |
 | Sicurezza | account, permessi, segreti, TLS | requisiti e configurazione | IT + owner |
-| Test | funzionali, integrazione, performance | risultati e riferimento di confronto | sviluppatore |
+| Test | unitari, integrazione, compatibilità, performance; requisiti coperti; esiti e limitazioni | report della suite collegato a commit/tag e versione dell'artefatto | sviluppatore; IT verifica ambiente e tracciabilità |
 | distribuzione | artefatto, procedura, prova rapida di avvio | pipeline/runbook | IT + sviluppatore |
 | Operatività | log, metriche, alert, nuovo tentativo automatico, restart | configurazione operativa | IT |
 | Recovery | ripristino della versione precedente e riferimento di confronto precedente | procedura verificata | IT + sviluppatore |
