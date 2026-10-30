@@ -240,6 +240,8 @@ Per un package R, `testthat` è il package comunemente usato per definire ed ese
 
 La suite accompagna il codice durante le modifiche: viene eseguita in sviluppo e può essere richiamata dai controlli automatici della pipeline o da `R CMD check`. Il package sorgente, i test e il package installabile sono elementi distinti. La presenza di test nel repository non dimostra che siano stati eseguiti sulla versione candidata al rilascio.
 
+Il ciclo da tracciare è **sorgente identificato → test → build del package → artefatto versionato → distribuzione**. Un'applicazione che utilizza quel package è un ulteriore elemento: ha codice, configurazione, dipendenze e modalità di distribuzione proprie. Il rilascio di una nuova versione del package non coincide necessariamente con il rilascio dell'applicazione che lo importa; occorre verificare la compatibilità e decidere quando aggiornare l'applicazione.
+
 | Livello | Che cosa verifica | Esempio di problema intercettabile |
 |---|---|---|
 | Unitario | Una funzione o un comportamento circoscritto, con dipendenze controllate | Calcolo errato su un input limite |
