@@ -439,7 +439,7 @@ system.time(df_dplyr <- dplyr::mutate(df_dplyr, totale = quantita * prezzo))
 system.time(DT[, totale := quantita * prezzo])
 ```
 
-I tempi prodotti da questo esempio **non sono valori di riferimento universali**: dipendono dall'ambiente di esecuzione. Per confrontare la memoria, è utile osservare il processo durante l'operazione oppure usare uno strumento di analisi dei tempi di esecuzione della memoria; non basta guardare `object.size()` dopo che l'operazione è terminata.
+Il chunk esegue una sola misurazione per implementazione: è una verifica orientativa, non un benchmark. I tempi prodotti da questo esempio **non sono valori di riferimento universali**: dipendono dall'ambiente di esecuzione. Per confrontare la memoria, è utile osservare il processo durante l'operazione oppure usare uno strumento di analisi dei tempi di esecuzione della memoria; non basta guardare `object.size()` dopo che l'operazione è terminata.
 
 ### Che cosa deve osservare IT?
 
