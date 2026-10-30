@@ -2,11 +2,11 @@
 
 **Capire, valutare e gestire soluzioni sviluppate in R**
 
-Manuale tecnico per sistemisti, architetti, DevOps, team piattaforma e responsabili tecnici che devono comprendere, valutare, portare in esercizio e governare soluzioni sviluppate in R senza dover diventare sviluppatori R.
+Manuale tecnico per sistemisti, architetti, DevOps, team piattaforma e responsabili tecnici che devono comprendere, valutare, portare in esercizio e governare soluzioni sviluppate in R.
 
 ## Obiettivo
 
-Il manuale insegna a riconoscere che cosa cambia quando il workload è R e a trasformare una richiesta tecnica in una specifica verificabile. L'obiettivo non è formare sviluppatori R, ma fornire a IT un modello per classificare una soluzione, valutarne ambiente e workload, definire il perimetro del deployment e gestirne l'esercizio.
+Il manuale fornisce a IT un modello per classificare una soluzione R, valutarne ambiente e carico di lavoro, definire il perimetro della distribuzione e gestirne l'esercizio. Il risultato atteso è trasformare una richiesta tecnica in requisiti ed evidenze verificabili.
 
 Il percorso segue questa sequenza:
 
