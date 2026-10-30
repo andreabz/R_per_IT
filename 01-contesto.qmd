@@ -367,7 +367,7 @@ Due termini che possono comparire quando una dipendenza attraversa il confine tr
 
 Un progetto dovrebbe dichiarare le proprie dipendenze R e poter ricostruire un ambiente coerente. Il lockfile di progetto descrive le dipendenze R da ricostruire, ma non congela automaticamente OS, librerie native, driver, configurazione, credenziali o dati.
 
-Una baseline completa può essere:
+Una situazione di riferimento completa può comprendere:
 
 | Livello | Informazione |
 |---|---|
@@ -381,7 +381,7 @@ Una baseline completa può essere:
 | Sistemi esterni | database, API, filesystem |
 | Test | dati ed esiti |
 
-Questa baseline tornerà nel capitolo 5, quando l'ambiente deve diventare parte di una release, e nel capitolo 6, quando una modifica deve produrre una nuova baseline.
+Questa situazione di riferimento tornerà nel capitolo 5, quando l'ambiente deve diventare parte di una release, e nel capitolo 6, quando una modifica deve produrre una nuova situazione di riferimento.
 
 ## Componenti nativi
 
@@ -423,6 +423,6 @@ ALTREP è quindi un esempio, non una spiegazione completa della memoria. Nel cap
 6. Esistono dipendenze native?
 7. Quali driver/client sono necessari?
 8. Quali sistemi esterni sono coinvolti?
-9. Come viene ricostruita la baseline?
+9. Come viene ricostruita la situazione di riferimento?
 
 Le domande decisive sono già raccolte nella checklist: punto di ingresso, ambiente R, dipendenze native, sistemi esterni e riferimento riproducibile. Il capitolo successivo passa dalla composizione dell'ambiente al modo in cui **il runtime R usa memoria, processi, worker e thread**.
