@@ -14,7 +14,7 @@ Il punto non è aggiungere altra teoria: è collegare **evidenza, decisione e re
 | Termine | Significato operativo |
 |---|---|
 | **collo di bottiglia** | componente o fase che limita significativamente la prestazione complessiva del carico di lavoro |
-| **riferimento di confronto** | configurazione di riferimento con cui confrontare una modifica; nel corso include codice, ambiente e risultati misurati |
+| **situazione di riferimento** | configurazione descritta e misurata con cui confrontare una modifica; include codice, ambiente e risultati |
 | **responsabilità** | assegnazione esplicita della responsabilità di una decisione, componente o attività operativa |
 
 ```{mermaid}
@@ -51,7 +51,7 @@ Non è ancora una specifica verificata. Servono almeno carico di lavoro, durata 
 
 Il ruolo di IT è verificare che la richiesta tecnica sia sostenuta da evidenze riproducibili; la correttezza del metodo e della logica applicativa resta responsabilità dello sviluppatore e dei referenti competenti.
 
-## Riferimento di confronto
+## Situazione di riferimento
 
 una situazione di riferimento di una soluzione R può comprendere:
 
@@ -121,7 +121,7 @@ Per esempio, «CPU 100%» è un fatto. «Il carico di lavoro è CPU-bound» è u
 
 ## Caso 1 — RAM
 
-**Collegamenti:** runtime e copy-on-modify (`02`) → diagnostica (`03`) → eventuale spostamento del calcolo (`04`) → riferimento di confronto e test (`05`).
+**Collegamenti:** runtime e copy-on-modify (`02`) → diagnostica (`03`) → eventuale spostamento del calcolo (`04`) → situazione di riferimento e test (`05`).
 
 > «Lo script va in errore per memoria. Servono 64 GB.»
 
@@ -248,7 +248,7 @@ Una decisione di produzione dovrebbe passare questi controlli; un elemento non a
 | Sicurezza | identità, privilegi minimi, autorizzazioni, segreti, TLS e flussi di rete | IT/security + owner |
 | Osservabilità | log correlabili, metriche, alert e criteri di errore | IT/piattaforma + maintainer |
 | Recovery | ripristino della versione precedente di codice **e ambiente**, gestione output parziali, prova di ripristino | IT + sviluppatore |
-| passaggio di consegne | runbook, owner, reperibilità/escalation, riferimento di confronto e dipendenze | owner operativo nominato |
+| passaggio di consegne | runbook, owner, reperibilità/escalation, situazione di riferimento e dipendenze | owner operativo nominato |
 
 Per una `Shiny` o un'API aggiungere test con concorrenza rappresentativa, latenza e gestione delle dipendenze. Per un batch aggiungere exit code, timeout, nuovo tentativo automatico, idempotenza e verifica dell'output. Per Quarto aggiungere render completo e controllo dell'artefatto. Per package/pipeline verificare compatibilità, contratti tra step e tracciabilità della release.
 
@@ -266,7 +266,7 @@ Per una `Shiny` o un'API aggiungere test con concorrenza rappresentativa, latenz
 | Alternative | opzioni |
 | Test | esperimenti |
 | Decisione | soluzione |
-| riferimento di confronto | stato riproducibile |
+| situazione di riferimento | stato riproducibile |
 | responsabilità | responsabilità |
 
 ## Le quattro domande finali
