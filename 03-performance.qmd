@@ -360,7 +360,7 @@ Con base R:
 ```{r}
 #| label: confronto-base-r
 
-df <- `data.frame`(
+df <- data.frame(
   quantita = runif(1000000),
   prezzo = runif(1000000)
 )
@@ -375,13 +375,13 @@ Con `dplyr`:
 ```{r}
 #| label: confronto-dplyr
 
-df <- `data.frame`(
+df <- data.frame(
   quantita = runif(1000000),
   prezzo = runif(1000000)
 )
 
 system.time({
-  df <- `dplyr`::mutate(df, totale = quantita * prezzo)
+  df <- dplyr::mutate(df, totale = quantita * prezzo)
 })
 ```
 
@@ -390,7 +390,7 @@ Con `data.table`:
 ```{r}
 #| label: confronto-datatable
 
-DT <- `data.table`::`data.table`(
+DT <- data.table::data.table(
   quantita = runif(1000000),
   prezzo = runif(1000000)
 )
@@ -426,16 +426,16 @@ Una misura minima del tempo è:
 
 n <- 10000000L
 
-df_base <- `data.frame`(
+df_base <- data.frame(
   quantita = runif(n),
   prezzo = runif(n)
 )
 
 df_dplyr <- df_base
-DT <- `data.table`::as.`data.table`(df_base)
+DT <- data.table::as.data.table(df_base)
 
 system.time(df_base$totale <- df_base$quantita * df_base$prezzo)
-system.time(df_dplyr <- `dplyr`::mutate(df_dplyr, totale = quantita * prezzo))
+system.time(df_dplyr <- dplyr::mutate(df_dplyr, totale = quantita * prezzo))
 system.time(DT[, totale := quantita * prezzo])
 ```
 
@@ -462,7 +462,7 @@ Con un `data.frame`, un'assegnazione può comportare lavoro di riallocazione/cop
 ```{r}
 #| label: esempio-modifica-in-place
 
-DT <- `data.table`::`data.table`(
+DT <- data.table::data.table(
   quantita = runif(10000000L),
   prezzo = runif(10000000L)
 )
