@@ -345,7 +345,7 @@ flowchart LR
 - Runtime, package, OS e dipendenze native.
 - Input/output, volumi, frequenza e concorrenza.
 - Sistemi esterni, accessi e configurazione.
-- Test, riferimento di confronto e limiti noti.
+- Test, situazione di riferimento e limiti noti.
 - Runbook, log, timeout e contatti operativi.
 
 ---
