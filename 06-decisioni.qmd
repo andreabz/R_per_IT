@@ -228,7 +228,7 @@ Test:
 7. Quali alternative applicative devono essere considerate?
 8. Quali informazioni entrano nella richiesta IT?
 
-Nel caso ipotetico, il parallelismo riduce il tempo e aumenta il consumo di memoria; il guadagno tra 4 e 8 worker è limitato. I valori non costituiscono un benchmark né giustificano da soli una scelta hardware. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
+Nel caso ipotetico, il parallelismo riduce il tempo e aumenta il consumo di memoria; il guadagno tra 4 e 8 worker è limitato. I valori non costituiscono un benchmark. La scelta hardware richiede anche di valutare ottimizzazione, riduzione dei dati, architettura e margine operativo.
 
 
 ## Passaggio di consegne e criteri di presa in carico
