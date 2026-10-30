@@ -97,7 +97,7 @@ Per questo, davanti a una prova comparativa, IT deve sapere **quale dei tre temp
 
 ### Perché una sola misura non basta?
 
-`system.time()` misura un'esecuzione. una prova comparativa deve invece confrontare esecuzioni ripetute e controllate.
+`system.time()` misura una singola esecuzione. Una prova comparativa confronta esecuzioni ripetute e controllate.
 
 ```text
 stesso input
@@ -249,26 +249,6 @@ nuova situazione di riferimento
 
 IT dovrebbe arrivare a una delle tre conclusioni: problema infrastrutturale plausibile con evidenze; problema applicativo plausibile da restituire allo sviluppatore; evidenza insufficiente e quindi necessità di un test migliore.
 
-## Analisi dei tempi di esecuzione
-
-Il monitoraggio dice che la macchina è sotto carico; l'analisi dei tempi di esecuzione aiuta a capire **quale parte del codice R consuma il tempo**.
-
-```text
-misura globale
-   ↓
-ipotesi
-   ↓
-analisi dei tempi di esecuzione R / osservazione infrastrutturale
-   ↓
-candidato collo di bottiglia
-   ↓
-modifica
-   ↓
-prova comparativa
-```
-
-l'analisi dei tempi di esecuzione non sostituisce il monitoraggio infrastrutturale: mette in relazione il comportamento del codice con quello della macchina.
-
 ## Approfondimento — Lessico della diagnostica
 
 Prima di interpretare le misure, definiamo alcuni termini usati nel ragionamento sulle performance:
@@ -347,11 +327,11 @@ list(
 Il confronto delle sole durate non basta: registrare anche righe e byte trasferiti e confrontare i valori aggregati con una tolleranza numerica appropriata. Le date sono di esempio e vanno sostituite con un intervallo noto, identico nelle due query.
 
 
-## Approfondimento — Vectorization
+## Approfondimento — Vectorizzazione
 
-La vectorization permette a R di esprimere operazioni su insiemi di valori e può ridurre overhead interpretativo delegando lavoro a codice compilato.
+La vectorizzazione permette a R di esprimere operazioni su insiemi di valori e può ridurre overhead interpretativo delegando lavoro a codice compilato.
 
-Per IT il punto è che **due implementazioni con lo stesso risultato possono avere costi molto diversi in CPU, allocation e memoria**.
+Per IT il punto è che **due implementazioni con lo stesso risultato possono avere costi molto diversi in CPU, allocazioni e memoria**.
 
 Questo è un buon esempio di confine tra competenza applicativa e infrastrutturale: IT può misurare il costo, mentre la scelta di cambiare algoritmo o implementazione resta in collaborazione con chi sviluppa il carico di lavoro.
 
@@ -463,7 +443,7 @@ I tempi prodotti da questo esempio **non sono valori di riferimento universali**
 
 ### Che cosa deve osservare IT?
 
-Il punto del prova comparativa non è raccogliere una classifica. È verificare se l'implementazione modifica materialmente il carico di lavoro.
+Lo scopo della prova comparativa non è stilare una classifica. È verificare se l'implementazione modifica materialmente il carico di lavoro.
 
 | Implementazione | Tempo | Picco RAM | Interpretazione |
 |---|---:|---:|---|
