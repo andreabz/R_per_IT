@@ -229,7 +229,7 @@ f <- function() {
 f()
 ```
 
-Quando f() cerca x, R non cerca semplicemente «dove è stata chiamata» la funzione. La funzione è stata **definita** in un determinato environment e conserva il riferimento a quella catena.
+Quando `f()` cerca `x`, R non cerca semplicemente «dove è stata chiamata» la funzione. La funzione è stata **definita** in un determinato environment e conserva il riferimento a quella catena.
 
 Questo è il **lexical scoping**.
 
