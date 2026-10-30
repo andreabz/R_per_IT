@@ -238,7 +238,7 @@ Le strutture più comuni sono convenzioni di organizzazione del codice; non defi
 | `golem` | progetto organizzato come package, punto di ingresso e cartella `dev/` | individuare funzioni di avvio/build, moduli, dipendenze e artefatto di deploy |
 | **`Rhino`** | `app.R` minimale e codice applicativo sotto `app/`, incluso `app/main.R` | seguire il loader e la convenzione dei moduli; non trattare `app.R` come un `global.R` tradizionale |
 
-La struttura effettiva va verificata nel repository e nella documentazione della versione usata. Riferimenti ufficiali: [`Shiny`](https://shiny.posit.co/), [`golem`](https://thinkr-open.github.io/golem/) e [`Rhino` — struttura dell'applicazione](https://appsilon.github.io/rhino/dev/articles/explanation/application-structure.html).
+La struttura effettiva va verificata nel repository e nella documentazione della versione usata. Riferimenti ufficiali: [`Shiny`](https://shiny.posit.co/), [`golem`](https://thinkr-open.github.io/golem/) e [`Rhino` — struttura dell'applicazione](https://appsilon.github.io/rhino/articles/explanation/application-structure.html).
 
 ### Ciclo di vita, sessioni e memoria condivisa
 
