@@ -73,7 +73,7 @@ In particolare deve saper:
 - verificare che distribuzione, configurazione, sicurezza, logging, monitoraggio, rollback e responsabilità operativa siano descritti;
 - restituire allo sviluppatore una richiesta di informazioni concreta quando il passaggio di consegne è incompleto.
 
-Il livello atteso è **di comprensione e presa in carico operativa**, non di sviluppo R né di ottimizzazione algoritmica. Il manuale contiene approfondimenti diagnostici per i casi in cui serva capire meglio un problema.
+Il corso sviluppa competenze di **comprensione e presa in carico operativa**. Gli approfondimenti diagnostici supportano i casi in cui occorre interpretare misure o discutere un problema applicativo.
 
 ## Come è organizzato il manuale
 
@@ -83,7 +83,7 @@ I sei capitoli seguono una progressione intenzionale. L'introduzione non è un c
 2. **Runtime, memoria e parallelismo** — come R esegue il lavoro, usa memoria, processi, worker e thread.
 3. **Performance e diagnostica** — come misurare il comportamento e distinguere un collo di bottiglia da un'ipotesi.
 4. **Architettura e integrazione** — dove collocare R e dove devono essere eseguiti dati e calcoli.
-5. **distribuzione e gestione operativa** — come trasformare il software in una rilascio riproducibile e gestibile.
+5. **Distribuzione e gestione operativa** — come trasformare il software in una release riproducibile e gestibile.
 6. **Decisioni operative** — come collegare requisiti, evidenze, esperimenti, situazione di riferimento e responsabilità operativa.
 
 La sequenza può essere letta anche come una serie di domande:
@@ -147,7 +147,7 @@ Questa distinzione evita di trasformare un'ipotesi in una specifica hardware.
 
 ## Che cosa aggiunge R rispetto a uno stack IT esistente?
 
-R non è un sostituto generale di Oracle, APEX, scheduler, web server o sistemi di storage. In una soluzione aziendale occupa normalmente **una parte dello stack**: quella in cui servono analisi statistiche, modellistica, simulazione, elaborazione dati o generazione di report analitici.
+In una soluzione aziendale R occupa la parte dello stack dedicata ad analisi statistiche, modellistica, simulazione, elaborazione dati o generazione di report analitici. Oracle, APEX, scheduler, web server e storage continuano a svolgere le rispettive funzioni quando soddisfano i requisiti.
 
 Un modo semplice per orientarsi è questo:
 
@@ -172,9 +172,9 @@ Se la risposta è chiara, diventa più semplice definire il confine della soluzi
 
 ## Come cambia il rapporto tra sviluppatore e IT
 
-Il manuale non serve soltanto a permettere a IT di comprendere R. Serve anche a rendere più efficace la **consegna di una soluzione R da parte dello sviluppatore**.
+Il manuale supporta IT nella comprensione delle soluzioni R e rende più efficace la **consegna di una soluzione R da parte dello sviluppatore**.
 
-Lo sviluppatore non deve diventare amministratore di sistema. Deve però poter distinguere:
+Lo sviluppatore deve poter distinguere:
 
 - ciò che conosce da ciò che deve ancora essere verificato;
 - il comportamento del carico di lavoro dalla risorsa infrastrutturale richiesta;
