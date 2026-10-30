@@ -32,26 +32,6 @@ flowchart LR
   G --> H[monitoraggio]
 ``` 
 
-## Catena di rilascio
-
-```text
-codice R
- ↓
-commit
- ↓
-test
- ↓
-ambiente riproducibile
- ↓
-artefatto
- ↓
-deploy
- ↓
-verifica rapida di avvio
- ↓
-monitoraggio
-```
-
 ## Codice sorgente, artefatto e ambiente
 
 Nella distribuzione vanno distinti tre oggetti:
@@ -189,19 +169,9 @@ La configurazione non definisce da sola autenticazione, autorizzazione, TLS, lim
 
 ## Sviluppo, test e produzione
 
-la distribuzione deve distinguere almeno tre ambienti o fasi logiche:
+La distribuzione deve distinguere sviluppo, test e produzione. Il fatto che una soluzione funzioni sul computer dello sviluppatore non dimostra che sia pronta per la produzione: tra gli ambienti possono cambiare R, package, librerie native, driver, configurazione, credenziali, rete e dati.
 
-~~~text
-sviluppo
-   ↓ commit
-test
-   ↓ validazione
-produzione
-~~~
-
-Il fatto che una soluzione funzioni sul PC dello sviluppatore non dimostra che sia pronta per la produzione. Tra gli ambienti possono cambiare R, package, librerie native, driver, configurazione, credenziali, rete e dati.
-
-Per IT è utile trattare la configurazione di produzione come una situazione di riferimento esplicita, non come una copia implicita dell'ambiente di sviluppo.
+Per IT la configurazione di produzione deve essere una situazione di riferimento esplicita, non una copia implicita dell'ambiente di sviluppo.
 
 ## Test
 
@@ -357,7 +327,7 @@ release
 nuova situazione di riferimento
 ~~~
 
-la situazione di riferimento precedente deve rimanere disponibile per un eventuale ripristino della versione precedente.
+La situazione di riferimento precedente deve rimanere disponibile per un eventuale ripristino della versione precedente.
 
 ## Prova rapida di avvio e ripristino della versione precedente
 
@@ -444,7 +414,7 @@ processo/sessione R
 database / API / filesystem
 ```
 
-Qui diventano centrali concorrenza, latenza, numero di sessioni o worker, isolamento tra richieste, timeout, disponibilità e comportamento dopo il riavvio. una prova comparativa eseguita con un solo utente non descrive automaticamente il comportamento del servizio sotto carico.
+Qui diventano centrali concorrenza, latenza, numero di sessioni o worker, isolamento tra richieste, timeout, disponibilità e comportamento dopo il riavvio. Una prova comparativa eseguita con un solo utente non descrive automaticamente il comportamento del servizio sotto carico.
 
 La modalità di esecuzione deve quindi essere una voce esplicita della consegna a IT: **batch, servizio, applicazione interattiva o altro modello**, con relativo entrypoint e ciclo di vita.
 
@@ -483,29 +453,9 @@ Un inventario minimo comprende:
 
 L'obiettivo non è documentare ogni dettaglio del sistema, ma rendere espliciti quelli che possono cambiare **risultato, performance, accesso ai dati o comportamento operativo**.
 
-## Production come ciclo di vita
+## Ciclo di vita in esercizio
 
-La messa in produzione non è un evento unico. Una soluzione gestibile deve avere un percorso esplicito:
-
-```text
-sviluppo
-   ↓
-test
-   ↓
-validazione
-   ↓
-release
-   ↓
-distribuzione
-   ↓
-verifica rapida di avvio
-   ↓
-monitoraggio
-   ↓
-aggiornamento / rollback
-```
-
-Ogni passaggio deve lasciare abbastanza evidenza da permettere a un altro tecnico di capire quale versione è in esercizio, con quale ambiente e con quale configurazione.
+Ogni passaggio tra sviluppo, test e produzione deve lasciare evidenza della versione in uso, dell'ambiente e della configurazione. La sequenza operativa è descritta nella catena di rilascio all'inizio del capitolo; questa sezione riguarda la tracciabilità durante l'esercizio e gli aggiornamenti.
 
 ## Passaggio di consegne: le informazioni che lo sviluppatore deve fornire a IT
 
