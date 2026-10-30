@@ -138,7 +138,7 @@ docker logs shiny-test
 docker stop shiny-test
 ```
 
-Sostituire l'immagine base, il tag e il file di configurazione con valori reali; il nome registry.example.org è un segnaposto documentale. La verifica curl controlla la risposta HTTP iniziale, non autenticazione, autorizzazione, dipendenze applicative o comportamento sotto carico. Se il comando si interrompe prima di docker stop, rimuovere il container di test con docker rm -f `shiny`-test.
+Sostituire l'immagine base, il tag e il file di configurazione con valori reali; il nome registry.example.org è un segnaposto documentale. La verifica curl controlla la risposta HTTP iniziale, non autenticazione, autorizzazione, dipendenze applicative o comportamento sotto carico. Se il comando si interrompe prima di docker stop, rimuovere il container di test con docker rm -f shiny-test.
 
 Il comando docker run è adatto a una verifica locale; non è una configurazione di produzione. Non mettere segreti in file env versionati o in immagini. In produzione usare il secret store e la rete della piattaforma, impostare limiti CPU/RAM e health check e terminare il container tramite l'orchestratore.
 
@@ -424,11 +424,12 @@ Per uno script schedulato, l'entrypoint deve restituire un esito non-zero in cas
 
 ```bash
 # Eseguire con l'account tecnico e l'ambiente R previsti dal job.
-Rscript --vanilla <percorso-progetto>/run_report.R
+PROJECT_DIR="/percorso/del/progetto"
+Rscript --vanilla "${PROJECT_DIR}/run_report.R"
 echo $?  # registrare l'exit code nello scheduler, non soltanto in una shell interattiva
 ```
 
-Il placeholder `<percorso-progetto>` va sostituito. In produzione configurare working directory, variabili d'ambiente, timeout, directory temporanea, log rotation e notifica di errore nello scheduler. Un job che intercetta un errore e termina comunque con exit code 0 può apparire riuscito pur avendo prodotto un output incompleto.
+Impostare `PROJECT_DIR` sul percorso assoluto del progetto prima di eseguire il comando. In produzione configurare working directory, variabili d'ambiente, timeout, directory temporanea, log rotation e notifica di errore nello scheduler. Un job che intercetta un errore e termina comunque con exit code 0 può apparire riuscito pur avendo prodotto un output incompleto.
 
 
 ## Configurazione del runtime
