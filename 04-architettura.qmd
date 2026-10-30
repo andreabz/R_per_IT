@@ -120,7 +120,7 @@ Il livello di dettaglio cambia con la soluzione. Per evitare checklist parallele
 | `Shiny` | entrypoint, sessioni, concorrenza, latenza, dati condivisi, autenticazione e restart | proxy, cache condivisa, variazione delle risorse e test di carico secondo l'architettura |
 | API `plumber2` / client `httr2` | contratto HTTP, timeout, errori, autenticazione, log e dipendenze esterne | rate limit, paginazione, nuovo tentativo automatico e versionamento secondo il contratto |
 
-Per ogni campo, la scheda distingue **necessario**, **condizionale** e **buona pratica**: non trasformare una voce non applicabile in un requisito artificiale; annotare invece il motivo. Se un dato manca, registrarlo come informazione da ottenere e indicare il test o il responsabile. Le sezioni 1–14 dell'appendice coprono identificazione, esecuzione, ambiente, dati, risorse, sicurezza, test, errori, distribuzione, monitoraggio, riferimento di confronto e responsabilità.
+Per ogni campo, la scheda distingue **necessario**, **condizionale** e **buona pratica**: non trasformare una voce non applicabile in un requisito artificiale; annotare invece il motivo. Se un dato manca, registrarlo come informazione da ottenere e indicare il test o il responsabile. Le sezioni 1–14 dell'appendice coprono identificazione, esecuzione, ambiente, dati, risorse, sicurezza, test, errori, distribuzione, monitoraggio, situazione di riferimento e responsabilità.
 
 Per esempio, per uno **script personale** la concorrenza e l'alta disponibilità possono non essere requisiti. Per una **API** diventano invece requisiti centrali: il servizio deve definire chi può chiamarlo, come vengono gestite richieste contemporanee, quali timeout sono ammessi e cosa accade quando una dipendenza esterna non risponde.
 
@@ -330,7 +330,7 @@ Non bisogna trasformare l'analisi dei tempi di esecuzione in un prerequisito bur
 
 Sono sufficienti tre livelli di maturità:
 
-1. **Sintomo documentato** — scenario, dataset, utenti, concorrenza, tempi osservati e riferimento di confronto.
+1. **Sintomo documentato** — scenario, dataset, utenti, concorrenza, tempi osservati e situazione di riferimento.
 2. **Misure raccolte** — per esempio tempo Oracle, CPU, RAM, rete o durata delle singole fasi.
 3. **Ipotesi verificata** — un test che distingue tra più possibili colli di bottiglia.
 
