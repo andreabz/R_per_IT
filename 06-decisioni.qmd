@@ -196,7 +196,7 @@ La domanda da verificare è quali parti dell'ambiente R devono essere incluse ne
 
 Richiesta:
 
-> «Il mio script R impiega tre ore. Mi serve una VM con 16 core e 64 GB di RAM.»
+> «Il mio script R impiega tre ore. Mi serve una macchina virtuale (VM) con 16 core e 64 GB di RAM.»
 
 **Dati didattici ipotetici:** i valori seguenti servono esclusivamente all'esercizio e non descrivono un sistema reale né misure raccolte nel repository.
 
