@@ -261,9 +261,9 @@ S3, S4 e R6 sono sistemi diversi per rappresentare oggetti e comportamento. S3 �
 
 Per IT è sufficiente riconoscere che una libreria R può introdurre oggetti con stato, con effetti su memoria, serializzazione e comportamento tra worker.
 
-## `Parallel` e `future`
+## `parallel` e `future`
 
-`Parallel` espone meccanismi espliciti di parallelizzazione. `Future` introduce un'astrazione che separa la descrizione del lavoro dalla strategia di esecuzione.
+`parallel` espone meccanismi espliciti di parallelizzazione. `future` introduce un'astrazione che separa la descrizione del lavoro dalla strategia di esecuzione.
 
 Questa astrazione può nascondere dettagli che IT deve comunque conoscere:
 
