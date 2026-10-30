@@ -150,7 +150,7 @@ Raccogliere:
 - repository, commit/tag ed entrypoint;
 - versione di R;
 - package e repository;
-- presenza e contenuto del file che registra le dipendenze;
+- presenza e contenuto del lockfile;
 - library effettivamente utilizzate;
 - dipendenze native e driver Oracle.
 
