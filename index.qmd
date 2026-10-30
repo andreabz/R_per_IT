@@ -36,8 +36,6 @@ Le definizioni sono introduttive. Nei capitoli tecnici i termini vengono precisa
 
 Il principio vale per l'intero manuale. Una richiesta parte dal risultato che deve essere ottenuto; da lì si identificano carico di lavoro e ambiente, si raccolgono evidenze, si valutano le alternative e solo alla fine si definiscono infrastruttura, rilascio e gestione.
 
-Il percorso è intenzionale: ogni capitolo risponde a una domanda e prepara quella successiva.
-
 Il percorso è:
 
 ```text
