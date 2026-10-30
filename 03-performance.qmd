@@ -315,12 +315,30 @@ tempo_db <- system.time({
   )
 })
 
-stopifnot(nrow(totale_r) == nrow(totale_db))
+# Ordinare e uniformare i nomi prima del confronto.
+totale_r <- totale_r[order(totale_r$PRODOTTO_ID), ]
+totale_db <- totale_db[order(totale_db$PRODOTTO_ID), ]
+names(totale_db)[names(totale_db) == "IMPORTO_TOTALE"] <- "IMPORTO"
+
+stopifnot(
+  identical(
+    as.character(totale_r$PRODOTTO_ID),
+    as.character(totale_db$PRODOTTO_ID)
+  ),
+  isTRUE(all.equal(
+    as.numeric(totale_r$IMPORTO),
+    as.numeric(totale_db$IMPORTO),
+    tolerance = 1e-8,
+    check.attributes = FALSE
+  ))
+)
+
 list(
   tempo_completo = tempo_completo,
   righe_trasferite_completo = nrow(vendite),
   tempo_db = tempo_db,
-  righe_trasferite_db = nrow(totale_db)
+  righe_trasferite_db = nrow(totale_db),
+  risultati_equivalenti = TRUE
 )
 ```
 
