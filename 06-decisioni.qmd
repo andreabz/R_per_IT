@@ -180,7 +180,7 @@ La domanda è anche quanta memoria, rete e serializzazione si evita spostando il
 
 **Collegamenti:** ambiente e dipendenze (`01`) → costo del runtime (`02`) → situazione di riferimento della prova comparativa (`03`) → riproducibilità della distribuzione (`05`).
 
-Chiedere dipendenze effettive, versioni, file che registra le dipendenze, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
+Chiedere dipendenze effettive, versioni, lockfile, R, librerie native, repository, autorizzazione, procedura di aggiornamento e verifica.
 
 L'obiettivo è una situazione di riferimento ricostruibile, non un numero di package installati. Il test minimo è provare la ricostruzione in un ambiente pulito e verificare che il carico di lavoro produca lo stesso risultato atteso.
 
