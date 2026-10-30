@@ -53,10 +53,9 @@ execute:
 - Pausa — 10 min
 - Architetture e integrazioni — 40 min
 - Rilascio, sicurezza e operatività — 35 min
-- Caso integrato in gruppi — 45 min
+- Caso integrato in gruppi e confronto — 45 min
 - Sintesi, domande e transizioni — 15 min
 
-Il tempo include esercizi e confronto; non è una sequenza di 30 esposizioni frontali.
 
 ---
 
