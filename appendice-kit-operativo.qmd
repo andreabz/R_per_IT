@@ -109,7 +109,7 @@ Questo evita di attribuire automaticamente a R tutto il tempo osservato dal job.
 | Campo | Da compilare |
 |---|---|
 | Dataset usato per il test | |
-| Durata riferimento di confronto | |
+| Durata nella situazione di riferimento | |
 | RAM di picco | |
 | CPU | |
 | I/O | |
@@ -224,7 +224,7 @@ Per i job con scrittura di dati, la **idempotenza** deve essere esplicitamente v
 | prova rapida di avvio | |
 | Versione in produzione | |
 | Configurazione associata | |
-| riferimento di confronto precedente | |
+| situazione di riferimento precedente | |
 | Procedura di ripristino della versione precedente | |
 | Tempo stimato di ripristino | |
 | Owner del ripristino della versione precedente | |
