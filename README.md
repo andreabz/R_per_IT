@@ -14,7 +14,7 @@ Il percorso segue questa sequenza:
 
 Il modello operativo è:
 
-**requisito → evidenza → decisione → responsabilità → baseline**
+**requisito → evidenza → decisione → responsabilità → situazione di riferimento**
 
 L'attenzione è rivolta soprattutto a:
 
@@ -35,7 +35,7 @@ L'attenzione è rivolta soprattutto a:
 3. **Performance e diagnostica** — come misurare tempo, CPU, RAM, I/O, database, profiling e scaling.
 4. **Architettura e integrazione** — dove collocare il calcolo e come presentare a IT i diversi tipi di soluzione R.
 5. **Deployment e gestione operativa** — come trasformare codice e ambiente in una release riproducibile e gestibile.
-6. **Decisioni operative** — come passare da requisito ed evidenza a decisione, baseline e ownership.
+6. **Decisioni operative** — come passare da requisito ed evidenza a decisione, situazione di riferimento e responsabilità.
 
 
 ## Perché R può entrare nello stack IT
