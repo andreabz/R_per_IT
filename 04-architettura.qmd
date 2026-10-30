@@ -303,12 +303,12 @@ Una situazione iniziale può essere:
 
 > «Sul mio PC funziona. Vorrei pubblicarla; è lenta con alcuni utenti, forse serve più CPU.»
 
-Dopo una prima preparazione, la consegna può invece contenere:
+Esempio illustrativo: dopo una prima preparazione, la consegna potrebbe contenere questi dati, da sostituire con misure raccolte sul sistema reale:
 
 | Informazione | Esempio |
 |---|---|
 | Forma | applicazione `Shiny` |
-| Entrypoint | \`app.R\` |
+| Entrypoint | `app.R` |
 | Versione | commit/tag del repository |
 | Ambiente | R + dipendenze ricostruibili |
 | Dati | Oracle + eventuali API |
@@ -360,7 +360,7 @@ Dire «non so ancora se il problema è R, Oracle o la rete» è un'informazione 
 |---|---|---|
 | Script personale | entrypoint, ambiente, dati e permessi | ambiente utente e accessi |
 | Batch | calendario, durata, input/output, exit code, nuovo tentativo automatico | scheduler, account, log, alert e recovery |
-| Quarto | sorgenti, \`renv.lock\`, dati, destinazione e durata del render | ambiente di build, artefatto e pubblicazione |
+| Quarto | sorgenti, `renv.lock`, dati, destinazione e durata del render | ambiente di build, artefatto e pubblicazione |
 | `Shiny` | entrypoint, utenti, sessioni, latenza, dipendenze e requisiti web | proxy, autenticazione, distribuzione, monitoraggio e capacità |
 | API `plumber2` | endpoint, contratto, timeout, errori, concorrenza e versioning | gateway/proxy, TLS, autenticazione, limiti e osservabilità |
 | Package | API del componente, dipendenze, test e compatibilità | repository, release e compatibilità |
