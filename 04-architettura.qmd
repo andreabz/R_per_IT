@@ -34,8 +34,8 @@ Alcuni termini della sezione successiva descrivono componenti o comportamenti ch
 | **embedded** | componente eseguito all'interno dello stesso processo o distribuito come parte dell'applicazione, invece di essere necessariamente un servizio remoto separato |
 | **formato colonnare** | formato dati che memorizza insieme i valori di una colonna, utile per alcune scansioni e operazioni analitiche |
 | **Parquet** | formato di file colonnare usato per memorizzare dati strutturati in modo efficiente per molti carico di lavoro analitici |
-| **Arrow** | ecosistema e formato per rappresentare e trasferire dati tabellari in memoria in modo interoperabile tra linguaggi e strumenti |
-| **DuckDB** | motore SQL analitico eseguibile localmente, utilizzabile come componente embedded anziché come database server separato |
+| **`Arrow`** | ecosistema e formato per rappresentare e trasferire dati tabellari in memoria in modo interoperabile tra linguaggi e strumenti |
+| **`DuckDB`** | motore SQL analitico eseguibile localmente, utilizzabile come componente embedded anziché come database server separato |
 | **APEX** | piattaforma Oracle per costruire applicazioni web sopra database Oracle; qui è un esempio di componente applicativo esterno a R |
 
 ## Definire il carico di lavoro
@@ -170,7 +170,7 @@ La domanda è **quale parte del problema R deve risolvere**.
 | Oracle | dati, integrità, query, aggregazioni | R riceve dati già ridotti quando filtrare e aggregare lato database è appropriato |
 | APEX | interfaccia e workflow applicativo vicino a Oracle | R può fornire analisi o calcoli specialistici |
 | Scheduler/orchestratore | quando e con quale sequenza eseguire i job | R esegue lo step analitico |
-| Reverse proxy | ingresso HTTP, routing, TLS secondo l'architettura | inoltra verso Shiny/API |
+| Reverse proxy | ingresso HTTP, routing, TLS secondo l'architettura | inoltra verso `Shiny`/API |
 | R | analisi, modellistica, simulazione, trasformazioni e reportistica analitica | deve avere un entrypoint e un ambiente riproducibile |
 | Quarto | costruzione del documento/artefatto | usa R durante il render quando richiesto |
 | `Shiny` | interfaccia web interattiva | introduce sessioni e concorrenza |
@@ -238,7 +238,7 @@ Le strutture più comuni sono convenzioni di organizzazione del codice; non defi
 | `golem` | progetto organizzato come package, punto di ingresso e cartella `dev/` | individuare funzioni di avvio/build, moduli, dipendenze e artefatto di deploy |
 | **`Rhino`** | `app.R` minimale e codice applicativo sotto `app/`, incluso `app/main.R` | seguire il loader e la convenzione dei moduli; non trattare `app.R` come un `global.R` tradizionale |
 
-La struttura effettiva va verificata nel repository e nella documentazione della versione usata. Riferimenti ufficiali: [`Shiny`](https://shiny.posit.co/), [`golem`](https://thinkr-open.github.io/golem/) e [`Rhino` — struttura dell'applicazione](https://appsilon.github.io/rhino/dev/articles/explanation/application-structure.html).
+La struttura effettiva va verificata nel repository e nella documentazione della versione usata. Riferimenti ufficiali: [`Shiny`](https://`shiny`.posit.co/), [`golem`](https://thinkr-open.github.io/`golem`/) e [`Rhino` — struttura dell'applicazione](https://appsilon.github.io/rhino/dev/articles/explanation/application-structure.html).
 
 ### Ciclo di vita, sessioni e memoria condivisa
 
@@ -388,7 +388,7 @@ Il contratto dell'API, gli errori, i timeout, i limiti, l'autenticazione e la co
 - **`plumber2` espone** endpoint HTTP: il servizio R riceve richieste, valida input, esegue il lavoro e restituisce status code e body.
 - **`httr2` consuma** un servizio HTTP: R costruisce una richiesta verso un endpoint remoto, applica timeout e autenticazione, interpreta status code e body e gestisce errori transitori.
 
-Il fatto che un'applicazione usi `httr2` non significa che esponga un'API; usare `plumber2` non significa che il servizio sappia consumare automaticamente API esterne. La documentazione ufficiale di [`plumber2`](https://plumber2.posit.co/reference/index.html) e [`httr2`](https://httr2.r-lib.org/reference/req_perform.html) descrive le rispettive API, che possono cambiare fra versioni: verificare le funzioni e gli argomenti sulla versione effettivamente adottata.
+Il fatto che un'applicazione usi `httr2` non significa che esponga un'API; usare `plumber2` non significa che il servizio sappia consumare automaticamente API esterne. La documentazione ufficiale di [`plumber2`](https://`plumber2`.posit.co/reference/index.html) e [`httr2`](https://`httr2`.r-lib.org/reference/req_perform.html) descrive le rispettive API, che possono cambiare fra versioni: verificare le funzioni e gli argomenti sulla versione effettivamente adottata.
 
 Esempio minimo di API esposta con `plumber2`:
 
@@ -517,7 +517,7 @@ risultato <- httr2::resp_body_json(risposta)
 
 Le credenziali vanno passate tramite il meccanismo aziendale approvato (per esempio secret store o variabili d'ambiente protette), non nel sorgente. Non attivare log verbose in produzione se possono esporre header o body sensibili.
 
-i nuovi tentativi automatici sono **condizionali**, non automatici per qualsiasi errore. Sono adatti soltanto a errori transitori e operazioni per cui la ripetizione è sicura; per POST con effetti collaterali serve un contratto di idempotenza o una chiave idempotente. Limitare numero di tentativi e tempo totale, rispettare `Retry-After` quando previsto e non ritentare indiscriminatamente errori 4xx. Riferimento: [`httr2` — req_retry](https://httr2.r-lib.org/reference/req_retry.html).
+i nuovi tentativi automatici sono **condizionali**, non automatici per qualsiasi errore. Sono adatti soltanto a errori transitori e operazioni per cui la ripetizione è sicura; per POST con effetti collaterali serve un contratto di idempotenza o una chiave idempotente. Limitare numero di tentativi e tempo totale, rispettare `Retry-After` quando previsto e non ritentare indiscriminatamente errori 4xx. Riferimento: [`httr2` — req_retry](https://`httr2`.r-lib.org/reference/req_retry.html).
 
 
 #### R dentro una pipeline
@@ -639,9 +639,9 @@ La domanda IT è:
 
 Questo diventa importante quando si misura il tempo: se misuriamo soltanto la costruzione del piano e non la materializzazione, possiamo misurare il costo sbagliato.
 
-## Arrow e DuckDB
+## `Arrow` e `DuckDB`
 
-Arrow è utile per rappresentazioni e formati colonnari; DuckDB è un motore analitico embedded.
+`Arrow` è utile per rappresentazioni e formati colonnari; `DuckDB` è un motore analitico embedded.
 
 ```text
 Parquet / Arrow
