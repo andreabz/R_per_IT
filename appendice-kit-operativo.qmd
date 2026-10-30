@@ -245,7 +245,7 @@ Registrare almeno:
 - dimensione degli input;
 - risorse di picco quando rilevanti.
 
-### Shiny/API
+### `Shiny`/API
 
 Osservare, secondo il caso:
 
