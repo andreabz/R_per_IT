@@ -40,7 +40,7 @@ L'attenzione è rivolta soprattutto a:
 
 ## Perché R può entrare nello stack IT
 
-R non è un sostituto generale di Oracle, APEX, scheduler, web server o sistemi di storage. In una soluzione aziendale occupa normalmente **una parte dello stack**: quella in cui servono analisi statistiche, modellistica, simulazione, elaborazione dati o generazione di report analitici.
+In una soluzione aziendale R occupa una parte dello stack: quella in cui servono analisi statistiche, modellistica, simulazione, elaborazione dati o generazione di report analitici. Database, workflow, scheduler, web server e storage restano responsabilità dei componenti aziendali che già li gestiscono, quando adeguati al requisito.
 
 Un modo semplice per orientarsi è questo:
 
