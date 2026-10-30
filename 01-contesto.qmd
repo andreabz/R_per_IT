@@ -235,9 +235,9 @@ Non serve eseguire questo comando in produzione: serve capire che «il package �
 
 ## Che cos'è un file che registra le dipendenze?
 
-Un **file che registra le dipendenze** è un file che registra lo stato delle dipendenze di un progetto in un determinato momento, in modo che quell'ambiente possa essere ricostruito.
+Un **lockfile** registra le versioni delle dipendenze di un progetto in un determinato momento e permette di ricostruire l'ambiente R dichiarato.
 
-Nel caso di `renv`, il file si chiama normalmente `renv`.lock e viene **gestito da `renv`**, non dal runtime R in modo automatico.
+Nel caso di `renv`, il file si chiama normalmente `renv.lock` e viene **gestito da `renv`**, non dal runtime R in modo automatico.
 
 Il ciclo tipico è:
 
@@ -248,7 +248,7 @@ project library
      ↓
 `renv::snapshot()`
      ↓
-`renv`.lock
+`renv.lock`
      ↓
 nuova macchina
      ↓
@@ -257,7 +257,7 @@ nuova macchina
 project library ricostruita
 ~~~
 
-snapshot() registra lo stato della library di progetto nel file che registra le dipendenze; restore() usa il file che registra le dipendenze per installare nella library di progetto le versioni registrate. Il file che registra le dipendenze contiene anche la versione di R e i repository associati al progetto.
+`snapshot()` registra lo stato della library di progetto nel file `renv.lock`; `restore()` usa il lockfile per installare nella library di progetto le versioni registrate. Il file che registra le dipendenze contiene anche la versione di R e i repository associati al progetto.
 
 ### Laboratorio operativo — verificare e ricostruire un ambiente
 
@@ -347,12 +347,12 @@ Non congela automaticamente:
 Quindi:
 
 ~~~text
-`renv`.lock
+`renv.lock`
    ≠
 immagine completa del server
 ~~~
 
-Il file che registra le dipendenze controlla una parte importante dell'ambiente R, non l'intera infrastruttura.
+Il lockfile descrive una parte importante dell'ambiente R, non l'intera infrastruttura.
 
 ## Approfondimento — Due termini infrastrutturali
 
