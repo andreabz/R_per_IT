@@ -377,7 +377,6 @@ flowchart TD
  F -->|KO| H["ripristino della versione precedente verificato"]
 ```
 
-ripristino della versione precedente deve considerare codice, ambiente, configurazione e possibili output parziali.
 
 ---
 
