@@ -56,7 +56,7 @@ Git identifica il codice; non identifica da solo l'intero ambiente R.
 
 ## `renv` nella distribuzione
 
-Il file che registra le dipendenze di `renv` registra versione di R, repository e record dei package, incluse versioni e sorgenti quando note. Non è però un inventario completo di OS, librerie native, driver, configurazione, credenziali o dati.
+Il file `renv.lock` registra la versione di R, i repository e i record dei package, incluse versioni e sorgenti quando note. Non è però un inventario completo di OS, librerie native, driver, configurazione, credenziali o dati.
 
 Per alcune installazioni `renv` può inoltre individuare i requisiti di sistema dei package; questi requisiti devono comunque essere soddisfatti dall'ambiente di destinazione.
 
