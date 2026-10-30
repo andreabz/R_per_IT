@@ -165,7 +165,7 @@ Prima del rilascio devono essere distinti almeno:
 | Integrazione | raggiunge correttamente DB, API e storage? |
 | Compatibilità | l'ambiente R è coerente? |
 | Performance | rispetta la situazione di riferimento o il requisito? |
-| prova rapida di avvio | la distribuzione è avviabile e operativo? |
+| prova rapida di avvio | la distribuzione è avviabile e operativa? |
 
 Per un package, allegare alla consegna le evidenze della versione candidata:
 
