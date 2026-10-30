@@ -59,7 +59,7 @@ Per una soluzione interattiva indicare anche il numero di sessioni o richieste c
 | Versione R | |
 | Sistema operativo/versione | |
 | Package | |
-| `renv`.lock o altra specifica delle dipendenze | |
+| `renv.lock` o altra specifica delle dipendenze | |
 | Repository package | |
 | Dipendenze native | |
 | Driver/client database | |
