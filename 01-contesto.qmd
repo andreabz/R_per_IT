@@ -330,7 +330,7 @@ Se la risposta è sì, `renv` è una possibile soluzione; non è però l'unica f
 
 ### Che cosa NON congela il lockfile?
 
-Un lockfile `renv` non è una fotografia dell'intero server.
+Il file `renv.lock` non è una fotografia dell'intero server.
 
 Non congela automaticamente:
 
