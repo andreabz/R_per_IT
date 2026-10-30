@@ -10,7 +10,7 @@ Il manuale fornisce a IT un modello per classificare una soluzione R, valutarne 
 
 Il percorso segue questa sequenza:
 
-**contesto → runtime → performance → architettura → deployment → decisioni**
+**contesto → runtime → performance → architettura → distribuzione → decisioni**
 
 Il modello operativo è:
 
@@ -23,7 +23,7 @@ L'attenzione è rivolta soprattutto a:
 - misura, profiling, benchmark e diagnosi delle performance;
 - architetture R e integrazione con database, filesystem, API e altri sistemi;
 - diverse forme di soluzione: script personale, batch, report Quarto, `Shiny`, API `plumber2`, package e job in pipeline;
-- build, test, artefatti, release e deployment;
+- build, test, artefatti, rilascio e distribuzione;
 - configurazione, sicurezza, registrazione dei log, monitoraggio, ripristino della versione precedente e continuità operativa;
 - passaggio di consegne tra sviluppatore e IT;
 - trasformazione delle evidenze in decisioni tecniche.
@@ -34,7 +34,7 @@ L'attenzione è rivolta soprattutto a:
 2. **Runtime, memoria e parallelismo** — come R esegue il lavoro e come interpretare processi, worker, thread e memoria.
 3. **Performance e diagnostica** — come misurare tempo, CPU, RAM, I/O, database, profiling e scaling.
 4. **Architettura e integrazione** — dove collocare il calcolo e come presentare a IT i diversi tipi di soluzione R.
-5. **Deployment e gestione operativa** — come trasformare codice e ambiente in una release riproducibile e gestibile.
+5. **Deployment e gestione operativa** — come trasformare codice e ambiente in una rilascio riproducibile e gestibile.
 6. **Decisioni operative** — come passare da requisito ed evidenza a decisione, situazione di riferimento e responsabilità.
 
 
@@ -86,7 +86,7 @@ Una soluzione può combinare più modelli: per esempio un report Quarto generato
 
 Una richiesta come «servono più CPU», «serve più RAM» o «serve un server dedicato» viene trattata come una richiesta da verificare, non come una specifica infrastrutturale già definita.
 
-L'approccio parte da requisito e workload, passa attraverso misure ed evidenze e arriva a una decisione architetturale, operativa e governata.
+L'approccio parte da requisito e carico di lavoro, passa attraverso misure ed evidenze e arriva a una decisione architetturale, operativa e governata.
 
 ## Passaggio di consegne sviluppatore → IT
 
@@ -95,7 +95,7 @@ Per portare una soluzione R in produzione devono essere espliciti almeno:
 - applicazione, repository, commit/tag ed entrypoint;
 - versione R, OS e dipendenze;
 - package, lockfile e dipendenze native;
-- modalità di esecuzione, workload, durata, frequenza e concorrenza;
+- modalità di esecuzione, carico di lavoro, durata, frequenza e concorrenza;
 - input, output, dimensioni e crescita dei dati;
 - CPU, RAM, I/O, rete, worker e thread;
 - database, API, filesystem, storage e altri sistemi esterni;
@@ -103,7 +103,7 @@ Per portare una soluzione R in produzione devono essere espliciti almeno:
 - autenticazione, autorizzazioni, segreti e TLS;
 - test funzionali, integrazione, compatibilità e performance;
 - distribuzione, prova rapida di avvio, registrazione dei log, monitoraggio, riavvio e ripristino della versione precedente;
-- ownership e responsabilità.
+- responsabilità operative e responsabilità.
 
 La regola è:
 
