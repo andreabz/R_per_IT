@@ -34,7 +34,7 @@ L'attenzione è rivolta soprattutto a:
 2. **Runtime, memoria e parallelismo** — come R esegue il lavoro e come interpretare processi, worker, thread e memoria.
 3. **Performance e diagnostica** — come misurare tempo, CPU, RAM, I/O, database, profiling e scaling.
 4. **Architettura e integrazione** — dove collocare il calcolo e come presentare a IT i diversi tipi di soluzione R.
-5. **Deployment e gestione operativa** — come trasformare codice e ambiente in una rilascio riproducibile e gestibile.
+5. **Distribuzione e gestione operativa** — come trasformare codice e ambiente in un rilascio riproducibile e gestibile.
 6. **Decisioni operative** — come passare da requisito ed evidenza a decisione, situazione di riferimento e responsabilità.
 
 
@@ -103,7 +103,7 @@ Per portare una soluzione R in produzione devono essere espliciti almeno:
 - autenticazione, autorizzazioni, segreti e TLS;
 - test funzionali, integrazione, compatibilità e performance;
 - distribuzione, prova rapida di avvio, registrazione dei log, monitoraggio, riavvio e ripristino della versione precedente;
-- responsabilità operative e responsabilità.
+- responsabilità operative.
 
 La regola è:
 
