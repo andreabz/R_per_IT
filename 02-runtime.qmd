@@ -98,7 +98,9 @@ Per R conviene distinguere tre livelli:
 
 Molte strategie di parallelismo R usano processi distinti, mentre BLAS/LAPACK e altre librerie possono usare thread.
 
-Quindi «8 worker» non significa necessariamente «8 thread» e non implica che la macchina eseguirà soltanto otto unità di lavoro.\n\n> **Per IT: quando qualcuno chiede più CPU, chiedere prima quali processi, worker o thread stanno effettivamente utilizzando la CPU.**
+Quindi «8 worker» non significa necessariamente «8 thread» e non implica che la macchina eseguirà soltanto otto unità di lavoro.
+
+> **Per IT: quando qualcuno chiede più CPU, chiedere prima quali processi, worker o thread stanno effettivamente utilizzando la CPU.**
 
 ## Allocation e copy-on-modify
 
@@ -179,7 +181,9 @@ tempo_blocchi
 ```
 
 Su Linux, eseguire ogni strategia in un processo separato e registrare il massimo RSS con `/usr/bin/time -v Rscript laboratorio-memoria.R`; verificare la disponibilità del comando e usare lo stesso metodo per entrambe. Per un confronto valido, usare lo stesso input e più ripetizioni. Il metodo per blocchi non garantisce un RSS inferiore: l'oggetto finale resta in memoria.
-\n\n> **Per una richiesta RAM, il dato utile è il picco osservato nel carico di lavoro reale, non la somma delle dimensioni nominali dei dataset.**
+
+
+> **Per una richiesta RAM, il dato utile è il picco osservato nel carico di lavoro reale, non la somma delle dimensioni nominali dei dataset.**
 
 ## Approfondimento — Environment e lexical scoping
 
@@ -364,7 +368,9 @@ deserializzazione
 worker
 ```
 
-Per oggetti grandi, questo overhead può annullare parte del vantaggio del parallelismo.\n\n> **Un aumento dei worker può aumentare anche il costo di coordinamento.**
+Per oggetti grandi, questo overhead può annullare parte del vantaggio del parallelismo.
+
+> **Un aumento dei worker può aumentare anche il costo di coordinamento.**
 
 ## BLAS, LAPACK e thread nativi
 
