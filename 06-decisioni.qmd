@@ -198,7 +198,7 @@ Richiesta:
 
 > «Il mio script R impiega tre ore. Mi serve una VM con 16 core e 64 GB di RAM.»
 
-Dati didattici ipotetici, introdotti per l'esercizio e non riferiti a una misurazione del repository o a un sistema reale:
+**Dati didattici ipotetici:** i valori seguenti servono esclusivamente all'esercizio e non descrivono un sistema reale né misure raccolte nel repository.
 
 ```
 RAM di picco: 11 GB
@@ -228,7 +228,7 @@ Test:
 7. Quali alternative applicative devono essere considerate?
 8. Quali informazioni entrano nella richiesta IT?
 
-La prova comparativa mostra che il parallelismo riduce il tempo, ma aumenta rapidamente il consumo di memoria e non garantisce uno scaling lineare. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
+Nel caso ipotetico, il parallelismo riduce il tempo e aumenta il consumo di memoria; il guadagno tra 4 e 8 worker è limitato. I valori non costituiscono un benchmark né giustificano da soli una scelta hardware. Non basta ancora per scegliere l'hardware: vanno considerate anche ottimizzazione, riduzione dei dati e architettura.
 
 
 ## Passaggio di consegne e criteri di presa in carico
