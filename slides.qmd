@@ -307,14 +307,36 @@ flowchart LR
 
 ---
 
-# Sicurezza, test e osservabilità
+# Sicurezza e osservabilità
 
 - Identità e privilegi minimi per utenti e servizi.
 - Segreti fuori da repository, immagini e log.
 - TLS, autorizzazione e flussi di rete espliciti.
-- Test funzionali, integrazione, compatibilità e performance pertinenti.
-- Log correlabili, metriche, alert e health check adeguati al carico di lavoro.
-- Testare il contratto esterno, non soltanto l'avvio del processo.
+- Log correlabili, metriche, alert e health check.
+- Osservare le dipendenze esterne e il carico di lavoro.
+
+---
+
+# Test automatici di un package R
+
+- `testthat`: test automatici di funzioni e comportamenti attesi.
+- Unitari: verificano comportamenti circoscritti.
+- Integrazione: verificano collaborazioni tra componenti.
+- Performance: confrontano tempi e risorse su carichi rappresentativi.
+- Pass: aspettativa rispettata; fail: risultato inatteso.
+- Error: esecuzione interrotta; skip: controllo escluso.
+- Non eseguito: nessuna evidenza di verifica.
+- Test superati non equivalgono a copertura completa o prontezza.
+
+---
+
+# Workflow documentazione e pipeline applicativa
+
+- Il workflow del corso esegue build Quarto e pubblica il manuale.
+- Non esegue una suite `testthat` né rilascia un'applicazione.
+- Pipeline applicativa: test → build → verifica artefatto.
+- Promozione e osservazione dipendono da prodotto e infrastruttura.
+- Un workflow verde attesta solo i controlli configurati.
 
 ---
 
