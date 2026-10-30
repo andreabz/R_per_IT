@@ -24,8 +24,8 @@ L'attenzione è rivolta soprattutto a:
 - architetture R e integrazione con database, filesystem, API e altri sistemi;
 - diverse forme di soluzione: script personale, batch, report Quarto, `Shiny`, API `plumber2`, package e job in pipeline;
 - build, test, artefatti, release e deployment;
-- configurazione, sicurezza, logging, monitoring, rollback e continuità operativa;
-- handover tra sviluppatore e IT;
+- configurazione, sicurezza, registrazione dei log, monitoraggio, ripristino della versione precedente e continuità operativa;
+- passaggio di consegne tra sviluppatore e IT;
 - trasformazione delle evidenze in decisioni tecniche.
 
 ## Struttura
@@ -74,7 +74,7 @@ Il corso considera esplicitamente diversi modelli operativi:
 | Script batch | quando parte, quanto dura, quali risorse usa e come viene monitorato? |
 | Report Quarto | come viene generato, con quale ambiente e dove viene pubblicato l'artefatto? |
 | Applicazione `Shiny` | come vengono gestite sessioni, concorrenza, autenticazione e scaling? |
-| API `plumber2` | quale contratto espone, chi può chiamarla e quali sono timeout, limiti e monitoring? |
+| API `plumber2` | quale contratto espone, chi può chiamarla e quali sono timeout, limiti e monitoraggio? |
 | Package R | quale API fornisce, quali dipendenze ha e come viene versionato e testato? |
 | Job R in pipeline | quali sono input/output, dipendenze, retry, stato e responsabilità dello step? |
 
@@ -102,18 +102,18 @@ Per portare una soluzione R in produzione devono essere espliciti almeno:
 - configurazione, timeout, directory temporanee e variabili d'ambiente;
 - autenticazione, autorizzazioni, segreti e TLS;
 - test funzionali, integrazione, compatibilità e performance;
-- deployment, smoke test, logging, monitoring, restart e rollback;
+- distribuzione, prova rapida di avvio, registrazione dei log, monitoraggio, riavvio e ripristino della versione precedente;
 - ownership e responsabilità.
 
 La regola è:
 
-> **Lo sviluppatore fornisce una descrizione riproducibile del workload e delle evidenze; IT deve poter trasformare queste informazioni in una configurazione, un deployment e un esercizio verificabili.**
+> **Lo sviluppatore fornisce una descrizione riproducibile del carico di lavoro e delle evidenze; IT deve poter trasformare queste informazioni in una configurazione, una distribuzione e un esercizio verificabili.**
 
 La checklist breve dell'appendice può essere usata già nella prima riunione: quando un'informazione manca, va registrata come informazione mancante e associata al responsabile o al test necessario per ottenerla.
 
 ## Kit operativo
 
-Il manuale include un'appendice utilizzabile come traccia per l'handover sviluppatore → IT e per una prima verifica di prontezza per la produzione. La scheda raccoglie identificazione, modello di esecuzione, ambiente R, dati, risorse, sicurezza, test, error handling, deployment, monitoring, aggiornamenti e ownership.
+Il manuale include un'appendice utilizzabile come traccia per il passaggio di consegne dallo sviluppatore a IT e per una prima verifica della prontezza per la produzione. La scheda raccoglie identificazione, modello di esecuzione, ambiente R, dati, risorse, sicurezza, test, gestione degli errori, distribuzione, monitoraggio, aggiornamenti e responsabilità operative.
 
 ## Pubblicazione
 
