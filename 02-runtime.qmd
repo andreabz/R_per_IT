@@ -338,7 +338,7 @@ Queste verifiche descrivono la configurazione del programma. Per confermare ciò
 
 ```bash
 ps -eo pid,ppid,nlwp,cmd | grep '[R]'
-pstree -ap <PID_DEL_PROCESSO_R>
+pstree -ap 1234  # sostituire 1234 con il PID del processo R
 ```
 
 Un gruppo di processi R figli è compatibile con un backend a processi, ma non basta da solo a distinguere fork da PSOCK: occorre leggere anche il codice o la configurazione. Fork deriva dal processo padre; PSOCK avvia processi R separati e li collega tramite socket. Su Windows le strategie fork non sono disponibili.
@@ -420,6 +420,17 @@ RhpcBLASctl::omp_set_num_threads(1)
 La prima riguarda BLAS; la seconda le regioni OpenMP. Non sostituiscono la verifica delle variabili d'ambiente e dell'implementazione effettiva: il risultato va misurato sul processo e sui worker realmente utilizzati.
 
 In un processo che crea worker, l'impostazione dei thread va verificata anche nei worker: ogni processo può avviare più thread BLAS. Una configurazione di 4 worker con 8 thread ciascuno può generare fino a 32 thread concorrenti. Per molti carichi paralleli conviene iniziare con un thread BLAS per worker, poi misurare combinazioni diverse.
+
+Con un cluster PSOCK, se `RhpcBLASctl` è installato e disponibile anche nei worker, il numero di thread BLAS può essere impostato su ciascun processo:
+
+```r
+parallel::clusterEvalQ(cl, {
+  RhpcBLASctl::blas_set_num_threads(1)
+  NULL
+})
+```
+
+La chiamata va eseguita dopo la creazione del cluster e prima di distribuire il lavoro. Verificare che la libreria BLAS in uso supporti il controllo e che l'impostazione sia effettivamente applicata. Per strategie fork, impostare e verificare i thread nel processo che esegue ciascuna attività; non assumere che un'impostazione fatta in seguito nel master modifichi automaticamente tutti i worker.
 
 ### Worker e thread nativi sono due livelli diversi
 
