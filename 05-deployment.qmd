@@ -149,6 +149,8 @@ Quando una o più applicazioni Shiny devono essere utilizzate da più persone, o
 
 ShinyProxy risolve questa parte per applicazioni Shiny distribuite in container. Riceve le richieste degli utenti, applica il meccanismo di autenticazione configurato, presenta le applicazioni disponibili e avvia il container previsto quando un utente ne richiede una. Il proxy inoltra quindi le richieste al servizio Shiny nel container. La gestione delle istanze e il backend disponibile dipendono dalla versione e dalla configurazione adottata.
 
+È utile distinguere i componenti: un reverse proxy general-purpose gestisce l'ingresso HTTP/HTTPS e l'instradamento verso i servizi; ShinyProxy è un gestore specializzato per applicazioni Shiny, che aggiunge catalogo delle app, autenticazione configurata e ciclo di vita delle istanze container. Può a sua volta essere collocato dietro il reverse proxy aziendale, che continua a gestire il punto di ingresso e le regole comuni di rete.
+
 ShinyProxy non sostituisce il codice Shiny, il database o l'intera infrastruttura. Occorre comunque predisporre immagini container, rete, certificati, autenticazione, autorizzazioni, limiti di risorse, log e monitoraggio. Se l'organizzazione dispone già di un portale applicativo o di un gateway che copre questi requisiti, va valutata anche l'integrazione con i componenti esistenti.
 
 Per un'installazione ShinyProxy che utilizza il backend Docker, uno spec minimale può avere questa forma. Le proprietà effettivamente supportate dipendono dalla versione di ShinyProxy e dal backend; verificare la [documentazione ufficiale di configurazione](https://shinyproxy.io/documentation/configuration/) e [deploying apps](https://shinyproxy.io/documentation/deploying-apps/) prima di applicarlo.
