@@ -136,6 +136,13 @@ ALTREP, copie, allocazioni temporanee e più processi fanno sì che questi valor
 
 Una misura utile deve quindi riportare almeno il punto temporale, il processo o worker osservato e il contesto di concorrenza.
 
+
+### ALTREP e rappresentazione degli oggetti
+
+ALTREP è un meccanismo interno di R che consente ad alcuni oggetti di usare rappresentazioni alternative. In alcuni casi i dati non vengono materializzati tutti nella forma tradizionale finché non sono necessari.
+
+Per IT conta la conseguenza: la dimensione logica di un oggetto non misura da sola la memoria residente del processo. Per dimensionare un carico occorre osservare il picco RSS durante l'esecuzione, considerando copie, allocazioni temporanee e processi aggiuntivi.
+
 ### Laboratorio specifico — copie, blocchi e picco RSS
 
 **Obiettivo:** verificare se una trasformazione completa crea un picco di memoria maggiore dell'elaborazione per blocchi. Il risultato dipende dalla rappresentazione dei dati e dall'operazione; non va generalizzato senza misura.
@@ -197,82 +204,6 @@ Verificare la disponibilità di `/usr/bin/time` e usare lo stesso metodo per ent
 
 
 > **Per una richiesta RAM, il dato utile è il picco osservato nel carico di lavoro reale, non la somma delle dimensioni nominali dei dataset.**
-
-## Approfondimento — Environment e lexical scoping
-
-Un **environment** è una struttura che associa nomi a oggetti e contiene un riferimento a un altro environment, detto *enclosing environment*.
-
-Possiamo immaginarlo come una catena:
-
-~~~text
-environment locale
-      ↓
-environment della funzione
-      ↓
-environment del package
-      ↓
-base environment
-~~~
-
-Un environment ha identità propria e può essere modificato.
-
-```{r}
-#| label: esempio-environment
-
-e <- new.env()
-e$x <- 10
-e$x
-```
-
-Qui e contiene l'associazione x → 10. Se un'altra variabile punta allo stesso environment, entrambe osservano lo stesso stato.
-
-### Lexical scoping
-
-Consideriamo:
-
-```{r}
-#| label: esempio-lexical-scoping
-
-x <- 10
-
-f <- function() {
-  x
-}
-
-f()
-```
-
-Quando `f()` cerca `x`, R non cerca semplicemente «dove è stata chiamata» la funzione. La funzione è stata **definita** in un determinato environment e conserva il riferimento a quella catena.
-
-Questo è il **lexical scoping**.
-
-Una funzione R è quindi una *closure*: contiene codice e l'environment associato alla sua definizione.
-
-~~~text
-funzione
-├── codice
-└── environment di definizione
-          ↓
-      nomi visibili
-~~~
-
-Questo spiega funzioni annidate, factory, package e molti oggetti che mantengono stato.
-
-Per IT il concetto è utile perché chiarisce **da dove arriva lo stato che una funzione vede**.
-
-## Approfondimento — Lazy evaluation
-
-R usa la lazy evaluation: gli argomenti di una funzione non vengono necessariamente valutati nel momento in cui la funzione viene chiamata, ma quando il loro valore è richiesto.
-
-Per IT interessa la conseguenza operativa: **il momento della valutazione di un argomento può essere diverso dal momento della chiamata che lo contiene**.
-
-Questo concetto è distinto dalla lazy execution di un database o di un framework analitico, che verrà ripreso nel capitolo 4.
-
-## Approfondimento — S3, S4 e `R6`
-
-S3, S4 e `R6` sono sistemi diversi per rappresentare oggetti e comportamento. S3 è basato sul dispatch per classe e relativamente leggero; S4 è più formale; `R6` introduce oggetti a semantica di riferimento e stato mutabile.
-
-Per IT è sufficiente riconoscere che una libreria R può introdurre oggetti con stato, con effetti su memoria, serializzazione e comportamento tra worker.
 
 ## `parallel` e `future`
 
