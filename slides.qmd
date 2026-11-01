@@ -232,6 +232,7 @@ Configurazione: `class(cl)`, `future::plan()`; su Linux osservare anche `ps` e `
 - OpenMP: `OMP_NUM_THREADS`.
 - Impostare prima dell'avvio di R e verificare il comportamento dei worker.
 - Iniziare spesso con 1 thread per worker, poi misurare.
+- Con PSOCK, impostare i thread anche nei singoli worker.
 
 
 ---
