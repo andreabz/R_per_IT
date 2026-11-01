@@ -89,7 +89,7 @@ infrastruttura
 
 Una dipendenza può attraversare più livelli. Un package può utilizzare C/C++ o Fortran compilato e dipendere da librerie di sistema. Installare un package e rendere disponibile l'ambiente necessario all'esecuzione non sono la stessa operazione.
 
-**Per R questo confine è particolarmente importante:** il lockfile descrive l'ecosistema dei package, ma non rende automaticamente identiche le librerie native, i driver e il sistema operativo.
+**Per R questo confine è particolarmente importante:** strumenti come `renv` registrano le versioni dei package in un file chiamato *lockfile* (per esempio `renv.lock`). Il file aiuta a ricostruire l'ambiente R, ma non rende automaticamente identiche le librerie native, i driver e il sistema operativo di due macchine.
 
 Un esempio tipico è un package che si installa correttamente in sviluppo ma in produzione richiede una libreria di sistema o un client database assente. Il problema non è necessariamente nel codice R: la catena di dipendenze attraversa un confine gestito da IT.
 
@@ -388,30 +388,6 @@ Questa situazione di riferimento tornerà nel capitolo 5, quando l'ambiente deve
 R può delegare lavoro a codice compilato. Per IT la conseguenza non è semplicemente «serve una libreria»: cambiano anche versioni, ABI, compilatori, driver e gestione dei thread.
 
 Questo è uno dei punti in cui una soluzione R si comporta diversamente da un semplice script interpretato: la catena di dipendenze può arrivare sotto il livello dei package.
-
-## Approfondimento — ALTREP
-
-ALTREP è un meccanismo interno di R che permette ad alcuni oggetti di avere una rappresentazione alternativa rispetto alla rappresentazione tradizionale. Un oggetto può quindi essere descritto senza che tutti i suoi dati siano necessariamente materializzati immediatamente nella forma che ci aspettiamo.
-
-Per IT non serve conoscere l'implementazione di ALTREP. Serve capire una conseguenza:
-
-> **la dimensione logica di un oggetto R non è una misura affidabile, da sola, della memoria fisica consumata dal processo.**
-
-Questo diventa importante quando confrontiamo:
-
-~~~text
-dimensione dei dati
-      ↓
-oggetti R
-      ↓
-allocazioni temporanee / copie
-      ↓
-memoria del processo
-      ↓
-memoria della macchina
-~~~
-
-ALTREP è quindi un esempio, non una spiegazione completa della memoria. Nel capitolo 2 vedremo gli altri meccanismi che producono la differenza.
 
 ## Checklist
 
