@@ -218,13 +218,19 @@ Il principale problema operativo è la riproducibilità del render e la gestione
 
 #### `Shiny`
 
+`Shiny` consente di esporre un'applicazione interattiva attraverso il browser. L'utente raggiunge un indirizzo web e visualizza l'interfaccia; le azioni compiute nella pagina vengono scambiate con il processo R, che aggiorna gli output e mantiene lo stato della sessione. Non si tratta quindi di una pagina HTML statica generata una volta: l'applicazione resta attiva e gestisce connessioni e sessioni utente.
+
+Durante lo sviluppo l'applicazione può essere avviata in ascolto su `localhost`, quindi raggiungibile soltanto dalla macchina che la esegue. Per renderla disponibile sulla rete aziendale o su Internet occorre predisporre un punto di accesso raggiungibile, configurare l'ascolto dell'applicazione e definire instradamento HTTP/HTTPS, TLS e autenticazione. In molte architetture un **reverse proxy** riceve le richieste dall'esterno e le inoltra al servizio Shiny, senza esporre direttamente la porta del processo R.
+
+Una singola istanza Shiny può già gestire più sessioni contemporaneamente. Quando servono isolamento più forte tra utenti o applicazioni, istanze indipendenti, limiti di risorse e distribuzione riproducibile, si può valutare l'esecuzione in container. Un gestore come **ShinyProxy** può autenticare gli utenti, presentare le applicazioni disponibili e avviare le istanze containerizzate secondo la configurazione prevista. In installazioni più articolate, un orchestratore gestisce collocazione, riavvio e scalabilità dei container. Non è un requisito automatico per ogni app Shiny: va scelto in base a concorrenza, isolamento, disponibilità e servizi già presenti nell'infrastruttura.
+
 ~~~text
 browser
+   ↓ HTTPS
+reverse proxy / gateway
    ↓
-reverse proxy
-   ↓
-`Shiny`
-   ├── sessioni
+servizio Shiny
+   ├── sessioni utente
    ├── Oracle
    └── API / filesystem
 ~~~
