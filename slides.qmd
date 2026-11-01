@@ -219,6 +219,7 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 
 Fork: Unix-like, copy-on-write, cautela con thread e connessioni.
 PSOCK: processi separati e trasferimento/serializzazione degli oggetti.
+Configurazione: `class(cl)`, `future::plan()`; su Linux osservare anche `ps` e `pstree`.
 
 ---
 
