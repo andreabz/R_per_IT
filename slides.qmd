@@ -121,7 +121,7 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 
 ---
 
-# Processo, processo di lavoro e filo di esecuzione
+# Processo, worker e thread
 
 - **Processo:** memoria e risorse proprie.
 - **Worker:** unità di lavoro concorrente.
@@ -257,7 +257,7 @@ Sono ruoli distinti: server HTTP e client HTTP.
 
 ---
 
-# Integrazioni: definire i confini
+# Integrazioni e confini
 
 | Componente | Verifiche |
 |---|---|
@@ -284,7 +284,7 @@ flowchart LR
 
 ---
 
-# Distribuzione: prerequisiti e confini
+# Distribuzione e prerequisiti
 
 - Dichiarare entrypoint, directory, runtime e dipendenze.
 - Separare configurazione e segreti gestiti dalla piattaforma.
@@ -292,6 +292,52 @@ flowchart LR
 - Verificare build, avvio, risposta e log.
 - ShinyProxy/Kubernetes: verificare configurazione e compatibilità.
 - Gli esempi richiedono adattamento e test nell'ambiente target.
+
+---
+
+# Arrow e DuckDB: dati oltre la RAM
+
+- Problema: file grandi o distribuiti, trasferimenti e copie costosi.
+- Arrow: formato colonnare e interoperabilità tra strumenti.
+- DuckDB: motore SQL analitico eseguibile localmente.
+- DuckDB interroga Parquet e dati Arrow senza un server DB.
+- Arrow descrive/scambia i dati; DuckDB esegue le query.
+- Oracle resta preferibile quando è già il sistema sorgente adatto.
+
+---
+
+# Container: che cosa aggiunge a renv?
+
+| Livello | Che cosa descrive |
+|---|---|
+| `renv.lock` | Versioni e sorgenti dei package R |
+| Immagine | OS user-space, R, librerie native, package e codice |
+| Piattaforma | Rete, identità, segreti, storage e risorse |
+
+Il container rende distribuibile una parte più ampia dell'ambiente; non sostituisce la configurazione della piattaforma.
+
+---
+
+# ShinyProxy: il problema che risolve
+
+- Più utenti devono raggiungere applicazioni Shiny pubblicate.
+- Occorre gestire accesso, instradamento e avvio delle istanze.
+- ShinyProxy riceve le richieste e applica l'autenticazione configurata.
+- Avvia il container dell'applicazione e inoltra le richieste.
+- Restano da configurare autorizzazioni, rete, TLS, risorse e log.
+- Verificare prima se portale o gateway aziendale coprono già queste funzioni.
+
+---
+
+# Pipeline applicativa con GitHub Actions
+
+- Un commit o una richiesta di integrazione avvia i controlli.
+- Restore: R e package dichiarati in `renv.lock`.
+- Test: esecuzione automatica di `testthat`.
+- Build: package o immagine container.
+- Verifica: avvio minimo e controlli sull'artefatto.
+- Pubblicazione: immagine taggata nel registro container.
+- Deploy: promozione autorizzata dell'immagine nell'ambiente target.
 
 ---
 
@@ -363,18 +409,18 @@ flowchart LR
 
 ---
 
-# Gate di rilascio e ripristino
+# Gate di rilascio
 
 ```{mermaid}
 %%| echo: false
-flowchart TD
- A["Requisiti verificabili"] --> B["Test ed evidenze"]
- B --> C["Sicurezza e osservabilità"]
- C --> D["passaggio di consegne e responsabilità"]
- D --> E["Rilascio"]
- E --> F["verifica rapida di avvio"]
- F -->|OK| G["Esercizio"]
- F -->|KO| H["ripristino della versione precedente verificato"]
+%%{init: {"flowchart": {"curve": "linear"}, "themeVariables": {"fontSize": "16px"}}}%%
+flowchart LR
+ A["Requisiti"] --> B["Test"]
+ B --> C["Immagine / artefatto"]
+ C --> D["Rilascio"]
+ D --> E{"Verifica"}
+ E -->|OK| F["Esercizio"]
+ E -->|KO| G["Rollback"]
 ```
 
 
