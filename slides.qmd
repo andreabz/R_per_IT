@@ -186,6 +186,55 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 
 ---
 
+# Leggere `/usr/bin/time -v`
+
+- **Maximum resident set size (kbytes):** picco RSS del processo misurato.
+- **User time / System time:** CPU in user space e kernel.
+- **Elapsed time:** tempo reale trascorso.
+- **Percent of CPU:** rapporto tra tempo CPU e tempo reale.
+- Il dato non equivale automaticamente alla RAM aggregata dei worker figli.
+- Confrontare esecuzioni omogenee e ripetute.
+
+---
+
+# `parallel` e `future`: quando provarli
+
+- Usarli quando il lavoro si divide in attività indipendenti.
+- Prima misurare il tempo sequenziale e individuare il collo di bottiglia.
+- `parallel`: controllo esplicito di cluster e worker.
+- `future`: separa il codice dalla strategia di esecuzione.
+- Evitare se prevalgono attese DB/rete o attività dipendenti.
+- Verificare overhead, trasferimenti, RAM e carico sui sistemi esterni.
+
+---
+
+# Fork e PSOCK: riconoscere il backend
+
+| Configurazione | Backend |
+|---|---|
+| `mclapply()`, `makeForkCluster()` | Fork |
+| `makeCluster()` | PSOCK, default |
+| `future::plan(multicore)` | Fork, se supportato |
+| `future::plan(multisession)` | Processi separati |
+
+Fork: Unix-like, copy-on-write, cautela con thread e connessioni.
+PSOCK: processi separati e trasferimento/serializzazione degli oggetti.
+
+---
+
+# Thread BLAS/LAPACK: controllo distinto
+
+- `parallel` controlla i worker, non i thread BLAS.
+- Identificare prima l'implementazione BLAS installata.
+- OpenBLAS: `OPENBLAS_NUM_THREADS`.
+- Intel MKL: `MKL_NUM_THREADS`.
+- OpenMP: `OMP_NUM_THREADS`.
+- Impostare prima dell'avvio di R e verificare il comportamento dei worker.
+- Iniziare spesso con 1 thread per worker, poi misurare.
+
+
+---
+
 # Database: dove elaborare i dati?
 
 ```{mermaid}
@@ -224,14 +273,15 @@ La forma applicativa determina quali misure servono per dimensionare il sistema.
 
 ---
 
-# `Shiny`: struttura e avvio
+# `Shiny`: struttura e pubblicazione
 
 - `app.R`: può contenere UI, server e chiamata a `shinyApp()`.
 - `ui.R` + `server.R`: interfaccia e funzione server separate.
 - `global.R`: inizializzazione prima delle sessioni.
-- `golem`: applicazione organizzata come package.
-- `Rhino`: punto di ingresso e codice applicativo secondo la propria struttura.
-- Verificare loader, moduli e procedura di build della versione usata.
+- Il browser raggiunge un'app web interattiva, non un file HTML statico.
+- Per la rete aziendale: endpoint raggiungibile, HTTPS e routing.
+- Un reverse proxy inoltra le richieste al servizio Shiny.
+- Shiny gestisce più sessioni; container e ShinyProxy sono opzioni per isolamento e gestione delle istanze.
 
 ---
 
@@ -430,13 +480,16 @@ Il container rende distribuibile una parte più ampia dell'ambiente; non sostitu
 
 ---
 
-# Workflow documentazione e pipeline applicativa
+# CI/CD: test, build e rilascio
 
-- Il workflow del corso esegue build Quarto e pubblica il manuale.
-- Non esegue una suite `testthat` né rilascia un'applicazione.
-- Pipeline applicativa: test → build → verifica artefatto.
-- Promozione e osservazione dipendono da prodotto e infrastruttura.
-- Un workflow verde attesta solo i controlli configurati.
+- Ogni modifica avvia i controlli automatici previsti.
+- Restore: R e package da `renv.lock`.
+- Test: funzioni e comportamenti con `testthat`.
+- Build: package o immagine container.
+- Verifica: avvio minimo e controlli sull'artefatto.
+- Pubblicazione: immagine taggata nel registro container.
+- Deploy: promozione autorizzata nell'ambiente target.
+- GitHub Actions è un possibile orchestratore, non la piattaforma di esercizio.
 
 ---
 
