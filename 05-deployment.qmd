@@ -87,11 +87,12 @@ Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 ### Esempio quasi eseguibile — container per una `Shiny`
 
 **Assunzioni da verificare prima dell'uso:**
-- la directory di build contiene `app.R` (o la struttura `Shiny` prevista), `renv.lock` e i file di progetto necessari;
-- l'immagine base R è approvata dall'organizzazione e contiene il sistema operativo e le librerie native richieste;
-- l'app ascolta sulla porta 3838 nel container;
-- il registro immagini, la rete, i certificati e il secret store sono gestiti dalla piattaforma;
-- i valori tra parentesi angolari sono segnaposto da sostituire. Non esiste una versione universale di R o dell'immagine base: usare una situazione di riferimento supportata e aggiornarla secondo il processo di release.
+
+- La directory di build contiene `app.R` (o la struttura `Shiny` prevista), `renv.lock` e i file di progetto necessari.
+- L'immagine base R è approvata dall'organizzazione e contiene il sistema operativo e le librerie native richieste.
+- L'applicazione ascolta sulla porta 3838 all'interno del container.
+- Il registro immagini, la rete, i certificati e il secret store sono gestiti dalla piattaforma.
+- I valori di esempio sono segnaposto da sostituire. Non esiste una versione universale di R o dell'immagine base: usare una situazione di riferimento supportata e aggiornarla secondo il processo di release.
 
 ```dockerfile
 
@@ -288,11 +289,9 @@ if (!nzchar(api_url)) {
 
 L'esempio legge una configurazione non segreta dall'ambiente e fallisce esplicitamente se manca. Token e password devono provenire da un secret store o da un meccanismo aziendale equivalente, con permessi e rotazione definiti; non devono essere scritti nel repository, nell'immagine container o nei log.
 
-## GitHub Actions
+## GitHub Actions e pipeline CI/CD
 
-Il workflow del repository di questo corso pubblica la documentazione. Il file `.github/workflows/quarto-pages.yml` definisce l'avvio su push al branch `main` o manualmente, configura R 4.6.0, ripristina l'ambiente `renv`, installa Quarto, esegue il rendering del libro e delle slide, carica l'artefatto Pages e lo distribuisce. Nel workflow esaminato non è presente un passaggio che esegua una suite `testthat`.
-
-Il successo di questo workflow attesta il completamento dei passaggi di build e pubblicazione configurati. Non attesta la correttezza funzionale di un'applicazione R né la prontezza di un prodotto per la produzione. Inoltre, la configurazione del progetto disabilita l'esecuzione dei chunk durante il rendering: il rendering del manuale non equivale all'esecuzione e alla verifica degli esempi R.
+GitHub Actions è uno dei sistemi che possono automatizzare le attività di integrazione e rilascio. Non è necessario conoscere il workflow usato per pubblicare questo corso: il punto didattico è capire quali controlli conviene automatizzare per un'applicazione R e quali artefatti produrre.
 
 Una pipeline applicativa automatizza i controlli che devono essere ripetuti a ogni modifica e prepara una versione candidata al rilascio. Per esempio, quando viene pubblicato un commit o aperta una richiesta di integrazione, GitHub Actions può avviare un job che recupera il sorgente, installa la versione di R prevista, ripristina le dipendenze con `renv` ed esegue i test con `testthat`. Se i controlli falliscono, la pipeline si interrompe e la versione non viene promossa.
 
