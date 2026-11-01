@@ -142,7 +142,13 @@ Sostituire l'immagine base, il tag e il file di configurazione con valori reali;
 
 Il comando docker run è adatto a una verifica locale; non è una configurazione di produzione. Non mettere segreti in file env versionati o in immagini. In produzione usare il secret store e la rete della piattaforma, impostare limiti CPU/RAM e health check e terminare il container tramite l'orchestratore.
 
-### Esempio di specifica ShinyProxy
+### ShinyProxy: accesso e avvio delle applicazioni
+
+Quando una o più applicazioni Shiny devono essere utilizzate da più persone, occorre gestire l'accesso, instradare le richieste e avviare le istanze applicative. Pubblicare direttamente una porta del server Shiny può bastare per una prova limitata, ma lascia da definire come gli utenti vengono autenticati, come raggiungono l'applicazione e come vengono isolate le sessioni o le istanze.
+
+ShinyProxy risolve questa parte per applicazioni Shiny distribuite in container. Riceve le richieste degli utenti, applica il meccanismo di autenticazione configurato, presenta le applicazioni disponibili e avvia il container previsto quando un utente ne richiede una. Il proxy inoltra quindi le richieste al servizio Shiny nel container. La gestione delle istanze e il backend disponibile dipendono dalla versione e dalla configurazione adottata.
+
+ShinyProxy non sostituisce il codice Shiny, il database o l'intera infrastruttura. Occorre comunque predisporre immagini container, rete, certificati, autenticazione, autorizzazioni, limiti di risorse, log e monitoraggio. Se l'organizzazione dispone già di un portale applicativo o di un gateway che copre questi requisiti, va valutata anche l'integrazione con i componenti esistenti.
 
 Per un'installazione ShinyProxy che utilizza il backend Docker, uno spec minimale può avere questa forma. Le proprietà effettivamente supportate dipendono dalla versione di ShinyProxy e dal backend; verificare la [documentazione ufficiale di configurazione](https://shinyproxy.io/documentation/configuration/) e [deploying apps](https://shinyproxy.io/documentation/deploying-apps/) prima di applicarlo.
 
@@ -288,7 +294,11 @@ Il workflow del repository di questo corso pubblica la documentazione. Il file `
 
 Il successo di questo workflow attesta il completamento dei passaggi di build e pubblicazione configurati. Non attesta la correttezza funzionale di un'applicazione R né la prontezza di un prodotto per la produzione. Inoltre, la configurazione del progetto disabilita l'esecuzione dei chunk durante il rendering: il rendering del manuale non equivale all'esecuzione e alla verifica degli esempi R.
 
-Una pipeline applicativa ha uno scopo diverso: controlla una versione del software e prepara un artefatto destinato a un ambiente di esecuzione. In base al prodotto può ripristinare le dipendenze, eseguire test unitari e d'integrazione, effettuare controlli di sicurezza e compatibilità, costruire il package o l'immagine, verificare l'artefatto e renderlo disponibile per la promozione. Le fasi e i sistemi coinvolti dipendono dal rischio, dal prodotto e dall'infrastruttura.
+Una pipeline applicativa automatizza i controlli che devono essere ripetuti a ogni modifica e prepara una versione candidata al rilascio. Per esempio, quando viene pubblicato un commit o aperta una richiesta di integrazione, GitHub Actions può avviare un job che recupera il sorgente, installa la versione di R prevista, ripristina le dipendenze con `renv` ed esegue i test con `testthat`. Se i controlli falliscono, la pipeline si interrompe e la versione non viene promossa.
+
+Se i test hanno esito positivo, un job successivo può costruire il package o l'immagine container. Per un'applicazione Shiny, il Dockerfile produce un'immagine che contiene runtime, librerie native, package e codice. La pipeline può eseguire una verifica minima dell'immagine, assegnarle un tag associato al commit o alla versione e pubblicarla in un registro container. L'immagine pubblicata è l'artefatto candidato al rilascio: gli ambienti di test e produzione possono prelevare lo stesso artefatto, fornendo configurazioni e segreti attraverso i rispettivi sistemi.
+
+GitHub Actions coordina questi passaggi, ma non è di per sé il registro delle immagini, il sistema di autenticazione o la piattaforma che esegue l'applicazione. La pubblicazione dell'immagine non equivale al deploy: il rilascio nell'ambiente previsto deve essere autorizzato, configurato e verificato secondo le procedure aziendali.
 
 ```text
 modifica
