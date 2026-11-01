@@ -40,6 +40,7 @@ execute:
 | Dati e query | Oracle |
 | Workflow | APEX; scheduler aziendale |
 | Calcolo e report | R, Quarto, `Shiny` |
+| Processi di laboratorio | LIMS |
 | Accesso e rete | Proxy, gateway, IAM |
 
 
@@ -106,6 +107,16 @@ Per tutti: durata, frequenza, errori e destinazione dell'output.
 
 ---
 
+# Ambiente R: package e dipendenze native
+
+- R esegue il codice; i package aggiungono funzioni e componenti.
+- Una library è una directory che contiene package installati.
+- Un package può dipendere da librerie native e driver esterni.
+- Il ripristino dei package non ricostruisce da solo il sistema operativo.
+- La consegna a IT identifica versioni, sorgenti e dipendenze native.
+
+---
+
 # Dal punto di ingresso al sistema operativo
 
 ```{mermaid}
@@ -128,6 +139,16 @@ Codice sorgente, ambiente e artefatto distribuito sono oggetti distinti.
 - **Thread nativo:** flusso di esecuzione nel processo.
 - Più core disponibili non rendono automaticamente parallelo un processo R.
 - Worker e thread possono aumentare RAM e contesa.
+
+---
+
+# Memoria: dimensione dell'oggetto e RSS
+
+- La dimensione logica non coincide con la memoria residente.
+- Copie e oggetti temporanei possono aumentare il picco.
+- ALTREP può rimandare la materializzazione di alcuni dati.
+- Più worker possono mantenere copie o dati trasferiti.
+- Misurare il picco RSS durante il carico rappresentativo.
 
 ---
 
@@ -175,6 +196,19 @@ flowchart LR
 ```
 
 Confrontare con il trasferimento completo: righe, colonne, volume, tempi DB e tempi R. La decisione si basa sul tempo totale e sui vincoli del sistema.
+
+---
+
+# Carico di lavoro: batch e servizio
+
+| Batch | Servizio interattivo |
+|---|---|
+| Frequenza e durata | Latenza e concorrenza |
+| Input e output | Sessioni e richieste |
+| Exit code e retry | Codici HTTP e timeout |
+| Finestra di esecuzione | Disponibilità e restart |
+
+La forma applicativa determina quali misure servono per dimensionare il sistema.
 
 ---
 
@@ -236,6 +270,16 @@ Sono ruoli distinti: server HTTP e client HTTP.
 
 ---
 
+# Oracle e R: separare le responsabilità
+
+- Oracle conserva i dati e gestisce transazioni e integrità.
+- Filtri e aggregazioni vanno eseguiti nel DB quando appropriato.
+- R riceve il risultato necessario per analisi e calcoli specialistici.
+- Misurare righe, volume trasferito e tempi su entrambi i lati.
+- Evitare copie e trasferimenti completi senza una ragione.
+
+---
+
 # API esposte: contratto e responsabilità
 
 - Metodi, percorsi, parametri, body, header e formati.
@@ -266,6 +310,16 @@ Sono ruoli distinti: server HTTP e client HTTP.
 | GIS | Formati, coordinate, volumi |
 | Scheduler | Account, ambiente, exit code |
 | Proxy/gateway | Routing, TLS, limiti |
+
+---
+
+# Release: sorgente, immagine e ambiente
+
+- Commit/tag identifica il codice sorgente.
+- `renv.lock` descrive i package R da ricostruire.
+- Dockerfile costruisce l'immagine con R e dipendenze native.
+- Il tag dell'immagine collega l'artefatto alla versione.
+- Configurazione, segreti e dati restano esterni all'immagine.
 
 ---
 
