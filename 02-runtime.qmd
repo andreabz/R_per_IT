@@ -385,7 +385,14 @@ OMP_NUM_THREADS=1 Rscript analisi.R
 
 Non impostare tutte le variabili indiscriminatamente: va identificata la libreria effettivamente usata da R e consultata la sua documentazione. Le variabili vanno normalmente definite prima di avviare R, perché alcune librerie leggono la configurazione durante l'inizializzazione.
 
-In alcuni ambienti è possibile modificare il numero di thread anche durante la sessione con strumenti specifici, per esempio il package `RhpcBLASctl` per le implementazioni supportate. Non è una funzione universale di R e non tutte le librerie permettono la stessa gestione.
+In alcuni ambienti è possibile modificare il numero di thread anche durante la sessione con strumenti specifici, per esempio il package `RhpcBLASctl` per le implementazioni supportate. Non è una funzione universale di R e non tutte le librerie permettono la stessa gestione. Quando la combinazione di R, BLAS e package è supportata, le chiamate principali sono:
+
+```r
+RhpcBLASctl::blas_set_num_threads(1)
+RhpcBLASctl::omp_set_num_threads(1)
+```
+
+La prima riguarda BLAS; la seconda le regioni OpenMP. Non sostituiscono la verifica delle variabili d'ambiente e dell'implementazione effettiva: il risultato va misurato sul processo e sui worker realmente utilizzati.
 
 In un processo che crea worker, l'impostazione dei thread va verificata anche nei worker: ogni processo può avviare più thread BLAS. Una configurazione di 4 worker con 8 thread ciascuno può generare fino a 32 thread concorrenti. Per molti carichi paralleli conviene iniziare con un thread BLAS per worker, poi misurare combinazioni diverse.
 
