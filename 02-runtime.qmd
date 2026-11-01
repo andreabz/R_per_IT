@@ -138,12 +138,6 @@ ALTREP è un meccanismo interno di R che consente ad alcuni oggetti di usare rap
 Per IT conta la conseguenza: la dimensione logica di un oggetto non misura da sola la memoria residente del processo. Per dimensionare un carico occorre osservare il picco RSS durante l'esecuzione, considerando copie, allocazioni temporanee e processi aggiuntivi.
 
 
-### ALTREP e rappresentazione degli oggetti
-
-ALTREP è un meccanismo interno di R che consente ad alcuni oggetti di usare rappresentazioni alternative. In alcuni casi i dati non vengono materializzati tutti nella forma tradizionale finché non sono necessari.
-
-Per IT conta la conseguenza: la dimensione logica di un oggetto non misura da sola la memoria residente del processo. Per dimensionare un carico occorre osservare il picco RSS durante l'esecuzione, considerando copie, allocazioni temporanee e processi aggiuntivi.
-
 ### Laboratorio specifico — copie, blocchi e picco RSS
 
 **Obiettivo:** verificare se una trasformazione completa crea un picco di memoria maggiore dell'elaborazione per blocchi. Il risultato dipende dalla rappresentazione dei dati e dall'operazione; non va generalizzato senza misura.
@@ -201,24 +195,37 @@ Su Linux, eseguire separatamente:
 /usr/bin/time -v Rscript laboratorio-memoria.R blocchi
 ```
 
-Verificare la disponibilità di `/usr/bin/time` e usare lo stesso metodo per entrambe le prove. Per un confronto valido, ripetere le esecuzioni in condizioni comparabili e confrontare le mediane. Il metodo per blocchi non garantisce un RSS inferiore: l'oggetto finale resta in memoria.
+Nel rapporto prodotto da `/usr/bin/time -v`, la riga da cercare è **`Maximum resident set size (kbytes)`**: indica il massimo RSS osservato durante quella singola esecuzione, espresso in kilobyte. È il picco della memoria fisica residente attribuito al processo misurato, non la dimensione degli oggetti R e non la RAM libera o totale della macchina.
+
+Le altre righe principali sono:
+
+- **User time:** tempo CPU trascorso in modalità utente;
+- **System time:** tempo CPU trascorso nel kernel;
+- **Elapsed (wall clock) time:** tempo reale trascorso dall'avvio alla fine;
+- **Percent of CPU:** rapporto tra tempo CPU e tempo reale;
+- **Major/Minor page faults:** pagine di memoria caricate da storage o gestite senza lettura da storage;
+- **Exit status:** codice di uscita del comando.
+
+Per esempio, se `Maximum resident set size` riporta `850000`, il picco misurato è circa 850 MB in unità decimali, oppure circa 830 MiB. Per confrontare le due strategie interessa soprattutto confrontare questa riga e il tempo trascorso, non sommare le altre metriche.
+
+Questo laboratorio avvia un solo processo `Rscript`: il valore è quindi utile per confrontare le due esecuzioni. Quando il programma crea worker o altri processi, non assumere che il dato rappresenti automaticamente il consumo aggregato dell'intero gruppo. In quel caso occorre misurare anche i processi figli o il gruppo/cgroup che li contiene, con strumenti del sistema operativo.
+
+Verificare la disponibilità di GNU `time` in `/usr/bin/time` e usare lo stesso metodo per entrambe le prove. Ripetere le esecuzioni in condizioni comparabili e confrontare le mediane. Il metodo per blocchi non garantisce un RSS inferiore: l'oggetto finale resta in memoria.
 
 
 > **Per una richiesta RAM, il dato utile è il picco osservato nel carico di lavoro reale, non la somma delle dimensioni nominali dei dataset.**
 
 ## `parallel` e `future`
 
-`parallel` espone meccanismi espliciti di parallelizzazione. `future` introduce un'astrazione che separa la descrizione del lavoro dalla strategia di esecuzione.
+Il parallelismo serve quando un lavoro può essere suddiviso in attività indipendenti o quasi indipendenti, eseguibili contemporaneamente. Esempi: elaborare molti file separati, eseguire simulazioni indipendenti o applicare lo stesso calcolo a gruppi distinti di dati.
 
-Questa astrazione può nascondere dettagli che IT deve comunque conoscere:
+Non è una soluzione automatica a un programma lento. Se le operazioni dipendono l'una dall'altra, se il carico è molto breve o se il tempo viene speso soprattutto in attese su database e rete, l'avvio e il coordinamento dei worker possono costare più del lavoro risparmiato. Prima si misura il caso sequenziale; poi si prova il parallelismo su un carico rappresentativo, controllando anche il carico introdotto sui sistemi esterni.
 
-- numero e tipo di processi;
-- backend;
-- trasferimento degli oggetti;
-- risorse disponibili;
-- concorrenza.
+`parallel` è incluso in R e mette a disposizione meccanismi espliciti per creare worker e distribuire attività. È adatto quando lo sviluppatore deve scegliere direttamente come creare il cluster e come inviare il lavoro.
 
-Per valutare il parallelismo, verificare **quale backend viene realmente utilizzato e che cosa viene trasferito ai worker**.
+`future` offre invece un'interfaccia che separa la definizione del lavoro dalla strategia di esecuzione. Il codice che descrive le attività può restare simile mentre si cambia strategia, per esempio tra esecuzione sequenziale, processi locali o processi su più macchine. Nella pratica viene spesso usato insieme a `future.apply` o a package che lo supportano.
+
+La scelta non si fa in base al nome del package: va verificato quale backend è stato configurato, quanti worker vengono avviati, dove girano e quali dati devono ricevere.
 
 ## Fork e PSOCK
 
@@ -226,7 +233,9 @@ Questi due backend sono spesso citati insieme perché hanno conseguenze diverse 
 
 ### Fork
 
-Con **fork**, un processo figlio deriva dal processo R principale.
+Con **fork**, un processo figlio deriva dal processo R principale. È una scelta da valutare soprattutto su sistemi Unix-like quando i worker devono elaborare dati già presenti nel processo principale e prevalentemente in lettura: il meccanismo copy-on-write può evitare copie fisiche immediate delle pagine non modificate.
+
+Non è disponibile su Windows e richiede cautela in applicazioni che usano GUI, connessioni o librerie native con propri thread. Non va scelto soltanto perché sembra risparmiare RAM: le modifiche ai dati possono generare copie e alcuni ambienti non sono adatti a creare processi tramite fork.
 
 ~~~text
 R principale
@@ -255,7 +264,7 @@ RAM aggiuntiva
 
 ### PSOCK
 
-Con **PSOCK** vengono avviati processi R separati che comunicano tramite connessioni socket.
+Con **PSOCK** vengono avviati processi R separati che comunicano tramite connessioni socket. È spesso la scelta più portabile, anche su Windows, e offre processi distinti con un avvio più esplicito. Il costo è che gli oggetti necessari ai worker devono essere trasferiti e ricostruiti: con dataset grandi, serializzazione e copie possono diventare una parte rilevante del tempo e della RAM.
 
 ~~~text
 R principale
@@ -296,6 +305,22 @@ Se il master contiene un data frame molto grande, non basta sapere il numero di 
 | portabilità | dipende dall'OS | generalmente più portabile |
 
 La tabella identifica **i costi da misurare**.
+
+### Come riconoscere il backend effettivo
+
+Il backend si riconosce prima di tutto dal codice o dalla configurazione che crea i worker:
+
+| Codice/configurazione | Modello utilizzato |
+|---|---|
+| `parallel::mclapply()` | fork su sistemi Unix-like; su Windows non crea worker fork |
+| `parallel::makeForkCluster()` | cluster basato su fork |
+| `parallel::makeCluster()` | PSOCK, comportamento predefinito |
+| `future::plan(multicore)` | fork, dove supportato |
+| `future::plan(multisession)` | processi R separati, in genere tramite PSOCK |
+
+Con un cluster creato da `parallel`, la classe dell'oggetto può essere ispezionata con `class(cl)`: per esempio `SOCKcluster` o `FORKcluster`. Con `future`, `future::plan()` mostra la strategia configurata e `future::nbrOfWorkers()` il numero di worker previsto.
+
+Queste verifiche descrivono la configurazione del programma. Per confermare ciò che accade durante l'esecuzione, IT può osservare l'albero dei processi sul sistema operativo e verificare quanti processi R sono effettivamente attivi. Il solo numero di processi non identifica sempre il backend: va letto insieme alla configurazione o al codice che li ha creati.
 
 ## Serializzazione
 
@@ -340,6 +365,29 @@ CPU
 ~~~
 
 L'implementazione concreta di BLAS può essere single-thread o multi-thread. Un processo R apparentemente singolo può quindi utilizzare più thread nativi.
+
+### Come si imposta il numero di thread?
+
+Il numero di worker R e quello dei thread BLAS/LAPACK sono due impostazioni distinte. `parallel` controlla i worker; non controlla direttamente i thread interni alla libreria numerica.
+
+Il metodo dipende dall'implementazione installata. Molte librerie leggono variabili d'ambiente all'avvio del processo R. Esempi comuni sono:
+
+```bash
+# OpenBLAS
+OPENBLAS_NUM_THREADS=1 Rscript analisi.R
+
+# Intel MKL
+MKL_NUM_THREADS=1 Rscript analisi.R
+
+# Implementazioni basate su OpenMP
+OMP_NUM_THREADS=1 Rscript analisi.R
+```
+
+Non impostare tutte le variabili indiscriminatamente: va identificata la libreria effettivamente usata da R e consultata la sua documentazione. Le variabili vanno normalmente definite prima di avviare R, perché alcune librerie leggono la configurazione durante l'inizializzazione.
+
+In alcuni ambienti è possibile modificare il numero di thread anche durante la sessione con strumenti specifici, per esempio il package `RhpcBLASctl` per le implementazioni supportate. Non è una funzione universale di R e non tutte le librerie permettono la stessa gestione.
+
+In un processo che crea worker, l'impostazione dei thread va verificata anche nei worker: ogni processo può avviare più thread BLAS. Una configurazione di 4 worker con 8 thread ciascuno può generare fino a 32 thread concorrenti. Per molti carichi paralleli conviene iniziare con un thread BLAS per worker, poi misurare combinazioni diverse.
 
 ### Worker e thread nativi sono due livelli diversi
 
