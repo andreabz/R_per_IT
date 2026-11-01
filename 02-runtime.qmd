@@ -206,7 +206,7 @@ Le altre righe principali sono:
 - **Major/Minor page faults:** pagine di memoria caricate da storage o gestite senza lettura da storage;
 - **Exit status:** codice di uscita del comando.
 
-Per esempio, se `Maximum resident set size` riporta `850000`, il picco misurato è circa 850 MB in unità decimali, oppure circa 830 MiB. Per confrontare le due strategie interessa soprattutto confrontare questa riga e il tempo trascorso, non sommare le altre metriche.
+Per esempio, se `Maximum resident set size` riporta `850000`, il picco misurato è circa 830 MiB, cioè circa 870 MB in unità decimali. Per confrontare le due strategie interessa soprattutto confrontare questa riga e il tempo trascorso, non sommare le altre metriche.
 
 Questo laboratorio avvia un solo processo `Rscript`: il valore è quindi utile per confrontare le due esecuzioni. Quando il programma crea worker o altri processi, non assumere che il dato rappresenti automaticamente il consumo aggregato dell'intero gruppo. In quel caso occorre misurare anche i processi figli o il gruppo/cgroup che li contiene, con strumenti del sistema operativo.
 
