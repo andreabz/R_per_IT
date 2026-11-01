@@ -4,219 +4,77 @@ subtitle: "Capire, valutare e gestire soluzioni sviluppate in R"
 
 # Introduzione {.unnumbered}
 
-## A chi è rivolto
+Questo manuale è rivolto al personale IT che deve valutare e gestire software sviluppato in R. Non è un corso di programmazione: il codice compare quando serve a chiarire un comportamento, un requisito o una scelta tecnica.
 
-Questo manuale è pensato per chi, in IT, deve **capire, valutare e gestire soluzioni sviluppate in R**. Non è un corso di programmazione R: il codice compare solo quando aiuta a capire una decisione tecnica o un comportamento del runtime.
+## Obiettivo
 
-Il problema ricorrente è trasformare una richiesta formulata in termini tecnici — «installare R», «servono più RAM», «serve un server», «pubblichiamo una `Shiny`» — in una descrizione del problema che possa essere valutata, verificata e gestita nel tempo.
+Una richiesta come «installare R», «servono più RAM» o «pubblicare una Shiny» non contiene ancora tutte le informazioni necessarie. Occorre identificare che cosa deve fare la soluzione, come viene eseguita, quali sistemi utilizza e quali condizioni servono per mantenerla in esercizio.
 
-## Come procede il manuale
+Al termine del corso i partecipanti dovranno saper:
 
-Il percorso parte dalla richiesta iniziale e dalla forma della soluzione: script, elaborazione pianificata, report, applicazione o servizio. Passa poi a ciò che serve per eseguirla, cioè R, i pacchetti e le librerie esterne. Quando il comportamento è chiaro, si misurano tempi, memoria e accesso ai dati; solo dopo si valutano struttura, integrazioni, distribuzione e gestione nel tempo. L'ultimo capitolo usa questi elementi per confrontare le alternative e chiarire che cosa serve per prendere in carico una soluzione.
+- riconoscere le principali forme di soluzione R: script, batch, report, package, API e applicazioni Shiny;
+- identificare runtime, package, dipendenze native e sistemi esterni;
+- interpretare misure di CPU, memoria, tempi e accesso ai dati;
+- distinguere le responsabilità di R da quelle di database, scheduler, proxy e piattaforme aziendali;
+- valutare test, distribuzione, sicurezza, monitoraggio e passaggio di consegne;
+- chiedere allo sviluppatore le informazioni mancanti prima del rilascio.
 
-Alcuni termini ricorrono nel manuale:
+## Percorso
 
-- **Ambiente di esecuzione (runtime):** versione di R, pacchetti, librerie di sistema e configurazione necessari per avviare il programma.
-- **Punto di ingresso (entry point):** file o comando da cui parte l'esecuzione.
-- **Pacchetto (package) R:** insieme versionato di funzioni, dati e documentazione che può essere installato e riutilizzato.
-- **Processo:** programma in esecuzione con il proprio spazio di memoria.
-- **Worker:** processo o unità di lavoro incaricata di eseguire una parte del calcolo.
-- **Thread:** flusso di esecuzione all'interno di un processo.
-- **Profilazione (profiling):** raccolta di misure che mostra quali funzioni o fasi consumano più tempo.
-- **Contenitore (container):** ambiente isolato che raccoglie l'applicazione e parte delle dipendenze necessarie per avviarla.
-- **Interfaccia di programmazione (API, Application Programming Interface):** regole con cui un programma chiede dati o operazioni a un altro programma.
-- **HTTP (Hypertext Transfer Protocol, protocollo di trasferimento ipertestuale):** messaggio inviato a un servizio web; la risposta contiene un codice che indica l'esito e, quando previsto, dei dati.
-- **Memoria residente (RSS, Resident Set Size):** quantità di memoria fisica attribuita dal sistema operativo a un processo in un dato momento.
-- **Rilascio (release):** versione identificata e consegnata per l'uso o la distribuzione.
-- **Ripristino della versione precedente (rollback):** ritorno a una versione conosciuta, compresi gli elementi di configurazione necessari.
+I sei capitoli seguono il ciclo di valutazione di una soluzione:
 
-Altre sigle usate nel manuale: **CPU** (Central Processing Unit, unità centrale di elaborazione); **RAM** (Random Access Memory, memoria ad accesso casuale); **TLS** (Transport Layer Security, protocollo che protegge le comunicazioni); **CI/CD** (Continuous Integration/Continuous Delivery, integrazione continua e consegna automatizzata delle modifiche); **IAM** (Identity and Access Management, gestione di identità e accessi); **BLAS** e **LAPACK** (librerie per il calcolo numerico); **JSON** (formato testuale per scambiare dati strutturati); **SQL** (linguaggio per interrogare e modificare dati nei database); **IDE** (ambiente integrato di sviluppo); **GIS** (sistema informativo geografico); **UI** (interfaccia utente); **OS** (sistema operativo); **I/O** (ingresso/uscita dei dati).
+1. **Contesto e ambiente R:** componenti, package e dipendenze.
+2. **Runtime, memoria e parallelismo:** processi, worker, thread e uso delle risorse.
+3. **Performance e diagnostica:** misure e interpretazione dei colli di bottiglia.
+4. **Architettura e integrazione:** forme applicative, confini e sistemi esterni.
+5. **Distribuzione e gestione operativa:** test, release, configurazione e monitoraggio.
+6. **Decisioni operative:** confronto tra alternative e presa in carico.
 
-Le definizioni sono introduttive. Nei capitoli tecnici i termini vengono precisati quando servono a interpretare una misura o una configurazione.
+Il manuale distingue tre livelli di informazione:
 
-Il principio vale per l'intero manuale. Una richiesta parte dal risultato che deve essere ottenuto; da lì si identificano carico di lavoro e ambiente, si raccolgono evidenze, si valutano le alternative e solo alla fine si definiscono infrastruttura, rilascio e gestione.
+- **fatto misurato:** per esempio CPU al 95% durante un job;
+- **interpretazione o ipotesi:** per esempio un possibile limite di calcolo;
+- **decisione:** per esempio aumentare i worker, dopo aver verificato l'effetto su tempi e memoria.
 
-Il percorso è:
+## Termini ricorrenti
 
-```text
-requisito
-   ↓
-ambiente R e carico di lavoro
-   ↓
-modello di esecuzione
-   ↓
-misura e diagnosi
-   ↓
-architettura
-   ↓
-distribuzione
-   ↓
-decisione e responsabilità
-   ↓
-nuova situazione di riferimento quando cambia qualcosa
-```
+| Termine | Significato |
+|---|---|
+| **Runtime** | Ambiente che esegue il codice, principalmente R e le sue dipendenze |
+| **Package** | Componente software installabile e riutilizzabile in R |
+| **Processo** | Programma in esecuzione con il proprio spazio di memoria |
+| **Worker** | Unità a cui viene assegnata una parte del lavoro |
+| **Thread** | Flusso di esecuzione all'interno di un processo |
+| **API** | Interfaccia con cui un programma richiede dati o operazioni a un altro programma |
+| **Container** | Ambiente isolato che raccoglie l'applicazione e parte delle dipendenze necessarie |
+| **Profiling** | Raccolta di misure per individuare le fasi che consumano tempo o risorse |
+| **RSS** | Memoria residente attribuita dal sistema operativo a un processo |
+| **Release** | Versione identificata e consegnata per l'uso |
+| **Rollback** | Ripristino di una versione precedente conosciuta |
 
-## Obiettivi operativi a fine corso
+Le sigle CPU, RAM, HTTP, TLS, CI/CD, IAM, BLAS, LAPACK, JSON, SQL, IDE, GIS, UI, OS e I/O sono definite nei capitoli in cui diventano necessarie.
 
-Al termine del percorso, un membro IT deve poter **ricevere una soluzione R, farne emergere i requisiti operativi e identificare le informazioni mancanti prima della messa in esercizio**.
+## R nello stack aziendale
 
-In particolare deve saper:
+R è adatto soprattutto ad analisi statistiche, modellistica, simulazione, elaborazione di dati e produzione di report. Può anche esporre servizi e applicazioni interattive. La scelta va confrontata con le responsabilità già coperte dagli strumenti aziendali.
 
-- riconoscere le principali forme di soluzione R: script, batch, report Quarto, `Shiny`, API, package e job di pipeline;
-- distinguere R dal suo ambiente di esecuzione e identificare package, dipendenze native, driver e sistemi esterni;
-- capire che cosa descrivono un repository, un commit/tag e un lockfile e che cosa resta fuori dalla sua portata;
-- leggere un carico di lavoro in termini di input, output, frequenza, durata, utenti/concorrenza e risorse;
-- distinguere una misura da un'ipotesi e chiedere le evidenze necessarie prima di trasformare una richiesta in una specifica infrastrutturale;
-- rappresentare i confini tra R, Oracle, filesystem, API, scheduler, proxy e altri componenti aziendali;
-- verificare che distribuzione, configurazione, sicurezza, logging, monitoraggio, rollback e responsabilità operativa siano descritti;
-- restituire allo sviluppatore una richiesta di informazioni concreta quando il passaggio di consegne è incompleto.
-
-Il corso sviluppa competenze di **comprensione e presa in carico operativa**. Gli approfondimenti diagnostici supportano i casi in cui occorre interpretare misure o discutere un problema applicativo.
-
-## Come è organizzato il manuale
-
-I sei capitoli seguono una progressione intenzionale. L'introduzione non è un capitolo numerato: definisce il metodo. I capitoli sono numerati da 1 a 6 e ciascuno risponde a una domanda precisa.
-
-1. **Contesto e ambiente R** — che cosa compone una soluzione R e quali dipendenze devono essere governate.
-2. **Runtime, memoria e parallelismo** — come R esegue il lavoro, usa memoria, processi, worker e thread.
-3. **Performance e diagnostica** — come misurare il comportamento e distinguere un collo di bottiglia da un'ipotesi.
-4. **Architettura e integrazione** — dove collocare R e dove devono essere eseguiti dati e calcoli.
-5. **Distribuzione e gestione operativa** — come trasformare il software in una release riproducibile e gestibile.
-6. **Decisioni operative** — come collegare requisiti, evidenze, esperimenti, situazione di riferimento e responsabilità operativa.
-
-La sequenza può essere letta anche come una serie di domande:
-
-> **Che cosa sto gestendo? → Come viene eseguito? → Come posso dimostrare cosa sta succedendo? → Dove deve avvenire il lavoro? → Come porto la soluzione in esercizio? → Come trasformo le evidenze in una decisione?**
-
-## Le dimensioni da valutare
-
-Il metodo ricorrente è **requisito → evidenza → decisione → responsabilità → situazione di riferimento**. Si applica a cinque dimensioni:
-
-- **Software:** versione di R, package, dipendenze e componenti nativi.
-- **Runtime:** processi, memoria, worker, thread e parallelismo.
-- **Carico di lavoro:** CPU, RAM, I/O, rete e database.
-- **Architettura:** confini tra R, database, servizi e piattaforme.
-- **Operatività:** rilascio, configurazione, sicurezza, monitoraggio e responsabilità.
-
-## Quattro domande da ricordare
-
-Queste domande sintetizzano il metodo e tornano nel capitolo 6:
-
-1. **Che cosa deve fare?**
-2. **Quale evidenza dimostra che serve ciò che viene richiesto?**
-3. **Dove deve essere eseguito il lavoro?**
-4. **Esiste già un componente aziendale adatto?**
-
-Non sono quattro domande sull'hardware. Servono a impedire che una richiesta infrastrutturale venga trattata come una specifica già dimostrata.
-
-## Dal problema alla decisione
-
-Una richiesta infrastrutturale non dovrebbe partire dalla risorsa desiderata. Il punto di partenza è il problema da risolvere:
-
-```text
-Che cosa deve fare?
-       ↓
-Quali dati usa?
-       ↓
-Quanto spesso e con quale concorrenza?
-       ↓
-Quanto deve essere veloce?
-       ↓
-Quale risorsa limita?
-       ↓
-Quali alternative esistono?
-       ↓
-Quale infrastruttura serve?
-```
-
-Il corso introduce il **modello computazionale di R** necessario per interpretare correttamente le evidenze. Per esempio, un oggetto R può essere copiato, un worker può richiedere memoria aggiuntiva, una libreria nativa può creare propri thread e una query può essere eseguita dal database invece che da R. Questi dettagli cambiano il significato di una misura di CPU o RAM.
-
-## Come leggere le evidenze
-
-Durante il percorso è utile distinguere tra:
-
-- **fatto misurato** — per esempio «CPU 98%»;
-- **interpretazione** — per esempio «il carico di lavoro sembra CPU-bound»;
-- **ipotesi** — per esempio «potrebbe essere parallelizzabile»;
-- **test** — per esempio «confrontiamo 1, 2, 4 e 8 worker»;
-- **decisione infrastrutturale** — per esempio «valutiamo una configurazione con più core».
-
-Questa distinzione evita di trasformare un'ipotesi in una specifica hardware.
-
-## Che cosa aggiunge R rispetto a uno stack IT esistente?
-
-In una soluzione aziendale R occupa la parte dello stack dedicata ad analisi statistiche, modellistica, simulazione, elaborazione dati o generazione di report analitici. Oracle, APEX, scheduler, web server e storage continuano a svolgere le rispettive funzioni quando soddisfano i requisiti.
-
-Un modo semplice per orientarsi è questo:
-
-| Esigenza | Componente tipicamente coinvolto |
+| Esigenza | Componente da valutare |
 |---|---|
 | Persistenza, integrità e query sui dati | Oracle |
-| Applicazioni web gestionali e workflow vicino a Oracle | APEX |
-| Scheduling e orchestrazione | piattaforma IT aziendale |
-| Autenticazione, rete e TLS | infrastruttura aziendale |
-| Analisi statistica, modellistica e simulazione | R |
-| Report analitici riproducibili | Quarto + R |
-| Interfacce analitiche interattive | `Shiny` + R |
-| Servizi che espongono capacità analitiche | API + R |
+| Applicazioni gestionali e workflow vicino a Oracle | APEX |
+| Processi di laboratorio e tracciabilità | LIMS |
+| Scheduling, rete, identità e infrastruttura | Piattaforme IT aziendali |
+| Analisi statistica e calcolo specialistico | R |
+| Report analitici riproducibili | R + Quarto |
+| Interfacce analitiche interattive | Shiny, oppure APEX secondo i requisiti |
 
-Non è una classifica. Serve a chiarire **quale responsabilità viene aggiunta da R e quali componenti aziendali possono rimanere in carico allo stack esistente**.
+Il corso non prescrive R come soluzione predefinita. Aiuta a riconoscere i casi in cui offre un vantaggio e quelli in cui è preferibile mantenere il lavoro nei sistemi già presenti.
 
-Una domanda utile per IT è quindi:
+## Quattro domande per IT
 
-> **Quale problema risolve R che non è già naturalmente coperto da un componente aziendale esistente?**
+1. Che cosa deve fare la soluzione e con quale modalità viene utilizzata?
+2. Quali dati, risorse e sistemi esterni richiede?
+3. Quali misure giustificano l'architettura e il dimensionamento?
+4. Esiste già un componente aziendale adatto a svolgere una parte del lavoro?
 
-Se la risposta è chiara, diventa più semplice definire il confine della soluzione e non duplicare funzioni già disponibili.
-
-## Come cambia il rapporto tra sviluppatore e IT
-
-Il manuale supporta IT nella comprensione delle soluzioni R e rende più efficace la **consegna di una soluzione R da parte dello sviluppatore**.
-
-Lo sviluppatore deve poter distinguere:
-
-- ciò che conosce da ciò che deve ancora essere verificato;
-- il comportamento del carico di lavoro dalla risorsa infrastrutturale richiesta;
-- il codice applicativo dai componenti aziendali che lo ospitano;
-- una misura da un'ipotesi sulla causa di un problema.
-
-Per esempio, una richiesta come «ho una `Shiny`, pubblicatela e se è lenta servono più CPU» lascia a IT gran parte della ricostruzione del problema. Una richiesta più utile identifica almeno repository e commit, punto di ingresso, ambiente e dipendenze, utenti e concorrenza, sistemi esterni, tempi osservati e situazione di riferimento disponibile. Se il collo di bottiglia non è noto, può essere dichiarato esplicitamente: **non è un prerequisito per chiedere supporto a IT sapere già quale sia la causa**.
-
-Il risultato atteso è quindi una collaborazione a due livelli:
-
-~~~text
-sviluppatore
-  ├── descrive applicazione e carico di lavoro
-  ├── fornisce ambiente, dati e situazione di riferimento
-  └── formula o documenta le ipotesi applicative
-                 ↓
-                IT
-  ├── definisce piattaforma e confini infrastrutturali
-  ├── gestisce rete, identità, proxy, distribuzione e monitoraggio
-  └── verifica capacità, sicurezza e operabilità
-~~~
-
-Per le richieste reali, la scheda dell'appendice *Kit operativo per IT* può essere usata come traccia di passaggio di consegne.
-
-## Come usare il manuale
-
-La lettura segue i sei capitoli in sequenza. Per applicare il metodo a una richiesta reale, il corso mette a disposizione due supporti distinti:
-
-- **Kit operativo per IT:** scheda unica da compilare durante il passaggio di consegne.
-- **Strumenti pratici per IT:** procedure di raccolta delle evidenze e laboratorio integrato, dalla ricostruzione dell'ambiente alla decisione.
-
-Il laboratorio usa un caso batch su Oracle e richiede di distinguere fatti, informazioni mancanti, ipotesi, test e decisioni. Le misure non fornite devono essere raccolte o dichiarate mancanti, non stimate.
-
-Per la prima lettura concentrarsi su forme applicative, dipendenze, carico di lavoro, confini architetturali e gestione operativa. Gli approfondimenti sul runtime servono quando occorre interpretare misure di memoria, processi, worker, thread o profiling.
-
-## Una distinzione fondamentale
-
-Il manuale tiene separate tre domande:
-
-| Domanda | Oggetto |
-|---|---|
-| Quanto costa eseguire il lavoro? | performance e dimensionamento |
-| Che cosa stiamo eseguendo? | software, ambiente e configurazione |
-| Il metodo è adeguato allo scopo? | metodo analitico e criteri applicabili |
-
-IT deve poter verificare le prime due senza assumere la responsabilità della terza. La collaborazione tra IT e sviluppatore rimane necessaria quando una decisione tecnica dipende dalla logica applicativa o dal metodo scientifico.
-
+La scheda dell'appendice *Kit operativo per IT* raccoglie le informazioni necessarie al passaggio di consegne. Gli *Strumenti pratici per IT* propongono procedure per raccogliere evidenze e valutare un caso batch integrato con Oracle.
