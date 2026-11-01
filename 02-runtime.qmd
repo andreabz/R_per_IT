@@ -56,13 +56,6 @@ Non tutte le sezioni hanno lo stesso peso per IT.
 - BLAS/LAPACK e thread nativi;
 - prova comparativa separando worker e thread.
 
-**Approfondimento del linguaggio — non necessario alla prima lettura**
-
-- environment e lexical scoping;
-- lazy evaluation;
-- S3, S4 e `R6`.
-
-Questi ultimi concetti aiutano a capire alcuni comportamenti di R e delle sue librerie, ma non sono prerequisiti per la prima presa in carico di una normale soluzione R.
 
 ## Lessico del runtime
 
