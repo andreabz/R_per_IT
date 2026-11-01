@@ -370,7 +370,7 @@ L'implementazione concreta di BLAS può essere single-thread o multi-thread. Un 
 
 Il numero di worker R e quello dei thread BLAS/LAPACK sono due impostazioni distinte. `parallel` controlla i worker; non controlla direttamente i thread interni alla libreria numerica.
 
-Il metodo dipende dall'implementazione installata. Molte librerie leggono variabili d'ambiente all'avvio del processo R. Esempi comuni sono:
+Il metodo dipende dall'implementazione installata. Per iniziare a identificare BLAS e LAPACK, eseguire `sessionInfo()` e leggere i percorsi riportati nelle righe BLAS e LAPACK, quando disponibili. Molte librerie leggono variabili d'ambiente all'avvio del processo R. Esempi comuni sono:
 
 ```bash
 # OpenBLAS
