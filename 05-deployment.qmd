@@ -88,17 +88,13 @@ Le dipendenze esterne restano fuori dall'immagine e devono essere documentate.
 
 **Assunzioni da verificare prima dell'uso:**
 
-- La directory di build contiene `app.R` (o la struttura `Shiny` prevista), `renv.lock` e i file di progetto necessari.
-- L'immagine base R è approvata dall'organizzazione e contiene il sistema operativo e le librerie native richieste.
-- L'applicazione ascolta sulla porta 3838 all'interno del container.
-- Il registro immagini, la rete, i certificati e il secret store sono gestiti dalla piattaforma.
-- I valori di esempio sono segnaposto da sostituire. Non esiste una versione universale di R o dell'immagine base: usare una situazione di riferimento supportata e aggiornarla secondo il processo di release.
+1. La directory di build contiene `app.R` (o la struttura `Shiny` prevista), `renv.lock` e i file di progetto necessari.
+2. L'immagine base R è approvata dall'organizzazione e contiene il sistema operativo e le librerie native richieste.
+3. L'applicazione ascolta sulla porta 3838 all'interno del container.
+4. Il registro immagini, la rete, i certificati e il secret store sono gestiti dalla piattaforma.
+5. I valori di esempio sono segnaposto da sostituire. Non esiste una versione universale di R o dell'immagine base: usare una situazione di riferimento supportata e aggiornarla secondo il processo di release.
 
 ```dockerfile
-
-
-
-
 # Dockerfile illustrativo: sostituire con una base approvata e verificata.
 ARG R_BASE_IMAGE
 FROM ${R_BASE_IMAGE}
@@ -293,7 +289,7 @@ L'esempio legge una configurazione non segreta dall'ambiente e fallisce esplicit
 
 ## GitHub Actions e pipeline CI/CD
 
-GitHub Actions è uno dei sistemi che possono automatizzare le attività di integrazione e rilascio. Non è necessario conoscere il workflow usato per pubblicare questo corso: il punto didattico è capire quali controlli conviene automatizzare per un'applicazione R e quali artefatti produrre.
+GitHub Actions è un esempio di piattaforma CI/CD (*Continuous Integration / Continuous Delivery*). Per il personale IT interessa il processo che può automatizzare: verificare le modifiche, produrre un artefatto identificabile e renderlo disponibile per il rilascio. I dettagli del workflow di questo repository non sono necessari per comprendere il modello e non vanno confusi con una pipeline applicativa.
 
 Una pipeline applicativa automatizza i controlli che devono essere ripetuti a ogni modifica e prepara una versione candidata al rilascio. Per esempio, quando viene pubblicato un commit o aperta una richiesta di integrazione, GitHub Actions può avviare un job che recupera il sorgente, installa la versione di R prevista, ripristina le dipendenze con `renv` ed esegue i test con `testthat`. Se i controlli falliscono, la pipeline si interrompe e la versione non viene promossa.
 
