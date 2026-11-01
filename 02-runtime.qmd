@@ -126,7 +126,7 @@ Per diagnosticare la memoria conviene distinguere almeno tre livelli:
 - **memoria residente del processo** osservata dal sistema operativo;
 - **memoria complessiva** della macchina, che include altri processi e possibili worker.
 
-ALTREP, copie, allocazioni temporanee e più processi fanno sì che questi valori non coincidano.
+Copie, allocazioni temporanee e più processi fanno sì che questi valori non coincidano. ALTREP è descritto nella sottosezione dedicata.
 
 Una misura utile deve quindi riportare almeno il punto temporale, il processo o worker osservato e il contesto di concorrenza.
 
@@ -195,7 +195,21 @@ Su Linux, eseguire separatamente:
 /usr/bin/time -v Rscript laboratorio-memoria.R blocchi
 ```
 
-Nel rapporto prodotto da `/usr/bin/time -v`, la riga da cercare è **`Maximum resident set size (kbytes)`**: indica il massimo RSS osservato durante quella singola esecuzione, espresso in kilobyte. È il picco della memoria fisica residente attribuito al processo misurato, non la dimensione degli oggetti R e non la RAM libera o totale della macchina.
+Nel rapporto prodotto da `/usr/bin/time -v`, la riga da cercare è **`Maximum resident set size (kbytes)`**. Questa è la misura RSS (*Resident Set Size*): il massimo della memoria fisica residente attribuita al processo durante l'esecuzione. La sigla RSS non compare necessariamente come etichetta; nella versione GNU di `time` su Linux la voce da leggere è proprio `Maximum resident set size (kbytes)`.
+
+Per esempio, un estratto può apparire così:
+
+```text
+Command being timed: "Rscript laboratorio-memoria.R completo"
+Elapsed (wall clock) time (h:mm:ss or m:ss): 0:12.41
+User time (seconds): 10.82
+System time (seconds): 1.21
+Percent of CPU this job got: 96%
+Maximum resident set size (kbytes): 850000
+Exit status: 0
+```
+
+In questo esempio il picco RSS è 850.000 kB, circa 830 MiB. Non è la dimensione degli oggetti R, né la RAM libera o totale della macchina. Il dato riguarda il processo misurato; se il programma crea worker o processi figli, occorre osservare anche questi ultimi o misurare il gruppo di processi.
 
 Le altre righe principali sono:
 
@@ -217,15 +231,15 @@ Verificare la disponibilità di GNU `time` in `/usr/bin/time` e usare lo stesso 
 
 ## `parallel` e `future`
 
-Il parallelismo serve quando un lavoro può essere suddiviso in attività indipendenti o quasi indipendenti, eseguibili contemporaneamente. Esempi: elaborare molti file separati, eseguire simulazioni indipendenti o applicare lo stesso calcolo a gruppi distinti di dati.
+Il parallelismo serve quando un lavoro può essere suddiviso in attività indipendenti o quasi indipendenti, eseguibili contemporaneamente. Esempi tipici sono l'elaborazione di molti file separati, simulazioni indipendenti o lo stesso calcolo applicato a gruppi distinti di dati.
 
-Non è una soluzione automatica a un programma lento. Se le operazioni dipendono l'una dall'altra, se il carico è molto breve o se il tempo viene speso soprattutto in attese su database e rete, l'avvio e il coordinamento dei worker possono costare più del lavoro risparmiato. Prima si misura il caso sequenziale; poi si prova il parallelismo su un carico rappresentativo, controllando anche il carico introdotto sui sistemi esterni.
+Ha senso provarlo quando la misura sequenziale mostra che il calcolo occupa una parte rilevante del tempo e le attività possono procedere senza attendersi continuamente. È meno promettente per lavori molto brevi, sequenziali o dominati da attese su Oracle, rete o filesystem: in questi casi avviare e coordinare i worker può costare più del tempo risparmiato. Prima si misura il caso sequenziale; poi si prova un numero contenuto di worker, verificando durata, CPU, RAM, trasferimento dei dati e carico introdotto sui sistemi esterni.
 
-`parallel` è incluso in R e mette a disposizione meccanismi espliciti per creare worker e distribuire attività. È adatto quando lo sviluppatore deve scegliere direttamente come creare il cluster e come inviare il lavoro.
+`parallel` è incluso in R e permette di creare e gestire direttamente i worker. È adatto quando il programma deve controllare esplicitamente il cluster, la distribuzione delle attività e la sua chiusura. Per esempio, `makeCluster()` crea un gruppo di processi e `parLapply()` distribuisce una lista di attività tra i worker.
 
-`future` offre invece un'interfaccia che separa la definizione del lavoro dalla strategia di esecuzione. Il codice che descrive le attività può restare simile mentre si cambia strategia, per esempio tra esecuzione sequenziale, processi locali o processi su più macchine. Nella pratica viene spesso usato insieme a `future.apply` o a package che lo supportano.
+`future` separa invece la descrizione del lavoro dalla strategia con cui viene eseguito. Lo sviluppatore può descrivere un'attività futura e scegliere una strategia sequenziale, processi locali o processi su più macchine. È utile quando si vuole mantenere simile il codice applicativo e cambiare il modello di esecuzione attraverso la configurazione. Spesso viene usato insieme a `future.apply` o da package che già supportano questo modello.
 
-La scelta non si fa in base al nome del package: va verificato quale backend è stato configurato, quanti worker vengono avviati, dove girano e quali dati devono ricevere.
+In entrambi i casi la presenza del package non dimostra che il programma stia usando più core. IT deve verificare la strategia effettiva, il numero di worker, il backend, i processi attivi e il costo di trasferimento dei dati.
 
 ## Fork e PSOCK
 
@@ -320,7 +334,16 @@ Il backend si riconosce prima di tutto dal codice o dalla configurazione che cre
 
 Con un cluster creato da `parallel`, la classe dell'oggetto può essere ispezionata con `class(cl)`: per esempio `SOCKcluster` o `FORKcluster`. Con `future`, `future::plan()` mostra la strategia configurata e `future::nbrOfWorkers()` il numero di worker previsto.
 
-Queste verifiche descrivono la configurazione del programma. Per confermare ciò che accade durante l'esecuzione, IT può osservare l'albero dei processi sul sistema operativo e verificare quanti processi R sono effettivamente attivi. Il solo numero di processi non identifica sempre il backend: va letto insieme alla configurazione o al codice che li ha creati.
+Queste verifiche descrivono la configurazione del programma. Per confermare ciò che accade durante l'esecuzione, su Linux IT può osservare i processi con `ps` o `pstree`, verificando PID, processo padre e numero di thread:
+
+```bash
+ps -eo pid,ppid,nlwp,cmd | grep '[R]'
+pstree -ap <PID_DEL_PROCESSO_R>
+```
+
+Un gruppo di processi R figli è compatibile con un backend a processi, ma non basta da solo a distinguere fork da PSOCK: occorre leggere anche il codice o la configurazione. Fork deriva dal processo padre; PSOCK avvia processi R separati e li collega tramite socket. Su Windows le strategie fork non sono disponibili.
+
+Con `future`, leggere la strategia impostata con `future::plan()` e il numero di worker previsto con `future::nbrOfWorkers()`. Con un cluster `parallel`, controllare la classe restituita da `class(cl)`: per esempio `SOCKcluster` o `FORKcluster`. Il numero di processi e il backend effettivo vanno verificati durante il carico, non dedotti dal numero di core della macchina.
 
 ## Serializzazione
 
@@ -370,7 +393,9 @@ L'implementazione concreta di BLAS può essere single-thread o multi-thread. Un 
 
 Il numero di worker R e quello dei thread BLAS/LAPACK sono due impostazioni distinte. `parallel` controlla i worker; non controlla direttamente i thread interni alla libreria numerica.
 
-Il metodo dipende dall'implementazione installata. Per iniziare a identificare BLAS e LAPACK, eseguire `sessionInfo()` e leggere i percorsi riportati nelle righe BLAS e LAPACK, quando disponibili. Molte librerie leggono variabili d'ambiente all'avvio del processo R. Esempi comuni sono:
+Il metodo dipende dall'implementazione BLAS e dalla libreria di thread usata. Per identificare la libreria caricata, leggere le righe BLAS e LAPACK di `sessionInfo()`; quando disponibile, `extSoftVersion()["BLAS"]` restituisce anche il percorso della BLAS. Poi consultare la documentazione di quella specifica implementazione.
+
+Molte librerie leggono variabili d'ambiente all'avvio del processo R. Esempi comuni sono:
 
 ```bash
 # OpenBLAS
