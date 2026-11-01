@@ -39,7 +39,7 @@ Il capitolo ha due livelli.
 - library path e ordine di ricerca;
 - lockfile e gestione delle dipendenze;
 - ABI, driver e librerie native;
-- ALTREP e differenza tra dimensione logica e memoria del processo.
+- differenza tra dimensione logica e memoria del processo.
 
 Per la prima presa in carico non è necessario conoscere i dettagli interni di R: serve soprattutto saper ricostruire il perimetro della soluzione.
 
