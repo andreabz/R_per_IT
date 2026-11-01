@@ -1,0 +1,15 @@
+/* Regole dedicate alla presentazione RevealJS. */
+.reveal .slides section h1 {
+  font-size: 1.8em;
+  line-height: 1.15;
+  max-width: 100%;
+}
+
+.reveal .slides section .mermaid .nodeLabel,
+.reveal .slides section .mermaid .edgeLabel {
+  text-align: center !important;
+}
+
+.reveal .slides section .mermaid .nodeLabel p {
+  text-align: center !important;
+}
