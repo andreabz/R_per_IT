@@ -143,6 +143,13 @@ ALTREP è un meccanismo interno di R che consente ad alcuni oggetti di usare rap
 
 Per IT conta la conseguenza: la dimensione logica di un oggetto non misura da sola la memoria residente del processo. Per dimensionare un carico occorre osservare il picco RSS durante l'esecuzione, considerando copie, allocazioni temporanee e processi aggiuntivi.
 
+
+### ALTREP e rappresentazione degli oggetti
+
+ALTREP è un meccanismo interno di R che consente ad alcuni oggetti di usare rappresentazioni alternative. In alcuni casi i dati non vengono materializzati tutti nella forma tradizionale finché non sono necessari.
+
+Per IT conta la conseguenza: la dimensione logica di un oggetto non misura da sola la memoria residente del processo. Per dimensionare un carico occorre osservare il picco RSS durante l'esecuzione, considerando copie, allocazioni temporanee e processi aggiuntivi.
+
 ### Laboratorio specifico — copie, blocchi e picco RSS
 
 **Obiettivo:** verificare se una trasformazione completa crea un picco di memoria maggiore dell'elaborazione per blocchi. Il risultato dipende dalla rappresentazione dei dati e dall'operazione; non va generalizzato senza misura.
