@@ -24,6 +24,7 @@ Prima della tabella delle soluzioni, definiamo i termini che identificano i prin
 | **reverse proxy** | componente che riceve richieste HTTP e le inoltra al servizio applicativo, spesso gestendo anche TLS, routing o autenticazione secondo l'architettura adottata |
 
 Questi termini descrivono **come viene eseguito e consumato il lavoro**, non soltanto quale codice R contiene la soluzione.
+
 ## Lessico architetturale aggiuntivo
 
 Alcuni termini della sezione successiva descrivono componenti o comportamenti che non sono specifici di R:
