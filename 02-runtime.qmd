@@ -88,6 +88,7 @@ R
 ```
 
 Un singolo processo R può quindi essere associato a più thread nativi anche quando il codice applicativo non ha creato worker R.
+
 ## Processo, worker e thread
 
 Per R conviene distinguere tre livelli:
