@@ -40,9 +40,13 @@ Alcuni termini della sezione successiva descrivono componenti o comportamenti ch
 
 ## Definire il carico di lavoro
 
-Servono almeno: interattivo o batch, utenti e concorrenza, frequenza, tempo di risposta, dimensione e crescita dei dati, disponibilità e sistemi esterni.
+Prima di scegliere server, numero di processi o piattaforma, occorre descrivere il lavoro che la soluzione deve svolgere. La stessa applicazione R può avere requisiti molto diversi se viene eseguita una volta al giorno come processo batch oppure se risponde contemporaneamente a decine di utenti.
 
-Per R aggiungere: modalità di esecuzione dello script, dipendenze runtime, quantità di dati trasferita dentro e fuori R e costo atteso della serializzazione o materializzazione.
+Per un job batch interessano frequenza, durata massima accettabile, dimensione degli input, quantità di dati prodotti e comportamento in caso di errore. Per un servizio interattivo contano anche numero di utenti simultanei, tempo di risposta, isolamento delle richieste e disponibilità attesa. In entrambi i casi vanno identificati crescita dei dati, sistemi esterni e finestre temporali in cui il carico può essere eseguito.
+
+Per una soluzione R occorre inoltre capire quanta parte dei dati viene trasferita nel processo, quali dipendenze servono per avviarlo e se il lavoro crea copie, oggetti intermedi o processi aggiuntivi. Queste informazioni collegano il requisito applicativo alle misure di CPU, memoria, rete e database.
+
+Per esempio, un report giornaliero su Oracle può tollerare alcuni minuti di elaborazione e lavorare in un'unica finestra schedulata. Una dashboard Shiny deve invece rispondere alle richieste degli utenti senza bloccare le altre sessioni. Non è quindi sufficiente conoscere la dimensione del dataset: serve descrivere quando, da chi e con quale frequenza viene utilizzato.
 
 ```{mermaid}
 %%| echo: false
@@ -607,17 +611,15 @@ Un requisito importante è misurare il confine: tempo della query, volume trasfe
 
 ## Lazy execution
 
-Qui bisogna distinguere due idee.
+R e alcuni strumenti di analisi possono rimandare l'esecuzione di un'operazione. Il termine *lazy* viene usato per due comportamenti distinti.
 
 ### Lazy evaluation del linguaggio R
 
-È il meccanismo visto nel capitolo 2: un argomento di funzione può essere valutato quando serve.
+Quando una funzione riceve un argomento, R può rimandarne la valutazione fino al momento in cui il valore viene effettivamente richiesto. Per chi gestisce il sistema significa che la chiamata a una funzione e l'esecuzione di tutte le operazioni contenute nell'argomento non coincidono necessariamente nel tempo.
 
-### Lazy execution di un backend
+### Lazy execution di un backend analitico
 
-Un sistema analitico può invece costruire una descrizione delle trasformazioni e rimandare l'esecuzione.
-
-Esempio concettuale:
+Un backend può costruire un piano di trasformazioni senza eseguire subito le operazioni sui dati. L'esecuzione avviene quando viene richiesta una raccolta o una materializzazione del risultato.
 
 ~~~text
 codice R
@@ -628,34 +630,34 @@ piano / SQL
    ↓
 backend
    ↓
-materializzazione
+materializzazione del risultato
 ~~~
 
-Il codice R può quindi descrivere un'operazione senza che il database abbia ancora eseguito il lavoro.
+La distinzione è importante per misurare correttamente i tempi: cronometrare soltanto la costruzione del piano non misura il lavoro svolto dal database o dal motore analitico. Occorre includere l'istruzione che avvia l'esecuzione e il trasferimento del risultato.
 
-La domanda IT è:
-
-> **Quale istruzione fa partire davvero l'esecuzione e quale componente la esegue?**
-
-Questo diventa importante quando si misura il tempo: se misuriamo soltanto la costruzione del piano e non la materializzazione, possiamo misurare il costo sbagliato.
+La domanda IT è: **quale istruzione avvia davvero il lavoro e quale componente lo esegue?**
 
 ## `Arrow` e `DuckDB`
 
-`Arrow` è utile per rappresentazioni e formati colonnari; `DuckDB` è un motore analitico embedded.
+Quando i dati arrivano da molti file o sono troppo grandi per essere caricati interamente in memoria, può essere utile eseguire filtri e aggregazioni prima di trasferire i risultati in R. Il problema da risolvere è ridurre letture, copie e trasferimenti non necessari, mantenendo accessibili i dati nel formato in cui sono già disponibili.
 
-```text
-Parquet / Arrow
-       ↓
-    DuckDB
-       ↓
-filtri / aggregazioni
-       ↓
-dataset ridotto
-       ↓
-       R
-```
+`Arrow` fornisce un formato colonnare e strumenti per leggere, rappresentare e scambiare dati tabellari in modo efficiente tra linguaggi e processi. È utile soprattutto quando occorre lavorare con file Parquet o condividere dati senza convertirli continuamente in strutture diverse.
 
-Questi strumenti possono spostare parte del lavoro fuori dal processo R e ridurre il costo di trasferimento o materializzazione. La scelta va verificata sul carico di lavoro e sugli standard dell'organizzazione.
+`DuckDB` è invece un motore SQL analitico che può essere eseguito all'interno del processo applicativo. Permette di interrogare file Parquet e dati compatibili con Arrow usando SQL, senza dover predisporre un database server separato. In questo scenario Arrow riguarda soprattutto il formato e l'interoperabilità; DuckDB esegue le query e le aggregazioni.
+
+~~~text
+file Parquet / dati Arrow
+          ↓
+     DuckDB: SQL
+          ↓
+ filtri e aggregazioni
+          ↓
+    risultato ridotto
+          ↓
+       R: analisi
+~~~
+
+I due strumenti possono essere usati insieme, ma non sono intercambiabili. Non sostituiscono automaticamente Oracle: se i dati sono già gestiti in Oracle e le query possono essere eseguite lì in modo efficiente, è spesso preferibile lasciare filtri e aggregazioni nel database. Arrow e DuckDB meritano una valutazione quando i dati sono distribuiti in file, quando serve un motore analitico locale o quando l'accesso a un database server non è la soluzione più adatta.
 
 ## Confini di integrazione con lo stack aziendale
 
@@ -684,7 +686,13 @@ immagine
 └── codice
 ~~~
 
-Questo è utile per rendere più riproducibile il rapporto tra R, package e librerie native.
+Il container completa il lavoro iniziato da `renv`, ma copre un livello diverso dell'ambiente.
+
+`renv` registra le dipendenze dei package R e aiuta a ricostruire la library del progetto. Non installa da solo le librerie native di sistema, i client database o i driver richiesti. Un'immagine container può includere una versione di R, il sistema operativo user-space, le librerie native necessarie, i package ricostruiti dal lockfile e il codice applicativo.
+
+In fase di build, il processo usa quindi `renv.lock` per ricostruire i package dentro un'immagine basata su un sistema operativo e su una versione R scelti. Il risultato è un artefatto identificabile e distribuibile. Per rendere il build più stabile occorre anche fissare e aggiornare consapevolmente l'immagine base, preferibilmente tramite un riferimento immutabile o un digest quando la piattaforma lo consente.
+
+Il container non congela l'intero ambiente di esercizio: kernel e configurazione dell'host, rete, identità, segreti, database, storage e servizi esterni restano responsabilità della piattaforma e dell'organizzazione.
 
 Ma il container non contiene automaticamente la soluzione completa:
 
